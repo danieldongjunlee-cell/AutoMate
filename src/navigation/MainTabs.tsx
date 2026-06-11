@@ -15,6 +15,16 @@ import { HomeScreen } from '../screens/home/HomeScreen';
 import { MapFilterScreen } from '../screens/home/MapFilterScreen';
 import { PhotoExampleScreen } from '../screens/home/PhotoExampleScreen';
 import { SubmittedScreen } from '../screens/home/SubmittedScreen';
+import { MaintDashboardScreen } from '../screens/maint/MaintDashboardScreen';
+import { MaintDiyScreen } from '../screens/maint/MaintDiyScreen';
+import { MaintHistoryScreen } from '../screens/maint/MaintHistoryScreen';
+import { MaintManualScreen } from '../screens/maint/MaintManualScreen';
+import { MaintPaymentScreen } from '../screens/maint/MaintPaymentScreen';
+import { MaintScanCamScreen } from '../screens/maint/MaintScanCamScreen';
+import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
+import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
+import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
+import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
@@ -75,18 +85,32 @@ function HomeStack() {
 }
 
 const MaintNative = createNativeStackNavigator<MaintStackParamList>();
-const maintScreens = buildScreens([
-  'MaintDashboard',
-  'MaintHistory',
-  'MaintScanCam',
-  'MaintScanRev',
-  'MaintManual',
-  'MaintDiy',
-  'MaintSchedule',
-  'MaintScheduleBook',
-  'MaintPayment',
-  'MaintScheduleConfirm',
-] as const);
+const maintScreens = buildScreens(
+  [
+    'MaintDashboard',
+    'MaintHistory',
+    'MaintScanCam',
+    'MaintScanRev',
+    'MaintManual',
+    'MaintDiy',
+    'MaintSchedule',
+    'MaintScheduleBook',
+    'MaintPayment',
+    'MaintScheduleConfirm',
+  ] as const,
+  {
+    MaintDashboard: MaintDashboardScreen,
+    MaintHistory: MaintHistoryScreen,
+    MaintScanCam: MaintScanCamScreen,
+    MaintScanRev: MaintScanRevScreen,
+    MaintManual: MaintManualScreen,
+    MaintDiy: MaintDiyScreen,
+    MaintSchedule: MaintScheduleScreen,
+    MaintScheduleBook: MaintScheduleBookScreen,
+    MaintPayment: MaintPaymentScreen,
+    MaintScheduleConfirm: MaintScheduleConfirmScreen,
+  },
+);
 
 function MaintStack() {
   const theme = useTheme();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 
-import { radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../theme';
 
 /**
  * Pro paywall overlay (submitted / after-hours / DIY hub). Children render

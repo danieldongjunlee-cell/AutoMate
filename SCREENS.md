@@ -41,16 +41,16 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-maint-dashboard` | Maintenance | — | ⬜ |
-| `s-maint-history` | Service History | — | ⬜ |
-| `s-maint-scan-cam` | Scan Camera | — | ⬜ |
-| `s-maint-scan-rev` | Scan Review | — | ⬜ |
-| `s-maint-manual` | Manual Log | — | ⬜ |
-| `s-maint-diy` | DIY Tips Hub | — | ⬜ |
-| `s-maint-schedule` | Schedule Service | — | ⬜ |
-| `s-maint-schedule-book` | Book Appointment | — | ⬜ |
-| `s-maint-payment` | Payment | — | ⬜ |
-| `s-maint-schedule-confirm` | Booking Confirmed | — | ⬜ |
+| `s-maint-dashboard` | Maintenance | `src/screens/maint/MaintDashboardScreen.tsx` | ✅ |
+| `s-maint-history` | Service History | `src/screens/maint/MaintHistoryScreen.tsx` | ✅ |
+| `s-maint-scan-cam` | Scan Camera | `src/screens/maint/MaintScanCamScreen.tsx` | ✅ |
+| `s-maint-scan-rev` | Scan Review | `src/screens/maint/MaintScanRevScreen.tsx` | ✅ |
+| `s-maint-manual` | Manual Log | `src/screens/maint/MaintManualScreen.tsx` | ✅ |
+| `s-maint-diy` | DIY Tips Hub | `src/screens/maint/MaintDiyScreen.tsx` | ✅ |
+| `s-maint-schedule` | Schedule Service | `src/screens/maint/MaintScheduleScreen.tsx` | ✅ |
+| `s-maint-schedule-book` | Book Appointment | `src/screens/maint/MaintScheduleBookScreen.tsx` | ✅ |
+| `s-maint-payment` | Payment | `src/screens/maint/MaintPaymentScreen.tsx` | ✅ |
+| `s-maint-schedule-confirm` | Booking Confirmed | `src/screens/maint/MaintScheduleConfirmScreen.tsx` | ✅ |
 
 ## Compare tab (Step 5)
 

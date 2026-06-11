@@ -1,0 +1,181 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+
+import { FilterChips, PointsBadge } from '../../components/FilterChips';
+import { Screen, SectionLabel } from '../../components/ui';
+import { MaintStackParamList } from '../../navigation/types';
+import {
+  HISTORY_TIME_FILTERS,
+  HISTORY_TYPE_FILTERS,
+  VEHICLE,
+} from '../../services/mock/data';
+import { maintService } from '../../services/mock/maintService';
+import { radii, spacing, useTheme } from '../../theme';
+
+type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintHistory'>;
+
+function HealthRing({ pct }: { pct: number }) {
+  const { colors } = useTheme();
+  const r = 26;
+  const c = 2 * Math.PI * r;
+  return (
+    <View style={{ width: 64, height: 64 }}>
+      <Svg width={64} height={64} viewBox="0 0 64 64">
+        <Circle cx={32} cy={32} r={r} fill="none" stroke={colors.surfaceAlt} strokeWidth={6} />
+        <Circle
+          cx={32}
+          cy={32}
+          r={r}
+          fill="none"
+          stroke={colors.success}
+          strokeWidth={6}
+          strokeDasharray={`${(pct / 100) * c} ${c}`}
+          strokeLinecap="round"
+          transform="rotate(-90 32 32)"
+        />
+      </Svg>
+      <View style={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 17, fontWeight: '600', color: colors.successDark }}>{pct}</Text>
+      </View>
+    </View>
+  );
+}
+
+export function MaintHistoryScreen() {
+  const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
+  const [timeFilter, setTimeFilter] = useState(HISTORY_TIME_FILTERS[0]);
+  const [typeFilter, setTypeFilter] = useState(HISTORY_TYPE_FILTERS[0]);
+  const { data: records, isLoading } = useQuery({
+    queryKey: ['service-history'],
+    queryFn: maintService.getServiceHistory,
+  });
+
+  const visible = (records ?? []).filter((rec) => {
+    if (typeFilter === 'All types') return true;
+    if (typeFilter === 'Tires') return rec.type.toLowerCase().includes('tire');
+    return rec.type.toLowerCase().includes(typeFilter.split(' ')[0].toLowerCase());
+  });
+
+  return (
+    <Screen>
+      <FilterChips options={HISTORY_TIME_FILTERS} selected={timeFilter} onSelect={setTimeFilter} />
+      <FilterChips options={HISTORY_TYPE_FILTERS} selected={typeFilter} onSelect={setTypeFilter} />
+
+      {/* Health summary */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.sm,
+          padding: spacing.md,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          marginVertical: spacing.sm,
+        }}
+      >
+        <HealthRing pct={VEHICLE.healthPct} />
+        <View>
+          <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
+            Good condition
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            Oil change due ~{VEHICLE.oilDueInMi} mi
+          </Text>
+        </View>
+      </View>
+
+      {/* Add record */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <Pressable
+          onPress={() => navigation.navigate('MaintScanCam')}
+          style={({ pressed }) => ({
+            flex: 1,
+            backgroundColor: colors.successSurface,
+            borderRadius: radii.sm,
+            borderWidth: 1.5,
+            borderColor: colors.success,
+            padding: spacing.md,
+            alignItems: 'center',
+            gap: 5,
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 26 }}>📷</Text>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
+            Scan receipt
+          </Text>
+          <PointsBadge points={20} />
+        </Pressable>
+        <Pressable
+          onPress={() => navigation.navigate('MaintManual')}
+          style={({ pressed }) => ({
+            flex: 1,
+            backgroundColor: colors.surface,
+            borderRadius: radii.sm,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.border,
+            padding: spacing.md,
+            alignItems: 'center',
+            gap: 5,
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 26 }}>✏️</Text>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
+            Manual input
+          </Text>
+          <PointsBadge points={10} />
+        </Pressable>
+      </View>
+
+      <SectionLabel>Past services</SectionLabel>
+      {isLoading ? (
+        <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xl }} />
+      ) : visible.length === 0 ? (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', padding: spacing.lg }}>
+          No services match this filter.
+        </Text>
+      ) : (
+        visible.map((rec) => (
+          <View
+            key={rec.id}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.sm,
+              paddingVertical: spacing.sm,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: colors.divider,
+            }}
+          >
+            <View
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: radii.sm,
+                backgroundColor: rec.icon === '↺' ? colors.infoSurface : colors.successSurface,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 16 }}>{rec.icon}</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
+                {rec.type}
+              </Text>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+                {rec.dateLabel} · {rec.mileage} · ${rec.cost}
+              </Text>
+            </View>
+          </View>
+        ))
+      )}
+    </Screen>
+  );
+}

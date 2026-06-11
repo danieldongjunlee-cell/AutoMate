@@ -35,6 +35,10 @@ interface AppState {
   darkMode: boolean;
   toggleDarkMode: () => void;
 
+  // Reward points (420 pts = $4.20 in the wireframe; earned by scans/logs/posts)
+  points: number;
+  addPoints: (n: number) => void;
+
   // Damage flow: selected car parts (car-diagram multi-select)
   selectedParts: string[];
   togglePart: (part: string) => void;
@@ -63,6 +67,9 @@ export const useAppStore = create<AppState>((set) => ({
 
   darkMode: false,
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
+
+  points: 420,
+  addPoints: (n) => set((s) => ({ points: s.points + n })),
 
   selectedParts: [],
   togglePart: (part) =>

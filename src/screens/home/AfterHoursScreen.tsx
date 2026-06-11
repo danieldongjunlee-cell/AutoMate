@@ -9,7 +9,7 @@ import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
-import { DiyGuideRow, ProLockOverlay } from './ProLockOverlay';
+import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'AfterHours'>;
 

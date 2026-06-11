@@ -190,3 +190,195 @@ export const BOOKING_MONTH = {
 
 export const dealerById = (id: string | null | undefined): Dealer =>
   DEALERS.find((d) => d.id === id) ?? DEALERS[0];
+
+// ── Maintenance domain ─────────────────────────────────────────────────
+
+/** Primary vehicle (maint-dashboard / prof-cars). */
+export const VEHICLE = {
+  name: '2019 Honda Accord EX-L',
+  colorName: 'Lunar Silver Metallic',
+  vin: '1HGCV1F34KA01234',
+  odometerMi: 47230,
+  oilSpec: '5W-30 Full Synthetic',
+  lastService: 'Mar 12, 2025',
+  healthPct: 78,
+  healthLabel: 'Good',
+  oilDueInMi: 800,
+  marketValue: {
+    value: 17400,
+    aboveAvg: 420,
+    low: 14200,
+    high: 21500,
+    /** Position of value within low–high band. */
+    barPct: 67,
+  },
+};
+
+export interface UpcomingService {
+  id: string;
+  name: string;
+  due: string;
+  icon: string;
+  status: 'Soon' | 'Upcoming' | 'Scheduled';
+}
+
+export const UPCOMING_SERVICES: UpcomingService[] = [
+  { id: 'up-oil', name: 'Oil change', due: 'Due ~800 mi', icon: '🛢️', status: 'Soon' },
+  { id: 'up-tires', name: 'Tire rotation', due: 'Due ~2,500 mi', icon: '↺', status: 'Upcoming' },
+  {
+    id: 'up-insp',
+    name: 'Multi-point inspection',
+    due: 'Due Nov 2025',
+    icon: '🔍',
+    status: 'Scheduled',
+  },
+];
+
+export interface ServiceRecord {
+  id: string;
+  type: string;
+  shop: string;
+  dateLabel: string;
+  mileage: string;
+  cost: number;
+  icon: string;
+}
+
+/** Seed history records from the wireframe (maint-history "Past services"). */
+export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
+  {
+    id: 'rec-oil',
+    type: 'Oil change',
+    shop: 'AutoFix Pro',
+    dateLabel: 'Mar 12',
+    mileage: '44,500 mi',
+    cost: 49,
+    icon: '🛢️',
+  },
+  {
+    id: 'rec-tires',
+    type: 'Tire rotation',
+    shop: 'Honda Fairfax',
+    dateLabel: 'Dec 5',
+    mileage: '42,100 mi',
+    cost: 39,
+    icon: '↺',
+  },
+];
+
+export const HISTORY_TIME_FILTERS = ['All time', 'Last 6 months', '2024', '2023'];
+export const HISTORY_TYPE_FILTERS = ['All types', 'Oil change', 'Tires', 'Brakes', 'Body repair'];
+export const MANUAL_SERVICE_TYPES = ['Oil change', 'Tire rotation', 'Brake service', 'Air filter'];
+
+/** Receipt fields parsed by the mock OCR (maint-scan-rev). */
+export const SCANNED_RECEIPT = {
+  serviceType: 'Oil change — synthetic',
+  shop: 'AutoFix Pro',
+  date: 'Mar 12, 2025',
+  mileage: '44,500 mi',
+  amount: '$49.00',
+};
+
+export interface DiyGuide {
+  id: string;
+  level: 'EASY' | 'MED' | 'HARD';
+  title: string;
+  meta: string;
+  free: boolean;
+}
+
+export const DIY_GUIDES: DiyGuide[] = [
+  {
+    id: 'diy-boil',
+    level: 'EASY',
+    title: 'Boiling water dent removal',
+    meta: '3 steps · ~8 min · No tools needed',
+    free: true,
+  },
+  {
+    id: 'diy-plunger',
+    level: 'EASY',
+    title: 'Plunger pull on bumper dents',
+    meta: '2 steps · ~5 min · No tools needed',
+    free: true,
+  },
+  {
+    id: 'diy-paint',
+    level: 'MED',
+    title: 'Paint touch-up for scratches',
+    meta: '4 steps · ~12 min · No tools needed',
+    free: false,
+  },
+  {
+    id: 'diy-chip',
+    level: 'EASY',
+    title: 'Nail polish paint chip fix',
+    meta: '2 steps · ~5 min · No tools needed',
+    free: false,
+  },
+  {
+    id: 'diy-pdr',
+    level: 'HARD',
+    title: 'PDR paintless dent repair',
+    meta: '5 steps · ~22 min · PDR kit required',
+    free: false,
+  },
+];
+
+export const DIY_CATEGORIES = ['All', 'Bumper', 'Scratches', 'Paint chips', 'Interior'];
+
+export const SCHEDULE_SERVICE_FILTERS = ['All', 'Oil change', 'Tires', 'Brakes', 'Inspection'];
+
+/** Per-dealer price chips on maint-schedule cards. */
+export const DEALER_SERVICE_CHIPS: Record<string, string[]> = {
+  'honda-fairfax': ['Oil $49', 'Tires $89+', 'Brakes $149', 'Inspection $39'],
+  'autofix-pro': ['Oil $39', 'Inspection $69', 'Brakes $129'],
+  'vienna-auto': ['Tires $79+', 'Brakes $129'],
+};
+
+export interface BookableService {
+  id: string;
+  name: string;
+  detail: string;
+  price: number;
+  durationMin: number;
+  icon: string;
+}
+
+/** Multi-select service menu (maint-schedule-book, Honda Fairfax). */
+export const BOOKABLE_SERVICES: BookableService[] = [
+  {
+    id: 'svc-oil',
+    name: 'Oil change',
+    detail: 'Full synthetic 5W-30 · ~45 min',
+    price: 49,
+    durationMin: 45,
+    icon: '🛢️',
+  },
+  {
+    id: 'svc-tires',
+    name: 'Tire rotation',
+    detail: '4-wheel balance · ~30 min',
+    price: 29,
+    durationMin: 30,
+    icon: '🛞',
+  },
+  {
+    id: 'svc-insp',
+    name: 'Multi-point inspection',
+    detail: '27-point check · ~60 min',
+    price: 39,
+    durationMin: 60,
+    icon: '🔧',
+  },
+  {
+    id: 'svc-brakes',
+    name: 'Brake inspection',
+    detail: 'Pads & rotors check · ~45 min',
+    price: 149,
+    durationMin: 45,
+    icon: '🛑',
+  },
+];
+
+export const MAINT_TIME_SLOTS = ['8:00 AM', '10:00 AM', '1:00 PM', '3:30 PM'];
