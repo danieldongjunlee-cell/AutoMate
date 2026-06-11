@@ -4,8 +4,7 @@ import {
   UPCOMING_SERVICES,
   VEHICLE,
 } from './data';
-
-const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+import { delay } from './delay';
 
 /** In-memory history so saved scans/manual logs appear immediately. */
 let history: ServiceRecord[] = [...SERVICE_HISTORY_SEED];
@@ -46,6 +45,6 @@ export const maintService = {
 
   async payForBooking(_total: number) {
     await delay(700);
-    return { ok: true, reminder: 'day before at 9:00 AM' };
+    return { ok: true, reminder: 'day before at 9:00 AM', pointsEarned: 50 }; // "Book service via app"
   },
 };

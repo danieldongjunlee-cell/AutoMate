@@ -1,15 +1,16 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CompareStackParamList } from '../../navigation/types';
-import { ACCEPTED_QUOTES, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
+import { acceptedQuoteById, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { Screen } from '../../components/ui';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompCashIns'>;
+type Route = RouteProp<CompareStackParamList, 'CompCashIns'>;
 
 /** Salmon insurance-banner surface from the wireframe (#FAECE7 / #4A1B0C). */
 const SALMON_BG = '#FAECE7';
@@ -18,8 +19,9 @@ const SALMON_FG = '#4A1B0C';
 /** Wireframe s-comp-cash-ins: pay cash vs. file insurance side-by-side. */
 export function CompCashInsScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const { colors } = useTheme();
-  const aq = ACCEPTED_QUOTES[0];
+  const aq = acceptedQuoteById(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
   return (
@@ -74,7 +76,7 @@ export function CompCashInsScreen() {
       {/* Cash vs insurance */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <Pressable
-          onPress={() => navigation.navigate('CompCashBook')}
+          onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.successSurface,
@@ -107,20 +109,20 @@ export function CompCashInsScreen() {
         </Pressable>
 
         <Pressable
-          onPress={() => navigation.navigate('CompInsurance')}
+          onPress={() => navigation.navigate('CompInsurance', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.dangerSurface,
             borderRadius: radii.md,
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: '#F09595',
+            borderColor: colors.dangerBorder,
             padding: spacing.md,
             alignItems: 'center',
             opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🛡️</Text>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#791F1F', marginBottom: 4 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.dangerDeep, marginBottom: 4 }}>
             File insurance
           </Text>
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.success }}>$0</Text>
@@ -130,7 +132,7 @@ export function CompCashInsScreen() {
               backgroundColor: colors.dangerSurface,
               borderRadius: radii.pill,
               borderWidth: StyleSheet.hairlineWidth,
-              borderColor: '#F09595',
+              borderColor: colors.dangerBorder,
               paddingHorizontal: 11,
               paddingVertical: 3,
             }}
@@ -143,7 +145,7 @@ export function CompCashInsScreen() {
       </View>
 
       {/* Deep dive link */}
-      <Pressable onPress={() => navigation.navigate('CompDeepDive')}>
+      <Pressable onPress={() => navigation.navigate('CompDeepDive', { quoteId: aq.id })}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.navy, palette.navyMid]}

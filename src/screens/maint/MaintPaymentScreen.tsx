@@ -8,38 +8,30 @@ import { Card, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
 import { maintService } from '../../services/mock/maintService';
-import { useAppStore } from '../../store/useAppStore';
+import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintPayment'>;
 
 type PayMethod = 'visa' | 'applepay';
-
-const dayLabel = (iso: string | null) => {
-  if (!iso) return '';
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-};
 
 /** Wireframe s-maint-payment: order summary + payment method → confirm. */
 export function MaintPaymentScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const cart = useAppStore((s) => s.cart);
+  const addPoints = useAppStore((s) => s.addPoints);
   const dealer = dealerById(cart.dealerId);
   const [method, setMethod] = useState<PayMethod>('visa');
   const [paying, setPaying] = useState(false);
 
-  const total = cart.services.reduce((sum, s) => sum + s.price, 0);
-  const totalMin = cart.services.reduce((sum, s) => sum + s.durationMin, 0);
+  const { total, totalMin } = cartTotals(cart);
 
   const onPay = async () => {
     setPaying(true);
-    await maintService.payForBooking(total);
+    const { pointsEarned } = await maintService.payForBooking(total);
+    addPoints(pointsEarned);
     setPaying(false);
     navigation.navigate('MaintScheduleConfirm');
   };
@@ -76,7 +68,7 @@ export function MaintPaymentScreen() {
           }}
         >
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>
-            {dealer.name} · {dayLabel(cart.date)} {cart.time}
+            {dealer.name} · {formatDayLabel(cart.date)} {cart.time}
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{totalMin} min</Text>
         </View>

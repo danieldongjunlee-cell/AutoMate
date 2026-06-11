@@ -20,7 +20,7 @@ export type HomeStackParamList = {
   MapFilter: undefined;
   AcceptBooking: { dealerId?: string } | undefined;
   BookingConfirm:
-    | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash' }
+    | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash'; priceLabel?: string }
     | undefined;
   BundleDeals: undefined;
   Notifications: undefined;
@@ -41,16 +41,16 @@ export type MaintStackParamList = {
 
 export type CompareStackParamList = {
   CompSelect: undefined;
-  CompCashIns: undefined;
-  CompDeepDive: undefined;
-  CompCashBook: undefined;
-  CompInsurance: undefined;
+  CompCashIns: { quoteId?: string } | undefined;
+  CompDeepDive: { quoteId?: string } | undefined;
+  CompCashBook: { quoteId?: string } | undefined;
+  CompInsurance: { quoteId?: string } | undefined;
 };
 
 export type CommunityStackParamList = {
   CommChannels: undefined;
   CommHonda: undefined;
-  CommPost: undefined;
+  CommPost: { postId?: string } | undefined;
   CommCreate: undefined;
 };
 

@@ -34,7 +34,8 @@ export function CommCreateScreen() {
       hasPhoto ? 1 : 0,
     );
     addPoints(pointsEarned);
-    await queryClient.invalidateQueries({ queryKey: ['feed'] });
+    // Fire-and-forget: the feed refetches while we navigate back to it.
+    queryClient.invalidateQueries({ queryKey: ['feed'] });
     setPublishing(false);
     navigation.goBack();
   };

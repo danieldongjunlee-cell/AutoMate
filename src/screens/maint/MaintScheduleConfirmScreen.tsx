@@ -1,86 +1,47 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
-import { dealerById } from '../../services/mock/data';
-import { useAppStore } from '../../store/useAppStore';
+import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
+import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScheduleConfirm'>;
-
-const dayLabel = (iso: string | null) => {
-  if (!iso) return 'Mon, Apr 7';
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-};
 
 /** Wireframe s-maint-schedule-confirm: paid-booking success summary. */
 export function MaintScheduleConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const cart = useAppStore((s) => s.cart);
   const clearCart = useAppStore((s) => s.clearCart);
 
-  const dealer = dealerById(cart.dealerId);
-  const total = cart.services.reduce((sum, s) => sum + s.price, 0);
-  const totalMin = cart.services.reduce((sum, s) => sum + s.durationMin, 0);
-  const serviceNames = cart.services.map((s) => s.name).join(' + ') || 'Oil change';
+  // Snapshot once on mount: keeps the summary stable while Done clears the
+  // cart (no fallback flash during the pop animation), and renders the
+  // confirmed mock appointment when deep-linked from the "Upcoming"
+  // notification with no live cart.
+  const booking = useRef(
+    (() => {
+      const cart = useAppStore.getState().cart;
+      return cart.services.length > 0 ? cart : BOOKED_APPOINTMENT;
+    })(),
+  ).current;
+
+  const dealer = dealerById(booking.dealerId);
+  const { total, totalMin } = cartTotals(booking);
+  const serviceNames = booking.services.map((s) => s.name).join(' + ');
 
   const onDone = () => {
-    clearCart();
     navigation.navigate('MaintDashboard');
+    clearCart();
   };
-
-  const cell = (label: string, value: string, sub?: string, subColor?: string) => (
-    <View style={{ width: '50%', paddingVertical: spacing.xs }}>
-      <Text
-        style={{
-          fontSize: 11,
-          fontWeight: '600',
-          color: colors.textTertiary,
-          textTransform: 'uppercase',
-          marginBottom: 2,
-        }}
-      >
-        {label}
-      </Text>
-      <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
-      {sub ? <Text style={{ fontSize: 13, color: subColor ?? colors.textTertiary }}>{sub}</Text> : null}
-    </View>
-  );
 
   return (
     <Screen>
-      <View style={{ alignItems: 'center', paddingVertical: spacing.lg }}>
-        <View
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-            backgroundColor: colors.successSurface,
-            borderWidth: 2.5,
-            borderColor: colors.success,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Text style={{ fontSize: 36 }}>✅</Text>
-        </View>
-        <Text style={{ fontSize: 24, fontWeight: '700', color: colors.successDeep, marginBottom: 2 }}>
-          You're booked!
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          Reminder set for the day before
-        </Text>
-      </View>
+      <SuccessHeader title="You're booked!" subtitle="Reminder set for the day before" />
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
         <SectionLabel>Summary</SectionLabel>
@@ -106,38 +67,19 @@ export function MaintScheduleConfirmScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {cell('Service', serviceNames)}
-          {cell('Date & time', dayLabel(cart.date), cart.time ?? '8:00 AM', colors.primaryDark)}
-          {cell('Paid', `$${total}`, undefined, colors.successDark)}
-          {cell('Duration', `~${totalMin} min`)}
+          <SummaryCell label="Service" value={serviceNames} />
+          <SummaryCell
+            label="Date & time"
+            value={formatDayLabel(booking.date, 'Mon, Apr 7')}
+            sub={booking.time ?? '8:00 AM'}
+            subColor={colors.primaryDark}
+          />
+          <SummaryCell label="Paid" value={`$${total}`} subColor={colors.successDark} />
+          <SummaryCell label="Duration" value={`~${totalMin} min`} />
         </View>
       </Card>
 
-      {/* Reminder */}
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.primaryLight,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
-        }}
-      >
-        <Text style={{ fontSize: 20 }}>🔔</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
-            Reminder set
-          </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Day before at 9:00 AM</Text>
-        </View>
-        <Pressable onPress={() => Alert.alert('Reminder', 'Reminder editing comes with the backend.')}>
-          <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
-        </Pressable>
-      </View>
+      <ReminderRow sub="Day before at 9:00 AM" />
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Pressable

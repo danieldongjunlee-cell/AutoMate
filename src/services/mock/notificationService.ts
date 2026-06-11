@@ -1,4 +1,5 @@
 import { MainTabParamList } from '../../navigation/types';
+import { delay } from './delay';
 
 export interface AppNotification {
   id: string;
@@ -9,11 +10,9 @@ export interface AppNotification {
   unread: boolean;
   /** Tinted card style for unread items (wireframe s-notifications). */
   tint: 'primary' | 'success' | 'gold' | 'neutral';
-  /** Deep link: target route, plus the owning tab for cross-tab jumps. */
-  target?: { screen: string; tab?: keyof MainTabParamList };
+  /** Deep link: target route, owning tab for cross-tab jumps, and params. */
+  target?: { screen: string; tab?: keyof MainTabParamList; params?: object };
 }
-
-const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 let notifications: AppNotification[] = [
   {
@@ -24,7 +23,7 @@ let notifications: AppNotification[] = [
     body: 'Your rear bumper estimate ($320–$345) is ready. Tap to book your appointment.',
     unread: true,
     tint: 'primary',
-    target: { screen: 'AcceptBooking' },
+    target: { screen: 'AcceptBooking', params: { dealerId: 'honda-fairfax' } },
   },
   {
     id: 'n-oil-due',
@@ -64,7 +63,7 @@ let notifications: AppNotification[] = [
     body: '"That DIY dent trick actually works — saved me $400 too!"',
     unread: false,
     tint: 'neutral',
-    target: { screen: 'CommPost', tab: 'CommunityTab' },
+    target: { screen: 'CommPost', tab: 'CommunityTab', params: { postId: 'post-james' } },
   },
   {
     id: 'n-upcoming',

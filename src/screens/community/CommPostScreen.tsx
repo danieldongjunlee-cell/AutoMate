@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -5,15 +6,18 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 
 import { CategoryBadge } from '../../components/PostCard';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
+import { CommunityStackParamList } from '../../navigation/types';
 import { communityService } from '../../services/mock/communityService';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-comm-post: post detail + comments + composer. */
 export function CommPostScreen() {
+  const route = useRoute<RouteProp<CommunityStackParamList, 'CommPost'>>();
   const { colors } = useTheme();
+  const postId = route.params?.postId ?? 'post-james';
   const { data, isLoading } = useQuery({
-    queryKey: ['post', 'post-james'],
-    queryFn: () => communityService.getPost('post-james'),
+    queryKey: ['post', postId],
+    queryFn: () => communityService.getPost(postId),
   });
 
   if (isLoading || !data) {

@@ -1,4 +1,4 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -6,25 +6,29 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { CompareStackParamList } from '../../navigation/types';
-import { ACCEPTED_QUOTES, BOOKING_MONTH, dealerById, PAYMENT_CARD } from '../../services/mock/data';
+import {
+  acceptedQuoteById,
+  COMP_TIME_SLOTS,
+  dealerById,
+  PAYMENT_CARD,
+} from '../../services/mock/data';
 import { quoteService } from '../../services/mock/quoteService';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { weekdayOf } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompCashBook'>;
-
-const SLOTS = ['9:00 AM', '10:30 AM', '2:00 PM'];
-
-const weekdayOf = (day: number) =>
-  new Date(BOOKING_MONTH.year, BOOKING_MONTH.month - 1, day).toLocaleDateString('en-US', {
-    weekday: 'short',
-  });
+type Route = RouteProp<CompareStackParamList, 'CompCashBook'>;
 
 /** Wireframe s-comp-cash-book: cash booking → home-tab BookingConfirm (cross-tab). */
 export function CompCashBookScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const { colors } = useTheme();
-  const aq = ACCEPTED_QUOTES[0];
+  const addPoints = useAppStore((s) => s.addPoints);
+  const aq = acceptedQuoteById(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
   // Wireframe defaults: Apr 8 (selected day) · 10:30 AM
@@ -37,16 +41,17 @@ export function CompCashBookScreen() {
   const onConfirm = async () => {
     if (!day || !time) return;
     setBooking(true);
-    await quoteService.bookAppointment(dealer.id, dateLabel!, time);
+    const { pointsEarned } = await quoteService.bookAppointment(dealer.id, dateLabel!, time);
+    addPoints(pointsEarned);
     setBooking(false);
     // Booking confirmation lives on the Home tab (wireframe ⤴ edge).
-    navigation.dispatch(
-      CommonActions.navigate('HomeTab', {
-        screen: 'BookingConfirm',
-        initial: false,
-        params: { dealerId: dealer.id, dateLabel, time, paid: 'cash' },
-      }),
-    );
+    navigateCrossTab(navigation, 'HomeTab', 'BookingConfirm', {
+      dealerId: dealer.id,
+      dateLabel,
+      time,
+      paid: 'cash',
+      priceLabel: `$${aq.priceLow} – $${aq.priceHigh}`,
+    });
   };
 
   return (
@@ -84,7 +89,7 @@ export function CompCashBookScreen() {
 
       <SectionLabel>{day ? `Select time — ${dateLabel}` : 'Select time'}</SectionLabel>
       <View style={{ marginBottom: spacing.md }}>
-        <TimeSlots slots={SLOTS} selected={time} onSelect={setTime} />
+        <TimeSlots slots={COMP_TIME_SLOTS} selected={time} onSelect={setTime} />
       </View>
 
       {/* Card on file */}

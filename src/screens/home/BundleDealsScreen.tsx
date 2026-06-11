@@ -1,9 +1,10 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -96,14 +97,12 @@ const DEALS: Deal[] = [
 export function BundleDealsScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const setCartDealer = useAppStore((s) => s.setCartDealer);
+  const startBooking = useAppStore((s) => s.startBooking);
 
   const claim = (dealerId: string) => {
-    setCartDealer(dealerId);
+    startBooking(dealerId);
     // Bundle booking happens on the Maintenance tab (wireframe ⤴ edge).
-    navigation.dispatch(
-      CommonActions.navigate('MaintTab', { screen: 'MaintScheduleBook', initial: false }),
-    );
+    navigateCrossTab(navigation, 'MaintTab', 'MaintScheduleBook');
   };
 
   return (

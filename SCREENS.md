@@ -5,9 +5,9 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (verified in app)
 Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 compare/community/profile · 6 notifications/bundles
 
 > **All build steps complete:** every one of the 55 wireframe screens has a
-> real implementation registered in React Navigation. The wireframe graph in
-> `src/navigation/registry.ts` remains the navigation reference; the
-> `PlaceholderScreen` factory is kept for future routes.
+> real implementation registered in React Navigation. Header titles live in
+> `src/navigation/registry.ts`; the navigation graph reference is
+> docs/wireframe-analysis.md §2.
 
 ## Auth (Step 2)
 

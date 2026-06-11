@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -7,7 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CompareStackParamList } from '../../navigation/types';
 import {
-  ACCEPTED_QUOTES,
+  acceptedQuoteById,
   dealerById,
   DEEP_DIVE_ROWS,
   INSURANCE_POLICY,
@@ -15,12 +15,14 @@ import {
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompDeepDive'>;
+type Route = RouteProp<CompareStackParamList, 'CompDeepDive'>;
 
 /** Wireframe s-comp-deep-dive: 3-year cash vs. insurance cost table + verdict. */
 export function CompDeepDiveScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const { colors } = useTheme();
-  const aq = ACCEPTED_QUOTES[0];
+  const aq = acceptedQuoteById(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
   const headCell = (label: string, color: string, align: 'left' | 'center' = 'center') => (
@@ -219,7 +221,7 @@ export function CompDeepDiveScreen() {
             backgroundColor: colors.dangerSurface,
             borderRadius: radii.sm,
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: '#F09595',
+            borderColor: colors.dangerBorder,
             padding: spacing.sm,
           }}
         >
@@ -244,7 +246,7 @@ export function CompDeepDiveScreen() {
 
       <PrimaryButton
         label={`Book ${dealer.name} · Pay cash →`}
-        onPress={() => navigation.navigate('CompCashBook')}
+        onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
       />
     </Screen>
   );

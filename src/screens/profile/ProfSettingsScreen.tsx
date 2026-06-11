@@ -125,7 +125,7 @@ export function ProfSettingsScreen() {
           backgroundColor: colors.dangerSurface,
           borderRadius: radii.sm,
           borderWidth: 0.5,
-          borderColor: '#F09595',
+          borderColor: colors.dangerBorder,
           paddingVertical: 13,
           alignItems: 'center',
           marginBottom: spacing.sm,

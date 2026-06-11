@@ -91,11 +91,13 @@ export interface ThemeColors {
   successDark: string;
   successDeep: string;
   successSurface: string;
+  successLight: string;
   warning: string;
   warningSurface: string;
   warningDeep: string;
   danger: string;
   dangerSurface: string;
+  dangerBorder: string;
   dangerDeep: string;
   info: string;
   infoSurface: string;
@@ -129,11 +131,13 @@ export const lightColors: ThemeColors = {
   successDark: palette.successDark,
   successDeep: palette.successDeep,
   successSurface: palette.successSurface,
+  successLight: palette.successLight,
   warning: palette.warning,
   warningSurface: palette.warningSurface,
   warningDeep: palette.warningDeep,
   danger: palette.danger,
   dangerSurface: palette.dangerSurface,
+  dangerBorder: palette.dangerBorder,
   dangerDeep: palette.dangerDeep,
   info: palette.info,
   infoSurface: palette.infoSurface,
@@ -169,11 +173,13 @@ export const darkColors: ThemeColors = {
   successDark: '#5DCFAA',
   successDeep: '#9FE5CC',
   successSurface: '#15302A',
+  successLight: '#5DCFAA',
   warning: '#F2B04A',
   warningSurface: '#332817',
   warningDeep: '#F0C050',
   danger: '#E8625F',
   dangerSurface: '#331C1C',
+  dangerBorder: '#7A4040',
   dangerDeep: '#F09595',
   info: '#5BA0E5',
   infoSurface: '#16283A',

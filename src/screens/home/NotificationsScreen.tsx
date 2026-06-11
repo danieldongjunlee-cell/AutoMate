@@ -1,10 +1,11 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { NotificationCard } from '../../components/NotificationCard';
 import { Screen, SectionLabel } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import {
   AppNotification,
   notificationService,
@@ -37,18 +38,18 @@ export function NotificationsScreen() {
     });
   }, [navigation, colors, queryClient]);
 
-  const open = async (n: AppNotification) => {
+  const open = (n: AppNotification) => {
     if (n.unread) {
-      await notificationService.markRead(n.id);
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      // Fire-and-forget so the deep link opens on the same tap.
+      notificationService
+        .markRead(n.id)
+        .then(() => queryClient.invalidateQueries({ queryKey: ['notifications'] }));
     }
     if (!n.target) return;
     if (n.target.tab) {
-      navigation.dispatch(
-        CommonActions.navigate(n.target.tab, { screen: n.target.screen, initial: false }),
-      );
+      navigateCrossTab(navigation, n.target.tab, n.target.screen, n.target.params);
     } else {
-      navigation.navigate(n.target.screen);
+      navigation.navigate(n.target.screen, n.target.params);
     }
   };
 

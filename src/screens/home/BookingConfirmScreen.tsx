@@ -3,7 +3,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AvatarCircle, Card, Screen } from '../../components/ui';
+import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
+import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTES } from '../../services/mock/data';
 import { radii, spacing, useTheme } from '../../theme';
@@ -28,69 +29,18 @@ export function BookingConfirmScreen() {
   const dateLabel = route.params?.dateLabel ?? 'Thu, Apr 12';
   const time = route.params?.time ?? '10:30 AM';
   const isCash = route.params?.paid === 'cash';
-  const priceLabel = quote?.priceHigh ? `$${quote.price} – $${quote.priceHigh}` : `$${quote?.price ?? 330}`;
-
-  const summaryCell = (label: string, value: string, sub?: string, subColor?: string) => (
-    <View style={{ width: '50%', paddingVertical: spacing.xs }}>
-      <Text
-        style={{
-          fontSize: 11,
-          fontWeight: '600',
-          color: colors.textTertiary,
-          textTransform: 'uppercase',
-          marginBottom: 2,
-        }}
-      >
-        {label}
-      </Text>
-      <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
-      {sub ? (
-        <Text style={{ fontSize: 12, color: subColor ?? colors.textTertiary }}>{sub}</Text>
-      ) : null}
-    </View>
-  );
+  // Cross-tab cash bookings price from ACCEPTED_QUOTES and pass their label.
+  const priceLabel =
+    route.params?.priceLabel ??
+    (quote?.priceHigh ? `$${quote.price} – $${quote.priceHigh}` : `$${quote?.price ?? 330}`);
 
   return (
     <Screen>
-      {/* Success header */}
-      <View style={{ alignItems: 'center', paddingVertical: spacing.lg }}>
-        <View
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-            backgroundColor: colors.successSurface,
-            borderWidth: 2.5,
-            borderColor: colors.success,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Text style={{ fontSize: 36 }}>✅</Text>
-        </View>
-        <Text style={{ fontSize: 24, fontWeight: '700', color: colors.successDeep, marginBottom: 2 }}>
-          You're all set!
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          Reminder set · We'll notify you 1 day before
-        </Text>
-      </View>
+      <SuccessHeader title="You're all set!" subtitle="Reminder set · We'll notify you 1 day before" />
 
       {/* Booking summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: '700',
-            color: colors.textTertiary,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
-          }}
-        >
-          Booking summary
-        </Text>
+        <SectionLabel>Booking summary</SectionLabel>
         <View
           style={{
             flexDirection: 'row',
@@ -113,55 +63,18 @@ export function BookingConfirmScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {summaryCell('Date & time', dateLabel, time, colors.primaryDark)}
-          {summaryCell('Estimate', priceLabel, isCash ? 'cash payment' : '± after inspection')}
-          {summaryCell('Service', 'Rear bumper dent', `${quote?.parts ?? 'OEM'} parts`)}
-          {summaryCell('Drop-off', 'Self drop-off', '15 min check-in')}
+          <SummaryCell label="Date & time" value={dateLabel} sub={time} subColor={colors.primaryDark} />
+          <SummaryCell label="Estimate" value={priceLabel} sub={isCash ? 'cash payment' : '± after inspection'} />
+          <SummaryCell label="Service" value="Rear bumper dent" sub={`${quote?.parts ?? 'OEM'} parts`} />
+          <SummaryCell label="Drop-off" value="Self drop-off" sub="15 min check-in" />
         </View>
       </Card>
 
-      {/* Reminder */}
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.primaryLight,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.sm,
-        }}
-      >
-        <Text style={{ fontSize: 22 }}>🔔</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
-            Reminder set
-          </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            1 day before at 9:00 AM
-          </Text>
-        </View>
-        <Pressable onPress={() => Alert.alert('Reminder', 'Reminder editing comes with the backend.')}>
-          <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
-        </Pressable>
-      </View>
+      <ReminderRow sub="1 day before at 9:00 AM" />
 
       {/* What to bring */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: '600',
-            color: colors.textTertiary,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
-          }}
-        >
-          What to bring
-        </Text>
+        <SectionLabel>What to bring</SectionLabel>
         {BRING_ITEMS.map(({ icon, label }, i) => (
           <View
             key={label}

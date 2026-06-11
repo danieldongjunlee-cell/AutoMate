@@ -8,8 +8,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LogoRow } from '../../components/Logo';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
+import { notificationService } from '../../services/mock/notificationService';
 import { quoteService } from '../../services/mock/quoteService';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Home'>;
@@ -21,11 +24,17 @@ export function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const resetDamageFlow = useAppStore((s) => s.resetDamageFlow);
 
   const { data: request } = useQuery({
     queryKey: ['quoteRequest'],
     queryFn: quoteService.getQuoteRequest,
   });
+  const { data: notifications } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: notificationService.getNotifications,
+  });
+  const hasUnread = notifications?.some((n) => n.unread) ?? false;
 
   return (
     <Screen style={{ paddingTop: insets.top + spacing.sm }}>
@@ -53,28 +62,26 @@ export function HomeScreen() {
           hitSlop={6}
         >
           <Text style={{ fontSize: 18 }}>🔔</Text>
-          <View
-            style={{
-              position: 'absolute',
-              top: 2,
-              right: 2,
-              width: 10,
-              height: 10,
-              borderRadius: 5,
-              backgroundColor: colors.danger,
-              borderWidth: 1.5,
-              borderColor: colors.background,
-            }}
-          />
+          {hasUnread ? (
+            <View
+              style={{
+                position: 'absolute',
+                top: 2,
+                right: 2,
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: colors.danger,
+                borderWidth: 1.5,
+                borderColor: colors.background,
+              }}
+            />
+          ) : null}
         </Pressable>
       </View>
 
       {/* Streak banner → How you earn */}
-      <Pressable
-        onPress={() =>
-          navigation.getParent()?.navigate('ProfileTab', { screen: 'ProfEarn', initial: false })
-        }
-      >
+      <Pressable onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfEarn')}>
         <LinearGradient
           colors={[palette.primary, palette.primaryDark]}
           start={{ x: 0, y: 0 }}
@@ -117,7 +124,13 @@ export function HomeScreen() {
       </Pressable>
 
       {/* Hero: Get a Repair Estimate */}
-      <Pressable onPress={() => navigation.navigate('CarDiagram')}>
+      <Pressable
+        onPress={() => {
+          // A new estimate always starts clean (wireframe: "0 selected").
+          resetDamageFlow();
+          navigation.navigate('CarDiagram');
+        }}
+      >
         <LinearGradient
           colors={[palette.primary, palette.primaryDark]}
           start={{ x: 0, y: 0 }}

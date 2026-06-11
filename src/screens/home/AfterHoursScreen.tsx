@@ -176,7 +176,7 @@ export function AfterHoursScreen() {
                 paddingVertical: 1,
               }}
             >
-              <Text style={{ fontSize: 11, color: palette.navy === '#0B1E3D' ? '#5DCFAA' : '#5DCFAA' }}>
+              <Text style={{ fontSize: 11, color: palette.successLight }}>
                 87% confidence
               </Text>
             </View>

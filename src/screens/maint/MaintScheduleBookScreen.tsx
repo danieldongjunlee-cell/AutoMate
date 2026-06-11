@@ -13,7 +13,7 @@ import {
   dealerById,
   MAINT_TIME_SLOTS,
 } from '../../services/mock/data';
-import { useAppStore } from '../../store/useAppStore';
+import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScheduleBook'>;
@@ -26,6 +26,8 @@ export function MaintScheduleBookScreen() {
   const toggleCartService = useAppStore((s) => s.toggleCartService);
   const setCartSlot = useAppStore((s) => s.setCartSlot);
 
+  // Cart defaults (oil change · Apr 7 · 8:00 AM) are seeded by startBooking()
+  // at every entry point (MaintSchedule dealer cards, BundleDeals claims).
   const dealer = dealerById(cart.dealerId);
   const selectedDay = cart.date ? Number(cart.date.split('-')[2]) : null;
 
@@ -33,24 +35,7 @@ export function MaintScheduleBookScreen() {
     navigation.setOptions({ title: dealer.name });
   }, [navigation, dealer.name]);
 
-  // Wireframe default: oil change pre-selected, Apr 7 · 8:00 AM.
-  useEffect(() => {
-    const state = useAppStore.getState();
-    if (state.cart.services.length === 0) {
-      const oil = BOOKABLE_SERVICES[0];
-      state.toggleCartService({
-        id: oil.id,
-        name: oil.name,
-        price: oil.price,
-        durationMin: oil.durationMin,
-      });
-    }
-    if (!state.cart.date) state.setCartSlot('2027-04-07', '8:00 AM');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const total = cart.services.reduce((sum, s) => sum + s.price, 0);
-  const totalMin = cart.services.reduce((sum, s) => sum + s.durationMin, 0);
+  const { total, totalMin } = cartTotals(cart);
   const count = cart.services.length;
   const canContinue = count > 0 && !!cart.date && !!cart.time;
 

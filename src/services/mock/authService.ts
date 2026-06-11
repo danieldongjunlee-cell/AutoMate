@@ -2,8 +2,8 @@
  * Mock auth service. Swap with real API calls later — screens only depend on
  * these signatures.
  */
+import { delay } from './delay';
 
-const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export const MOCK_PHONE = '+1 (703) 555-0198';
 

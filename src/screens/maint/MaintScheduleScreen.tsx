@@ -20,7 +20,7 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintSchedule'>;
 /** Wireframe s-maint-schedule: service-type filter + partner dealer cards. */
 export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
-  const setCartDealer = useAppStore((s) => s.setCartDealer);
+  const startBooking = useAppStore((s) => s.startBooking);
   const [filter, setFilter] = useState(SCHEDULE_SERVICE_FILTERS[0]);
 
   const dealers = DEALERS.filter((d) => {
@@ -43,7 +43,7 @@ export function MaintScheduleScreen() {
           dealer={dealer}
           serviceChips={DEALER_SERVICE_CHIPS[dealer.id]}
           onPress={() => {
-            setCartDealer(dealer.id);
+            startBooking(dealer.id);
             navigation.navigate('MaintScheduleBook');
           }}
         />

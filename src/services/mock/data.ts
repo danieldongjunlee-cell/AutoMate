@@ -24,7 +24,7 @@ export const DEALERS: Dealer[] = [
     distanceMi: 1.2,
     hours: 'Mon–Sat 8AM–7PM',
     openStatus: 'Open',
-    closesAt: '6PM',
+    closesAt: '7PM',
   },
   {
     id: 'autofix-pro',
@@ -36,7 +36,7 @@ export const DEALERS: Dealer[] = [
     distanceMi: 0.8,
     hours: 'Mon–Fri 8AM–6PM',
     openStatus: 'Open',
-    closesAt: '7PM',
+    closesAt: '6PM',
   },
   {
     id: 'vienna-auto',
@@ -239,6 +239,7 @@ export interface ServiceRecord {
   type: string;
   shop: string;
   dateLabel: string;
+  year: number;
   mileage: string;
   cost: number;
   icon: string;
@@ -251,6 +252,7 @@ export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
     type: 'Oil change',
     shop: 'AutoFix Pro',
     dateLabel: 'Mar 12',
+    year: 2025,
     mileage: '44,500 mi',
     cost: 49,
     icon: '🛢️',
@@ -260,6 +262,7 @@ export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
     type: 'Tire rotation',
     shop: 'Honda Fairfax',
     dateLabel: 'Dec 5',
+    year: 2024,
     mileage: '42,100 mi',
     cost: 39,
     icon: '↺',
@@ -426,6 +429,8 @@ export const ACCEPTED_QUOTES: AcceptedQuote[] = [
 export const INSURANCE_POLICY = {
   carrier: 'State Farm',
   coverage: 'Comprehensive + Collision',
+  // The wireframe shows SF-7821-VA on the compare screens and SF-8847234 on
+  // s-prof-insurance's "Policy number" row — both kept verbatim.
   policyNumber: 'SF-7821-VA',
   accountNumber: 'SF-8847234',
   deductible: 500,
@@ -689,3 +694,20 @@ export const MILESTONE_PARTNERS = [
   { dealerId: 'honda-fairfax', tag: 'OEM' },
   { dealerId: 'autofix-pro', tag: 'Same-day' },
 ];
+
+export const acceptedQuoteById = (id: string | null | undefined): AcceptedQuote =>
+  ACCEPTED_QUOTES.find((q) => q.id === id) ?? ACCEPTED_QUOTES[0];
+
+/** Time slots offered on the compare-tab cash booking (s-comp-cash-book). */
+export const COMP_TIME_SLOTS = ['9:00 AM', '10:30 AM', '2:00 PM'];
+
+/**
+ * The confirmed appointment behind the "Upcoming: Honda Fairfax — Mon Apr 7"
+ * notification (s-notifications → s-maint-schedule-confirm deep link).
+ */
+export const BOOKED_APPOINTMENT = {
+  dealerId: 'honda-fairfax',
+  services: [{ id: 'svc-oil', name: 'Oil change', price: 49, durationMin: 45 }],
+  date: '2027-04-07',
+  time: '8:00 AM',
+};

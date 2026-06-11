@@ -13,9 +13,6 @@ import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
 
-/** Business hours used to route submitted vs. after-hours (wireframe: 11:48 PM variant). */
-export const isAfterHours = (d = new Date()) => d.getHours() >= 21 || d.getHours() < 7;
-
 export function ConfirmSubmitScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -23,16 +20,23 @@ export function ConfirmSubmitScreen() {
   const photos = useAppStore((s) => s.damagePhotos);
   const damageType = useAppStore((s) => s.damageType);
   const setDamageType = useAppStore((s) => s.setDamageType);
+  const addPoints = useAppStore((s) => s.addPoints);
   const [submitting, setSubmitting] = useState(false);
 
-  const parts = selectedParts.length ? selectedParts : ['Rear bumper'];
-  const primaryPart = parts[0];
+  const parts = selectedParts;
+  const primaryPart = parts[0] ?? '—';
 
   const onSubmit = async () => {
     setSubmitting(true);
-    await quoteService.submitDamageRequest(parts, photos.length, damageType);
+    // The service decides after-hours routing (backend-owned rule).
+    const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(
+      parts,
+      photos.length,
+      damageType,
+    );
+    addPoints(pointsEarned);
     setSubmitting(false);
-    navigation.navigate(isAfterHours() ? 'AfterHours' : 'Submitted');
+    navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
   };
 
   return (
@@ -255,7 +259,8 @@ export function ConfirmSubmitScreen() {
 
       {/* Submit */}
       <PrimaryButton
-        label="Submit for quotes →"
+        label={parts.length ? 'Submit for quotes → earn +20 pts' : 'Select a damaged part first'}
+        disabled={!parts.length}
         loading={submitting}
         onPress={onSubmit}
         style={{ marginBottom: spacing.sm }}

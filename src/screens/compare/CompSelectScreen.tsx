@@ -38,7 +38,7 @@ export function CompSelectScreen() {
         return (
           <Pressable
             key={aq.id}
-            onPress={() => navigation.navigate('CompCashIns')}
+            onPress={() => navigation.navigate('CompCashIns', { quoteId: aq.id })}
             style={({ pressed }) => ({
               backgroundColor: colors.surface,
               borderRadius: radii.md,

@@ -37,13 +37,15 @@ export function MaintManualScreen() {
         type: serviceType,
         shop,
         dateLabel: date.replace(/, \d{4}$/, ''),
+        year: Number(date.match(/\d{4}$/)?.[0] ?? 2025),
         mileage,
         cost: parseFloat(cost) || 0,
       },
       'manual',
     );
     addPoints(pointsEarned);
-    await queryClient.invalidateQueries({ queryKey: ['service-history'] });
+    // Fire-and-forget: the history screen refetches while we navigate.
+    queryClient.invalidateQueries({ queryKey: ['service-history'] });
     setSaving(false);
     navigation.navigate('MaintHistory');
   };

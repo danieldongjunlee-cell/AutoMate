@@ -5,7 +5,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CompareStackParamList } from '../../navigation/types';
 import { INSURANCE_POLICY } from '../../services/mock/data';
-import { Screen } from '../../components/ui';
+import { Badge, Screen } from '../../components/ui';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompInsurance'>;
@@ -90,28 +90,8 @@ export function CompInsuranceScreen() {
             </View>
           </View>
           <View style={{ flexDirection: 'row', gap: 6 }}>
-            <View
-              style={{
-                backgroundColor: colors.successSurface,
-                borderRadius: radii.pill,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 12, color: colors.successDeep }}>24/7 available</Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: radii.pill,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: colors.border,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 12, color: colors.textSecondary }}>Claims dept.</Text>
-            </View>
+            <Badge label="24/7 available" variant="success" />
+            <Badge label="Claims dept." variant="neutral" />
           </View>
         </View>
 

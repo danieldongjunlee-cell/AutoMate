@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import { BOOKABLE_SERVICES } from '../services/mock/data';
+
 /** A service row in the multi-service booking cart (maint-schedule-book). */
 export interface CartService {
   id: string;
@@ -16,6 +18,25 @@ export interface BookingCart {
 }
 
 const emptyCart: BookingCart = { dealerId: null, services: [], date: null, time: null };
+
+/** Derived cart price/duration totals (used by book, payment, and confirm screens). */
+export const cartTotals = (cart: BookingCart) => ({
+  total: cart.services.reduce((sum, s) => sum + s.price, 0),
+  totalMin: cart.services.reduce((sum, s) => sum + s.durationMin, 0),
+});
+
+/** Wireframe defaults when a booking opens: oil change · Apr 7 · 8:00 AM. */
+const defaultCart = (dealerId: string): BookingCart => {
+  const oil = BOOKABLE_SERVICES[0];
+  return {
+    dealerId,
+    services: [{ id: oil.id, name: oil.name, price: oil.price, durationMin: oil.durationMin }],
+    date: '2027-04-07',
+    time: '8:00 AM',
+  };
+};
+
+const SEED_POINTS = 420;
 
 /** A captured (mock) damage photo. */
 export interface DamagePhoto {
@@ -54,7 +75,8 @@ interface AppState {
 
   // Maintenance booking cart (multi-service selection)
   cart: BookingCart;
-  setCartDealer: (dealerId: string) => void;
+  /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
+  startBooking: (dealerId: string) => void;
   toggleCartService: (service: CartService) => void;
   setCartSlot: (date: string, time: string) => void;
   clearCart: () => void;
@@ -63,12 +85,22 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   isAuthenticated: false,
   signIn: () => set({ isAuthenticated: true }),
-  signOut: () => set({ isAuthenticated: false, selectedParts: [], cart: emptyCart }),
+  // Sign-out clears the whole client session so the next account starts clean
+  // (wireframe: sign-out sheet → splash).
+  signOut: () =>
+    set({
+      isAuthenticated: false,
+      selectedParts: [],
+      damagePhotos: [],
+      damageType: 'Dent',
+      cart: emptyCart,
+      points: SEED_POINTS,
+    }),
 
   darkMode: false,
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
 
-  points: 420,
+  points: SEED_POINTS,
   addPoints: (n) => set((s) => ({ points: s.points + n })),
 
   selectedParts: [],
@@ -99,7 +131,7 @@ export const useAppStore = create<AppState>((set) => ({
   resetDamageFlow: () => set({ selectedParts: [], damagePhotos: [], damageType: 'Dent' }),
 
   cart: emptyCart,
-  setCartDealer: (dealerId) => set((s) => ({ cart: { ...s.cart, dealerId } })),
+  startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),
   toggleCartService: (service) =>
     set((s) => {
       const exists = s.cart.services.some((x) => x.id === service.id);

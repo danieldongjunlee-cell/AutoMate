@@ -55,11 +55,23 @@ export function MaintHistoryScreen() {
     queryFn: maintService.getServiceHistory,
   });
 
-  const visible = (records ?? []).filter((rec) => {
-    if (typeFilter === 'All types') return true;
-    if (typeFilter === 'Tires') return rec.type.toLowerCase().includes('tire');
-    return rec.type.toLowerCase().includes(typeFilter.split(' ')[0].toLowerCase());
-  });
+  // Type-filter chips map to record-type keywords ("Brakes" → "brake service").
+  const TYPE_KEYWORDS: Record<string, string> = {
+    'Oil change': 'oil',
+    Tires: 'tire',
+    Brakes: 'brake',
+    'Body repair': 'body',
+  };
+  // The mock "today" is early 2025, so the last six months reach into 2025.
+  const matchesTime = (year: number) =>
+    timeFilter === 'All time' ||
+    (timeFilter === 'Last 6 months' ? year >= 2025 : year === Number(timeFilter));
+
+  const visible = (records ?? []).filter(
+    (rec) =>
+      matchesTime(rec.year) &&
+      (typeFilter === 'All types' || rec.type.toLowerCase().includes(TYPE_KEYWORDS[typeFilter])),
+  );
 
   return (
     <Screen>

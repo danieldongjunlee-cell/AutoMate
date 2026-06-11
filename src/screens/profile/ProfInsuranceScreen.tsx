@@ -1,11 +1,12 @@
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen, SectionLabel } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { INSURANCE_POLICY } from '../../services/mock/data';
-import { radii, spacing, useTheme } from '../../theme';
+import { palette, radii, spacing, useTheme } from '../../theme';
 
 const DETAILS = [
   ['Policy number', INSURANCE_POLICY.accountNumber],
@@ -74,7 +75,7 @@ export function ProfInsuranceScreen() {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 12, color: '#5DCFAA' }}>Active</Text>
+            <Text style={{ fontSize: 12, color: palette.successLight }}>Active</Text>
           </View>
         </LinearGradient>
         <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
@@ -146,9 +147,7 @@ export function ProfInsuranceScreen() {
 
       {/* Compare link (cross-tab → Compare) */}
       <Pressable
-        onPress={() =>
-          navigation.dispatch(CommonActions.navigate('CompareTab', { screen: 'CompSelect' }))
-        }
+        onPress={() => navigateCrossTab(navigation, 'CompareTab', 'CompSelect')}
         style={({ pressed }) => ({
           backgroundColor: colors.successSurface,
           borderRadius: radii.sm,

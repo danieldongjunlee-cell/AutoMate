@@ -38,13 +38,15 @@ export function MaintScanRevScreen() {
         type: 'Oil change',
         shop: SCANNED_RECEIPT.shop,
         dateLabel: 'Mar 12',
+        year: 2025,
         mileage: SCANNED_RECEIPT.mileage,
         cost: 49,
       },
       'scan',
     );
     addPoints(pointsEarned);
-    await queryClient.invalidateQueries({ queryKey: ['service-history'] });
+    // Fire-and-forget: the history screen refetches while we navigate.
+    queryClient.invalidateQueries({ queryKey: ['service-history'] });
     setSaving(false);
     navigation.navigate('MaintHistory');
   };

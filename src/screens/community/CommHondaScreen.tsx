@@ -79,7 +79,11 @@ export function CommHondaScreen() {
         <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xxl }} />
       ) : (
         posts?.map((post) => (
-          <PostCard key={post.id} post={post} onPress={() => navigation.navigate('CommPost')} />
+          <PostCard
+            key={post.id}
+            post={post}
+            onPress={() => navigation.navigate('CommPost', { postId: post.id })}
+          />
         ))
       )}
     </Screen>

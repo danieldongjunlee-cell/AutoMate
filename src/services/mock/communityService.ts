@@ -6,8 +6,7 @@ import {
   POST_COMMENTS,
   USER,
 } from './data';
-
-const delay = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+import { delay } from './delay';
 
 /** In-memory feed so created posts appear immediately. */
 let posts: CommunityPost[] = [...COMMUNITY_POSTS];
