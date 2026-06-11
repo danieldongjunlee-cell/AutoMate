@@ -7,6 +7,8 @@ import { AcceptBookingScreen } from '../screens/home/AcceptBookingScreen';
 import { AfterHoursScreen } from '../screens/home/AfterHoursScreen';
 import { AllQuotesMapScreen } from '../screens/home/AllQuotesMapScreen';
 import { BookingConfirmScreen } from '../screens/home/BookingConfirmScreen';
+import { BundleDealsScreen } from '../screens/home/BundleDealsScreen';
+import { NotificationsScreen } from '../screens/home/NotificationsScreen';
 import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
@@ -88,7 +90,6 @@ const homeScreens = buildScreens(
     'Notifications',
   ] as const,
   {
-    // Step 3: damage flow. BundleDeals + Notifications stay placeholders (step 6).
     Home: HomeScreen,
     CarDiagram: CarDiagramScreen,
     PhotoExample: PhotoExampleScreen,
@@ -101,6 +102,8 @@ const homeScreens = buildScreens(
     MapFilter: MapFilterScreen,
     AcceptBooking: AcceptBookingScreen,
     BookingConfirm: BookingConfirmScreen,
+    BundleDeals: BundleDealsScreen,
+    Notifications: NotificationsScreen,
   },
 );
 

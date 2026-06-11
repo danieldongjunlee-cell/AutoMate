@@ -4,10 +4,10 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (verified in app)
 
 Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 compare/community/profile · 6 notifications/bundles
 
-> **Step 1 complete:** all 55 routes are registered in React Navigation
-> (`src/navigation/registry.ts`) and render `PlaceholderScreen` with every
-> wireframe nav edge tappable. A screen's status flips to ✅ when its real
-> implementation replaces the placeholder and is verified.
+> **All build steps complete:** every one of the 55 wireframe screens has a
+> real implementation registered in React Navigation. The wireframe graph in
+> `src/navigation/registry.ts` remains the navigation reference; the
+> `PlaceholderScreen` factory is kept for future routes.
 
 ## Auth (Step 2)
 
@@ -34,8 +34,8 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 | `s-map` | Map (separate screen, entry: "Filter quotes on map" on All Quotes Map) | `src/screens/home/MapFilterScreen.tsx` | ✅ |
 | `s-accept-booking` | Accept & Book | `src/screens/home/AcceptBookingScreen.tsx` | ✅ |
 | `s-booking-confirm` | Booking Confirmed | `src/screens/home/BookingConfirmScreen.tsx` | ✅ |
-| `s-home-bundle-deals` | Bundle Deals (Step 6) | — | ⬜ |
-| `s-notifications` | Notifications (Step 6) | — | ⬜ |
+| `s-home-bundle-deals` | Bundle Deals | `src/screens/home/BundleDealsScreen.tsx` | ✅ |
+| `s-notifications` | Notifications | `src/screens/home/NotificationsScreen.tsx` | ✅ |
 
 ## Maintenance tab (Step 4)
 
