@@ -382,3 +382,310 @@ export const BOOKABLE_SERVICES: BookableService[] = [
 ];
 
 export const MAINT_TIME_SLOTS = ['8:00 AM', '10:00 AM', '1:00 PM', '3:30 PM'];
+
+// ── Compare domain ─────────────────────────────────────────────────────
+
+export interface AcceptedQuote {
+  id: string;
+  dealerId: string;
+  priceLow: number;
+  priceHigh: number;
+  parts: 'OEM' | 'Aftermarket';
+  acceptedOn: string;
+}
+
+/** Accepted quotes available for cash-vs-insurance comparison (s-comp-select). */
+export const ACCEPTED_QUOTES: AcceptedQuote[] = [
+  {
+    id: 'aq-honda',
+    dealerId: 'honda-fairfax',
+    priceLow: 320,
+    priceHigh: 345,
+    parts: 'OEM',
+    acceptedOn: 'Apr 10',
+  },
+  {
+    id: 'aq-autofix',
+    dealerId: 'autofix-pro',
+    priceLow: 280,
+    priceHigh: 310,
+    parts: 'Aftermarket',
+    acceptedOn: 'Apr 10',
+  },
+  {
+    id: 'aq-city',
+    dealerId: 'city-body',
+    priceLow: 350,
+    priceHigh: 375,
+    parts: 'OEM',
+    acceptedOn: 'Apr 10',
+  },
+];
+
+/** Linked insurance policy (s-comp-cash-ins banner / s-prof-insurance). */
+export const INSURANCE_POLICY = {
+  carrier: 'State Farm',
+  coverage: 'Comprehensive + Collision',
+  policyNumber: 'SF-7821-VA',
+  accountNumber: 'SF-8847234',
+  deductible: 500,
+  premiumPerYear: 1200,
+  covers: '2019 Honda Accord',
+  renewal: 'Dec 15, 2025',
+  claimsPhone: '1-800-STATE-FARM',
+  claimsPhoneDigits: '(1-800-782-8332)',
+  claimReference: 'REF-AM-9821-VA',
+};
+
+/** 3-year cost table rows (s-comp-deep-dive). */
+export const DEEP_DIVE_ROWS = [
+  { item: 'Repair cost', sub: '', cash: '$320', insure: '$0', risk: false },
+  { item: 'Deductible', sub: '', cash: '—', insure: '$500', risk: false },
+  { item: 'Premium hike', sub: 'Yr 1–3 (~15%/yr)', cash: '—', insure: '+$540', risk: true },
+  { item: 'Claim on record', sub: '', cash: '—', insure: '3 yrs', risk: false },
+];
+
+// ── Community domain ───────────────────────────────────────────────────
+
+export interface Channel {
+  id: string;
+  name: string;
+  initial: string;
+  color: string;
+  members: number;
+  newPosts?: number;
+  joined: boolean;
+}
+
+export const CHANNELS: Channel[] = [
+  {
+    id: 'honda',
+    name: 'Honda Owners',
+    initial: 'H',
+    color: '#7F77DD',
+    members: 1240,
+    newPosts: 12,
+    joined: true,
+  },
+  { id: 'toyota', name: 'Toyota Owners', initial: 'T', color: '#1A1A1A', members: 890, joined: false },
+  { id: 'gm', name: 'GM Owners', initial: 'G', color: '#D0021B', members: 530, joined: false },
+];
+
+export type PostCategory = 'Tip' | 'Review' | 'Question' | 'Warning' | 'Quotes' | 'DIY';
+
+export interface CommunityPost {
+  id: string;
+  author: string;
+  initial: string;
+  color: string;
+  car: string;
+  ago: string;
+  category: PostCategory;
+  body: string;
+  replies: number;
+  likes: number;
+  hasPhoto?: boolean;
+}
+
+export const COMMUNITY_POSTS: CommunityPost[] = [
+  {
+    id: 'post-james',
+    author: 'James K.',
+    initial: 'J',
+    color: '#7F77DD',
+    car: '2019 Accord EX-L',
+    ago: '2h ago',
+    category: 'Tip',
+    body:
+      'Used AutoMate for a rear bumper dent — submitted photos at midnight and woke up to 6 quotes from local shops. Honda Fairfax was $285, lowest by $60. Booked same day 👌',
+    replies: 14,
+    likes: 28,
+    hasPhoto: true,
+  },
+  {
+    id: 'post-sarah',
+    author: 'Sarah M.',
+    initial: 'S',
+    color: '#1D9E75',
+    car: '2021 Civic Sport',
+    ago: '5h ago',
+    category: 'Review',
+    body:
+      'The Pro DIY guide for nail polish paint chip fix actually worked on my hood scratch. Saved $400 in labor. Paint match was perfect ✨',
+    replies: 7,
+    likes: 41,
+  },
+  {
+    id: 'post-mike',
+    author: 'Mike R.',
+    initial: 'M',
+    color: '#378ADD',
+    car: '2020 Pilot',
+    ago: '8h ago',
+    category: 'Question',
+    body:
+      "Insurance filed a claim for my door ding and my premium went up $180/yr. AutoMate's compare tool literally showed me it would cost more to insure than pay cash 🤦. Always check first!",
+    replies: 22,
+    likes: 67,
+  },
+  {
+    id: 'post-alex',
+    author: 'Alex T.',
+    initial: 'A',
+    color: '#E24B4A',
+    car: '2022 CR-V',
+    ago: '12h ago',
+    category: 'Warning',
+    body:
+      'Heads up Fairfax Honda owners — some shops are quoting 2-3x market rate for bumper repairs right now. AutoMate showed me the range so I knew what was fair 👍',
+    replies: 11,
+    likes: 54,
+  },
+];
+
+export interface PostComment {
+  id: string;
+  author: string;
+  initial: string;
+  color: string;
+  car: string;
+  likes: number;
+  body: string;
+}
+
+/** Comments on the James K. post (s-comm-post). */
+export const POST_COMMENTS: PostComment[] = [
+  {
+    id: 'c-sarah',
+    author: 'Sarah M.',
+    initial: 'S',
+    color: '#1D9E75',
+    car: '2021 Civic',
+    likes: 5,
+    body:
+      'That was amazing! I tried the same at 11 PM and got 5 quotes by 8:45 AM. After-hours timeline is so reassuring.',
+  },
+  {
+    id: 'c-mike',
+    author: 'Mike R.',
+    initial: 'M',
+    color: '#378ADD',
+    car: '2020 Pilot',
+    likes: 12,
+    body: 'The DIY tip section on the submission screen helped me fix a dent while waiting. Saved $200!',
+  },
+  {
+    id: 'c-anna',
+    author: 'Anna T.',
+    initial: 'A',
+    color: '#EF9F27',
+    car: '2018 CR-V',
+    likes: 3,
+    body: 'Which shop gave the best quote? I am in Fairfax too and had similar damage last month.',
+  },
+  {
+    id: 'c-kevin',
+    author: 'Kevin L.',
+    initial: 'K',
+    color: '#7F77DD',
+    car: '2022 Accord',
+    likes: 8,
+    body: 'The plunger method actually worked on mine haha. Thanks for the tip AutoMate!',
+  },
+];
+
+export const POST_CATEGORIES: PostCategory[] = ['Question', 'Tip', 'Quotes', 'DIY', 'Review'];
+
+// ── Profile domain ─────────────────────────────────────────────────────
+
+export const USER = {
+  name: 'John Doe',
+  username: '@johndoe',
+  email: 'johndoe@email.com',
+  phone: '+1 (703) 555-0198',
+  initial: 'J',
+  completionPct: 85,
+  googleEmail: 'johndoe@gmail.com',
+};
+
+export interface Milestone {
+  id: string;
+  icon: string;
+  title: string;
+  sub: string;
+  costPts: number;
+}
+
+export const MILESTONES: Milestone[] = [
+  { id: 'mile-oil', icon: '🛢️', title: 'Free oil change', sub: 'Standard synthetic', costPts: 6000 },
+  { id: 'mile-tires', icon: '🚗', title: 'Free tire rotation', sub: 'All 4 tires', costPts: 10000 },
+  { id: 'mile-insp', icon: '📷', title: 'Free inspection', sub: 'Full 21-point', costPts: 25000 },
+];
+
+export const EARN_ACTIONS = [
+  { icon: '📅', title: 'Daily check-in', sub: 'Log in every day', pts: 10 },
+  { icon: '📷', title: 'Scan service receipt', sub: 'Add to service history', pts: 20 },
+  { icon: '✒️', title: 'Manual service log', sub: 'Enter service details', pts: 10 },
+  { icon: '🛢️', title: 'Book service via app', sub: 'Schedule at a dealer', pts: 50 },
+  { icon: '📸', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: 20 },
+  { icon: '💬', title: 'Post in community', sub: 'Share tips and reviews', pts: 50 },
+  { icon: '🛡️', title: 'Add insurance policy', sub: 'Link your coverage', pts: 100 },
+  { icon: '👥', title: 'Refer a friend', sub: 'They join AutoMate', pts: 100 },
+];
+
+export const PAYMENT_CARD = {
+  brand: 'VISA',
+  last4: '4242',
+  holder: 'John Doe',
+  expires: '08/27',
+};
+
+export const LANGUAGES = [
+  { flag: '🇺🇸', name: 'English', selected: true },
+  { flag: '🇰🇷', name: '한국어', selected: false },
+  { flag: '🇪🇸', name: 'Español', selected: false },
+  { flag: '🇨🇳', name: '中文', selected: false },
+];
+
+export const HELP_TOPICS = [
+  { icon: '📷', title: 'How to submit damage photos' },
+  { icon: '💰', title: 'Understanding quotes & pricing' },
+  { icon: '📅', title: 'Managing bookings' },
+  { icon: '📞', title: 'Contact support' },
+];
+
+export const TERMS_SECTIONS = [
+  {
+    heading: '1. Acceptance of terms',
+    body: 'By using AutoMate, you agree to these Terms of Service. AutoMate connects vehicle owners with licensed repair shops in the Northern Virginia area.',
+  },
+  {
+    heading: '2. Services',
+    body: 'AutoMate provides a marketplace platform. We are not responsible for the quality of repairs performed by third-party shops.',
+  },
+  {
+    heading: '3. Payments',
+    body: 'Payments are processed securely. AutoMate charges a platform fee of 5% on completed transactions.',
+  },
+];
+
+export const PRIVACY_SECTIONS = [
+  {
+    heading: 'Data we collect',
+    body: 'We collect vehicle information, damage photos, location data, and service history to provide repair quotes and recommendations.',
+  },
+  {
+    heading: 'How we use your data',
+    body: 'Your data is shared with licensed repair shops only for the purpose of generating quotes. We never sell personal data to third parties.',
+  },
+  {
+    heading: 'Your rights',
+    body: 'You may request deletion of your data at any time through Settings → Account → Delete account.',
+  },
+];
+
+/** Partner dealers offering milestone redemption (s-prof-mile-det). */
+export const MILESTONE_PARTNERS = [
+  { dealerId: 'honda-fairfax', tag: 'OEM' },
+  { dealerId: 'autofix-pro', tag: 'Same-day' },
+];

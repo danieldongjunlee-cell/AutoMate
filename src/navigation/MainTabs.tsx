@@ -25,6 +25,37 @@ import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
 import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
 import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
+import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
+import { CommCreateScreen } from '../screens/community/CommCreateScreen';
+import { CommHondaScreen } from '../screens/community/CommHondaScreen';
+import { CommPostScreen } from '../screens/community/CommPostScreen';
+import { CompCashBookScreen } from '../screens/compare/CompCashBookScreen';
+import { CompCashInsScreen } from '../screens/compare/CompCashInsScreen';
+import { CompDeepDiveScreen } from '../screens/compare/CompDeepDiveScreen';
+import { CompInsuranceScreen } from '../screens/compare/CompInsuranceScreen';
+import { CompSelectScreen } from '../screens/compare/CompSelectScreen';
+import {
+  ProfChangeEmailScreen,
+  ProfChangePasswordScreen,
+  ProfChangePhoneScreen,
+} from '../screens/profile/ProfAccountFormScreens';
+import { ProfCarsScreen } from '../screens/profile/ProfCarsScreen';
+import { ProfEarnScreen } from '../screens/profile/ProfEarnScreen';
+import { ProfEditProfileScreen } from '../screens/profile/ProfEditProfileScreen';
+import { ProfHubScreen } from '../screens/profile/ProfHubScreen';
+import { ProfInsuranceScreen } from '../screens/profile/ProfInsuranceScreen';
+import { ProfMileDetScreen } from '../screens/profile/ProfMileDetScreen';
+import { ProfMilesScreen } from '../screens/profile/ProfMilesScreen';
+import {
+  ProfDistanceScreen,
+  ProfHelpCenterScreen,
+  ProfLanguageScreen,
+  ProfLinkedAccountsScreen,
+  ProfPrivacyScreen,
+  ProfTermsScreen,
+} from '../screens/profile/ProfMiscScreens';
+import { ProfPaymentScreen } from '../screens/profile/ProfPaymentScreen';
+import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
@@ -127,13 +158,16 @@ function MaintStack() {
 }
 
 const CompareNative = createNativeStackNavigator<CompareStackParamList>();
-const compareScreens = buildScreens([
-  'CompSelect',
-  'CompCashIns',
-  'CompDeepDive',
-  'CompCashBook',
-  'CompInsurance',
-] as const);
+const compareScreens = buildScreens(
+  ['CompSelect', 'CompCashIns', 'CompDeepDive', 'CompCashBook', 'CompInsurance'] as const,
+  {
+    CompSelect: CompSelectScreen,
+    CompCashIns: CompCashInsScreen,
+    CompDeepDive: CompDeepDiveScreen,
+    CompCashBook: CompCashBookScreen,
+    CompInsurance: CompInsuranceScreen,
+  },
+);
 
 function CompareStack() {
   const theme = useTheme();
@@ -150,12 +184,15 @@ function CompareStack() {
 }
 
 const CommunityNative = createNativeStackNavigator<CommunityStackParamList>();
-const communityScreens = buildScreens([
-  'CommChannels',
-  'CommHonda',
-  'CommPost',
-  'CommCreate',
-] as const);
+const communityScreens = buildScreens(
+  ['CommChannels', 'CommHonda', 'CommPost', 'CommCreate'] as const,
+  {
+    CommChannels: CommChannelsScreen,
+    CommHonda: CommHondaScreen,
+    CommPost: CommPostScreen,
+    CommCreate: CommCreateScreen,
+  },
+);
 
 function CommunityStack() {
   const theme = useTheme();
@@ -172,26 +209,48 @@ function CommunityStack() {
 }
 
 const ProfileNative = createNativeStackNavigator<ProfileStackParamList>();
-const profileScreens = buildScreens([
-  'ProfHub',
-  'ProfMiles',
-  'ProfMileDet',
-  'ProfEarn',
-  'ProfCars',
-  'ProfInsurance',
-  'ProfPayment',
-  'ProfSettings',
-  'ProfEditProfile',
-  'ProfChangeEmail',
-  'ProfChangePassword',
-  'ProfChangePhone',
-  'ProfLinkedAccounts',
-  'ProfHelpCenter',
-  'ProfTerms',
-  'ProfPrivacy',
-  'ProfLanguage',
-  'ProfDistance',
-] as const);
+const profileScreens = buildScreens(
+  [
+    'ProfHub',
+    'ProfMiles',
+    'ProfMileDet',
+    'ProfEarn',
+    'ProfCars',
+    'ProfInsurance',
+    'ProfPayment',
+    'ProfSettings',
+    'ProfEditProfile',
+    'ProfChangeEmail',
+    'ProfChangePassword',
+    'ProfChangePhone',
+    'ProfLinkedAccounts',
+    'ProfHelpCenter',
+    'ProfTerms',
+    'ProfPrivacy',
+    'ProfLanguage',
+    'ProfDistance',
+  ] as const,
+  {
+    ProfHub: ProfHubScreen,
+    ProfMiles: ProfMilesScreen,
+    ProfMileDet: ProfMileDetScreen,
+    ProfEarn: ProfEarnScreen,
+    ProfCars: ProfCarsScreen,
+    ProfInsurance: ProfInsuranceScreen,
+    ProfPayment: ProfPaymentScreen,
+    ProfSettings: ProfSettingsScreen,
+    ProfEditProfile: ProfEditProfileScreen,
+    ProfChangeEmail: ProfChangeEmailScreen,
+    ProfChangePassword: ProfChangePasswordScreen,
+    ProfChangePhone: ProfChangePhoneScreen,
+    ProfLinkedAccounts: ProfLinkedAccountsScreen,
+    ProfHelpCenter: ProfHelpCenterScreen,
+    ProfTerms: ProfTermsScreen,
+    ProfPrivacy: ProfPrivacyScreen,
+    ProfLanguage: ProfLanguageScreen,
+    ProfDistance: ProfDistanceScreen,
+  },
+);
 
 function ProfileStack() {
   const theme = useTheme();

@@ -56,50 +56,50 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-comp-select` | Select Quote | — | ⬜ |
-| `s-comp-cash-ins` | Cash vs Insurance | — | ⬜ |
-| `s-comp-deep-dive` | Cost Deep Dive | — | ⬜ |
-| `s-comp-cash-book` | Book (Cash) | — | ⬜ |
-| `s-comp-insurance` | Contact Insurer | — | ⬜ |
+| `s-comp-select` | Select Quote | `src/screens/compare/CompSelectScreen.tsx` | ✅ |
+| `s-comp-cash-ins` | Cash vs Insurance | `src/screens/compare/CompCashInsScreen.tsx` | ✅ |
+| `s-comp-deep-dive` | Cost Deep Dive | `src/screens/compare/CompDeepDiveScreen.tsx` | ✅ |
+| `s-comp-cash-book` | Book (Cash) | `src/screens/compare/CompCashBookScreen.tsx` | ✅ |
+| `s-comp-insurance` | Contact Insurer | `src/screens/compare/CompInsuranceScreen.tsx` | ✅ |
 
 ## Community tab (Step 5)
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-comm-channels` | Community | — | ⬜ |
-| `s-comm-honda` | Honda Feed | — | ⬜ |
-| `s-comm-post` | Post Detail | — | ⬜ |
-| `s-comm-create` | Create Post | — | ⬜ |
+| `s-comm-channels` | Community | `src/screens/community/CommChannelsScreen.tsx` | ✅ |
+| `s-comm-honda` | Honda Feed | `src/screens/community/CommHondaScreen.tsx` | ✅ |
+| `s-comm-post` | Post Detail | `src/screens/community/CommPostScreen.tsx` | ✅ |
+| `s-comm-create` | Create Post | `src/screens/community/CommCreateScreen.tsx` | ✅ |
 
 ## Profile tab (Step 5)
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-prof-hub` | Profile | — | ⬜ |
-| `s-prof-miles` | Milestones | — | ⬜ |
-| `s-prof-mile-det` | Milestone Detail | — | ⬜ |
-| `s-prof-earn` | Earn History | — | ⬜ |
-| `s-prof-cars` | My Cars | — | ⬜ |
-| `s-prof-insurance` | Insurance | — | ⬜ |
-| `s-prof-payment` | Payment | — | ⬜ |
-| `s-prof-settings` | Settings | — | ⬜ |
-| `s-prof-edit-profile` | Edit Profile | — | ⬜ |
-| `s-prof-change-email` | Change Email | — | ⬜ |
-| `s-prof-change-password` | Change Password | — | ⬜ |
-| `s-prof-change-phone` | Change Phone | — | ⬜ |
-| `s-prof-linked-accounts` | Linked Accounts | — | ⬜ |
-| `s-prof-help-center` | Help Center | — | ⬜ |
-| `s-prof-terms` | Terms of Service | — | ⬜ |
-| `s-prof-privacy` | Privacy Policy | — | ⬜ |
-| `s-prof-language` | Language | — | ⬜ |
-| `s-prof-distance` | Distance Units | — | ⬜ |
+| `s-prof-hub` | Profile | `src/screens/profile/ProfHubScreen.tsx` | ✅ |
+| `s-prof-miles` | Milestones | `src/screens/profile/ProfMilesScreen.tsx` | ✅ |
+| `s-prof-mile-det` | Milestone Detail | `src/screens/profile/ProfMileDetScreen.tsx` | ✅ |
+| `s-prof-earn` | Earn History | `src/screens/profile/ProfEarnScreen.tsx` | ✅ |
+| `s-prof-cars` | My Cars | `src/screens/profile/ProfCarsScreen.tsx` | ✅ |
+| `s-prof-insurance` | Insurance | `src/screens/profile/ProfInsuranceScreen.tsx` | ✅ |
+| `s-prof-payment` | Payment | `src/screens/profile/ProfPaymentScreen.tsx` | ✅ |
+| `s-prof-settings` | Settings | `src/screens/profile/ProfSettingsScreen.tsx` | ✅ |
+| `s-prof-edit-profile` | Edit Profile | `src/screens/profile/ProfEditProfileScreen.tsx` | ✅ |
+| `s-prof-change-email` | Change Email | `src/screens/profile/ProfAccountFormScreens.tsx` | ✅ |
+| `s-prof-change-password` | Change Password | `src/screens/profile/ProfAccountFormScreens.tsx` | ✅ |
+| `s-prof-change-phone` | Change Phone | `src/screens/profile/ProfAccountFormScreens.tsx` | ✅ |
+| `s-prof-linked-accounts` | Linked Accounts | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-help-center` | Help Center | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-terms` | Terms of Service | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-privacy` | Privacy Policy | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-language` | Language | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-distance` | Distance Units | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
 
 ## Global (non-screen)
 
 | Wireframe element | Component | Status |
 |---|---|---|
-| Tab bar (5 tabs, hidden on auth) | `src/navigation/MainTabs.tsx` | 🟨 (placeholders; reset-to-root via `popToTopOnBlur`) |
-| Auth gate (tab bar hidden on auth) | `src/navigation/RootNavigator.tsx` | 🟨 |
-| Design tokens (light + dark) | `src/theme/` | 🟨 (dark palette refined in step 5) |
-| Sign-out bottom sheet | — | ⬜ (placeholder signs out directly) |
-| Dark mode theming | `src/theme/index.ts` + Zustand `darkMode` | 🟨 (toggle UI lands with Settings) |
+| Tab bar (5 tabs, hidden on auth) | `src/navigation/MainTabs.tsx` | ✅ (reset-to-root via `popToTopOnBlur`) |
+| Auth gate (tab bar hidden on auth) | `src/navigation/RootNavigator.tsx` | ✅ |
+| Design tokens (light + dark) | `src/theme/` | ✅ |
+| Sign-out bottom sheet | `src/screens/profile/ProfSettingsScreen.tsx` | ✅ |
+| Dark mode theming | `src/theme/index.ts` + Zustand `darkMode` | ✅ (toggle in Settings themes nav + all screens) |
