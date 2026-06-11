@@ -13,10 +13,10 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-splash` | Splash | — | ⬜ |
-| `s-signup` | Sign Up | — | ⬜ |
-| `s-login` | Log In | — | ⬜ |
-| `s-verify-otp` | Verify OTP | — | ⬜ |
+| `s-splash` | Splash | `src/screens/auth/SplashScreen.tsx` | ✅ |
+| `s-signup` | Sign Up | `src/screens/auth/SignUpScreen.tsx` | ✅ |
+| `s-login` | Log In | `src/screens/auth/LogInScreen.tsx` | ✅ |
+| `s-verify-otp` | Verify OTP | `src/screens/auth/VerifyOtpScreen.tsx` | ✅ |
 
 ## Home tab (Steps 3 & 6)
 
