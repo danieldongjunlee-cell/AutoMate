@@ -22,18 +22,18 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-home` | Home | — | ⬜ |
-| `s-car-diagram` | Select Part | — | ⬜ |
-| `s-photo-example` | Photo Guide | — | ⬜ |
-| `s-camera` | Take Photos | — | ⬜ |
-| `s-confirm-submit` | Confirm Damage | — | ⬜ |
-| `s-submitted` | Submitted | — | ⬜ |
-| `s-after-hours` | After Hours | — | ⬜ |
-| `s-dealer-quotes` | Quotes Received | — | ⬜ |
-| `s-all-quotes-map` | All Quotes Map | — | ⬜ |
-| `s-map` | Map (filter variant) | — | ⬜ (pending decision, see analysis flag 1) |
-| `s-accept-booking` | Accept & Book | — | ⬜ |
-| `s-booking-confirm` | Booking Confirmed | — | ⬜ |
+| `s-home` | Home | `src/screens/home/HomeScreen.tsx` | ✅ |
+| `s-car-diagram` | Select Part | `src/screens/home/CarDiagramScreen.tsx` | ✅ |
+| `s-photo-example` | Photo Guide | `src/screens/home/PhotoExampleScreen.tsx` | ✅ |
+| `s-camera` | Take Photos | `src/screens/home/CameraScreen.tsx` | ✅ |
+| `s-confirm-submit` | Confirm Damage | `src/screens/home/ConfirmSubmitScreen.tsx` | ✅ |
+| `s-submitted` | Submitted | `src/screens/home/SubmittedScreen.tsx` | ✅ |
+| `s-after-hours` | After Hours | `src/screens/home/AfterHoursScreen.tsx` | ✅ |
+| `s-dealer-quotes` | Quotes Received | `src/screens/home/DealerQuotesScreen.tsx` | ✅ |
+| `s-all-quotes-map` | All Quotes Map | `src/screens/home/AllQuotesMapScreen.tsx` | ✅ |
+| `s-map` | Map (separate screen, entry: "Filter quotes on map" on All Quotes Map) | `src/screens/home/MapFilterScreen.tsx` | ✅ |
+| `s-accept-booking` | Accept & Book | `src/screens/home/AcceptBookingScreen.tsx` | ✅ |
+| `s-booking-confirm` | Booking Confirmed | `src/screens/home/BookingConfirmScreen.tsx` | ✅ |
 | `s-home-bundle-deals` | Bundle Deals (Step 6) | — | ⬜ |
 | `s-notifications` | Notifications (Step 6) | — | ⬜ |
 

@@ -17,6 +17,14 @@ export interface BookingCart {
 
 const emptyCart: BookingCart = { dealerId: null, services: [], date: null, time: null };
 
+/** A captured (mock) damage photo. */
+export interface DamagePhoto {
+  id: string;
+  label: string; // e.g. "Angle 1"
+  /** Placeholder art tint until real camera capture is wired. */
+  tint: string;
+}
+
 interface AppState {
   // Auth
   isAuthenticated: boolean;
@@ -31,6 +39,14 @@ interface AppState {
   selectedParts: string[];
   togglePart: (part: string) => void;
   clearParts: () => void;
+
+  // Damage flow: photos + damage type (camera / confirm-submit)
+  damagePhotos: DamagePhoto[];
+  addDamagePhoto: () => void;
+  removeDamagePhoto: (id: string) => void;
+  damageType: string;
+  setDamageType: (t: string) => void;
+  resetDamageFlow: () => void;
 
   // Maintenance booking cart (multi-service selection)
   cart: BookingCart;
@@ -56,6 +72,24 @@ export const useAppStore = create<AppState>((set) => ({
         : [...s.selectedParts, part],
     })),
   clearParts: () => set({ selectedParts: [] }),
+
+  damagePhotos: [],
+  addDamagePhoto: () =>
+    set((s) => {
+      const tints = ['#2D1A1A', '#3A2A1A', '#1A2A3A', '#1A2D1F', '#2A1A2D'];
+      const n = s.damagePhotos.length;
+      return {
+        damagePhotos: [
+          ...s.damagePhotos,
+          { id: `photo-${Date.now()}-${n}`, label: `Angle ${n + 1}`, tint: tints[n % tints.length] },
+        ],
+      };
+    }),
+  removeDamagePhoto: (id) =>
+    set((s) => ({ damagePhotos: s.damagePhotos.filter((p) => p.id !== id) })),
+  damageType: 'Dent',
+  setDamageType: (damageType) => set({ damageType }),
+  resetDamageFlow: () => set({ selectedParts: [], damagePhotos: [], damageType: 'Dent' }),
 
   cart: emptyCart,
   setCartDealer: (dealerId) => set((s) => ({ cart: { ...s.cart, dealerId } })),

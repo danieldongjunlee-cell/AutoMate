@@ -18,8 +18,10 @@ export type HomeStackParamList = {
   DealerQuotes: undefined;
   AllQuotesMap: undefined;
   MapFilter: undefined;
-  AcceptBooking: undefined;
-  BookingConfirm: undefined;
+  AcceptBooking: { dealerId?: string } | undefined;
+  BookingConfirm:
+    | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash' }
+    | undefined;
   BundleDeals: undefined;
   Notifications: undefined;
 };

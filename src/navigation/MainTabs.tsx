@@ -3,6 +3,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text } from 'react-native';
 
+import { AcceptBookingScreen } from '../screens/home/AcceptBookingScreen';
+import { AfterHoursScreen } from '../screens/home/AfterHoursScreen';
+import { AllQuotesMapScreen } from '../screens/home/AllQuotesMapScreen';
+import { BookingConfirmScreen } from '../screens/home/BookingConfirmScreen';
+import { CameraScreen } from '../screens/home/CameraScreen';
+import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
+import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
+import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
+import { HomeScreen } from '../screens/home/HomeScreen';
+import { MapFilterScreen } from '../screens/home/MapFilterScreen';
+import { PhotoExampleScreen } from '../screens/home/PhotoExampleScreen';
+import { SubmittedScreen } from '../screens/home/SubmittedScreen';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
@@ -17,22 +29,39 @@ import {
 // ── Per-tab native stacks ──────────────────────────────────────────────
 
 const HomeNative = createNativeStackNavigator<HomeStackParamList>();
-const homeScreens = buildScreens([
-  'Home',
-  'CarDiagram',
-  'PhotoExample',
-  'Camera',
-  'ConfirmSubmit',
-  'Submitted',
-  'AfterHours',
-  'DealerQuotes',
-  'AllQuotesMap',
-  'MapFilter',
-  'AcceptBooking',
-  'BookingConfirm',
-  'BundleDeals',
-  'Notifications',
-] as const);
+const homeScreens = buildScreens(
+  [
+    'Home',
+    'CarDiagram',
+    'PhotoExample',
+    'Camera',
+    'ConfirmSubmit',
+    'Submitted',
+    'AfterHours',
+    'DealerQuotes',
+    'AllQuotesMap',
+    'MapFilter',
+    'AcceptBooking',
+    'BookingConfirm',
+    'BundleDeals',
+    'Notifications',
+  ] as const,
+  {
+    // Step 3: damage flow. BundleDeals + Notifications stay placeholders (step 6).
+    Home: HomeScreen,
+    CarDiagram: CarDiagramScreen,
+    PhotoExample: PhotoExampleScreen,
+    Camera: CameraScreen,
+    ConfirmSubmit: ConfirmSubmitScreen,
+    Submitted: SubmittedScreen,
+    AfterHours: AfterHoursScreen,
+    DealerQuotes: DealerQuotesScreen,
+    AllQuotesMap: AllQuotesMapScreen,
+    MapFilter: MapFilterScreen,
+    AcceptBooking: AcceptBookingScreen,
+    BookingConfirm: BookingConfirmScreen,
+  },
+);
 
 function HomeStack() {
   const theme = useTheme();

@@ -5,11 +5,17 @@ import { createPlaceholderScreen } from '../screens/PlaceholderScreen';
 import { Theme } from '../theme';
 import { SCREEN_REGISTRY } from './registry';
 
-/** Pre-built placeholder components (must be stable, not created in render). */
-export function buildScreens<T extends string>(routes: readonly T[]) {
+/**
+ * Pre-built screen list (must be stable, not created in render). Routes
+ * without an override render the placeholder until their feature step lands.
+ */
+export function buildScreens<T extends string>(
+  routes: readonly T[],
+  overrides: Partial<Record<T, React.ComponentType<object>>> = {},
+) {
   return routes.map((name) => ({
     name,
-    component: createPlaceholderScreen(name),
+    component: overrides[name] ?? createPlaceholderScreen(name),
     title: SCREEN_REGISTRY[name].title,
   }));
 }
