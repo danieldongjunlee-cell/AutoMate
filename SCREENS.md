@@ -4,6 +4,11 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (verified in app)
 
 Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 compare/community/profile · 6 notifications/bundles
 
+> **Step 1 complete:** all 55 routes are registered in React Navigation
+> (`src/navigation/registry.ts`) and render `PlaceholderScreen` with every
+> wireframe nav edge tappable. A screen's status flips to ✅ when its real
+> implementation replaces the placeholder and is verified.
+
 ## Auth (Step 2)
 
 | Wireframe ID | Screen | Component | Status |
@@ -93,6 +98,8 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe element | Component | Status |
 |---|---|---|
-| Tab bar (5 tabs, hidden on auth) | — | ⬜ |
-| Sign-out bottom sheet | — | ⬜ |
-| Dark mode theming | — | ⬜ |
+| Tab bar (5 tabs, hidden on auth) | `src/navigation/MainTabs.tsx` | 🟨 (placeholders; reset-to-root via `popToTopOnBlur`) |
+| Auth gate (tab bar hidden on auth) | `src/navigation/RootNavigator.tsx` | 🟨 |
+| Design tokens (light + dark) | `src/theme/` | 🟨 (dark palette refined in step 5) |
+| Sign-out bottom sheet | — | ⬜ (placeholder signs out directly) |
+| Dark mode theming | `src/theme/index.ts` + Zustand `darkMode` | 🟨 (toggle UI lands with Settings) |
