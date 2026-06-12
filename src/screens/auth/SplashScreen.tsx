@@ -7,7 +7,7 @@ import { Pressable, Text, View } from 'react-native';
 import { LogoMark } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { AuthStackParamList } from '../../navigation/types';
-import { authService } from '../../services/mock/authService';
+import { authService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';

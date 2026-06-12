@@ -8,7 +8,7 @@ import { QuoteCard } from '../../components/QuoteCard';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTE_REQUEST } from '../../services/mock/data';
-import { quoteService } from '../../services/mock/quoteService';
+import { quoteService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'DealerQuotes'>;

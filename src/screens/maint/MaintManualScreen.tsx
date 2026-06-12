@@ -9,7 +9,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { MaintStackParamList } from '../../navigation/types';
 import { MANUAL_SERVICE_TYPES } from '../../services/mock/data';
-import { maintService } from '../../services/mock/maintService';
+import { maintService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { Screen } from '../../components/ui';
 import { radii, spacing, useTheme } from '../../theme';

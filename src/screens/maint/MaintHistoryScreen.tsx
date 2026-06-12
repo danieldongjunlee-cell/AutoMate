@@ -13,7 +13,7 @@ import {
   HISTORY_TYPE_FILTERS,
   VEHICLE,
 } from '../../services/mock/data';
-import { maintService } from '../../services/mock/maintService';
+import { maintService } from '../../services';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintHistory'>;

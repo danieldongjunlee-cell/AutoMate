@@ -8,7 +8,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
-import { maintService } from '../../services/mock/maintService';
+import { maintService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDashboard'>;

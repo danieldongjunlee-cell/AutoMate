@@ -51,9 +51,19 @@ export interface DamagePart {
 
 const DEFAULT_DAMAGE_TYPE = 'Dent';
 
+/** Authenticated user context (set by the auth service after the OTP step). */
+export interface AuthUser {
+  name: string;
+  email: string;
+}
+
 interface AppState {
   // Auth
   isAuthenticated: boolean;
+  /** Bearer token for the API client (real JWT in api mode, sentinel in mock mode). */
+  authToken: string | null;
+  user: AuthUser | null;
+  setAuth: (token: string | null, user: AuthUser | null) => void;
   signIn: () => void;
   signOut: () => void;
 
@@ -102,12 +112,17 @@ const emptyDraft = {
 
 export const useAppStore = create<AppState>((set) => ({
   isAuthenticated: false,
+  authToken: null,
+  user: null,
+  setAuth: (authToken, user) => set({ authToken, user }),
   signIn: () => set({ isAuthenticated: true }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
   signOut: () =>
     set({
       isAuthenticated: false,
+      authToken: null,
+      user: null,
       damageParts: [],
       ...emptyDraft,
       cart: emptyCart,

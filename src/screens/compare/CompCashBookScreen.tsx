@@ -14,7 +14,7 @@ import {
   dealerById,
   PAYMENT_CARD,
 } from '../../services/mock/data';
-import { quoteService } from '../../services/mock/quoteService';
+import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { weekdayOf } from '../../utils/dates';

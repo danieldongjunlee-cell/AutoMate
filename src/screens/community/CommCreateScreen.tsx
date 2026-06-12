@@ -8,7 +8,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
-import { communityService } from '../../services/mock/communityService';
+import { communityService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 

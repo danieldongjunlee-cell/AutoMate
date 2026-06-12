@@ -7,7 +7,7 @@ import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { AuthStackParamList } from '../../navigation/types';
-import { authService } from '../../services/mock/authService';
+import { authService, DEMO_EMAIL, DEMO_PASSWORD } from '../../services';
 import { spacing } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';
 
@@ -15,17 +15,24 @@ type Nav = NativeStackNavigationProp<AuthStackParamList, 'LogIn'>;
 
 export function LogInScreen() {
   const navigation = useNavigation<Nav>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  // Demo flow (spec §6): "I already have an account" lands here pre-filled
+  // with the seeded demo credentials.
+  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [password, setPassword] = useState(DEMO_PASSWORD);
   const [loading, setLoading] = useState(false);
 
   const canSubmit = email.trim() && password.length > 0;
 
   const onSubmit = async () => {
     setLoading(true);
-    await authService.logIn(email, password);
-    setLoading(false);
-    navigation.navigate('VerifyOtp');
+    try {
+      await authService.logIn(email, password);
+      navigation.navigate('VerifyOtp');
+    } catch (err) {
+      Alert.alert('Sign in failed', err instanceof Error ? err.message : 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -7,7 +7,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { CategoryBadge } from '../../components/PostCard';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
-import { communityService } from '../../services/mock/communityService';
+import { communityService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-comm-post: post detail + comments + composer. */

@@ -7,7 +7,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { Card, SectionLabel, Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { PAYMENT_CARD } from '../../services/mock/data';
-import { proService } from '../../services/mock/proService';
+import { proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyPayment'>;

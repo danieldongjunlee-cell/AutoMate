@@ -6,7 +6,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
-import { communityService } from '../../services/mock/communityService';
+import { communityService } from '../../services';
 import { Screen } from '../../components/ui';
 import { radii, spacing, useTheme } from '../../theme';
 

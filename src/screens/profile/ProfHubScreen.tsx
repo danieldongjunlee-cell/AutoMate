@@ -19,6 +19,12 @@ export function ProfHubScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const points = useAppStore((s) => s.points);
+  // Authenticated user context (set after the demo login); falls back to the
+  // wireframe USER constant until someone signs in.
+  const authedUser = useAppStore((s) => s.user);
+  const displayName = authedUser?.name ?? USER.name;
+  const displayEmail = authedUser?.email ?? USER.email;
+  const displayInitial = displayName.trim().charAt(0).toUpperCase() || USER.initial;
 
   const accountRow = (
     icon: string,
@@ -69,12 +75,12 @@ export function ProfHubScreen() {
     <Screen>
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-        <AvatarCircle initial={USER.initial} color={colors.primary} size={52} />
+        <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 18, fontWeight: '500', color: colors.textPrimary }}>
-            {USER.name}
+            {displayName}
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>{USER.email}</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>{displayEmail}</Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={{ fontSize: 13, color: colors.textTertiary }}>Completion</Text>

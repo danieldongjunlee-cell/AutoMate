@@ -7,7 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
-import { quoteService } from '../../services/mock/quoteService';
+import { quoteService } from '../../services';
 import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 

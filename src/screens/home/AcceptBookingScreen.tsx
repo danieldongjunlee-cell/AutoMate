@@ -8,7 +8,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTES, TIME_SLOTS } from '../../services/mock/data';
-import { quoteService } from '../../services/mock/quoteService';
+import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { weekdayOf } from '../../utils/dates';

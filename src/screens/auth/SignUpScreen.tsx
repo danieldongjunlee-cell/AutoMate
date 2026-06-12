@@ -7,7 +7,7 @@ import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { AuthStackParamList } from '../../navigation/types';
-import { authService } from '../../services/mock/authService';
+import { authService } from '../../services';
 import { spacing } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';
 

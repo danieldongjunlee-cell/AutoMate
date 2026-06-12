@@ -8,7 +8,7 @@ import { PostCard } from '../../components/PostCard';
 import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
-import { communityService } from '../../services/mock/communityService';
+import { communityService } from '../../services';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommHonda'>;

@@ -9,7 +9,7 @@ import { navigateCrossTab } from '../../navigation/crossTab';
 import {
   AppNotification,
   notificationService,
-} from '../../services/mock/notificationService';
+} from '../../services';
 import { spacing, useTheme } from '../../theme';
 
 /** Wireframe s-notifications: unread/earlier groups with deep links. */

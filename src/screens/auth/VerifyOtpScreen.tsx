@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { authService, MOCK_PHONE } from '../../services/mock/authService';
+import { authService, MOCK_PHONE } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';
@@ -25,9 +25,20 @@ export function VerifyOtpScreen() {
 
   const onVerify = async () => {
     setLoading(true);
-    const { ok } = await authService.verifyOtp(code);
-    setLoading(false);
-    if (ok) signIn();
+    try {
+      const { ok } = await authService.verifyOtp(code);
+      if (ok) {
+        signIn();
+        return;
+      }
+      Alert.alert('Invalid code', 'Use the demo verification code 123456.');
+      setCode('');
+      inputRef.current?.focus();
+    } catch (err) {
+      Alert.alert('Verification failed', err instanceof Error ? err.message : 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onResend = async () => {

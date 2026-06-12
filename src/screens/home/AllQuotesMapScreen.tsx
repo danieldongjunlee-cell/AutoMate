@@ -8,7 +8,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, Quote, QUOTE_REQUEST } from '../../services/mock/data';
-import { quoteService } from '../../services/mock/quoteService';
+import { quoteService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'AllQuotesMap'>;

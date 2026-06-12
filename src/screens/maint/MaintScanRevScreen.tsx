@@ -9,7 +9,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { SCANNED_RECEIPT } from '../../services/mock/data';
-import { maintService } from '../../services/mock/maintService';
+import { maintService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 

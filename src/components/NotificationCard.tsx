@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { AppNotification } from '../services/mock/notificationService';
+import { AppNotification } from '../services';
 import { radii, spacing, useTheme } from '../theme';
 
 /** Gold-tier card colors from the wireframe (#FFF8E8 / #F0C050 / #7A5500). */

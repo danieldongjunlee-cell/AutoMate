@@ -10,8 +10,7 @@ import { LogoRow } from '../../components/Logo';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
-import { notificationService } from '../../services/mock/notificationService';
-import { quoteService } from '../../services/mock/quoteService';
+import { notificationService, quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 

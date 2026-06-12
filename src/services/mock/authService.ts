@@ -1,11 +1,18 @@
 /**
- * Mock auth service. Swap with real API calls later — screens only depend on
- * these signatures.
+ * Mock auth service — same signatures as services/api/authService so the
+ * service-layer mode switch (services/index.ts) is transparent to screens.
+ *
+ * Demo contract (spec §6): demo@automate.app / Demo1234! is the only valid
+ * login; the OTP screen accepts 123456 in both mock and api mode.
  */
+import { useAppStore } from '../../store/useAppStore';
 import { delay } from './delay';
 
-
 export const MOCK_PHONE = '+1 (703) 555-0198';
+
+export const DEMO_EMAIL = 'demo@automate.app';
+export const DEMO_PASSWORD = 'Demo1234!';
+export const DEMO_OTP = '123456';
 
 export interface SignUpInput {
   fullName: string;
@@ -14,21 +21,34 @@ export interface SignUpInput {
   password: string;
 }
 
+const DEMO_USER = { name: 'John Doe', email: DEMO_EMAIL };
+
+/** Whoever just passed login/sign-up — becomes store.user after the OTP. */
+let pendingUser = DEMO_USER;
+
 export const authService = {
-  async signUp(_input: SignUpInput): Promise<{ otpSentTo: string }> {
+  async signUp(input: SignUpInput): Promise<{ otpSentTo: string }> {
     await delay(600);
+    pendingUser = { name: input.fullName.trim() || DEMO_USER.name, email: input.email.trim() };
     return { otpSentTo: MOCK_PHONE };
   },
 
-  async logIn(_email: string, _password: string): Promise<{ otpSentTo: string }> {
+  /** Exact-match the demo credentials; anything else is rejected. */
+  async logIn(email: string, password: string): Promise<{ otpSentTo: string }> {
     await delay(600);
+    if (email.trim().toLowerCase() !== DEMO_EMAIL || password !== DEMO_PASSWORD) {
+      throw new Error('Invalid email or password.\nDemo account: demo@automate.app / Demo1234!');
+    }
+    pendingUser = DEMO_USER;
     return { otpSentTo: MOCK_PHONE };
   },
 
-  /** Any 6-digit code is accepted by the mock. */
+  /** Only the demo code 123456 verifies. */
   async verifyOtp(code: string): Promise<{ ok: boolean }> {
     await delay(500);
-    return { ok: code.length === 6 };
+    const ok = code === DEMO_OTP;
+    if (ok) useAppStore.getState().setAuth('mock-session-token', pendingUser);
+    return { ok };
   },
 
   async resendOtp(): Promise<{ otpSentTo: string }> {
@@ -38,6 +58,7 @@ export const authService = {
 
   async socialLogIn(_provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
     await delay(700);
+    useAppStore.getState().setAuth('mock-session-token', DEMO_USER);
     return { ok: true };
   },
 };

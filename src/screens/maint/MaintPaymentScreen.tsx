@@ -7,7 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
-import { maintService } from '../../services/mock/maintService';
+import { maintService } from '../../services';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
