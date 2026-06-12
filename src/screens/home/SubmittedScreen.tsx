@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Badge, Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -19,6 +19,8 @@ export function SubmittedScreen() {
   const damageParts = useAppStore((s) => s.damageParts);
   const isPro = useAppStore((s) => s.isPro);
   const aiEstimate = useAppStore((s) => s.aiEstimate);
+  // Quote-alert opt-in (mock push permission — flips the banner state).
+  const [notifyEnabled, setNotifyEnabled] = useState(false);
   const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
   // Live AI analysis from the submit response; wireframe demo values otherwise.
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
@@ -94,20 +96,31 @@ export function SubmittedScreen() {
         <Text style={{ fontSize: 22 }}>🔔</Text>
         <Pressable style={{ flex: 1 }} onPress={() => navigation.navigate('DealerQuotes')}>
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-            Notify me when quotes arrive
+            {notifyEnabled
+              ? "Alerts on — we'll ping you per quote"
+              : 'Notify me when quotes arrive'}
           </Text>
         </Pressable>
         <Pressable
-          onPress={() => Alert.alert('Notifications enabled', "We'll alert you as quotes arrive.")}
+          onPress={() => setNotifyEnabled(true)}
+          disabled={notifyEnabled}
           style={({ pressed }) => ({
-            backgroundColor: colors.warning,
+            backgroundColor: notifyEnabled ? colors.success : colors.warning,
             borderRadius: radii.sm,
             paddingHorizontal: spacing.md,
             paddingVertical: 6,
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: palette.dark }}>Enable</Text>
+          <Text
+            style={{
+              fontSize: 13,
+              fontWeight: '500',
+              color: notifyEnabled ? '#fff' : palette.dark,
+            }}
+          >
+            {notifyEnabled ? 'Enabled ✓' : 'Enable'}
+          </Text>
         </Pressable>
       </View>
 

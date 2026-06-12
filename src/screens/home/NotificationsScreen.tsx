@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { NotificationCard } from '../../components/NotificationCard';
+import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import {
@@ -56,7 +57,11 @@ export function NotificationsScreen() {
   if (isLoading || !notifications) {
     return (
       <Screen>
-        <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xxl }} />
+        <SectionLabel>Unread</SectionLabel>
+        <SkeletonList variant="row" count={2} />
+        <View style={{ height: spacing.sm }} />
+        <SectionLabel>Earlier</SectionLabel>
+        <SkeletonList variant="row" count={4} />
       </Screen>
     );
   }

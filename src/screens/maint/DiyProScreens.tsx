@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -35,8 +35,14 @@ export function ProBadge() {
 export function ProGuideRow({ guide }: { guide: ProGuide }) {
   const { colors } = useTheme();
   return (
-    <View
-      style={{
+    <Pressable
+      onPress={() =>
+        Alert.alert(
+          `${guide.icon} ${guide.title}`,
+          `${guide.sub}\n${guide.time} · ${guide.difficulty}\n\nFull step-by-step guide content ships with the backend.`,
+        )
+      }
+      style={({ pressed }) => ({
         backgroundColor: colors.surface,
         borderRadius: radii.sm,
         borderWidth: StyleSheet.hairlineWidth,
@@ -46,7 +52,8 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
         flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
-      }}
+        opacity: pressed ? 0.7 : 1,
+      })}
     >
       <Text style={{ fontSize: 21 }}>{guide.icon}</Text>
       <View style={{ flex: 1 }}>
@@ -68,7 +75,7 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
           {guide.difficulty}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

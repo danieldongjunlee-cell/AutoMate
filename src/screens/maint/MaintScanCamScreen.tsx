@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -20,11 +20,34 @@ const BRACKETS = [
   { bottom: 12, right: 12, borderBottomWidth: 2, borderRightWidth: 2 },
 ] as const;
 
+const VIEWFINDER_H = 190;
+
 /** Mock receipt scanner; swaps to expo-camera when capture is wired. */
 export function MaintScanCamScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(false);
+  // Mock capture: 'camera' / 'gallery' shows the receipt preview in the frame.
+  const [captured, setCaptured] = useState<'camera' | 'gallery' | null>(null);
+
+  // Scan-line sweep + shimmer, animated only while the OCR call is pending.
+  const sweep = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (!scanning) return;
+    const loop = Animated.loop(
+      Animated.timing(sweep, {
+        toValue: 1,
+        duration: 900,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+    );
+    loop.start();
+    return () => {
+      loop.stop();
+      sweep.setValue(0);
+    };
+  }, [scanning, sweep]);
 
   const onReview = async () => {
     setScanning(true);
@@ -59,11 +82,29 @@ export function MaintScanCamScreen() {
         style={{
           backgroundColor: '#111',
           borderRadius: radii.md,
-          height: 190,
+          height: VIEWFINDER_H,
           marginBottom: spacing.sm,
           overflow: 'hidden',
         }}
       >
+        {captured ? (
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 40, marginBottom: 4 }}>🧾</Text>
+            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.75)', fontWeight: '600' }}>
+              AutoFix Pro receipt {captured === 'gallery' ? 'imported' : 'captured'} ✓
+            </Text>
+          </View>
+        ) : null}
         {BRACKETS.map((pos, i) => (
           <View
             key={i}
@@ -77,17 +118,49 @@ export function MaintScanCamScreen() {
             }}
           />
         ))}
-        <View
-          style={{
-            position: 'absolute',
-            left: 20,
-            right: 20,
-            top: '40%',
-            height: 2,
-            backgroundColor: colors.primary,
-            opacity: 0.8,
-          }}
-        />
+        {scanning ? (
+          // OCR pending: animated scan-line sweep + shimmer band
+          <Animated.View
+            style={{
+              position: 'absolute',
+              left: 12,
+              right: 12,
+              top: 0,
+              transform: [
+                {
+                  translateY: sweep.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [16, VIEWFINDER_H - 24],
+                  }),
+                },
+              ],
+            }}
+          >
+            <View
+              style={{
+                height: 2,
+                backgroundColor: colors.primary,
+                shadowColor: colors.primary,
+                shadowOpacity: 0.9,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            />
+            <View style={{ height: 14, backgroundColor: colors.primary, opacity: 0.18 }} />
+          </Animated.View>
+        ) : (
+          <View
+            style={{
+              position: 'absolute',
+              left: 20,
+              right: 20,
+              top: '40%',
+              height: 2,
+              backgroundColor: colors.primary,
+              opacity: 0.8,
+            }}
+          />
+        )}
         <View style={{ position: 'absolute', bottom: 10, left: 0, right: 0, alignItems: 'center' }}>
           <Text
             style={{
@@ -100,7 +173,7 @@ export function MaintScanCamScreen() {
               overflow: 'hidden',
             }}
           >
-            Scanning...
+            {scanning ? 'Reading receipt…' : captured ? 'Ready to review' : 'Scanning...'}
           </Text>
         </View>
       </View>
@@ -127,8 +200,13 @@ export function MaintScanCamScreen() {
         </View>
       </View>
 
-      <PrimaryButton label="📷 Capture receipt" style={{ marginBottom: spacing.sm }} />
+      <PrimaryButton
+        label={captured === 'camera' ? '✓ Receipt captured — retake' : '📷 Capture receipt'}
+        onPress={() => setCaptured('camera')}
+        style={{ marginBottom: spacing.sm }}
+      />
       <Pressable
+        onPress={() => setCaptured('gallery')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
           borderWidth: StyleSheet.hairlineWidth,
@@ -140,12 +218,14 @@ export function MaintScanCamScreen() {
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>🗂 Gallery instead</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
+          {captured === 'gallery' ? '✓ Imported from gallery' : '🗂 Gallery instead'}
+        </Text>
       </Pressable>
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Pressable
-          onPress={() => navigation.goBack()}
+          onPress={() => (captured ? setCaptured(null) : navigation.goBack())}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.surface,

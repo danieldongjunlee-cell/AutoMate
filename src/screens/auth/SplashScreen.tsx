@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { LogoMark } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -129,10 +129,16 @@ export function SplashScreen() {
               opacity: pressed || socialLoading === provider ? 0.6 : 1,
             })}
           >
-            <Text style={{ fontSize: 16, fontWeight: '700', color: palette.textPrimary }}>
-              {icon}
-            </Text>
-            <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
+            {socialLoading === provider ? (
+              <ActivityIndicator size="small" color={palette.textPrimary} />
+            ) : (
+              <>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: palette.textPrimary }}>
+                  {icon}
+                </Text>
+                <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
+              </>
+            )}
           </Pressable>
         ))}
       </View>

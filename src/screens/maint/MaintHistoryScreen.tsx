@@ -2,10 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 import { FilterChips, PointsBadge } from '../../components/FilterChips';
+import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
@@ -148,7 +149,7 @@ export function MaintHistoryScreen() {
       <FilterChips options={HISTORY_TYPE_FILTERS} selected={typeFilter} onSelect={setTypeFilter} />
       <FilterChips options={HISTORY_TIME_FILTERS} selected={timeFilter} onSelect={setTimeFilter} />
       {isLoading ? (
-        <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xl }} />
+        <SkeletonList variant="row" count={5} />
       ) : visible.length === 0 ? (
         <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', padding: spacing.lg }}>
           No services match this filter.

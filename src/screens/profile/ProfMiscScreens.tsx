@@ -12,6 +12,7 @@ import {
   TERMS_SECTIONS,
   USER,
 } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-prof-linked-accounts. */
@@ -173,17 +174,18 @@ export function ProfPrivacyScreen() {
   return <LegalDoc sections={PRIVACY_SECTIONS} />;
 }
 
-/** Wireframe s-prof-language. */
+/** Wireframe s-prof-language (selection persisted in the app store). */
 export function ProfLanguageScreen() {
   const { colors } = useTheme();
-  const [selected, setSelected] = useState(LANGUAGES.findIndex((l) => l.selected));
+  const language = useAppStore((s) => s.language);
+  const setLanguage = useAppStore((s) => s.setLanguage);
   return (
     <Screen>
       <Card style={{ overflow: 'hidden' }}>
         {LANGUAGES.map((lang, i) => (
           <Pressable
             key={lang.name}
-            onPress={() => setSelected(i)}
+            onPress={() => setLanguage(lang.name)}
             style={({ pressed }) => ({
               flexDirection: 'row',
               alignItems: 'center',
@@ -198,12 +200,12 @@ export function ProfLanguageScreen() {
               style={{
                 flex: 1,
                 fontSize: 15,
-                color: i === selected ? colors.textPrimary : colors.textTertiary,
+                color: lang.name === language ? colors.textPrimary : colors.textTertiary,
               }}
             >
               {lang.name}
             </Text>
-            {i === selected ? (
+            {lang.name === language ? (
               <Text style={{ fontSize: 18, color: colors.primary }}>✔</Text>
             ) : null}
           </Pressable>
@@ -213,10 +215,11 @@ export function ProfLanguageScreen() {
   );
 }
 
-/** Wireframe s-prof-distance. */
+/** Wireframe s-prof-distance (selection persisted in the app store). */
 export function ProfDistanceScreen() {
   const { colors } = useTheme();
-  const [unit, setUnit] = useState<'mi' | 'km'>('mi');
+  const unit = useAppStore((s) => s.distanceUnit);
+  const setUnit = useAppStore((s) => s.setDistanceUnit);
   const rows = [
     { id: 'mi' as const, name: 'Miles', sub: 'Used in the United States' },
     { id: 'km' as const, name: 'Kilometers', sub: 'Used internationally' },

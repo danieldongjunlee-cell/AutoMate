@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
@@ -68,7 +68,12 @@ export function ProfEditProfileScreen() {
         >
           <Text style={{ fontSize: 34, fontWeight: '700', color: '#fff' }}>{USER.initial}</Text>
         </LinearGradient>
-        <Pressable hitSlop={8}>
+        <Pressable
+          onPress={() =>
+            Alert.alert('Change photo', 'Photo upload uses the device camera or gallery.')
+          }
+          hitSlop={8}
+        >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change photo</Text>
         </Pressable>
       </View>

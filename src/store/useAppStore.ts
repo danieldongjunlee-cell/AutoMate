@@ -71,6 +71,13 @@ interface AppState {
   darkMode: boolean;
   toggleDarkMode: () => void;
 
+  // App preferences (Settings → Language / Distance units). Stored here so the
+  // selection persists across navigation (device-level prefs — survive sign-out).
+  language: string;
+  setLanguage: (language: string) => void;
+  distanceUnit: 'mi' | 'km';
+  setDistanceUnit: (distanceUnit: 'mi' | 'km') => void;
+
   // Reward points (420 pts seed; earned by scans/logs/posts).
   // Single client cache — the points services (mock + api) keep it current.
   points: number;
@@ -139,6 +146,11 @@ export const useAppStore = create<AppState>((set) => ({
 
   darkMode: false,
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
+
+  language: 'English',
+  setLanguage: (language) => set({ language }),
+  distanceUnit: 'mi',
+  setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
 
   points: SEED_POINTS,
   addPoints: (n) => set((s) => ({ points: s.points + n })),

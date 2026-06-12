@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { BOOKING_MONTH } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -42,13 +42,13 @@ export function CalendarMonth({
           marginBottom: spacing.md,
         }}
       >
-        <View style={navBtn(colors.surfaceAlt)}>
+        <Pressable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
           <Text style={{ fontSize: 16, color: colors.textTertiary }}>‹</Text>
-        </View>
+        </Pressable>
         <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>{label}</Text>
-        <View style={navBtn(colors.surfaceAlt)}>
+        <Pressable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
           <Text style={{ fontSize: 16, color: colors.textTertiary }}>›</Text>
-        </View>
+        </Pressable>
       </View>
 
       {/* Weekday header */}
@@ -115,7 +115,11 @@ export function CalendarMonth({
   );
 }
 
-const navBtn = (bg: string) =>
+/** Month nav: only the demo month has live availability until the backend serves more. */
+const otherMonths = () =>
+  Alert.alert('April 2027', 'Only April 2027 has open slots in the demo — more months arrive with live dealer availability.');
+
+const navBtn = (bg: string, pressed?: boolean) =>
   ({
     width: 32,
     height: 32,
@@ -123,6 +127,7 @@ const navBtn = (bg: string) =>
     backgroundColor: bg,
     alignItems: 'center',
     justifyContent: 'center',
+    opacity: pressed ? 0.6 : 1,
   }) as const;
 
 /** Horizontal time-slot chips (single select). */

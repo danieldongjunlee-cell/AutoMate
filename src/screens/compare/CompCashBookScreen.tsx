@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { ProcessingOverlay } from '../../components/Skeleton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { CompareStackParamList } from '../../navigation/types';
@@ -110,7 +111,10 @@ export function CompCashBookScreen() {
         <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
           Visa ••••{PAYMENT_CARD.last4}
         </Text>
-        <Pressable hitSlop={8}>
+        <Pressable
+          onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfPayment')}
+          hitSlop={8}
+        >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change</Text>
         </Pressable>
       </View>
@@ -121,6 +125,7 @@ export function CompCashBookScreen() {
         loading={booking}
         onPress={onConfirm}
       />
+      <ProcessingOverlay visible={booking} label="Booking appointment…" />
     </Screen>
   );
 }

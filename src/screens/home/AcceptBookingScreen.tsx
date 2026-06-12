@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { ProcessingOverlay } from '../../components/Skeleton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTES, TIME_SLOTS } from '../../services/mock/data';
@@ -91,6 +92,7 @@ export function AcceptBookingScreen() {
         loading={booking}
         onPress={onConfirm}
       />
+      <ProcessingOverlay visible={booking} label="Booking appointment…" />
     </Screen>
   );
 }

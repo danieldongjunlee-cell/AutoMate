@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ProcessingOverlay } from '../../components/Skeleton';
 import { Card, SectionLabel, Screen } from '../../components/ui';
 import { UsePointsRow } from '../../components/UsePointsRow';
 import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
@@ -196,6 +197,7 @@ export function DiyPaymentScreen() {
           </LinearGradient>
         )}
       </Pressable>
+      <ProcessingOverlay visible={paying} label="Processing payment…" />
     </Screen>
   );
 }

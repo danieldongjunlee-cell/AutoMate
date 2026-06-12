@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, Quote, QUOTE_REQUEST } from '../../services/mock/data';
@@ -79,7 +80,10 @@ function PricePin({ quote, onPress }: { quote: Quote; onPress: () => void }) {
 export function AllQuotesMapScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const { data: quotes } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
+  const { data: quotes, isLoading } = useQuery({
+    queryKey: ['quotes'],
+    queryFn: quoteService.getQuotes,
+  });
 
   const goAccept = (dealerId: string) => navigation.navigate('AcceptBooking', { dealerId });
   const topPicks = quotes?.slice(0, 3) ?? [];
@@ -203,6 +207,7 @@ export function AllQuotesMapScreen() {
       </View>
 
       <SectionLabel>Top picks</SectionLabel>
+      {isLoading ? <SkeletonList variant="row" count={3} /> : null}
       {topPicks.map((q) => {
         const dealer = dealerById(q.dealerId);
         const tag = TIER_TAG[q.tier];

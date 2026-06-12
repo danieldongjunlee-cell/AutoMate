@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 
 import { radii, spacing, useTheme } from '../theme';
 
@@ -146,9 +146,16 @@ export function DiyGuideRow({
         {meta}
       </Text>
       {showLink ? (
-        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark, marginTop: 5 }}>
-          Read guide →
-        </Text>
+        <Pressable
+          onPress={() =>
+            Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`)
+          }
+          hitSlop={6}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark, marginTop: 5 }}>
+            Read guide →
+          </Text>
+        </Pressable>
       ) : null}
     </View>
   );

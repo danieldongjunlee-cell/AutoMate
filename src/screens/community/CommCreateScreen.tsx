@@ -146,8 +146,9 @@ export function CommCreateScreen() {
         Add photos
       </Text>
       <View style={{ flexDirection: 'row', gap: spacing.xs, alignItems: 'center', marginBottom: spacing.md }}>
-        <View
-          style={{
+        <Pressable
+          onPress={() => setHasPhoto(true)}
+          style={({ pressed }) => ({
             width: 64,
             height: 64,
             borderRadius: radii.sm,
@@ -158,13 +159,15 @@ export function CommCreateScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 2,
-          }}
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
           <Text style={{ fontSize: 20 }}>📷</Text>
           <Text style={{ fontSize: 9, fontWeight: '500', color: colors.primaryDark }}>Camera</Text>
-        </View>
-        <View
-          style={{
+        </Pressable>
+        <Pressable
+          onPress={() => setHasPhoto(true)}
+          style={({ pressed }) => ({
             width: 64,
             height: 64,
             borderRadius: radii.sm,
@@ -175,11 +178,12 @@ export function CommCreateScreen() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 2,
-          }}
+            opacity: pressed ? 0.7 : 1,
+          })}
         >
           <Text style={{ fontSize: 20 }}>🖼️</Text>
           <Text style={{ fontSize: 9, fontWeight: '500', color: colors.textTertiary }}>Gallery</Text>
-        </View>
+        </Pressable>
         {hasPhoto ? (
           <View
             style={{

@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useState } from 'react';
 import { Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
@@ -15,11 +15,22 @@ type Route = RouteProp<HomeStackParamList, 'DealerMap'>;
 const ADDRESS = '11020 Fairfax Blvd, Fairfax, VA 22030';
 const HOURS = 'Mon–Fri 8AM–6PM · Sat 8AM–4PM';
 
-/** Decorative zoom button on the stylized map. */
-function ZoomButton({ label }: { label: string }) {
+/** Zoom button on the stylized map — adjusts the map scale state. */
+function ZoomButton({
+  label,
+  onPress,
+  disabled,
+}: {
+  label: string;
+  onPress: () => void;
+  disabled?: boolean;
+}) {
   return (
-    <View
-      style={{
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      hitSlop={6}
+      style={({ pressed }) => ({
         width: 32,
         height: 32,
         backgroundColor: '#fff',
@@ -31,12 +42,17 @@ function ZoomButton({ label }: { label: string }) {
         shadowRadius: 3,
         shadowOffset: { width: 0, height: 1 },
         elevation: 2,
-      }}
+        opacity: disabled ? 0.45 : pressed ? 0.7 : 1,
+      })}
     >
       <Text style={{ fontSize: 16, fontWeight: '700', color: '#555' }}>{label}</Text>
-    </View>
+    </Pressable>
   );
 }
+
+const MIN_ZOOM = 0.6;
+const MAX_ZOOM = 1.8;
+const ZOOM_STEP = 0.2;
 
 /**
  * Wireframe s-dealer-map: dealer detail map (booking-confirm "View on map").
@@ -47,8 +63,11 @@ export function DealerMapScreen() {
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const dealer = dealerById(route.params?.dealerId);
+  const [zoom, setZoom] = useState(1);
 
   const driveMin = Math.max(3, Math.round(dealer.distanceMi * 5));
+  const zoomBy = (delta: number) =>
+    setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round((z + delta) * 10) / 10)));
 
   return (
     <Screen>
@@ -71,6 +90,17 @@ export function DealerMapScreen() {
           borderColor: '#C8D5CC',
         }}
       >
+        {/* Scaled map contents (zoom +/- adjusts this wrapper's scale) */}
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            transform: [{ scale: zoom }],
+          }}
+        >
         {/* Roads */}
         <View
           style={{
@@ -190,11 +220,12 @@ export function DealerMapScreen() {
             }}
           />
         </View>
+        </View>
 
         {/* Zoom controls */}
         <View style={{ position: 'absolute', bottom: 10, right: 10, gap: 6 }}>
-          <ZoomButton label="+" />
-          <ZoomButton label="−" />
+          <ZoomButton label="+" onPress={() => zoomBy(ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} />
+          <ZoomButton label="−" onPress={() => zoomBy(-ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} />
         </View>
 
         {/* Distance chip */}

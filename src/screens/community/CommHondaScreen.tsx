@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { PostCard } from '../../components/PostCard';
+import { SkeletonList } from '../../components/Skeleton';
 import { Screen } from '../../components/ui';
 import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
@@ -79,7 +80,7 @@ export function CommHondaScreen() {
       </View>
 
       {isLoading ? (
-        <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xxl }} />
+        <SkeletonList variant="card" count={3} tall />
       ) : (
         posts?.map((post) => (
           <PostCard

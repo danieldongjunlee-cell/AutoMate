@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { ProcessingOverlay } from '../../components/Skeleton';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { UsePointsRow } from '../../components/UsePointsRow';
 import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
@@ -190,6 +191,7 @@ export function MaintPaymentScreen() {
       </View>
 
       <PrimaryButton label={`Confirm & pay $${totalLabel} →`} loading={paying} onPress={onPay} />
+      <ProcessingOverlay visible={paying} label="Processing payment…" />
     </Screen>
   );
 }

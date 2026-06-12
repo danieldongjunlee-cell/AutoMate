@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { QuoteCard } from '../../components/QuoteCard';
+import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTE_REQUEST } from '../../services/mock/data';
@@ -145,7 +146,7 @@ export function DealerQuotesScreen() {
       <SectionLabel>All {QUOTE_REQUEST.quotesReceived} quotes — sorted by price</SectionLabel>
 
       {isLoading ? (
-        <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xxl }} />
+        <SkeletonList variant="card" count={4} />
       ) : (
         quotes?.map((quote, i) => (
           <React.Fragment key={quote.id}>

@@ -3,8 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
@@ -133,9 +134,7 @@ export function ProfInsuranceScreen() {
     <Screen>
       <SectionLabel>Your policies</SectionLabel>
       {isLoading ? (
-        <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
+        <SkeletonList variant="card" count={1} tall />
       ) : (
         (policies ?? []).map((policy) => (
           <PolicyCard

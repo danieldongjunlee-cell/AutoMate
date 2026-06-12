@@ -20,6 +20,8 @@ export function ProfSettingsScreen() {
   const { colors } = useTheme();
   const darkMode = useAppStore((s) => s.darkMode);
   const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
+  const language = useAppStore((s) => s.language);
+  const distanceUnit = useAppStore((s) => s.distanceUnit);
   const signOut = useAppStore((s) => s.signOut);
 
   // Wireframe defaults: community replies off, the rest on.
@@ -99,13 +101,13 @@ export function ProfSettingsScreen() {
         <SettingsRow
           icon="🌐"
           label="Language"
-          value="English"
+          value={language}
           onPress={() => navigation.navigate('ProfLanguage')}
         />
         <SettingsRow
           icon="📏"
           label="Distance units"
-          value="Miles"
+          value={distanceUnit === 'mi' ? 'Miles' : 'Kilometers'}
           onPress={() => navigation.navigate('ProfDistance')}
           last
         />

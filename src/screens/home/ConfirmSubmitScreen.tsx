@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, SectionLabel, Screen } from '../../components/ui';
@@ -110,6 +110,79 @@ function PartCard({
   );
 }
 
+/** Staged copy shown while the AI service call is in flight. */
+const ANALYZE_STAGES = [
+  '🔍 Analyzing your photos…',
+  `📡 Contacting ${QUOTE_REQUEST.shopsNotified} shops…`,
+];
+
+/** In-screen AI analyzing state: pulsing 🤖 + staged status text (wireframe-consistent). */
+function AnalyzingState({ partCount }: { partCount: number }) {
+  const { colors } = useTheme();
+  const [stage, setStage] = useState(0);
+  const pulse = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1.18,
+          duration: 520,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 520,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+    loop.start();
+    // Stage copy flips halfway through the (~2s) service call.
+    const t = setTimeout(() => setStage(1), 1100);
+    return () => {
+      loop.stop();
+      clearTimeout(t);
+    };
+  }, [pulse]);
+
+  return (
+    <View style={{ alignItems: 'center', paddingVertical: 72 }}>
+      <Animated.Text style={{ fontSize: 58, transform: [{ scale: pulse }] }}>🤖</Animated.Text>
+      <Text
+        style={{
+          fontSize: 17,
+          fontWeight: '700',
+          color: colors.primaryDeep,
+          marginTop: spacing.lg,
+          marginBottom: 6,
+        }}
+      >
+        {ANALYZE_STAGES[stage]}
+      </Text>
+      <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
+        AI is estimating repair costs for {partCount} part{partCount !== 1 ? 's' : ''}
+      </Text>
+      {/* Stage dots */}
+      <View style={{ flexDirection: 'row', gap: 7, marginTop: spacing.lg }}>
+        {ANALYZE_STAGES.map((_, i) => (
+          <View
+            key={i}
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: i <= stage ? colors.primary : colors.border,
+            }}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+
 /** Wireframe s-confirm-submit: multi-part list built by looping the single-select flow. */
 export function ConfirmSubmitScreen() {
   const navigation = useNavigation<Nav>();
@@ -124,15 +197,30 @@ export function ConfirmSubmitScreen() {
 
   const onSubmit = async () => {
     setSubmitting(true);
-    // The service decides after-hours routing (backend-owned rule).
-    const { afterHours, pointsEarned, aiEstimate } =
-      await quoteService.submitDamageRequest(damageParts);
-    addPoints(pointsEarned);
-    // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
-    setAiEstimate(aiEstimate ?? null);
-    setSubmitting(false);
-    navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
+    try {
+      // The service decides after-hours routing (backend-owned rule). Pad to a
+      // ~2s minimum so the analyzing stages read (mock resolves instantly).
+      const [{ afterHours, pointsEarned, aiEstimate }] = await Promise.all([
+        quoteService.submitDamageRequest(damageParts),
+        new Promise((r) => setTimeout(r, 2000)),
+      ]);
+      addPoints(pointsEarned);
+      // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
+      setAiEstimate(aiEstimate ?? null);
+      navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  // In-screen analyzing state while the AI service call runs.
+  if (submitting) {
+    return (
+      <Screen>
+        <AnalyzingState partCount={damageParts.length} />
+      </Screen>
+    );
+  }
 
   return (
     <Screen>
