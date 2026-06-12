@@ -2,9 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
+import { ApplePaySheet } from '../../components/ApplePaySheet';
 import { ProcessingOverlay } from '../../components/Skeleton';
+import { Tappable } from '../../components/Tappable';
 import { Card, SectionLabel, Screen } from '../../components/ui';
 import { UsePointsRow } from '../../components/UsePointsRow';
 import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
@@ -27,6 +29,7 @@ export function DiyPaymentScreen() {
   const [method, setMethod] = useState<'card' | 'apple'>('card');
   const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [applePayOpen, setApplePayOpen] = useState(false);
 
   // Redemption: up to min(balance, total × 100) points (1 pt = $0.01).
   const maxRedeemable = Math.min(points, Math.round(PRO_PRICE_USD * POINTS_PER_USD));
@@ -122,7 +125,7 @@ export function DiyPaymentScreen() {
 
       <SectionLabel>Pay with</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={() => setMethod('card')}
           style={{
             flexDirection: 'row',
@@ -147,9 +150,14 @@ export function DiyPaymentScreen() {
           ) : (
             <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
           )}
-        </Pressable>
-        <Pressable
-          onPress={() => setMethod('apple')}
+        </Tappable>
+        <Tappable
+          onPress={() => {
+            setMethod('apple');
+            // Apple Pay option → simulated  Pay sheet; confirming completes
+            // the same onPay path.
+            setApplePayOpen(true);
+          }}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -171,10 +179,13 @@ export function DiyPaymentScreen() {
           ) : (
             <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
           )}
-        </Pressable>
+        </Tappable>
       </Card>
 
-      <Pressable onPress={onPay} disabled={paying}>
+      <Tappable
+        onPress={() => (method === 'apple' ? setApplePayOpen(true) : onPay())}
+        disabled={paying}
+      >
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.warning, '#F5B947']}
@@ -196,8 +207,14 @@ export function DiyPaymentScreen() {
             )}
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
       <ProcessingOverlay visible={paying} label="Processing payment…" />
+      <ApplePaySheet
+        visible={applePayOpen}
+        onClose={() => setApplePayOpen(false)}
+        onConfirmed={onPay}
+        totalLabel={`$${payTotal.toFixed(2)}`}
+      />
     </Screen>
   );
 }

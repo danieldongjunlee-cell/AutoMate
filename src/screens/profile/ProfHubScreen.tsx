@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
@@ -48,7 +50,7 @@ export function ProfHubScreen() {
     to: keyof ProfileStackParamList,
     extra?: React.ReactNode,
   ) => (
-    <Pressable
+    <Tappable
       key={title}
       onPress={() => navigation.navigate(to as never)}
       style={({ pressed }) => ({
@@ -82,7 +84,7 @@ export function ProfHubScreen() {
       </View>
       {extra}
       <Text style={{ fontSize: 18, color: colors.textTertiary }}>›</Text>
-    </Pressable>
+    </Tappable>
   );
 
   return (
@@ -122,7 +124,7 @@ export function ProfHubScreen() {
       </View>
 
       {/* Points card */}
-      <Pressable onPress={() => navigation.navigate('ProfMiles')}>
+      <Tappable onPress={() => navigation.navigate('ProfMiles')}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.primary, palette.primaryDark]}
@@ -200,7 +202,7 @@ export function ProfHubScreen() {
             </View>
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
 
       <SectionLabel>Account details</SectionLabel>
       {accountRow('🚗', colors.primarySurface, 'My cars', VEHICLE.name, 'ProfCars')}

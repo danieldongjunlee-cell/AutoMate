@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { QuoteCard } from '../../components/QuoteCard';
 import { SkeletonList } from '../../components/Skeleton';
@@ -30,7 +32,7 @@ export function DealerQuotesScreen() {
   const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
   const mapLink = (
-    <Pressable
+    <Tappable
       onPress={() => navigation.navigate('AllQuotesMap')}
       style={({ pressed }) => ({
         backgroundColor: palette.aiPanel,
@@ -53,7 +55,7 @@ export function DealerQuotesScreen() {
         </Text>
       </View>
       <Text style={{ fontSize: 18, color: 'rgba(255,255,255,.7)' }}>→</Text>
-    </Pressable>
+    </Tappable>
   );
 
   return (

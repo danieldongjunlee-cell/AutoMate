@@ -2,12 +2,13 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { LogoMark } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
+import { Tappable } from '../../components/Tappable';
 import { AuthStackParamList } from '../../navigation/types';
-import { authService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';
@@ -17,14 +18,8 @@ type Nav = NativeStackNavigationProp<AuthStackParamList, 'Splash'>;
 export function SplashScreen() {
   const navigation = useNavigation<Nav>();
   const signIn = useAppStore((s) => s.signIn);
-  const [socialLoading, setSocialLoading] = useState<'apple' | 'google' | null>(null);
-
-  const onSocial = async (provider: 'apple' | 'google') => {
-    setSocialLoading(provider);
-    const { ok } = await authService.socialLogIn(provider);
-    setSocialLoading(null);
-    if (ok) signIn();
-  };
+  // Branded chooser sheet (user-feedback pass 1) instead of an inline spinner.
+  const [sheetProvider, setSheetProvider] = useState<SocialProvider | null>(null);
 
   return (
     <AuthScreenShell centered>
@@ -74,22 +69,21 @@ export function SplashScreen() {
         onPress={() => navigation.navigate('SignUp')}
         style={{ marginBottom: spacing.sm }}
       />
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('LogIn')}
-        style={({ pressed }) => ({
+        style={{
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,.3)',
           borderRadius: radii.md,
           paddingVertical: 14,
           alignItems: 'center',
           marginBottom: spacing.lg,
-          opacity: pressed ? 0.7 : 1,
-        })}
+        }}
       >
         <Text style={{ color: 'rgba(255,255,255,.85)', fontSize: 15 }}>
           I already have an account
         </Text>
-      </Pressable>
+      </Tappable>
 
       {/* Divider */}
       <View
@@ -105,7 +99,7 @@ export function SplashScreen() {
         <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,.18)' }} />
       </View>
 
-      {/* Social buttons */}
+      {/* Social buttons → branded chooser sheets */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         {(
           [
@@ -113,11 +107,10 @@ export function SplashScreen() {
             { provider: 'google', icon: 'G', label: 'Google' },
           ] as const
         ).map(({ provider, icon, label }) => (
-          <Pressable
+          <Tappable
             key={provider}
-            onPress={() => onSocial(provider)}
-            disabled={socialLoading !== null}
-            style={({ pressed }) => ({
+            onPress={() => setSheetProvider(provider)}
+            style={{
               flex: 1,
               flexDirection: 'row',
               alignItems: 'center',
@@ -126,22 +119,24 @@ export function SplashScreen() {
               backgroundColor: '#fff',
               borderRadius: radii.md,
               paddingVertical: 13,
-              opacity: pressed || socialLoading === provider ? 0.6 : 1,
-            })}
+            }}
           >
-            {socialLoading === provider ? (
-              <ActivityIndicator size="small" color={palette.textPrimary} />
-            ) : (
-              <>
-                <Text style={{ fontSize: 16, fontWeight: '700', color: palette.textPrimary }}>
-                  {icon}
-                </Text>
-                <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
-              </>
-            )}
-          </Pressable>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: palette.textPrimary }}>
+              {icon}
+            </Text>
+            <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
+          </Tappable>
         ))}
       </View>
+
+      <SocialSignInSheet
+        provider={sheetProvider}
+        onClose={() => setSheetProvider(null)}
+        onSignedIn={() => {
+          setSheetProvider(null);
+          signIn(); // → Home
+        }}
+      />
     </AuthScreenShell>
   );
 }

@@ -1,7 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleProp, Text, TextStyle, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleProp, Text, TextStyle, ViewStyle } from 'react-native';
 
 import { palette, radii, spacing, useTheme } from '../theme';
+import { Tappable } from './Tappable';
 
 type Variant = 'primary' | 'auth' | 'outline' | 'success' | 'warning' | 'danger';
 
@@ -44,20 +45,20 @@ export function PrimaryButton({
   };
 
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       disabled={disabled || loading}
-      style={({ pressed }) => [
+      style={() => [
         {
           backgroundColor: bg[variant],
           borderRadius: radii.md,
           paddingVertical: 14,
           paddingHorizontal: spacing.lg,
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: 'center' as const,
+          justifyContent: 'center' as const,
           borderWidth: variant === 'outline' ? 1 : 0,
           borderColor: colors.border,
-          opacity: disabled ? 0.4 : pressed ? 0.8 : 1,
+          opacity: disabled ? 0.4 : 1,
         },
         style,
       ]}
@@ -69,6 +70,6 @@ export function PrimaryButton({
           {label}
         </Text>
       )}
-    </Pressable>
+    </Tappable>
   );
 }

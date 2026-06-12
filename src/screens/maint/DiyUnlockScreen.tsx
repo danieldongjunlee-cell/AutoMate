@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Card, SectionLabel, Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
@@ -124,7 +126,7 @@ export function DiyUnlockScreen() {
         <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text>
       </View>
 
-      <Pressable onPress={() => navigation.navigate('DiyPayment')}>
+      <Tappable onPress={() => navigation.navigate('DiyPayment')}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.warning, '#F5B947']}
@@ -143,7 +145,7 @@ export function DiyUnlockScreen() {
             </Text>
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
       <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textTertiary }}>
         One-time charge · 30-day money-back guarantee
       </Text>

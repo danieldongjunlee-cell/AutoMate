@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
@@ -74,7 +76,7 @@ export function MaintDashboardScreen() {
       </LinearGradient>
 
       {/* Car info */}
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('MaintHistory')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
@@ -140,10 +142,10 @@ export function MaintDashboardScreen() {
             Oil due ~{VEHICLE.oilDueInMi} mi
           </Text>
         </View>
-      </Pressable>
+      </Tappable>
 
       {/* DIY tips */}
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('MaintDiy')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
@@ -193,10 +195,10 @@ export function MaintDashboardScreen() {
             </View>
           ))}
         </View>
-      </Pressable>
+      </Tappable>
 
       {/* Book a service */}
-      <Pressable onPress={() => navigation.navigate('MaintSchedule')}>
+      <Tappable onPress={() => navigation.navigate('MaintSchedule')}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.primary, palette.primaryDark]}
@@ -222,7 +224,7 @@ export function MaintDashboardScreen() {
             <Text style={{ fontSize: 22, color: 'rgba(255,255,255,.8)' }}>→</Text>
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
 
       {/* Upcoming services */}
       <SectionLabel>Upcoming services</SectionLabel>

@@ -8,7 +8,8 @@ export const SCREEN_TITLES: Record<string, string> = {
   Splash: 'Splash', // s-splash
   SignUp: 'Create account', // s-signup
   LogIn: 'Welcome back', // s-login
-  VerifyOtp: 'Verify phone', // s-verify-otp
+  VerifyMethod: 'Verify your account', // ➕ app-only (user-feedback pass 1)
+  VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   Home: 'Home', // s-home
   CarDiagram: 'Select damaged part', // s-car-diagram
   PhotoExample: 'Photo guide', // s-photo-example

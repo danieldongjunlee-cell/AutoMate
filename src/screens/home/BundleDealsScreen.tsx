@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -225,7 +227,7 @@ export function BundleDealsScreen() {
                 ))}
               </View>
             )}
-            <Pressable
+            <Tappable
               onPress={() => claim(deal.dealerId)}
               style={({ pressed }) => ({
                 backgroundColor: deal.ctaBg,
@@ -236,7 +238,7 @@ export function BundleDealsScreen() {
               })}
             >
               <Text style={{ fontSize: 15, fontWeight: '700', color: deal.ctaFg }}>{deal.cta}</Text>
-            </Pressable>
+            </Tappable>
           </View>
         </View>
       ))}

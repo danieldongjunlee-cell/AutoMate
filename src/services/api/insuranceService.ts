@@ -56,6 +56,10 @@ export const insuranceService = {
     return { ok: r.ok, policy: toPolicy(r.policy) };
   },
 
+  async removePolicy(id: string): Promise<{ ok: boolean }> {
+    return request<{ ok: boolean }>(`/profile/policies/${id}`, { method: 'DELETE' });
+  },
+
   async scanCard(): Promise<ScannedInsuranceCard> {
     // The RN camera is still simulated, so no file is attached yet; the
     // server forwards a placeholder to damage-ai /insurance-card and returns

@@ -2,7 +2,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
@@ -107,7 +109,8 @@ export function CompDeepDiveScreen() {
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
             {dealer.name} — Rear bumper
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          {/* Price range is primary info — secondary tier (feedback pass 1) */}
+          <Text style={{ fontSize: 12, color: colors.textSecondary }}>
             ${aq.priceLow}–${aq.priceHigh} est. · {INSURANCE_POLICY.carrier} {usd(input.deductible)}{' '}
             ded.
           </Text>
@@ -304,7 +307,7 @@ export function CompDeepDiveScreen() {
           overflow: 'hidden',
         }}
       >
-        <Pressable
+        <Tappable
           onPress={() => setAssumptionsOpen((open) => !open)}
           style={({ pressed }) => ({
             flexDirection: 'row',
@@ -321,7 +324,7 @@ export function CompDeepDiveScreen() {
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             {assumptionsOpen ? '▾' : '▸'}
           </Text>
-        </Pressable>
+        </Tappable>
         {assumptionsOpen ? (
           <View
             style={{

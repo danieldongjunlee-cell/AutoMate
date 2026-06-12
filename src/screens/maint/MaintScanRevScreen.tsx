@@ -2,7 +2,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -108,12 +110,12 @@ export function MaintScanRevScreen() {
               <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
                 {receipt[key]}
               </Text>
-              <Pressable
+              <Tappable
                 onPress={() => Alert.alert('Edit field', 'Field editing arrives with real OCR.')}
                 hitSlop={8}
               >
                 <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
-              </Pressable>
+              </Tappable>
             </View>
           </View>
         ))}

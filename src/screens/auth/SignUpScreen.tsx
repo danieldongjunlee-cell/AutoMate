@@ -13,21 +13,35 @@ import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
 
+/** Password rules surfaced as a live ✓/✗ checklist (user-feedback pass 1). */
+const PASSWORD_RULES: { label: string; test: (pw: string) => boolean }[] = [
+  { label: 'At least 8 characters', test: (pw) => pw.length >= 8 },
+  { label: 'One uppercase letter', test: (pw) => /[A-Z]/.test(pw) },
+  { label: 'One number', test: (pw) => /\d/.test(pw) },
+];
+
 export function SignUpScreen() {
   const navigation = useNavigation<Nav>();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const canSubmit = fullName.trim() && email.trim() && phone.trim() && password.length >= 6;
+  const rules = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
+  const rulesPass = rules.every((r) => r.ok);
+  const matches = password.length > 0 && password === confirm;
+  const showMismatch = confirm.length > 0 && !matches;
+
+  const canSubmit = !!(fullName.trim() && email.trim() && phone.trim() && rulesPass && matches);
 
   const onSubmit = async () => {
     setLoading(true);
     await authService.signUp({ fullName, email, phone, password });
     setLoading(false);
-    navigation.navigate('VerifyOtp');
+    // Verification-method choice shows the actual entered email/phone.
+    navigation.navigate('VerifyMethod', { email: email.trim(), phone: phone.trim() });
   };
 
   return (
@@ -78,8 +92,38 @@ export function SignUpScreen() {
         onChangeText={setPassword}
         placeholder="••••••••"
         autoCapitalize="none"
-        containerStyle={{ marginBottom: spacing.xl }}
+        containerStyle={{ marginBottom: spacing.sm }}
       />
+
+      {/* Live password-rules checklist */}
+      <View style={{ marginBottom: spacing.md, gap: 4 }}>
+        {rules.map(({ label, ok }) => (
+          <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: ok ? '#5DCFAA' : '#F09595' }}>
+              {ok ? '✓' : '✗'}
+            </Text>
+            <Text style={{ fontSize: 13, color: ok ? '#5DCFAA' : 'rgba(255,255,255,.6)' }}>
+              {label}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      <TextField
+        label="Confirm password"
+        onDark
+        secure
+        value={confirm}
+        onChangeText={setConfirm}
+        placeholder="••••••••"
+        autoCapitalize="none"
+        containerStyle={{ marginBottom: showMismatch ? spacing.xs : spacing.xl }}
+      />
+      {showMismatch ? (
+        <Text style={{ fontSize: 13, color: '#F09595', marginBottom: spacing.lg }}>
+          Passwords don't match
+        </Text>
+      ) : null}
 
       <PrimaryButton
         label="Create account"

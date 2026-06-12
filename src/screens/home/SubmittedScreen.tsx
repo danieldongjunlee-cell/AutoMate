@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Badge, Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -94,14 +96,14 @@ export function SubmittedScreen() {
         }}
       >
         <Text style={{ fontSize: 22 }}>🔔</Text>
-        <Pressable style={{ flex: 1 }} onPress={() => navigation.navigate('DealerQuotes')}>
+        <Tappable style={{ flex: 1 }} onPress={() => navigation.navigate('DealerQuotes')}>
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
             {notifyEnabled
               ? "Alerts on — we'll ping you per quote"
               : 'Notify me when quotes arrive'}
           </Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() => setNotifyEnabled(true)}
           disabled={notifyEnabled}
           style={({ pressed }) => ({
@@ -121,7 +123,7 @@ export function SubmittedScreen() {
           >
             {notifyEnabled ? 'Enabled ✓' : 'Enable'}
           </Text>
-        </Pressable>
+        </Tappable>
       </View>
 
       {/* AI Repair Recommendation (Pro) */}

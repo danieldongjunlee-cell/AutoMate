@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
@@ -29,7 +31,7 @@ function PricePin({ quote, onPress }: { quote: Quote; onPress: () => void }) {
     quote.tier === 'best' ? BEST_GREEN : quote.tier === 'recommended' ? palette.primary : '#fff';
   const pillFg = quote.tier === 'other' ? palette.textPrimary : '#fff';
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={{
         position: 'absolute',
@@ -68,7 +70,7 @@ function PricePin({ quote, onPress }: { quote: Quote; onPress: () => void }) {
           {tag}
         </Text>
       ) : null}
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -213,7 +215,7 @@ export function AllQuotesMapScreen() {
         const tag = TIER_TAG[q.tier];
         const tinted = q.tier !== 'other';
         return (
-          <Pressable
+          <Tappable
             key={q.id}
             onPress={() => goAccept(q.dealerId)}
             style={({ pressed }) => ({
@@ -277,7 +279,7 @@ export function AllQuotesMapScreen() {
             >
               ${q.price}
             </Text>
-          </Pressable>
+          </Tappable>
         );
       })}
     </Screen>

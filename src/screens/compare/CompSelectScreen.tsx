@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CompareStackParamList } from '../../navigation/types';
@@ -36,7 +38,7 @@ export function CompSelectScreen() {
       {ACCEPTED_QUOTES.map((aq, i) => {
         const dealer = dealerById(aq.dealerId);
         return (
-          <Pressable
+          <Tappable
             key={aq.id}
             onPress={() => navigation.navigate('CompCashIns', { quoteId: aq.id })}
             style={({ pressed }) => ({
@@ -88,7 +90,7 @@ export function CompSelectScreen() {
                 ✔ Accepted · {aq.acceptedOn}
               </Text>
             </View>
-          </Pressable>
+          </Tappable>
         );
       })}
 

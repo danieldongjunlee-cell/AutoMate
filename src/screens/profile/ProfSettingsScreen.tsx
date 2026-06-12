@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Alert, Modal, Pressable, Text, View } from 'react-native';
+import { Alert, Modal, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { SettingsRow, TogglePill } from '../../components/SettingsRow';
 import { Card, Screen, SectionLabel } from '../../components/ui';
@@ -121,7 +123,7 @@ export function ProfSettingsScreen() {
       </Card>
 
       {/* Sign out */}
-      <Pressable
+      <Tappable
         onPress={() => setSheetVisible(true)}
         style={({ pressed }) => ({
           backgroundColor: colors.dangerSurface,
@@ -135,13 +137,13 @@ export function ProfSettingsScreen() {
         })}
       >
         <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>Sign out</Text>
-      </Pressable>
-      <Pressable
+      </Tappable>
+      <Tappable
         onPress={() => Alert.alert('Delete account', 'Account deletion comes with the backend.')}
         style={{ alignItems: 'center', marginBottom: spacing.sm }}
       >
         <Text style={{ fontSize: 13, color: colors.disabled }}>Delete account</Text>
-      </Pressable>
+      </Tappable>
       <Text style={{ fontSize: 12, color: colors.disabled, textAlign: 'center' }}>
         AutoMate v1.0.0 · Build 2027.1
       </Text>
@@ -153,11 +155,11 @@ export function ProfSettingsScreen() {
         animationType="slide"
         onRequestClose={() => setSheetVisible(false)}
       >
-        <Pressable
+        <Tappable
           style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.55)', justifyContent: 'flex-end' }}
           onPress={() => setSheetVisible(false)}
         >
-          <Pressable
+          <Tappable
             onPress={(e) => e.stopPropagation()}
             style={{
               backgroundColor: colors.card,
@@ -198,7 +200,7 @@ export function ProfSettingsScreen() {
             >
               You'll need to log back in.
             </Text>
-            <Pressable
+            <Tappable
               onPress={() => {
                 setSheetVisible(false);
                 signOut();
@@ -213,8 +215,8 @@ export function ProfSettingsScreen() {
               })}
             >
               <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>Sign out</Text>
-            </Pressable>
-            <Pressable
+            </Tappable>
+            <Tappable
               onPress={() => setSheetVisible(false)}
               style={({ pressed }) => ({
                 backgroundColor: colors.surface,
@@ -227,9 +229,9 @@ export function ProfSettingsScreen() {
               })}
             >
               <Text style={{ fontSize: 15, color: colors.textSecondary }}>Cancel</Text>
-            </Pressable>
-          </Pressable>
-        </Pressable>
+            </Tappable>
+          </Tappable>
+        </Tappable>
       </Modal>
     </Screen>
   );

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -75,7 +77,7 @@ export function MaintManualScreen() {
         {MANUAL_SERVICE_TYPES.map((type) => {
           const on = type === serviceType;
           return (
-            <Pressable
+            <Tappable
               key={type}
               onPress={() => setServiceType(type)}
               style={({ pressed }) => ({
@@ -91,7 +93,7 @@ export function MaintManualScreen() {
               <Text style={{ fontSize: 13, color: on ? colors.onPrimary : colors.textTertiary }}>
                 {type}
               </Text>
-            </Pressable>
+            </Tappable>
           );
         })}
       </View>

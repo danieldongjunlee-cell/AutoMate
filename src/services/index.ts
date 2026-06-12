@@ -15,18 +15,22 @@ import { compareService as apiCompareService } from './api/compareService';
 import { insuranceService as apiInsuranceService } from './api/insuranceService';
 import { maintService as apiMaintService } from './api/maintService';
 import { notificationService as apiNotificationService } from './api/notificationService';
+import { paymentMethodsService as apiPaymentMethodsService } from './api/paymentMethodsService';
 import { pointsService as apiPointsService } from './api/pointsService';
 import { proService as apiProService } from './api/proService';
 import { quoteService as apiQuoteService } from './api/quoteService';
+import { vehiclesService as apiVehiclesService } from './api/vehiclesService';
 import { authService as mockAuthService } from './mock/authService';
 import { communityService as mockCommunityService } from './mock/communityService';
 import { compareService as mockCompareService } from './mock/compareService';
 import { insuranceService as mockInsuranceService } from './mock/insuranceService';
 import { maintService as mockMaintService } from './mock/maintService';
 import { notificationService as mockNotificationService } from './mock/notificationService';
+import { paymentMethodsService as mockPaymentMethodsService } from './mock/paymentMethodsService';
 import { pointsService as mockPointsService } from './mock/pointsService';
 import { proService as mockProService } from './mock/proService';
 import { quoteService as mockQuoteService } from './mock/quoteService';
+import { vehiclesService as mockVehiclesService } from './mock/vehiclesService';
 
 /** True when the app talks to the real server (EXPO_PUBLIC_API_URL set). */
 export const USE_API = apiEnabled;
@@ -50,10 +54,18 @@ export const insuranceService: typeof mockInsuranceService = USE_API
 export const pointsService: typeof mockPointsService = USE_API
   ? apiPointsService
   : mockPointsService;
+export const vehiclesService: typeof mockVehiclesService = USE_API
+  ? apiVehiclesService
+  : mockVehiclesService;
+export const paymentMethodsService: typeof mockPaymentMethodsService = USE_API
+  ? apiPaymentMethodsService
+  : mockPaymentMethodsService;
 
 // Shared constants/types that screens use alongside the services.
 export { DEMO_EMAIL, DEMO_OTP, DEMO_PASSWORD, MOCK_PHONE } from './mock/authService';
-export type { SignUpInput } from './mock/authService';
+export type { SignUpInput, VerifyChannel } from './mock/authService';
+export type { Vehicle, VehicleInput } from './mock/vehiclesService';
+export type { PaymentCard, PaymentCardInput } from './mock/paymentMethodsService';
 export { isAfterHours } from './mock/quoteService';
 export type { AppNotification } from './mock/notificationService';
 export type { Comparison, ComparisonRequest } from './mock/compareService';

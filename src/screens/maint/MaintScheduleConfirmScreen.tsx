@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useRef } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
@@ -82,7 +84,7 @@ export function MaintScheduleConfirmScreen() {
       <ReminderRow sub="Day before at 9:00 AM" />
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={onDone}
           style={({ pressed }) => ({
             flex: 1,
@@ -94,8 +96,8 @@ export function MaintScheduleConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>Done</Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() => Alert.alert('Calendar', 'Calendar export will use the device calendar.')}
           style={({ pressed }) => ({
             flex: 1,
@@ -109,7 +111,7 @@ export function MaintScheduleConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Add to calendar</Text>
-        </Pressable>
+        </Tappable>
       </View>
     </Screen>
   );

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { pointsToUsd } from '../config/points';
 import { radii, spacing, useTheme } from '../theme';
@@ -25,7 +27,7 @@ export function FilterChips({
       {options.map((option) => {
         const on = option === selected;
         return (
-          <Pressable
+          <Tappable
             key={option}
             onPress={() => onSelect(option)}
             style={({ pressed }) => ({
@@ -47,7 +49,7 @@ export function FilterChips({
             >
               {option}
             </Text>
-          </Pressable>
+          </Tappable>
         );
       })}
     </ScrollView>

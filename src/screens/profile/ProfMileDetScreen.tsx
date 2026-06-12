@@ -1,6 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
@@ -95,7 +97,7 @@ export function ProfMileDetScreen() {
               </View>
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.xs }}>
-              <Pressable
+              <Tappable
                 onPress={() => Alert.alert('Directions', 'Opens the device maps app when wired.')}
                 style={({ pressed }) => ({
                   flex: 1,
@@ -107,8 +109,8 @@ export function ProfMileDetScreen() {
                 })}
               >
                 <Text style={{ fontSize: 13, color: colors.primaryDark }}>Get directions</Text>
-              </Pressable>
-              <Pressable
+              </Tappable>
+              <Tappable
                 onPress={() =>
                   Alert.alert(
                     'Redeem',
@@ -127,7 +129,7 @@ export function ProfMileDetScreen() {
                 <Text style={{ fontSize: 13, fontWeight: '500', color: colors.onPrimary }}>
                   Redeem here
                 </Text>
-              </Pressable>
+              </Tappable>
             </View>
           </View>
         );

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
@@ -99,7 +101,7 @@ export function CommCreateScreen() {
         {POST_CATEGORIES.map((cat) => {
           const on = cat === category;
           return (
-            <Pressable
+            <Tappable
               key={cat}
               onPress={() => setCategory(cat)}
               style={({ pressed }) => ({
@@ -115,7 +117,7 @@ export function CommCreateScreen() {
               <Text style={{ fontSize: 13, color: on ? colors.onPrimary : colors.textTertiary }}>
                 {cat}
               </Text>
-            </Pressable>
+            </Tappable>
           );
         })}
       </View>
@@ -146,7 +148,7 @@ export function CommCreateScreen() {
         Add photos
       </Text>
       <View style={{ flexDirection: 'row', gap: spacing.xs, alignItems: 'center', marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={() => setHasPhoto(true)}
           style={({ pressed }) => ({
             width: 64,
@@ -164,8 +166,8 @@ export function CommCreateScreen() {
         >
           <Text style={{ fontSize: 20 }}>📷</Text>
           <Text style={{ fontSize: 9, fontWeight: '500', color: colors.primaryDark }}>Camera</Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() => setHasPhoto(true)}
           style={({ pressed }) => ({
             width: 64,
@@ -183,7 +185,7 @@ export function CommCreateScreen() {
         >
           <Text style={{ fontSize: 20 }}>🖼️</Text>
           <Text style={{ fontSize: 9, fontWeight: '500', color: colors.textTertiary }}>Gallery</Text>
-        </Pressable>
+        </Tappable>
         {hasPhoto ? (
           <View
             style={{
@@ -196,7 +198,7 @@ export function CommCreateScreen() {
             }}
           >
             <Text style={{ fontSize: 24 }}>🚗</Text>
-            <Pressable
+            <Tappable
               onPress={() => setHasPhoto(false)}
               hitSlop={6}
               style={{
@@ -212,7 +214,7 @@ export function CommCreateScreen() {
               }}
             >
               <Text style={{ fontSize: 10, color: '#fff' }}>✕</Text>
-            </Pressable>
+            </Tappable>
           </View>
         ) : null}
         <Text style={{ flex: 1, fontSize: 12, color: colors.textPlaceholder, textAlign: 'center' }}>

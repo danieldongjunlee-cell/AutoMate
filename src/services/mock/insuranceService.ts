@@ -131,6 +131,12 @@ export const insuranceService = {
     return { ok: true, policy };
   },
 
+  async removePolicy(id: string): Promise<{ ok: boolean }> {
+    await delay(350);
+    policies = policies.filter((p) => p.id !== id);
+    return { ok: true };
+  },
+
   /** "OCR" an insurance card — autofills the prof-ins-add form after a scan
    * delay (api twin posts to /insurance/scan-card → damage-ai). */
   async scanCard(): Promise<ScannedInsuranceCard> {

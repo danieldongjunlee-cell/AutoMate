@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -9,6 +11,7 @@ import { TextField } from '../../components/TextField';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService, DEMO_EMAIL, DEMO_PASSWORD } from '../../services';
 import { spacing } from '../../theme';
+import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'LogIn'>;
@@ -29,7 +32,7 @@ export function LogInScreen() {
       await authService.logIn(email, password);
       navigation.navigate('VerifyOtp');
     } catch (err) {
-      Alert.alert('Sign in failed', err instanceof Error ? err.message : 'Please try again.');
+      showAlert('Sign in failed', err instanceof Error ? err.message : 'Please try again.');
     } finally {
       setLoading(false);
     }
@@ -68,15 +71,15 @@ export function LogInScreen() {
         containerStyle={{ marginBottom: spacing.sm }}
       />
 
-      <Pressable
+      <Tappable
         onPress={() =>
-          Alert.alert('Forgot password', 'Password reset will be wired to the backend later.')
+          showAlert('Forgot password', 'Password reset will be wired to the backend later.')
         }
         style={{ alignSelf: 'flex-end', marginBottom: spacing.xl }}
         hitSlop={8}
       >
         <Text style={{ fontSize: 13, color: '#7FB1E8' }}>Forgot password?</Text>
-      </Pressable>
+      </Tappable>
 
       <PrimaryButton
         label="Sign in"

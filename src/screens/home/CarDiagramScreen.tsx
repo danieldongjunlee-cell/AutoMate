@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Badge, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -33,7 +35,7 @@ function PartTile({
   const fg = selected ? '#fff' : colors.textSecondary;
 
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         flex: vertical ? 1 : undefined,
@@ -61,7 +63,7 @@ function PartTile({
       >
         {selected ? `✔ ${cell.name}` : cell.name}
       </Text>
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -191,7 +193,7 @@ export function CarDiagramScreen() {
               {draftPart ? `${draftPart} selected` : 'Tap a part above to select'}
             </Text>
           </View>
-          <Pressable
+          <Tappable
             disabled={!draftPart}
             onPress={() => navigation.navigate('PhotoExample')}
             style={({ pressed }) => ({
@@ -203,7 +205,7 @@ export function CarDiagramScreen() {
             })}
           >
             <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Continue →</Text>
-          </Pressable>
+          </Tappable>
         </View>
       </Screen>
     </View>

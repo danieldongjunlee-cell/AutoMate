@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { spacing, useTheme } from '../theme';
 
@@ -21,7 +23,7 @@ export function SettingsRow({
 }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       disabled={!onPress}
       style={({ pressed }) => ({
@@ -42,7 +44,7 @@ export function SettingsRow({
         <Text style={{ fontSize: 12, color: colors.textTertiary, marginRight: 8 }}>{value}</Text>
       ) : null}
       {right ?? (onPress ? <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text> : null)}
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -50,7 +52,7 @@ export function SettingsRow({
 export function TogglePill({ value, onToggle }: { value: boolean; onToggle: () => void }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={onToggle}
       hitSlop={8}
       style={{
@@ -71,6 +73,6 @@ export function TogglePill({ value, onToggle }: { value: boolean; onToggle: () =
           backgroundColor: '#fff',
         }}
       />
-    </Pressable>
+    </Tappable>
   );
 }

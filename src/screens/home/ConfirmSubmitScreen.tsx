@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, SectionLabel, Screen } from '../../components/ui';
@@ -25,7 +27,7 @@ function ActionChip({
 }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         flex: 1,
@@ -47,7 +49,7 @@ function ActionChip({
       >
         {label}
       </Text>
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -279,7 +281,7 @@ export function ConfirmSubmitScreen() {
       </View>
 
       {/* Add another part (loops back through the single-select flow) */}
-      <Pressable
+      <Tappable
         onPress={() => {
           resetDraft(); // fresh pass: nothing pre-selected on the diagram
           navigation.navigate('CarDiagram');
@@ -303,7 +305,7 @@ export function ConfirmSubmitScreen() {
         <Text style={{ fontSize: 12, color: colors.textTertiary }}>
           Each part gets its own photos & quotes
         </Text>
-      </Pressable>
+      </Tappable>
 
       {/* Submit */}
       <PrimaryButton

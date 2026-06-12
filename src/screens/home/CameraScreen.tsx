@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
@@ -72,7 +74,7 @@ export function CameraScreen() {
         {DAMAGE_TYPES.map((t) => {
           const on = t === draftType;
           return (
-            <Pressable
+            <Tappable
               key={t}
               onPress={() => setDraftType(t)}
               style={({ pressed }) => ({
@@ -94,13 +96,13 @@ export function CameraScreen() {
               >
                 {t}
               </Text>
-            </Pressable>
+            </Tappable>
           );
         })}
       </View>
 
       {/* Viewfinder */}
-      <Pressable onPress={addPhoto}>
+      <Tappable onPress={addPhoto}>
         {({ pressed }) => (
           <LinearGradient
             colors={['#1A1A1A', '#111']}
@@ -151,7 +153,7 @@ export function CameraScreen() {
             <Bracket pos="br" />
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
 
       {/* Photo slots */}
       <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>
@@ -191,7 +193,7 @@ export function CameraScreen() {
           }
           const isNext = i === photoCount;
           return (
-            <Pressable
+            <Tappable
               key={`slot-${i}`}
               onPress={isNext ? addPhoto : undefined}
               style={{
@@ -209,7 +211,7 @@ export function CameraScreen() {
               <Text style={{ fontSize: 10, color: isNext ? colors.textTertiary : colors.disabled }}>
                 Angle {i + 1}
               </Text>
-            </Pressable>
+            </Tappable>
           );
         })}
         <View
@@ -232,7 +234,7 @@ export function CameraScreen() {
 
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={addPhoto}
           style={({ pressed }) => ({
             flex: 1,
@@ -246,7 +248,7 @@ export function CameraScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>📁 Upload</Text>
-        </Pressable>
+        </Tappable>
         <PrimaryButton
           label="Submit photos →"
           disabled={!canSubmit}

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { BookableService } from '../services/mock/data';
 import { spacing, useTheme } from '../theme';
@@ -18,7 +20,7 @@ export function ServiceSelectRow({
 }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={onToggle}
       style={({ pressed }) => ({
         flexDirection: 'row',
@@ -59,6 +61,6 @@ export function ServiceSelectRow({
         </Text>
         <Text style={{ fontSize: 18, color: selected ? colors.primary : colors.disabled }}>✔</Text>
       </View>
-    </Pressable>
+    </Tappable>
   );
 }

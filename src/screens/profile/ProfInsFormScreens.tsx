@@ -2,7 +2,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
@@ -60,7 +62,7 @@ function FormField({
         {label}
       </Text>
       {picker ? (
-        <Pressable
+        <Tappable
           onPress={onPress}
           style={{
             flexDirection: 'row',
@@ -81,7 +83,7 @@ function FormField({
             {value || placeholder}
           </Text>
           <Text style={{ fontSize: 13, color: colors.primary }}>▾</Text>
-        </Pressable>
+        </Tappable>
       ) : (
         <View
           style={{
@@ -112,7 +114,7 @@ function CarrierOptions({ onSelect }: { onSelect: (carrier: string) => void }) {
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: spacing.sm }}>
       {CARRIERS.map((c) => (
-        <Pressable
+        <Tappable
           key={c}
           onPress={() => onSelect(c)}
           style={({ pressed }) => ({
@@ -125,7 +127,7 @@ function CarrierOptions({ onSelect }: { onSelect: (carrier: string) => void }) {
           })}
         >
           <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textSecondary }}>{c}</Text>
-        </Pressable>
+        </Tappable>
       ))}
     </View>
   );
@@ -286,7 +288,7 @@ export function ProfInsEditScreen() {
       ) : null}
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={() => navigation.goBack()}
           style={({ pressed }) => ({
             flex: 1,
@@ -300,8 +302,8 @@ export function ProfInsEditScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Cancel</Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={save}
           disabled={saving}
           style={({ pressed }) => ({
@@ -316,7 +318,7 @@ export function ProfInsEditScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
             {saving ? 'Saving…' : 'Save changes'}
           </Text>
-        </Pressable>
+        </Tappable>
       </View>
     </Screen>
   );
@@ -431,7 +433,7 @@ export function ProfInsAddScreen() {
     <Screen>
       {/* Method picker */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={scanCard}
           disabled={scanning}
           style={({ pressed }) => ({
@@ -456,7 +458,7 @@ export function ProfInsAddScreen() {
           <Text style={{ fontSize: 11, color: colors.primaryDark }}>
             {scanned ? 'Fields filled below' : 'Auto-fill in seconds'}
           </Text>
-        </Pressable>
+        </Tappable>
         <View
           style={{
             flex: 1,
@@ -529,7 +531,7 @@ export function ProfInsAddScreen() {
           </Text>
         </View>
         {(providers ?? []).map((p, i, arr) => (
-          <Pressable
+          <Tappable
             key={p.id}
             onPress={() => connect(p.id)}
             disabled={connectingId !== null}
@@ -567,7 +569,7 @@ export function ProfInsAddScreen() {
             ) : (
               <Text style={{ fontSize: 13, color: colors.primary }}>Connect →</Text>
             )}
-          </Pressable>
+          </Tappable>
         ))}
       </Card>
 
@@ -577,7 +579,7 @@ export function ProfInsAddScreen() {
         </Text>
       ) : null}
 
-      <Pressable
+      <Tappable
         onPress={addPolicy}
         disabled={saving}
         style={({ pressed }) => ({
@@ -591,7 +593,7 @@ export function ProfInsAddScreen() {
         <Text style={{ fontSize: 15, fontWeight: '700', color: colors.onPrimary }}>
           {saving ? 'Adding…' : 'Add policy'}
         </Text>
-      </Pressable>
+      </Tappable>
     </Screen>
   );
 }

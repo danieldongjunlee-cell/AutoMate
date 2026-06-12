@@ -1,7 +1,9 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { Alert, Share, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 import Svg, { Path } from 'react-native-svg';
 
 import { AvatarCircle, Badge, Card } from '../../components/ui';
@@ -26,7 +28,7 @@ function ZoomButton({
   disabled?: boolean;
 }) {
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       disabled={disabled}
       hitSlop={6}
@@ -46,7 +48,7 @@ function ZoomButton({
       })}
     >
       <Text style={{ fontSize: 16, fontWeight: '700', color: '#555' }}>{label}</Text>
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -294,7 +296,7 @@ export function DealerMapScreen() {
 
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={() =>
             Alert.alert('Get directions', `Turn-by-turn navigation to ${ADDRESS} opens in your maps app.`)
           }
@@ -308,8 +310,8 @@ export function DealerMapScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>🧭 Get directions</Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() =>
             Share.share({ message: `${dealer.name} Service Center — ${ADDRESS}` }).catch(() => {})
           }
@@ -325,7 +327,7 @@ export function DealerMapScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Share</Text>
-        </Pressable>
+        </Tappable>
       </View>
     </Screen>
   );

@@ -25,7 +25,8 @@ export function stackScreenOptions(theme: Theme): NativeStackNavigationOptions {
       fontSize: 17,
       fontWeight: '600',
     },
-    headerTintColor: theme.colors.textTertiary,
+    // High-contrast back chevron (user feedback: the tertiary tint was hard to see).
+    headerTintColor: theme.colors.textPrimary,
     headerShadowVisible: false,
     headerBackButtonDisplayMode: 'minimal',
     contentStyle: { backgroundColor: theme.colors.background },

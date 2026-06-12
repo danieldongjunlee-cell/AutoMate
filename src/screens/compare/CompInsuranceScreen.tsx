@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { CompareStackParamList } from '../../navigation/types';
 import { INSURANCE_POLICY } from '../../services/mock/data';
@@ -123,7 +125,7 @@ export function CompInsuranceScreen() {
 
         {/* Actions */}
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-          <Pressable
+          <Tappable
             onPress={() =>
               Alert.alert('Call insurer', 'Calling will be wired to the device dialer.')
             }
@@ -139,8 +141,8 @@ export function CompInsuranceScreen() {
             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
               📞 Call now
             </Text>
-          </Pressable>
-          <Pressable
+          </Tappable>
+          <Tappable
             onPress={() => navigation.goBack()}
             style={({ pressed }) => ({
               flex: 1,
@@ -154,7 +156,7 @@ export function CompInsuranceScreen() {
             })}
           >
             <Text style={{ fontSize: 14, color: colors.textSecondary }}>Dismiss</Text>
-          </Pressable>
+          </Tappable>
         </View>
       </View>
     </Screen>

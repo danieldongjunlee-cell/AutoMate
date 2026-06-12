@@ -21,6 +21,9 @@ export interface SignUpInput {
   password: string;
 }
 
+/** Verification channel chosen on the VerifyMethod screen. */
+export type VerifyChannel = 'email' | 'sms';
+
 const DEMO_USER = { name: 'John Doe', email: DEMO_EMAIL };
 
 /** Whoever just passed login/sign-up — becomes store.user after the OTP. */
@@ -56,7 +59,13 @@ export const authService = {
     return { otpSentTo: MOCK_PHONE };
   },
 
-  async socialLogIn(_provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
+  /** Send the code via the channel picked on VerifyMethod (email or SMS). */
+  async sendCode(_method: VerifyChannel, destination: string): Promise<{ otpSentTo: string }> {
+    await delay(500);
+    return { otpSentTo: destination };
+  },
+
+  async socialSignIn(_provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
     await delay(700);
     useAppStore.getState().setAuth('mock-session-token', DEMO_USER);
     return { ok: true };

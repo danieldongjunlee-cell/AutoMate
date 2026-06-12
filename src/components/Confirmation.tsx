@@ -1,5 +1,7 @@
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { radii, spacing, useTheme } from '../theme';
 
@@ -94,12 +96,12 @@ export function ReminderRow({ sub }: { sub: string }) {
         </Text>
         <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
       </View>
-      <Pressable
+      <Tappable
         onPress={() => Alert.alert('Reminder', 'Reminder editing comes with the backend.')}
         hitSlop={6}
       >
         <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
-      </Pressable>
+      </Tappable>
     </View>
   );
 }

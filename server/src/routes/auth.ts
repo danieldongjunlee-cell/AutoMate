@@ -60,13 +60,18 @@ authRouter.post('/verify-otp', async (req, res) => {
   });
 });
 
-// POST /auth/resend-otp { email }
+// POST /auth/resend-otp { email, method?, destination? }
+// method/destination back the VerifyMethod screen (email vs SMS choice); when
+// given, the chosen destination is echoed back as otpSentTo.
 authRouter.post('/resend-otp', async (req, res) => {
-  const { email } = req.body ?? {};
+  const { email, method, destination } = req.body ?? {};
   const user = email
     ? await prisma.user.findUnique({ where: { email: String(email).toLowerCase() } })
     : null;
-  return res.json({ otpSentTo: otpDestination(user?.phone ?? null) });
+  return res.json({
+    otpSentTo: destination ? String(destination) : otpDestination(user?.phone ?? null),
+    method: method === 'email' ? 'email' : 'sms',
+  });
 });
 
 // POST /auth/social { provider } — demo shortcut: signs in as the seeded demo

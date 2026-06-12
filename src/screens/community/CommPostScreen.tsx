@@ -2,7 +2,9 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useRef, useState } from 'react';
-import { Pressable, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Share, StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { CategoryBadge } from '../../components/PostCard';
 import { SkeletonCard, SkeletonList } from '../../components/Skeleton';
@@ -126,7 +128,7 @@ export function CommPostScreen() {
             borderTopColor: colors.divider,
           }}
         >
-          <Pressable onPress={() => setPostLiked((l) => !l)} hitSlop={6}>
+          <Tappable onPress={() => setPostLiked((l) => !l)} hitSlop={6}>
             <Text
               style={{
                 fontSize: 13,
@@ -136,14 +138,14 @@ export function CommPostScreen() {
             >
               {postLiked ? '❤️' : '🤍'} {post.likes + (postLiked ? 1 : 0)}
             </Text>
-          </Pressable>
+          </Tappable>
           <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primary }}>
             💬 {replyCount} replies
           </Text>
           <View style={{ flex: 1 }} />
-          <Pressable onPress={sharePost} hitSlop={6}>
+          <Tappable onPress={sharePost} hitSlop={6}>
             <Text style={{ fontSize: 13, color: colors.textTertiary }}>Share</Text>
-          </Pressable>
+          </Tappable>
         </View>
       </View>
 
@@ -168,7 +170,7 @@ export function CommPostScreen() {
                 <Text style={{ fontWeight: '600', color: colors.textPrimary }}>{c.author}</Text>
                 <Text style={{ color: colors.textTertiary }}> {c.car}</Text>
               </Text>
-              <Pressable onPress={() => toggleCommentLike(c.id)} hitSlop={6}>
+              <Tappable onPress={() => toggleCommentLike(c.id)} hitSlop={6}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -178,20 +180,20 @@ export function CommPostScreen() {
                 >
                   {liked ? '❤️' : '🤍'} {c.likes + (liked ? 1 : 0)}
                 </Text>
-              </Pressable>
+              </Tappable>
             </View>
             <Text
               style={{ fontSize: 13, color: colors.textPrimary, lineHeight: 19, marginLeft: 36 }}
             >
               {c.body}
             </Text>
-            <Pressable
+            <Tappable
               onPress={() => startReply(c.author)}
               style={{ marginLeft: 36, marginTop: 4 }}
               hitSlop={6}
             >
               <Text style={{ fontSize: 12, color: colors.primary }}>Reply</Text>
-            </Pressable>
+            </Tappable>
           </View>
         );
       })}
@@ -222,11 +224,11 @@ export function CommPostScreen() {
           returnKeyType="send"
           style={{ flex: 1, fontSize: 14, color: colors.textPrimary, paddingVertical: 0 }}
         />
-        <Pressable onPress={sendComment} hitSlop={8}>
+        <Tappable onPress={sendComment} hitSlop={8}>
           <Text style={{ fontSize: 18, color: draft.trim() ? colors.primary : colors.disabled }}>
             ➤
           </Text>
-        </Pressable>
+        </Tappable>
       </View>
     </Screen>
   );

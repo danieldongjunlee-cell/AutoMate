@@ -1,7 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
@@ -95,7 +97,7 @@ export function BookingConfirmScreen() {
 
       {/* Actions — wireframe v15.10: "View on map" → dealer-map */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={() => Alert.alert('Calendar', 'Calendar export will use the device calendar.')}
           style={({ pressed }) => ({
             flex: 1,
@@ -109,8 +111,8 @@ export function BookingConfirmScreen() {
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>
             Add to calendar
           </Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() => navigation.navigate('DealerMap', { dealerId: dealer.id })}
           style={({ pressed }) => ({
             flex: 1,
@@ -126,7 +128,7 @@ export function BookingConfirmScreen() {
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
             View on map
           </Text>
-        </Pressable>
+        </Tappable>
       </View>
     </Screen>
   );

@@ -6,7 +6,9 @@ export type AuthStackParamList = {
   Splash: undefined;
   SignUp: undefined;
   LogIn: undefined;
-  VerifyOtp: undefined;
+  /** Pick how to receive the code — shows the actual sign-up email/phone. */
+  VerifyMethod: { email: string; phone: string };
+  VerifyOtp: { method: 'email' | 'sms'; destination: string } | undefined;
 };
 
 export type HomeStackParamList = {

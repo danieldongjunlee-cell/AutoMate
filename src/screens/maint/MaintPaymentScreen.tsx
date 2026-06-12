@@ -1,10 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { ApplePaySheet } from '../../components/ApplePaySheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProcessingOverlay } from '../../components/Skeleton';
+import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { UsePointsRow } from '../../components/UsePointsRow';
 import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
@@ -30,6 +32,7 @@ export function MaintPaymentScreen() {
   const [method, setMethod] = useState<PayMethod>('visa');
   const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [applePayOpen, setApplePayOpen] = useState(false);
 
   const { total, totalMin } = cartTotals(cart);
 
@@ -132,10 +135,15 @@ export function MaintPaymentScreen() {
         ).map(({ id, icon, name, sub }, i) => {
           const on = method === id;
           return (
-            <Pressable
+            <Tappable
               key={id}
-              onPress={() => setMethod(id)}
-              style={({ pressed }) => ({
+              onPress={() => {
+                setMethod(id);
+                // The Apple Pay option opens the simulated  Pay sheet;
+                // confirming it completes the same payment path (onPay).
+                if (id === 'applepay') setApplePayOpen(true);
+              }}
+              style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 padding: spacing.md,
@@ -144,8 +152,7 @@ export function MaintPaymentScreen() {
                 borderLeftColor: on ? colors.primary : 'transparent',
                 borderBottomWidth: i === 0 ? StyleSheet.hairlineWidth : 0,
                 borderBottomColor: colors.divider,
-                opacity: pressed ? 0.7 : 1,
-              })}
+              }}
             >
               <Text style={{ fontSize: 20, marginRight: spacing.sm }}>{icon}</Text>
               <View style={{ flex: 1 }}>
@@ -165,7 +172,7 @@ export function MaintPaymentScreen() {
               <Text style={{ fontSize: 18, color: on ? colors.primary : colors.disabled }}>
                 {on ? '✔' : '›'}
               </Text>
-            </Pressable>
+            </Tappable>
           );
         })}
       </Card>
@@ -190,8 +197,18 @@ export function MaintPaymentScreen() {
         </Text>
       </View>
 
-      <PrimaryButton label={`Confirm & pay $${totalLabel} →`} loading={paying} onPress={onPay} />
+      <PrimaryButton
+        label={`Confirm & pay $${totalLabel} →`}
+        loading={paying}
+        onPress={() => (method === 'applepay' ? setApplePayOpen(true) : onPay())}
+      />
       <ProcessingOverlay visible={paying} label="Processing payment…" />
+      <ApplePaySheet
+        visible={applePayOpen}
+        onClose={() => setApplePayOpen(false)}
+        onConfirmed={onPay}
+        totalLabel={`$${totalLabel}`}
+      />
     </Screen>
   );
 }

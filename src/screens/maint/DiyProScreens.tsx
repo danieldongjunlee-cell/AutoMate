@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -35,7 +37,7 @@ export function ProBadge() {
 export function ProGuideRow({ guide }: { guide: ProGuide }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={() =>
         Alert.alert(
           `${guide.icon} ${guide.title}`,
@@ -75,7 +77,7 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
           {guide.difficulty}
         </Text>
       </View>
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -143,7 +145,7 @@ export function DiyMatchScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', gap: 6 }}>
-          <Pressable
+          <Tappable
             onPress={() => navigation.navigate('DiyGuides')}
             style={({ pressed }) => ({
               flex: 1,
@@ -155,8 +157,8 @@ export function DiyMatchScreen() {
             })}
           >
             <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>Open guide</Text>
-          </Pressable>
-          <Pressable
+          </Tappable>
+          <Tappable
             onPress={() => navigateCrossTab(navigation, 'HomeTab', 'DealerQuotes')}
             style={({ pressed }) => ({
               flex: 1,
@@ -170,7 +172,7 @@ export function DiyMatchScreen() {
             })}
           >
             <Text style={{ fontSize: 13, color: colors.textSecondary }}>Compare to quotes</Text>
-          </Pressable>
+          </Tappable>
         </View>
       </View>
 
@@ -310,7 +312,7 @@ export function DiyFutureScreen() {
               </Text>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>{g.sub}</Text>
             </View>
-            <Pressable
+            <Tappable
               onPress={() => setVoted((v) => ({ ...v, [g.id]: !v[g.id] }))}
               style={({ pressed }) => ({
                 backgroundColor: on ? colors.primary : colors.primarySurface,
@@ -335,7 +337,7 @@ export function DiyFutureScreen() {
               <Text style={{ fontSize: 10, color: on ? colors.onPrimary : colors.textTertiary }}>
                 votes
               </Text>
-            </Pressable>
+            </Tappable>
           </Card>
         );
       })}

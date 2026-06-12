@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
@@ -82,7 +84,7 @@ function HelpArticle({
       {children}
 
       {hideContactCta ? null : (
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('HelpContact')}
           style={({ pressed }) => ({
             backgroundColor: colors.surface,
@@ -98,7 +100,7 @@ function HelpArticle({
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark }}>
             Still need help? Contact support →
           </Text>
-        </Pressable>
+        </Tappable>
       )}
     </Screen>
   );
@@ -224,7 +226,7 @@ export function HelpContactScreen() {
       ]}
     >
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xs }}>
-        <Pressable
+        <Tappable
           onPress={() => Alert.alert('Start chat', 'Live chat connects to support with the backend.')}
           style={({ pressed }) => ({
             flex: 1,
@@ -238,8 +240,8 @@ export function HelpContactScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
             💬 Start chat
           </Text>
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() =>
             Alert.alert('Email us', 'Opens a draft to support@automate.app with the backend.')
           }
@@ -255,7 +257,7 @@ export function HelpContactScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>✉️ Email us</Text>
-        </Pressable>
+        </Tappable>
       </View>
     </HelpArticle>
   );

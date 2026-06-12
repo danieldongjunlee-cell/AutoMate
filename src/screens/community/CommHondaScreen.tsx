@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PostCard } from '../../components/PostCard';
 import { SkeletonList } from '../../components/Skeleton';
@@ -28,7 +30,7 @@ export function CommHondaScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('CommCreate')}
           style={({ pressed }) => ({
             backgroundColor: colors.primary,
@@ -45,7 +47,7 @@ export function CommHondaScreen() {
           <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>
             +{EARN_RULES.communityPost} pts · {pointsToUsd(EARN_RULES.communityPost)}
           </Text>
-        </Pressable>
+        </Tappable>
       ),
     });
   }, [navigation, colors]);

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { Screen } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
@@ -44,7 +46,7 @@ export function ProfMilesScreen() {
       {MILESTONES.map((m) => {
         const pct = Math.min(100, (points / m.costPts) * 100);
         return (
-          <Pressable
+          <Tappable
             key={m.id}
             onPress={() => navigation.navigate('ProfMileDet')}
             style={({ pressed }) => ({
@@ -98,7 +100,7 @@ export function ProfMilesScreen() {
                 style={{ width: `${Math.max(pct, 1.5)}%`, height: '100%', borderRadius: 5 }}
               />
             </View>
-          </Pressable>
+          </Tappable>
         );
       })}
     </Screen>

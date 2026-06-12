@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LogoRow } from '../../components/Logo';
@@ -43,7 +45,7 @@ function ScheduledServiceCard({
   const { colors } = useTheme();
   const paid = statusVariant === 'paid';
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         backgroundColor: colors.surface,
@@ -128,7 +130,7 @@ function ScheduledServiceCard({
           </Text>
         </View>
       </View>
-    </Pressable>
+    </Tappable>
   );
 }
 
@@ -182,7 +184,7 @@ export function HomeScreen() {
         }}
       >
         <LogoRow markSize={32} textSize={18} />
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('Notifications')}
           style={({ pressed }) => ({
             width: 38,
@@ -211,11 +213,11 @@ export function HomeScreen() {
               }}
             />
           ) : null}
-        </Pressable>
+        </Tappable>
       </View>
 
       {/* Streak banner → How you earn */}
-      <Pressable onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfEarn')}>
+      <Tappable onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfEarn')}>
         <LinearGradient
           colors={[palette.primary, palette.primaryDark]}
           start={{ x: 0, y: 0 }}
@@ -258,7 +260,7 @@ export function HomeScreen() {
             </View>
           </View>
         </LinearGradient>
-      </Pressable>
+      </Tappable>
 
       {/* Daily check-in award banner (dismissible, shown once per day) */}
       {checkIn?.awarded && !checkInDismissed ? (
@@ -281,14 +283,14 @@ export function HomeScreen() {
             Daily check-in +{checkIn.pointsEarned} pts ({pointsToUsd(checkIn.pointsEarned)}) · Day{' '}
             {checkIn.streakDay} streak
           </Text>
-          <Pressable onPress={() => setCheckInDismissed(true)} hitSlop={8}>
+          <Tappable onPress={() => setCheckInDismissed(true)} hitSlop={8}>
             <Text style={{ fontSize: 14, color: colors.warningDeep }}>✕</Text>
-          </Pressable>
+          </Tappable>
         </View>
       ) : null}
 
       {/* Hero: Get a Repair Estimate */}
-      <Pressable
+      <Tappable
         onPress={() => {
           // A new estimate always starts clean (wireframe: "0 selected").
           resetDamageFlow();
@@ -327,7 +329,7 @@ export function HomeScreen() {
             Take photos · Dealers quote you · Book or call
           </Text>
         </LinearGradient>
-      </Pressable>
+      </Tappable>
 
       {/* Bundle deal teaser */}
       <LinearGradient
@@ -344,7 +346,7 @@ export function HomeScreen() {
         <Text style={{ fontSize: 15, fontWeight: '500', color: '#fff', marginBottom: spacing.sm }}>
           Honda Fairfax Summer Bundle
         </Text>
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('BundleDeals')}
           style={({ pressed }) => ({
             backgroundColor: palette.warning,
@@ -358,12 +360,12 @@ export function HomeScreen() {
           <Text style={{ fontSize: 13, fontWeight: '600', color: palette.dark }}>
             Claim deal →
           </Text>
-        </Pressable>
+        </Tappable>
       </LinearGradient>
 
       {/* Pending quotes */}
       <SectionLabel>Pending quotes</SectionLabel>
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('DealerQuotes')}
         style={({ pressed }) => ({
           backgroundColor: colors.primarySurface,
@@ -400,7 +402,7 @@ export function HomeScreen() {
           variant="warning"
           style={{ backgroundColor: palette.warning }}
         />
-      </Pressable>
+      </Tappable>
 
       {/* Scheduled services (wireframe v15.10) */}
       <SectionLabel style={{ marginTop: spacing.lg }}>Scheduled services</SectionLabel>

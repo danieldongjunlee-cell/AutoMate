@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SectionLabel, Screen } from '../../components/ui';
@@ -61,7 +63,7 @@ export function DiyConfirmScreen() {
 
       <SectionLabel>Explore your benefits</SectionLabel>
       {BENEFIT_LINKS.map((b) => (
-        <Pressable
+        <Tappable
           key={b.route}
           onPress={() => navigation.navigate(b.route)}
           style={({ pressed }) => ({
@@ -85,7 +87,7 @@ export function DiyConfirmScreen() {
             <Text style={{ fontSize: 12, color: colors.textTertiary }}>{b.sub}</Text>
           </View>
           <Text style={{ fontSize: 17, color: colors.primary }}>→</Text>
-        </Pressable>
+        </Tappable>
       ))}
 
       <PrimaryButton

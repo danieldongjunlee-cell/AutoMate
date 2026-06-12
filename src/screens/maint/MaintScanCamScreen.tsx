@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -205,7 +207,7 @@ export function MaintScanCamScreen() {
         onPress={() => setCaptured('camera')}
         style={{ marginBottom: spacing.sm }}
       />
-      <Pressable
+      <Tappable
         onPress={() => setCaptured('gallery')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
@@ -221,10 +223,10 @@ export function MaintScanCamScreen() {
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           {captured === 'gallery' ? '✓ Imported from gallery' : '🗂 Gallery instead'}
         </Text>
-      </Pressable>
+      </Tappable>
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={() => (captured ? setCaptured(null) : navigation.goBack())}
           style={({ pressed }) => ({
             flex: 1,
@@ -238,7 +240,7 @@ export function MaintScanCamScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>← Retake</Text>
-        </Pressable>
+        </Tappable>
         <PrimaryButton label="Review scan →" loading={scanning} onPress={onReview} style={{ flex: 2 }} />
       </View>
     </Screen>

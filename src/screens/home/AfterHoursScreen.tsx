@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
@@ -243,7 +245,7 @@ export function AfterHoursScreen() {
         onPress={() => navigation.navigate('DealerQuotes')}
         style={{ marginBottom: spacing.sm }}
       />
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('Home')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
@@ -256,7 +258,7 @@ export function AfterHoursScreen() {
         })}
       >
         <Text style={{ fontSize: 14, color: colors.textSecondary }}>🏠 Back to home</Text>
-      </Pressable>
+      </Tappable>
     </Screen>
   );
 }

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { FilterChips } from '../../components/FilterChips';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
@@ -61,7 +63,7 @@ export function MaintDiyScreen() {
               </>
             );
             return isPriceChip ? (
-              <Pressable
+              <Tappable
                 key={s.label}
                 onPress={() => navigation.navigate('DiyUnlock')}
                 style={({ pressed }) => ({
@@ -76,7 +78,7 @@ export function MaintDiyScreen() {
                 })}
               >
                 {inner}
-              </Pressable>
+              </Tappable>
             ) : (
               <View
                 key={s.label}

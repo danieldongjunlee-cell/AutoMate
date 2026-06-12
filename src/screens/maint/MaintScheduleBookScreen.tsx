@@ -63,7 +63,7 @@ export function MaintScheduleBookScreen() {
         ))}
       </Card>
 
-      {/* Running total */}
+      {/* Running total — explicit, right-aligned emphasized amount (feedback pass 1) */}
       <View
         style={{
           backgroundColor: colors.primarySurface,
@@ -71,19 +71,37 @@ export function MaintScheduleBookScreen() {
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: colors.primaryLight,
           padding: spacing.sm,
+          paddingHorizontal: spacing.md,
           flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'space-between',
           gap: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 16 }}>💰</Text>
-        <View>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
-            {count} service{count !== 1 ? 's' : ''} selected
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <Text style={{ fontSize: 16 }}>💰</Text>
+          <View>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
+              {count} service{count !== 1 ? 's' : ''} selected
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.primaryDark }}>~{totalMin} min</Text>
+          </View>
+        </View>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '700',
+              letterSpacing: 0.6,
+              textTransform: 'uppercase',
+              color: colors.primaryDark,
+            }}
+          >
+            Total
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>
-            Total: ${total} · ~{totalMin} min
+          <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>
+            ${total}
           </Text>
         </View>
       </View>

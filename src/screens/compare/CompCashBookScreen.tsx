@@ -1,7 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -111,12 +113,12 @@ export function CompCashBookScreen() {
         <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
           Visa ••••{PAYMENT_CARD.last4}
         </Text>
-        <Pressable
+        <Tappable
           onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfPayment')}
           hitSlop={8}
         >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change</Text>
-        </Pressable>
+        </Tappable>
       </View>
 
       <PrimaryButton

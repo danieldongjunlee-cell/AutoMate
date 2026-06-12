@@ -4,7 +4,7 @@
  * subsequent request is authenticated.
  */
 import { useAppStore } from '../../store/useAppStore';
-import { DEMO_EMAIL, SignUpInput } from '../mock/authService';
+import { DEMO_EMAIL, SignUpInput, VerifyChannel } from '../mock/authService';
 import { ApiError, request } from './client';
 
 interface SessionResponse {
@@ -54,8 +54,16 @@ export const authService = {
     return request<{ otpSentTo: string }>('/auth/resend-otp', { body: { email: pendingEmail } });
   },
 
+  /** Channel-aware resend (VerifyMethod). Hits /auth/resend-otp with the
+   * method+destination params the server echoes back. */
+  async sendCode(method: VerifyChannel, destination: string): Promise<{ otpSentTo: string }> {
+    return request<{ otpSentTo: string }>('/auth/resend-otp', {
+      body: { email: pendingEmail, method, destination },
+    });
+  },
+
   /** Demo shortcut: the server signs social logins in as the seeded user. */
-  async socialLogIn(provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
+  async socialSignIn(provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
     try {
       const res = await request<SessionResponse>('/auth/social', { body: { provider } });
       useAppStore.getState().setAuth(res.token, res.user);

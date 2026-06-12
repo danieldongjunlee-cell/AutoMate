@@ -30,15 +30,17 @@ bar) are listed once at the top instead of 68×.
 |---|---|---|---|---|
 | s-splash | Get started → | `nav('signup')` | `SplashScreen` → SignUp | ✅ |
 | s-splash | I already have an account | (cursor) → login | → LogIn, pre-filled demo creds | ✅ |
-| s-splash | Apple social button | (cursor) | `authService.socialLogIn('apple')` mock sign-in, in-button spinner | ✅ |
-| s-splash | Google social button | (cursor) | `authService.socialLogIn('google')` mock sign-in, in-button spinner | ✅ |
-| s-signup | Create account | `nav('verify-otp')` | `authService.signUp` (loading) → VerifyOtp | ✅ |
+| s-splash | Apple social button | (cursor) | branded Apple ID sheet (`SocialSignInSheet`) → Continue → `authService.socialSignIn('apple')` → Home | ✅ |
+| s-splash | Google social button | (cursor) | branded Google account chooser (`SocialSignInSheet`) → demo account → `authService.socialSignIn('google')` → Home; "Use another account" alert | ✅ |
+| s-signup | ➕ Confirm password field + live rules checklist | (feedback pass 1) | ✓/✗ rows (8 chars / uppercase / number); mismatch shows red helper | ✅ |
+| s-signup | Create account | `nav('verify-otp')` | `authService.signUp` (loading) → **VerifyMethod**; disabled until rules pass & passwords match | ✅ |
 | s-signup | Log in link | (cursor) | → LogIn | ✅ |
 | s-login | Forgot password? | (cursor) | Alert (password reset = backend email flow) | 🔌 |
 | s-login | Sign in | `nav('verify-otp')` | `authService.logIn` (loading spinner, error Alert) → VerifyOtp | ✅ |
-| s-verify-otp | OTP boxes | (input) | 6-box UI over hidden input, auto-focus | ✅ |
-| s-verify-otp | Verify → | `nav('home')` | `authService.verifyOtp` (loading) → signIn; bad code Alert | ✅ |
-| s-verify-otp | Resend (0:42) | (cursor) | Real 42 s countdown; at 0:00 "Resend" → `authService.resendOtp` + counter resets | ✅ |
+| ➕ VerifyMethod | 📧 Email / 📱 Text message cards | (app-only, feedback pass 1) | show the ACTUAL entered email/phone; pick → `authService.sendCode(method, destination)` (spinner) → VerifyOtp `{method, destination}` | ✅ |
+| s-verify-otp | OTP boxes | (input) | 6-box UI over hidden input, auto-focus; header reads "Code sent to <destination>" + ✓ sent-via-email/SMS banner | ✅ |
+| s-verify-otp | Verify → | `nav('home')` | `authService.verifyOtp` (loading) → signIn; bad code alert (web-safe) | ✅ |
+| s-verify-otp | Resend (0:42) | (cursor) | Real 42 s countdown; at 0:00 "Resend" → `sendCode(method, destination)` (or legacy `resendOtp` from login) + counter resets | ✅ |
 
 ## Home tab
 
@@ -110,8 +112,8 @@ bar) are listed once at the top instead of 68×.
 | s-maint-dashboard | 📅 Book a service | `nav('maint-schedule')` | → MaintSchedule | ✅ |
 | s-maint-history | 📷 Scan receipt | `nav('maint-scan-cam')` | → MaintScanCam | ✅ |
 | s-maint-history | ✏️ Manual input | `nav('maint-manual')` | → MaintManual | ✅ |
-| s-maint-history | Type filters (All types/Oil/Tires/Brakes/Body) | (cursor) | filter chips actually filter the list | ✅ |
-| s-maint-history | Time filters (All time/6 months/2024/2023) | (cursor) | filter chips actually filter the list | ✅ |
+| s-maint-history | Type filter (All types/Oil/Tires/Brakes/Body) | (cursor) | **dropdown `Select`** (feedback pass 1) — modal option list, filters the list | ✅ |
+| s-maint-history | Time filter (All time/6 months/2024/2023) | (cursor) | **dropdown `Select`** side-by-side with Type, filters the list | ✅ |
 | s-maint-scan-cam | 📷 Capture receipt | cursor:pointer, no onclick | Mock capture: viewfinder shows 🧾 "receipt captured ✓", label flips | ✅ |
 | s-maint-scan-cam | 🗂 Gallery instead | cursor:pointer, no onclick | Mock import: "✓ Imported from gallery" preview | ✅ |
 | s-maint-scan-cam | ← Retake | `back()` | clears capture; goBack when nothing captured | ✅ |
@@ -127,7 +129,7 @@ bar) are listed once at the top instead of 68×.
 | s-maint-diy | 12 guide rows (Pro unlocked) | (cursor) | Alert preview per guide | 🔌 |
 | s-diy-unlock | 💳 Visa pay-with row | cursor:pointer, no onclick | informational (single card on file) | n/a |
 | s-diy-unlock | Unlock Pro for $10 → | `nav('diy-payment')` | → DiyPayment | ✅ |
-| s-diy-payment | Pay-with rows (Visa / Apple Pay) | (cursor) | single-select | ✅ |
+| s-diy-payment | Pay-with rows (Visa / Apple Pay) | (cursor) | single-select; Apple Pay row opens the simulated ** Pay sheet** — confirming it runs the same onPay | ✅ |
 | s-diy-payment | ➕ Use points toggle | (app-only, Phase 6) | redemption math, total updates | ✅ |
 | s-diy-payment | Pay $10.00 | `nav('diy-confirm')` | `pointsService.redeem` + `proService.unlockPro` (sets `isPro`), loading + **blocking overlay** → DiyConfirm | ✅ |
 | s-diy-confirm | 📚 All 12 DIY repair guides | `nav('diy-guides')` | → DiyGuides | ✅ |
@@ -146,7 +148,7 @@ bar) are listed once at the top instead of 68×.
 | s-maint-schedule-book | Calendar ‹ › arrows | cursor:pointer, no onclick | Alert: demo availability is April 2027 | 🔌 |
 | s-maint-schedule-book | Calendar days + time slots | (cursor) | `setCartSlot` | ✅ |
 | s-maint-schedule-book | Continue to payment → | `goPayment()` | → MaintPayment (renders live cart) | ✅ |
-| s-maint-payment | Payment-method rows (Visa / Apple Pay) | (cursor) | single-select | ✅ |
+| s-maint-payment | Payment-method rows (Visa / Apple Pay) | (cursor) | single-select; Apple Pay row opens the simulated ** Pay sheet** (total shown) — confirming completes payment via the same onPay | ✅ |
 | s-maint-payment | ➕ Use points toggle | (app-only, Phase 6) | redemption applied to total | ✅ |
 | s-maint-payment | Confirm & pay $… → | `nav('maint-schedule-confirm')` | `pointsService.redeem` + `maintService.payForBooking`, loading + **blocking overlay** → confirm | ✅ |
 | s-maint-schedule-confirm | Edit (reminder row) | (cursor) | Alert (reminder editing = backend) | 🔌 |
@@ -204,10 +206,11 @@ bar) are listed once at the top instead of 68×.
 | s-prof-mile-det | Get directions (×2) | (cursor) | Alert (device maps app) | 🔌 |
 | s-prof-mile-det | Redeem here (×2) | (cursor) | Alert (in-shop QR redemption = backend) | 🔌 |
 | s-prof-earn | (history list, no interactive elements) | — | — | — |
-| s-prof-cars | Edit car | (cursor) | Alert (vehicle editing = backend) | 🔌 |
-| s-prof-cars | Remove | (cursor) | Alert (vehicle removal = backend) | 🔌 |
-| s-prof-cars | ➕ Add another car | (cursor) | Alert (VIN scan / manual entry = backend) | 🔌 |
+| s-prof-cars | Edit car | (cursor) | inline edit modal (name + odometer) → `vehiclesService.updateVehicle` | ✅ |
+| s-prof-cars | Remove | (cursor) | confirm → `vehiclesService.removeVehicle`; empty state "No vehicles yet" + add card | ✅ |
+| s-prof-cars | ➕ Add another car | (cursor) | add modal (name + odometer) → `vehiclesService.addVehicle` | ✅ |
 | s-prof-insurance | ✎ Edit policy details | `nav('prof-ins-edit')` | → ProfInsEdit with `policyId` | ✅ |
+| s-prof-insurance | ➕ Remove (per policy card) | (feedback pass 1) | confirm → `insuranceService.removePolicy` (mock + DELETE /profile/policies/:id) | ✅ |
 | s-prof-insurance | ➕ Add another policy | `nav('prof-ins-add')` | → ProfInsAdd | ✅ |
 | s-prof-insurance | ⚖ Compare cash vs. insurance → | (cursor) | cross-tab → CompareTab/CompSelect | ✅ |
 | s-prof-ins-edit | Provider picker + carrier chips | (cursor) | inline carrier options | ✅ |
@@ -217,9 +220,10 @@ bar) are listed once at the top instead of 68×.
 | s-prof-ins-add | ✍️ Enter manually | (cursor) | informational (the form *is* below) | n/a |
 | s-prof-ins-add | Connect my insurer rows | (app-only, Phase 4) | aggregator connect with per-row spinner (insurance sync) | ✅ |
 | s-prof-ins-add | Add policy | `nav('prof-insurance')` | `insuranceService.addPolicy` + earn rule, validation errors → back | ✅ |
-| s-prof-payment | Edit card | (cursor) | Alert (card editing = backend/PCI) | 🔌 |
-| s-prof-payment | Remove | (cursor) | Alert (card removal = backend) | 🔌 |
-| s-prof-payment | ➕ Add payment method | (cursor) | Alert (payment-method linking = backend) | 🔌 |
+| s-prof-payment | Edit card | (cursor) | modal form (holder + expiry editable, last4 read-only) → `paymentMethodsService.updateCard` | ✅ |
+| s-prof-payment | Remove | (cursor) | confirm → `paymentMethodsService.removeCard`; empty state with add prompt | ✅ |
+| s-prof-payment | ➕ Add payment method | (cursor) | modal form (holder, last4, expiry) → `paymentMethodsService.addCard` | ✅ |
+| s-prof-payment | Apple Pay row | (cursor) | opens the simulated ** Pay sheet** (`ApplePaySheet`) → processing → ✓ Done | ✅ |
 | s-prof-settings | Edit profile / Change email / phone / password / Linked accounts | `nav('prof-…')` ×5 | each → its screen | ✅ |
 | s-prof-settings | Notification toggles (×4) | `toggleNotif(this)` | TogglePill state per row | ✅ |
 | s-prof-settings | Dark mode toggle | `toggleDarkMode(this)` | Zustand `darkMode` — themes the whole app | ✅ |
@@ -233,7 +237,8 @@ bar) are listed once at the top instead of 68×.
 | s-prof-change-email | Send verification link | (cursor) | mock submit → back | ✅ |
 | s-prof-change-password | Update password | (cursor) | mock submit → back | ✅ |
 | s-prof-change-phone | Send verification code | (cursor) | mock submit → back | ✅ |
-| s-prof-linked-accounts | Connect (Apple / Facebook) | (cursor) | Alert (OAuth = backend) | 🔌 |
+| s-prof-linked-accounts | Connect (Apple) | (cursor) | branded Apple ID sheet → `authService.socialSignIn('apple')` → row flips to Connected | ✅ |
+| s-prof-linked-accounts | Connect (Facebook) | (cursor) | Alert (OAuth = backend) | 🔌 |
 | s-prof-help-center | Search field | (input) | live TextInput | ✅ |
 | s-prof-help-center | 4 topic rows | `nav('help-…')` ×4 | → HelpPhotos / HelpQuotes / HelpBookings / HelpContact | ✅ |
 | s-help-photos | Still need help? Contact support → | `nav('help-contact')` | → HelpContact | ✅ |

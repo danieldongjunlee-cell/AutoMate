@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { CommunityPost, PostCategory } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -28,7 +30,7 @@ export function CategoryBadge({ category }: { category: PostCategory }) {
 export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () => void }) {
   const { colors } = useTheme();
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         backgroundColor: colors.surface,
@@ -60,6 +62,6 @@ export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () =
         <Text style={{ fontSize: 12, color: colors.textTertiary }}>❤️ {post.likes}</Text>
         <Text style={{ fontSize: 12, fontWeight: '500', color: colors.primaryDark }}>Read more</Text>
       </View>
-    </Pressable>
+    </Tappable>
   );
 }

@@ -28,11 +28,12 @@ export const palette = {
   disabled: '#D0CECA',
   white: '#FFFFFF',
 
-  // Text
+  // Text (tertiary/placeholder raised from #888/#AAA for readable contrast —
+  // user-feedback pass 1: faint fonts).
   textPrimary: '#1A1A1A',
   textSecondary: '#555555',
-  textTertiary: '#888888',
-  textPlaceholder: '#AAAAAA',
+  textTertiary: '#6E6E6E',
+  textPlaceholder: '#999999',
 
   // Semantic — success
   success: '#1D9E75',
@@ -119,7 +120,7 @@ export const lightColors: ThemeColors = {
   textPlaceholder: palette.textPlaceholder,
   tabBarBackground: palette.white,
   tabBarBorder: palette.border,
-  tabInactive: '#888888',
+  tabInactive: '#6E6E6E',
   tabActive: palette.primary,
   card: palette.surface,
   primary: palette.primary,
@@ -157,8 +158,8 @@ export const darkColors: ThemeColors = {
   disabled: '#3A3A4A',
   textPrimary: '#E0E0F0',
   textSecondary: '#B0B0C8',
-  textTertiary: '#8888A8',
-  textPlaceholder: '#5A5A7A',
+  textTertiary: '#9C9CBE',
+  textPlaceholder: '#6E6E92',
   tabBarBackground: '#0F0F1A',
   tabBarBorder: '#2A2A3A',
   tabInactive: '#5A5A8A',

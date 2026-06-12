@@ -1,5 +1,7 @@
 import React from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { radii, spacing, useTheme } from '../theme';
 
@@ -68,7 +70,7 @@ export function ProLockOverlay({
         >
           {subtitle}
         </Text>
-        <Pressable
+        <Tappable
           onPress={onUnlock}
           style={({ pressed }) => ({
             backgroundColor: colors.primary,
@@ -79,7 +81,7 @@ export function ProLockOverlay({
           })}
         >
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>{cta}</Text>
-        </Pressable>
+        </Tappable>
       </View>
     </View>
   );
@@ -146,7 +148,7 @@ export function DiyGuideRow({
         {meta}
       </Text>
       {showLink ? (
-        <Pressable
+        <Tappable
           onPress={() =>
             Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`)
           }
@@ -155,7 +157,7 @@ export function DiyGuideRow({
           <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark, marginTop: 5 }}>
             Read guide →
           </Text>
-        </Pressable>
+        </Tappable>
       ) : null}
     </View>
   );

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen, SectionLabel } from '../../components/ui';
@@ -109,7 +111,7 @@ export function PhotoExampleScreen() {
       </View>
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Pressable
+        <Tappable
           onPress={() => navigation.goBack()}
           style={({ pressed }) => ({
             flex: 1,
@@ -123,7 +125,7 @@ export function PhotoExampleScreen() {
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>← Change part</Text>
-        </Pressable>
+        </Tappable>
         <PrimaryButton
           label="Take photos →"
           onPress={() => navigation.navigate('Camera')}

@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { NotificationCard } from '../../components/NotificationCard';
 import { SkeletonList } from '../../components/Skeleton';
@@ -26,7 +28,7 @@ export function NotificationsScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Pressable
+        <Tappable
           onPress={async () => {
             await notificationService.markAllRead();
             queryClient.invalidateQueries({ queryKey: ['notifications'] });
@@ -34,7 +36,7 @@ export function NotificationsScreen() {
           hitSlop={8}
         >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Mark all read</Text>
-        </Pressable>
+        </Tappable>
       ),
     });
   }, [navigation, colors, queryClient]);

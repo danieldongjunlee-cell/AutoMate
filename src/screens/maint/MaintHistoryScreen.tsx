@@ -2,10 +2,13 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 import Svg, { Circle } from 'react-native-svg';
 
-import { FilterChips, PointsBadge } from '../../components/FilterChips';
+import { PointsBadge } from '../../components/FilterChips';
+import { Select } from '../../components/Select';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
@@ -94,7 +97,7 @@ export function MaintHistoryScreen() {
           <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
             Good condition
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
             Oil change due ~{VEHICLE.oilDueInMi} mi
           </Text>
         </View>
@@ -102,7 +105,7 @@ export function MaintHistoryScreen() {
 
       {/* Add record */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('MaintScanCam')}
           style={({ pressed }) => ({
             flex: 1,
@@ -121,8 +124,8 @@ export function MaintHistoryScreen() {
             Scan receipt
           </Text>
           <PointsBadge points={EARN_RULES.scanReceipt} usd />
-        </Pressable>
-        <Pressable
+        </Tappable>
+        <Tappable
           onPress={() => navigation.navigate('MaintManual')}
           style={({ pressed }) => ({
             flex: 1,
@@ -141,13 +144,27 @@ export function MaintHistoryScreen() {
             Manual input
           </Text>
           <PointsBadge points={EARN_RULES.manualLog} usd />
-        </Pressable>
+        </Tappable>
       </View>
 
-      {/* Wireframe v15.10: filters moved below the scan/manual cards */}
+      {/* User-feedback pass 1: the two chip rows became two side-by-side dropdowns. */}
       <SectionLabel>Past services</SectionLabel>
-      <FilterChips options={HISTORY_TYPE_FILTERS} selected={typeFilter} onSelect={setTypeFilter} />
-      <FilterChips options={HISTORY_TIME_FILTERS} selected={timeFilter} onSelect={setTimeFilter} />
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
+        <Select
+          label="Type"
+          value={typeFilter}
+          options={HISTORY_TYPE_FILTERS}
+          onChange={setTypeFilter}
+          style={{ flex: 1 }}
+        />
+        <Select
+          label="Time"
+          value={timeFilter}
+          options={HISTORY_TIME_FILTERS}
+          onChange={setTimeFilter}
+          style={{ flex: 1 }}
+        />
+      </View>
       {isLoading ? (
         <SkeletonList variant="row" count={5} />
       ) : visible.length === 0 ? (
@@ -183,7 +200,8 @@ export function MaintHistoryScreen() {
               <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                 {rec.type}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+              {/* Price is primary info — secondary tier, not tertiary (feedback pass 1) */}
+              <Text style={{ fontSize: 13, color: colors.textSecondary }}>
                 {rec.dateLabel} · {rec.mileage} · ${rec.cost}
               </Text>
             </View>

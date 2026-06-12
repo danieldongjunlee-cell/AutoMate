@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
@@ -88,7 +90,7 @@ export function CompCashInsScreen() {
 
       {/* Cash vs insurance */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
@@ -121,9 +123,9 @@ export function CompCashInsScreen() {
               <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
             </View>
           ) : null}
-        </Pressable>
+        </Tappable>
 
-        <Pressable
+        <Tappable
           onPress={() => navigation.navigate('CompInsurance', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
@@ -169,11 +171,11 @@ export function CompCashInsScreen() {
               <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
             </View>
           )}
-        </Pressable>
+        </Tappable>
       </View>
 
       {/* Deep dive link */}
-      <Pressable onPress={() => navigation.navigate('CompDeepDive', { quoteId: aq.id })}>
+      <Tappable onPress={() => navigation.navigate('CompDeepDive', { quoteId: aq.id })}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.navy, palette.navyMid]}
@@ -200,7 +202,7 @@ export function CompCashInsScreen() {
             <Text style={{ fontSize: 22, color: palette.primary }}>→</Text>
           </LinearGradient>
         )}
-      </Pressable>
+      </Tappable>
     </Screen>
   );
 }

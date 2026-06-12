@@ -1,20 +1,30 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { SkeletonList } from '../../components/Skeleton';
+import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, Policy } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
 
-function PolicyCard({ policy, onEdit }: { policy: Policy; onEdit: () => void }) {
+function PolicyCard({
+  policy,
+  onEdit,
+  onRemove,
+}: {
+  policy: Policy;
+  onEdit: () => void;
+  onRemove: () => void;
+}) {
   const { colors } = useTheme();
   const details = [
     ['Policy number', policy.policyNumber],
@@ -99,22 +109,38 @@ function PolicyCard({ policy, onEdit }: { policy: Policy; onEdit: () => void }) 
           padding: spacing.sm,
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: colors.divider,
+          flexDirection: 'row',
+          gap: spacing.xs,
         }}
       >
-        <Pressable
+        <Tappable
           onPress={onEdit}
-          style={({ pressed }) => ({
+          style={{
+            flex: 2,
             backgroundColor: colors.primary,
             borderRadius: radii.sm,
             paddingVertical: 11,
             alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
-          })}
+          }}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
             ✎ Edit policy details
           </Text>
-        </Pressable>
+        </Tappable>
+        <Tappable
+          onPress={onRemove}
+          style={{
+            flex: 1,
+            backgroundColor: colors.surface,
+            borderRadius: radii.sm,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.dangerBorder,
+            paddingVertical: 11,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Remove</Text>
+        </Tappable>
       </View>
     </View>
   );
@@ -124,10 +150,16 @@ function PolicyCard({ policy, onEdit }: { policy: Policy; onEdit: () => void }) 
 export function ProfInsuranceScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const queryClient = useQueryClient();
 
   const { data: policies, isLoading } = useQuery({
     queryKey: ['policies'],
     queryFn: () => insuranceService.listPolicies(),
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: (id: string) => insuranceService.removePolicy(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['policies'] }),
   });
 
   return (
@@ -135,18 +167,36 @@ export function ProfInsuranceScreen() {
       <SectionLabel>Your policies</SectionLabel>
       {isLoading ? (
         <SkeletonList variant="card" count={1} tall />
+      ) : (policies ?? []).length === 0 ? (
+        <Text
+          style={{
+            fontSize: 13,
+            color: colors.textSecondary,
+            textAlign: 'center',
+            padding: spacing.lg,
+          }}
+        >
+          No policies on file — add one below.
+        </Text>
       ) : (
         (policies ?? []).map((policy) => (
           <PolicyCard
             key={policy.id}
             policy={policy}
             onEdit={() => navigation.navigate('ProfInsEdit', { policyId: policy.id })}
+            onRemove={() =>
+              confirmAction(
+                'Remove policy',
+                `Remove the ${policy.carrier} policy ${policy.policyNumber}?`,
+                () => removeMutation.mutate(policy.id),
+              )
+            }
           />
         ))
       )}
 
       {/* Add policy */}
-      <Pressable
+      <Tappable
         onPress={() => navigation.navigate('ProfInsAdd')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
@@ -165,10 +215,10 @@ export function ProfInsuranceScreen() {
           Add another policy
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>Geico, Progressive, USAA...</Text>
-      </Pressable>
+      </Tappable>
 
       {/* Compare link (cross-tab → Compare) */}
-      <Pressable
+      <Tappable
         onPress={() => navigateCrossTab(navigation, 'CompareTab', 'CompSelect')}
         style={({ pressed }) => ({
           backgroundColor: colors.successSurface,
@@ -191,7 +241,7 @@ export function ProfInsuranceScreen() {
             See if filing a claim is worth it
           </Text>
         </View>
-      </Pressable>
+      </Tappable>
     </Screen>
   );
 }

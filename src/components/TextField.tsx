@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Pressable, StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { palette, radii, spacing, useTheme } from '../theme';
 
@@ -53,11 +55,11 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
           }}
         />
         {secure ? (
-          <Pressable onPress={() => setHidden((h) => !h)} hitSlop={8}>
+          <Tappable onPress={() => setHidden((h) => !h)} hitSlop={8}>
             <Text style={{ color: palette.authAction, fontSize: 13, fontWeight: '500' }}>
               {hidden ? 'Show' : 'Hide'}
             </Text>
-          </Pressable>
+          </Tappable>
         ) : null}
       </View>
     </View>

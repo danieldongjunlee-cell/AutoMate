@@ -1,9 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
+import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { showAlert } from '../../utils/alerts';
 import { ProfileStackParamList } from '../../navigation/types';
 import {
   HELP_TOPICS,
@@ -15,13 +18,25 @@ import {
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
-/** Wireframe s-prof-linked-accounts. */
+/** Wireframe s-prof-linked-accounts. Connect opens the branded sign-in sheet
+ * (user-feedback pass 1) — Google/Apple run authService.socialSignIn. */
 export function ProfLinkedAccountsScreen() {
   const { colors } = useTheme();
+  const [sheetProvider, setSheetProvider] = useState<SocialProvider | null>(null);
+  const [connected, setConnected] = useState<Record<string, boolean>>({
+    Google: true,
+    Apple: false,
+    Facebook: false,
+  });
   const rows = [
-    { icon: 'G', name: 'Google', sub: USER.googleEmail, connected: true },
-    { icon: '', name: 'Apple', sub: 'Not connected', connected: false },
-    { icon: 'f', name: 'Facebook', sub: 'Not connected', connected: false },
+    { icon: 'G', name: 'Google', sub: USER.googleEmail, provider: 'google' as const },
+    {
+      icon: '',
+      name: 'Apple',
+      sub: connected.Apple ? 'demo@automate.app' : 'Not connected',
+      provider: 'apple' as const,
+    },
+    { icon: 'f', name: 'Facebook', sub: 'Not connected', provider: null },
   ];
   return (
     <Screen>
@@ -53,7 +68,7 @@ export function ProfLinkedAccountsScreen() {
               </Text>
               <Text style={{ fontSize: 13, color: colors.textTertiary }}>{row.sub}</Text>
             </View>
-            {row.connected ? (
+            {connected[row.name] ? (
               <View
                 style={{
                   backgroundColor: colors.successSurface,
@@ -67,24 +82,36 @@ export function ProfLinkedAccountsScreen() {
                 </Text>
               </View>
             ) : (
-              <Pressable
-                onPress={() => Alert.alert('Connect', `${row.name} sign-in comes with the backend.`)}
-                style={({ pressed }) => ({
+              <Tappable
+                onPress={() =>
+                  row.provider
+                    ? setSheetProvider(row.provider)
+                    : showAlert('Connect', `${row.name} sign-in comes with the backend.`)
+                }
+                style={{
                   backgroundColor: colors.primarySurface,
                   borderRadius: radii.pill,
                   paddingHorizontal: 12,
                   paddingVertical: 4,
-                  opacity: pressed ? 0.7 : 1,
-                })}
+                }}
               >
                 <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark }}>
                   Connect
                 </Text>
-              </Pressable>
+              </Tappable>
             )}
           </View>
         ))}
       </Card>
+
+      <SocialSignInSheet
+        provider={sheetProvider}
+        onClose={() => setSheetProvider(null)}
+        onSignedIn={(provider) => {
+          setSheetProvider(null);
+          setConnected((c) => ({ ...c, [provider === 'google' ? 'Google' : 'Apple']: true }));
+        }}
+      />
     </Screen>
   );
 }
@@ -121,7 +148,7 @@ export function ProfHelpCenterScreen() {
       <SectionLabel>Popular topics</SectionLabel>
       <Card style={{ overflow: 'hidden' }}>
         {HELP_TOPICS.map((topic, i) => (
-          <Pressable
+          <Tappable
             key={topic.title}
             onPress={() => navigation.navigate(topic.route)}
             style={({ pressed }) => ({
@@ -136,7 +163,7 @@ export function ProfHelpCenterScreen() {
             <Text style={{ fontSize: 17, marginRight: spacing.md }}>{topic.icon}</Text>
             <Text style={{ flex: 1, fontSize: 15, color: colors.textPrimary }}>{topic.title}</Text>
             <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text>
-          </Pressable>
+          </Tappable>
         ))}
       </Card>
     </Screen>
@@ -183,7 +210,7 @@ export function ProfLanguageScreen() {
     <Screen>
       <Card style={{ overflow: 'hidden' }}>
         {LANGUAGES.map((lang, i) => (
-          <Pressable
+          <Tappable
             key={lang.name}
             onPress={() => setLanguage(lang.name)}
             style={({ pressed }) => ({
@@ -208,7 +235,7 @@ export function ProfLanguageScreen() {
             {lang.name === language ? (
               <Text style={{ fontSize: 18, color: colors.primary }}>✔</Text>
             ) : null}
-          </Pressable>
+          </Tappable>
         ))}
       </Card>
     </Screen>
@@ -228,7 +255,7 @@ export function ProfDistanceScreen() {
     <Screen>
       <Card style={{ overflow: 'hidden' }}>
         {rows.map((row, i) => (
-          <Pressable
+          <Tappable
             key={row.id}
             onPress={() => setUnit(row.id)}
             style={({ pressed }) => ({
@@ -255,7 +282,7 @@ export function ProfDistanceScreen() {
               </Text>
             </View>
             {unit === row.id ? <Text style={{ fontSize: 18, color: colors.primary }}>✔</Text> : null}
-          </Pressable>
+          </Tappable>
         ))}
       </Card>
     </Screen>

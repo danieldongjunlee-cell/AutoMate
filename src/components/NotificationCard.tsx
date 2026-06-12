@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { AppNotification } from '../services';
 import { radii, spacing, useTheme } from '../theme';
@@ -30,7 +32,7 @@ export function NotificationCard({
             : GOLD;
 
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         backgroundColor: tint.bg,
@@ -55,6 +57,6 @@ export function NotificationCard({
         ) : null}
       </View>
       <Text style={{ fontSize: 13, color: tint.body, lineHeight: 20 }}>{n.body}</Text>
-    </Pressable>
+    </Tappable>
   );
 }

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { Dealer } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -22,7 +24,7 @@ export function DealerCard({
   const { colors } = useTheme();
   const open = dealer.openStatus === 'Open';
   return (
-    <Pressable
+    <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
         backgroundColor: colors.surface,
@@ -92,7 +94,10 @@ export function DealerCard({
         ))}
       </View>
 
-      <View
+      {/* Inner CTA is its own Tappable so the button itself gives hover/press
+          feedback (user-feedback pass 1) — same action as the card. */}
+      <Tappable
+        onPress={onPress}
         style={{
           backgroundColor: dealer.color,
           borderRadius: radii.sm,
@@ -101,7 +106,7 @@ export function DealerCard({
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>{cta}</Text>
-      </View>
-    </Pressable>
+      </Tappable>
+    </Tappable>
   );
 }

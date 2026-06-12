@@ -1,5 +1,7 @@
 import React from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { BOOKING_MONTH } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -42,13 +44,13 @@ export function CalendarMonth({
           marginBottom: spacing.md,
         }}
       >
-        <Pressable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
+        <Tappable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
           <Text style={{ fontSize: 16, color: colors.textTertiary }}>‹</Text>
-        </Pressable>
+        </Tappable>
         <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>{label}</Text>
-        <Pressable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
+        <Tappable onPress={otherMonths} style={({ pressed }) => navBtn(colors.surfaceAlt, pressed)}>
           <Text style={{ fontSize: 16, color: colors.textTertiary }}>›</Text>
-        </Pressable>
+        </Tappable>
       </View>
 
       {/* Weekday header */}
@@ -80,7 +82,7 @@ export function CalendarMonth({
               key={day}
               style={{ width: `${100 / 7}%`, height: 40, alignItems: 'center', justifyContent: 'center' }}
             >
-              <Pressable
+              <Tappable
                 disabled={disabled}
                 onPress={() => onSelectDay(day)}
                 style={({ pressed }) => ({
@@ -106,7 +108,7 @@ export function CalendarMonth({
                 >
                   {day}
                 </Text>
-              </Pressable>
+              </Tappable>
             </View>
           );
         })}
@@ -146,7 +148,7 @@ export function TimeSlots({
       {slots.map((slot) => {
         const on = slot === selected;
         return (
-          <Pressable
+          <Tappable
             key={slot}
             onPress={() => onSelect(slot)}
             style={({ pressed }) => ({
@@ -168,7 +170,7 @@ export function TimeSlots({
             >
               {slot}
             </Text>
-          </Pressable>
+          </Tappable>
         );
       })}
     </View>

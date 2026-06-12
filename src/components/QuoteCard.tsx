@@ -1,5 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from './Tappable';
 
 import { Dealer, Quote } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -60,7 +62,7 @@ export function QuoteCard({
       </View>
 
       <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-        <Pressable
+        <Tappable
           onPress={onAccept}
           style={({ pressed }) => ({
             flex: 1,
@@ -74,7 +76,7 @@ export function QuoteCard({
           <Text style={{ fontSize: 13, fontWeight: '600', color: colors.onPrimary }}>
             Accept quote
           </Text>
-        </Pressable>
+        </Tappable>
         <View
           style={{
             flexDirection: 'row',

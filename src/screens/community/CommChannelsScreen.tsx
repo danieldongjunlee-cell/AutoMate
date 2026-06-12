@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import { Tappable } from '../../components/Tappable';
 
 import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
@@ -48,7 +50,7 @@ export function CommChannelsScreen() {
       </View>
 
       {(channels ?? CHANNELS).map((channel) => (
-        <Pressable
+        <Tappable
           key={channel.id}
           onPress={() =>
             channel.joined
@@ -109,7 +111,7 @@ export function CommChannelsScreen() {
               <Text style={{ fontSize: 13, color: colors.textTertiary }}>Join</Text>
             </View>
           )}
-        </Pressable>
+        </Tappable>
       ))}
 
       <View
