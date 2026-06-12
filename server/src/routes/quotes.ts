@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { EARN_RULES } from '../config';
 import { estimateDamage } from '../damageAi';
 import { awardPoints, prisma } from '../db';
 import { isAfterHours } from '../staticData';
@@ -96,7 +97,7 @@ quotesRouter.post('/submit', async (req, res) => {
       aiConfidence: estimate.confidencePct / 100,
     },
   });
-  const pointsEarned = 20; // "Submit damage photos" (s-prof-earn)
+  const pointsEarned = EARN_RULES.submitPhotos; // "Submit damage photos" (s-prof-earn)
   await awardPoints(req.user!.id, pointsEarned, 'Submit damage photos');
   return res.json({
     shopsNotified,

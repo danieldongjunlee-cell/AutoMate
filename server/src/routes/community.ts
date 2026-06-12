@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { EARN_RULES } from '../config';
 import { awardPoints, prisma } from '../db';
 import { agoLabel, CHANNELS } from '../staticData';
 
@@ -90,7 +91,8 @@ communityRouter.post('/posts', async (req, res) => {
       hasPhoto: Number(photoCount ?? 0) > 0,
     },
   });
-  const pointsEarned = 50 + (Number(photoCount ?? 0) > 0 ? 10 : 0);
+  const pointsEarned =
+    EARN_RULES.communityPost + (Number(photoCount ?? 0) > 0 ? EARN_RULES.communityPhotoBonus : 0);
   await awardPoints(req.user!.id, pointsEarned, 'Post in community');
   return res.json({ ok: true, pointsEarned });
 });

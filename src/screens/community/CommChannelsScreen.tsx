@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -124,7 +125,8 @@ export function CommChannelsScreen() {
       >
         <Text style={{ fontSize: 17 }}>★</Text>
         <Text style={{ fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
-          Post in any channel → earn +50 pts
+          Post in any channel → earn +{EARN_RULES.communityPost} pts ·{' '}
+          {pointsToUsd(EARN_RULES.communityPost)}
         </Text>
       </View>
     </Screen>

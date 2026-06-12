@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { MANUAL_SERVICE_TYPES } from '../../services/mock/data';
 import { maintService } from '../../services';
@@ -63,7 +64,7 @@ export function MaintManualScreen() {
         >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>✏️ Manual entry</Text>
         </View>
-        <PointsBadge points={10} />
+        <PointsBadge points={EARN_RULES.manualLog} usd />
       </View>
 
       {/* Service type chips */}
@@ -108,7 +109,7 @@ export function MaintManualScreen() {
       <TextField label="Cost ($)" value={cost} onChangeText={setCost} keyboardType="decimal-pad" />
 
       <PrimaryButton
-        label="Save service record → earn +10 pts"
+        label={`Save service record → earn +${EARN_RULES.manualLog} pts (${pointsToUsd(EARN_RULES.manualLog)})`}
         loading={saving}
         onPress={onSave}
         style={{ marginTop: spacing.sm }}

@@ -5,6 +5,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen } from '../../components/ui';
+import { pointsToUsd } from '../../config/points';
 import { ProfileStackParamList } from '../../navigation/types';
 import { MILESTONES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
@@ -36,7 +37,7 @@ export function ProfMilesScreen() {
           {points.toLocaleString()} pts
         </Text>
         <Text style={{ fontSize: 14, fontWeight: '500', color: palette.warning }}>
-          = ${(points / 100).toFixed(2)} · 100 pts = $1
+          = {pointsToUsd(points)} · 100 pts = $1
         </Text>
       </LinearGradient>
 
@@ -73,9 +74,14 @@ export function ProfMilesScreen() {
                   <Text style={{ fontSize: 12, color: colors.textTertiary }}>{m.sub}</Text>
                 </View>
               </View>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
-                {m.costPts.toLocaleString()} pts
-              </Text>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
+                  {m.costPts.toLocaleString()} pts
+                </Text>
+                <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                  {pointsToUsd(m.costPts)} value
+                </Text>
+              </View>
             </View>
             <View
               style={{

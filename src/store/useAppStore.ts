@@ -71,9 +71,12 @@ interface AppState {
   darkMode: boolean;
   toggleDarkMode: () => void;
 
-  // Reward points (420 pts seed; earned by scans/logs/posts)
+  // Reward points (420 pts seed; earned by scans/logs/posts).
+  // Single client cache — the points services (mock + api) keep it current.
   points: number;
   addPoints: (n: number) => void;
+  /** Set the absolute balance (api mode reconciles from server responses). */
+  setPoints: (n: number) => void;
 
   // AutoMate Pro membership ($10 lifetime — diy-unlock chain)
   isPro: boolean;
@@ -139,6 +142,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   points: SEED_POINTS,
   addPoints: (n) => set((s) => ({ points: s.points + n })),
+  setPoints: (points) => set({ points }),
 
   isPro: false,
   unlockPro: () => set({ isPro: true }),

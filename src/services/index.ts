@@ -15,6 +15,7 @@ import { compareService as apiCompareService } from './api/compareService';
 import { insuranceService as apiInsuranceService } from './api/insuranceService';
 import { maintService as apiMaintService } from './api/maintService';
 import { notificationService as apiNotificationService } from './api/notificationService';
+import { pointsService as apiPointsService } from './api/pointsService';
 import { proService as apiProService } from './api/proService';
 import { quoteService as apiQuoteService } from './api/quoteService';
 import { authService as mockAuthService } from './mock/authService';
@@ -23,6 +24,7 @@ import { compareService as mockCompareService } from './mock/compareService';
 import { insuranceService as mockInsuranceService } from './mock/insuranceService';
 import { maintService as mockMaintService } from './mock/maintService';
 import { notificationService as mockNotificationService } from './mock/notificationService';
+import { pointsService as mockPointsService } from './mock/pointsService';
 import { proService as mockProService } from './mock/proService';
 import { quoteService as mockQuoteService } from './mock/quoteService';
 
@@ -45,6 +47,9 @@ export const compareService: typeof mockCompareService = USE_API
 export const insuranceService: typeof mockInsuranceService = USE_API
   ? apiInsuranceService
   : mockInsuranceService;
+export const pointsService: typeof mockPointsService = USE_API
+  ? apiPointsService
+  : mockPointsService;
 
 // Shared constants/types that screens use alongside the services.
 export { DEMO_EMAIL, DEMO_OTP, DEMO_PASSWORD, MOCK_PHONE } from './mock/authService';
@@ -59,3 +64,4 @@ export type {
   PolicyInput,
   ScannedInsuranceCard,
 } from './mock/insuranceService';
+export type { CheckInResult, PointsLedgerEntry } from './mock/pointsService';

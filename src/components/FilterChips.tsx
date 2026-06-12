@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 
+import { pointsToUsd } from '../config/points';
 import { radii, spacing, useTheme } from '../theme';
 
 /** Horizontal single-select chip row (history filters, DIY categories, service types). */
@@ -53,8 +54,8 @@ export function FilterChips({
   );
 }
 
-/** ★ +N pts chip (scan/manual/post rewards). */
-export function PointsBadge({ points }: { points: number }) {
+/** ★ +N pts chip (scan/manual/post rewards). `usd` appends the dollar value. */
+export function PointsBadge({ points, usd = false }: { points: number; usd?: boolean }) {
   const { colors } = useTheme();
   return (
     <Text
@@ -69,7 +70,7 @@ export function PointsBadge({ points }: { points: number }) {
         overflow: 'hidden',
       }}
     >
-      ★ +{points} pts
+      ★ +{points} pts{usd ? ` · ${pointsToUsd(points)}` : ''}
     </Text>
   );
 }

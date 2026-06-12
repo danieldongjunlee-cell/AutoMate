@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
+import { EARN_RULES } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
 import { radii, spacing, useTheme } from '../../theme';
@@ -50,7 +51,7 @@ export function MaintScanCamScreen() {
         >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>📷 Receipt scanner</Text>
         </View>
-        <PointsBadge points={20} />
+        <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
 
       {/* Viewfinder */}

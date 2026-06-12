@@ -1,9 +1,11 @@
 import { Router } from 'express';
 
-import { POINT_VALUE_USD } from '../config';
+import { EARN_RULES, POINT_VALUE_USD } from '../config';
 import { awardPoints, prisma } from '../db';
 
 export const pointsRouter = Router();
+
+const CHECK_IN_REASON = 'Daily check-in';
 
 // GET /points → { balance, dollarValue, pointValueUsd, ledger }
 pointsRouter.get('/', async (req, res) => {
@@ -28,6 +30,50 @@ pointsRouter.post('/earn', async (req, res) => {
   }
   const balance = await awardPoints(req.user!.id, Math.round(points), String(req.body?.reason ?? 'Earned points'));
   return res.json({ ok: true, balance });
+});
+
+// POST /points/check-in → award the daily check-in once per calendar day
+// (idempotent: repeat calls the same day return awarded:false).
+pointsRouter.post('/check-in', async (req, res) => {
+  const userId = req.user!.id;
+  const entries = await prisma.pointsLedgerEntry.findMany({
+    where: { userId, reason: CHECK_IN_REASON },
+    select: { createdAt: true },
+  });
+  const days = new Set(entries.map((e) => e.createdAt.toDateString()));
+  const alreadyToday = days.has(new Date().toDateString());
+
+  // Consecutive-day streak ending today (today's check-in counts as day N).
+  let streakDay = 1;
+  const cursor = new Date();
+  for (;;) {
+    cursor.setDate(cursor.getDate() - 1);
+    if (!days.has(cursor.toDateString())) break;
+    streakDay += 1;
+  }
+
+  if (alreadyToday) {
+    const agg = await prisma.pointsLedgerEntry.aggregate({
+      where: { userId },
+      _sum: { delta: true },
+    });
+    return res.json({
+      ok: true,
+      awarded: false,
+      pointsEarned: 0,
+      streakDay,
+      balance: agg._sum.delta ?? 0,
+    });
+  }
+
+  const balance = await awardPoints(userId, EARN_RULES.dailyCheckIn, CHECK_IN_REASON);
+  return res.json({
+    ok: true,
+    awarded: true,
+    pointsEarned: EARN_RULES.dailyCheckIn,
+    streakDay,
+    balance,
+  });
 });
 
 // POST /points/redeem { points, reason }

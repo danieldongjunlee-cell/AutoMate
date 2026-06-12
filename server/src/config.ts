@@ -21,6 +21,20 @@ export const DEMO_OTP = '123456';
 /** Points valuation (approved decision): 1 point = $0.01. */
 export const POINT_VALUE_USD = 0.01;
 
+/** Earn schedule — mirrors src/config/points.ts EARN_RULES (keep in sync). */
+export const EARN_RULES = {
+  dailyCheckIn: 10,
+  streakDayBonus: 10,
+  scanReceipt: 20,
+  manualLog: 10,
+  bookService: 50,
+  submitPhotos: 20,
+  communityPost: 50,
+  communityPhotoBonus: 10,
+  addInsurance: 100,
+  referFriend: 100,
+} as const;
+
 /** Base URL of the damage-AI FastAPI service (services/damage-ai). */
 export const DAMAGE_AI_URL = (process.env.DAMAGE_AI_URL ?? 'http://localhost:8100').replace(
   /\/+$/,

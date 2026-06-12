@@ -3,6 +3,7 @@ import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
+import { pointsToUsd } from '../../config/points';
 import { dealerById, MILESTONE_PARTNERS, MILESTONES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -28,9 +29,14 @@ export function ProfMileDetScreen() {
             <Text style={{ fontSize: 17, fontWeight: '600', color: '#fff' }}>{milestone.title}</Text>
             <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>{milestone.sub}</Text>
           </View>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
-            {milestone.costPts.toLocaleString()} pts
-          </Text>
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
+              {milestone.costPts.toLocaleString()} pts
+            </Text>
+            <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.7)' }}>
+              {pointsToUsd(milestone.costPts)} value
+            </Text>
+          </View>
         </View>
         <View
           style={{ height: 6, backgroundColor: 'rgba(255,255,255,.2)', borderRadius: 3, overflow: 'hidden' }}

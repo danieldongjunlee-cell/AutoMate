@@ -2,15 +2,16 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LogoRow } from '../../components/Logo';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
-import { notificationService, quoteService } from '../../services';
+import { CheckInResult, notificationService, pointsService, quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -136,6 +137,28 @@ export function HomeScreen() {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const resetDamageFlow = useAppStore((s) => s.resetDamageFlow);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+
+  // Daily check-in: once per session day (the service is idempotent per
+  // calendar day — mock module latch / server POST /points/check-in).
+  const [checkIn, setCheckIn] = useState<CheckInResult | null>(null);
+  const [checkInDismissed, setCheckInDismissed] = useState(false);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let active = true;
+    pointsService
+      .checkIn()
+      .then((result) => {
+        if (active) setCheckIn(result);
+      })
+      .catch(() => {
+        // Offline / API error — the banner just doesn't show.
+      });
+    return () => {
+      active = false;
+    };
+  }, [isAuthenticated]);
+  const streakDay = checkIn?.streakDay ?? STREAK_DAYS;
 
   const { data: request } = useQuery({
     queryKey: ['quoteRequest'],
@@ -211,10 +234,10 @@ export function HomeScreen() {
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 }}>
               <Text style={{ fontSize: 13, fontWeight: '500', color: '#fff' }}>
-                Day {STREAK_DAYS} streak
+                Day {streakDay} streak
               </Text>
               <Text style={{ fontSize: 13, fontWeight: '700', color: palette.warning }}>
-                +10 pts
+                +{EARN_RULES.streakDayBonus} pts · {pointsToUsd(EARN_RULES.streakDayBonus)}
               </Text>
             </View>
             <View style={{ flexDirection: 'row', gap: 4 }}>
@@ -225,7 +248,10 @@ export function HomeScreen() {
                     flex: 1,
                     height: 6,
                     borderRadius: 3,
-                    backgroundColor: i < STREAK_DAYS ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.2)',
+                    backgroundColor:
+                      i < Math.min(streakDay, STREAK_TOTAL)
+                        ? 'rgba(255,255,255,.85)'
+                        : 'rgba(255,255,255,.2)',
                   }}
                 />
               ))}
@@ -233,6 +259,33 @@ export function HomeScreen() {
           </View>
         </LinearGradient>
       </Pressable>
+
+      {/* Daily check-in award banner (dismissible, shown once per day) */}
+      {checkIn?.awarded && !checkInDismissed ? (
+        <View
+          style={{
+            backgroundColor: colors.warningSurface,
+            borderRadius: radii.sm,
+            borderWidth: 1,
+            borderColor: colors.warning,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            marginBottom: spacing.sm,
+          }}
+        >
+          <Text style={{ fontSize: 15 }}>✅</Text>
+          <Text style={{ flex: 1, fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
+            Daily check-in +{checkIn.pointsEarned} pts ({pointsToUsd(checkIn.pointsEarned)}) · Day{' '}
+            {checkIn.streakDay} streak
+          </Text>
+          <Pressable onPress={() => setCheckInDismissed(true)} hitSlop={8}>
+            <Text style={{ fontSize: 14, color: colors.warningDeep }}>✕</Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       {/* Hero: Get a Repair Estimate */}
       <Pressable

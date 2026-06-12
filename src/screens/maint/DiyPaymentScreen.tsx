@@ -5,25 +5,47 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Card, SectionLabel, Screen } from '../../components/ui';
+import { UsePointsRow } from '../../components/UsePointsRow';
+import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { PAYMENT_CARD } from '../../services/mock/data';
-import { proService } from '../../services';
+import { pointsService, proService } from '../../services';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyPayment'>;
+
+/** AutoMate Pro lifetime price (wireframe s-diy-unlock/payment: $10). */
+const PRO_PRICE_USD = 10;
 
 /** Wireframe s-diy-payment: Pro order summary + payment method. */
 export function DiyPaymentScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const points = useAppStore((s) => s.points);
   const [method, setMethod] = useState<'card' | 'apple'>('card');
+  const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
+
+  // Redemption: up to min(balance, total × 100) points (1 pt = $0.01).
+  const maxRedeemable = Math.min(points, Math.round(PRO_PRICE_USD * POINTS_PER_USD));
+  const applied = usePoints ? maxRedeemable : 0;
+  const payTotal = Math.max(
+    0,
+    Math.round((PRO_PRICE_USD - applied * POINT_VALUE_USD) * 100) / 100,
+  );
 
   const onPay = async () => {
     setPaying(true);
-    await proService.unlockPro(); // flips store.isPro
-    setPaying(false);
-    navigation.navigate('DiyConfirm');
+    try {
+      if (applied > 0) {
+        await pointsService.redeem(applied, 'Redeemed for AutoMate Pro');
+      }
+      await proService.unlockPro(); // flips store.isPro
+      navigation.navigate('DiyConfirm');
+    } finally {
+      setPaying(false);
+    }
   };
 
   return (
@@ -57,6 +79,24 @@ export function DiyPaymentScreen() {
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>Tax incl.</Text>
         </View>
+        {applied > 0 ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingVertical: 6,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: colors.divider,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: colors.successDeep }}>
+              ★ Points applied ({applied.toLocaleString()} pts)
+            </Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.successDeep }}>
+              − {pointsToUsd(applied)}
+            </Text>
+          </View>
+        ) : null}
         <View
           style={{
             flexDirection: 'row',
@@ -66,9 +106,18 @@ export function DiyPaymentScreen() {
           }}
         >
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>Total</Text>
-          <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>$10.00</Text>
+          <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>
+            ${payTotal.toFixed(2)}
+          </Text>
         </View>
       </Card>
+
+      <UsePointsRow
+        balance={points}
+        maxRedeemable={maxRedeemable}
+        applied={applied}
+        onToggle={setUsePoints}
+      />
 
       <SectionLabel>Pay with</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
@@ -140,7 +189,9 @@ export function DiyPaymentScreen() {
             {paying ? (
               <ActivityIndicator color={palette.dark} />
             ) : (
-              <Text style={{ fontSize: 16, fontWeight: '800', color: palette.dark }}>Pay $10.00</Text>
+              <Text style={{ fontSize: 16, fontWeight: '800', color: palette.dark }}>
+                Pay ${payTotal.toFixed(2)}
+              </Text>
             )}
           </LinearGradient>
         )}

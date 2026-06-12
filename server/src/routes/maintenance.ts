@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 
+import { EARN_RULES } from '../config';
 import { extractReceipt } from '../damageAi';
 import { awardPoints, prisma } from '../db';
 import { UPCOMING_SERVICES } from '../staticData';
@@ -118,7 +119,7 @@ maintenanceRouter.post('/history', async (req, res) => {
       extracted: extracted ?? undefined,
     },
   });
-  const pointsEarned = source === 'scan' ? 20 : 10; // scan receipt / manual log
+  const pointsEarned = source === 'scan' ? EARN_RULES.scanReceipt : EARN_RULES.manualLog;
   await awardPoints(
     req.user!.id,
     pointsEarned,

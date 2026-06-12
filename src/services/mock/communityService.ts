@@ -1,3 +1,4 @@
+import { EARN_RULES } from '../../config/points';
 import {
   CHANNELS,
   CommunityPost,
@@ -48,6 +49,10 @@ export const communityService = {
       },
       ...posts,
     ];
-    return { ok: true, pointsEarned: 50 + (photoCount > 0 ? 10 : 0) };
+    return {
+      ok: true,
+      pointsEarned: (EARN_RULES.communityPost +
+        (photoCount > 0 ? EARN_RULES.communityPhotoBonus : 0)) as number,
+    };
   },
 };

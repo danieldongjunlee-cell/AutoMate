@@ -6,6 +6,7 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { PostCard } from '../../components/PostCard';
 import { Screen } from '../../components/ui';
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -40,7 +41,9 @@ export function CommHondaScreen() {
           })}
         >
           <Text style={{ fontSize: 13, fontWeight: '600', color: colors.onPrimary }}>+ Post</Text>
-          <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>+50 pts</Text>
+          <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>
+            +{EARN_RULES.communityPost} pts · {pointsToUsd(EARN_RULES.communityPost)}
+          </Text>
         </Pressable>
       ),
     });

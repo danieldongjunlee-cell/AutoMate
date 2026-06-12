@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 
 import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
-import { insuranceService } from '../../services';
+import { insuranceService, pointsService } from '../../services';
 import { VEHICLE } from '../../services/mock/data';
 import { radii, spacing, useTheme } from '../../theme';
 
@@ -417,6 +417,8 @@ export function ProfInsAddScreen() {
         covers: covers || VEHICLE.name,
         renewal,
       });
+      // "Add insurance policy" earn rule (+100 pts — s-prof-earn).
+      await pointsService.earn('addInsurance');
       await invalidate();
       navigation.goBack();
     } catch (e) {

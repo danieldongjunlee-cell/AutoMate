@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Screen, SectionLabel } from '../../components/ui';
+import { pointsToUsd } from '../../config/points';
 import { EARN_ACTIONS } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -30,7 +31,7 @@ export function ProfEarnScreen() {
           {points.toLocaleString()} pts
         </Text>
         <Text style={{ fontSize: 15, fontWeight: '500', color: palette.warning }}>
-          = ${(points / 100).toFixed(2)} · 100 pts = $1
+          = {pointsToUsd(points)} · 100 pts = $1
         </Text>
       </LinearGradient>
 
@@ -62,7 +63,9 @@ export function ProfEarnScreen() {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 12, color: colors.warningDeep }}>+{action.pts} pts</Text>
+            <Text style={{ fontSize: 12, color: colors.warningDeep }}>
+              +{action.pts} pts · {pointsToUsd(action.pts)}
+            </Text>
           </View>
         </View>
       ))}

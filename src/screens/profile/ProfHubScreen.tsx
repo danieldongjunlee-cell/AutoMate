@@ -6,6 +6,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
+import { pointsToUsd } from '../../config/points';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
@@ -147,7 +148,7 @@ export function ProfHubScreen() {
                 <Text style={{ fontSize: 26, fontWeight: '700', color: '#fff' }}>
                   {points.toLocaleString()} pts{' '}
                   <Text style={{ fontSize: 14, fontWeight: '400', color: palette.warning }}>
-                    = ${(points / 100).toFixed(2)}
+                    = {pointsToUsd(points)}
                   </Text>
                 </Text>
               </View>

@@ -5,9 +5,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { UsePointsRow } from '../../components/UsePointsRow';
+import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
-import { maintService } from '../../services';
+import { maintService, pointsService } from '../../services';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
@@ -22,18 +24,32 @@ export function MaintPaymentScreen() {
   const { colors } = useTheme();
   const cart = useAppStore((s) => s.cart);
   const addPoints = useAppStore((s) => s.addPoints);
+  const points = useAppStore((s) => s.points);
   const dealer = dealerById(cart.dealerId);
   const [method, setMethod] = useState<PayMethod>('visa');
+  const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
 
   const { total, totalMin } = cartTotals(cart);
 
+  // Redemption: up to min(balance, total × 100) points (1 pt = $0.01).
+  const maxRedeemable = Math.min(points, Math.round(total * POINTS_PER_USD));
+  const applied = usePoints ? maxRedeemable : 0;
+  const payTotal = Math.max(0, Math.round((total - applied * POINT_VALUE_USD) * 100) / 100);
+  const totalLabel = applied > 0 ? payTotal.toFixed(2) : String(total);
+
   const onPay = async () => {
     setPaying(true);
-    const { pointsEarned } = await maintService.payForBooking(total);
-    addPoints(pointsEarned);
-    setPaying(false);
-    navigation.navigate('MaintScheduleConfirm');
+    try {
+      if (applied > 0) {
+        await pointsService.redeem(applied, 'Redeemed at service payment');
+      }
+      const { pointsEarned } = await maintService.payForBooking(payTotal);
+      addPoints(pointsEarned);
+      navigation.navigate('MaintScheduleConfirm');
+    } finally {
+      setPaying(false);
+    }
   };
 
   return (
@@ -72,11 +88,38 @@ export function MaintPaymentScreen() {
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{totalMin} min</Text>
         </View>
+        {applied > 0 ? (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingVertical: 5,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: colors.divider,
+            }}
+          >
+            <Text style={{ fontSize: 14, color: colors.successDeep }}>
+              ★ Points applied ({applied.toLocaleString()} pts)
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.successDeep }}>
+              − {pointsToUsd(applied)}
+            </Text>
+          </View>
+        ) : null}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>Total</Text>
-          <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>
+            ${totalLabel}
+          </Text>
         </View>
       </Card>
+
+      <UsePointsRow
+        balance={points}
+        maxRedeemable={maxRedeemable}
+        applied={applied}
+        onToggle={setUsePoints}
+      />
 
       <SectionLabel>Payment method</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.sm }}>
@@ -146,7 +189,7 @@ export function MaintPaymentScreen() {
         </Text>
       </View>
 
-      <PrimaryButton label={`Confirm & pay $${total} →`} loading={paying} onPress={onPay} />
+      <PrimaryButton label={`Confirm & pay $${totalLabel} →`} loading={paying} onPress={onPay} />
     </Screen>
   );
 }

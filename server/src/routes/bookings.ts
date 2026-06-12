@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { EARN_RULES } from '../config';
 import { awardPoints, prisma } from '../db';
 import { DEALER_NAMES } from '../staticData';
 
@@ -33,7 +34,7 @@ bookingsRouter.post('/', async (req, res) => {
       status: 'confirmed',
     },
   });
-  const pointsEarned = 50; // "Book service via app"
+  const pointsEarned = EARN_RULES.bookService;
   await awardPoints(req.user!.id, pointsEarned, 'Book service via app');
   return res.json({ ok: true, reminder: '1 day before', pointsEarned });
 });
@@ -60,7 +61,7 @@ bookingsRouter.post('/pay', async (req, res) => {
   await prisma.payment.create({
     data: { userId: req.user!.id, bookingId: booking.id, amountCents, purpose: 'booking' },
   });
-  const pointsEarned = 50; // "Book service via app"
+  const pointsEarned = EARN_RULES.bookService;
   await awardPoints(req.user!.id, pointsEarned, 'Book service via app');
   return res.json({ ok: true, reminder: 'day before at 9:00 AM', pointsEarned });
 });

@@ -1,3 +1,4 @@
+import { EARN_RULES } from '../../config/points';
 import {
   SCANNED_RECEIPT,
   ScannedReceipt,
@@ -49,11 +50,18 @@ export const maintService = {
       },
       ...history,
     ];
-    return { ok: true, pointsEarned: source === 'scan' ? 20 : 10 };
+    return {
+      ok: true,
+      pointsEarned: (source === 'scan' ? EARN_RULES.scanReceipt : EARN_RULES.manualLog) as number,
+    };
   },
 
   async payForBooking(_total: number) {
     await delay(700);
-    return { ok: true, reminder: 'day before at 9:00 AM', pointsEarned: 50 }; // "Book service via app"
+    return {
+      ok: true,
+      reminder: 'day before at 9:00 AM',
+      pointsEarned: EARN_RULES.bookService as number,
+    };
   },
 };

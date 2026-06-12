@@ -7,6 +7,7 @@ import Svg, { Circle } from 'react-native-svg';
 
 import { FilterChips, PointsBadge } from '../../components/FilterChips';
 import { Screen, SectionLabel } from '../../components/ui';
+import { EARN_RULES } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import {
   HISTORY_TIME_FILTERS,
@@ -118,7 +119,7 @@ export function MaintHistoryScreen() {
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
             Scan receipt
           </Text>
-          <PointsBadge points={20} />
+          <PointsBadge points={EARN_RULES.scanReceipt} usd />
         </Pressable>
         <Pressable
           onPress={() => navigation.navigate('MaintManual')}
@@ -138,7 +139,7 @@ export function MaintHistoryScreen() {
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
             Manual input
           </Text>
-          <PointsBadge points={10} />
+          <PointsBadge points={EARN_RULES.manualLog} usd />
         </Pressable>
       </View>
 

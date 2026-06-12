@@ -7,6 +7,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { SCANNED_RECEIPT, ScannedReceipt } from '../../services/mock/data';
 import { maintService } from '../../services';
@@ -78,7 +79,7 @@ export function MaintScanRevScreen() {
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
           Scanned — verify below
         </Text>
-        <PointsBadge points={20} />
+        <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
 
       {/* Parsed fields */}
@@ -118,7 +119,11 @@ export function MaintScanRevScreen() {
         ))}
       </Card>
 
-      <PrimaryButton label="Save to history → earn +20 pts" loading={saving} onPress={onSave} />
+      <PrimaryButton
+        label={`Save to history → earn +${EARN_RULES.scanReceipt} pts (${pointsToUsd(EARN_RULES.scanReceipt)})`}
+        loading={saving}
+        onPress={onSave}
+      />
     </Screen>
   );
 }

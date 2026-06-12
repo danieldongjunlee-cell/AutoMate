@@ -1,3 +1,4 @@
+import { EARN_RULES } from '../../config/points';
 import { AiEstimateSummary, Quote, QUOTE_REQUEST, QUOTES } from './data';
 import { delay } from './delay';
 
@@ -26,7 +27,7 @@ export const quoteService = {
       etaHours: '1–3',
       submittedAt: new Date().toISOString(),
       afterHours: isAfterHours(),
-      pointsEarned: 20, // "Submit damage photos" (s-prof-earn)
+      pointsEarned: EARN_RULES.submitPhotos as number, // "Submit damage photos" (s-prof-earn)
       // Wireframe demo numbers (87% / $285–$480) so mock copy stays exact.
       aiEstimate: {
         priceLow: QUOTE_REQUEST.priceRange.low,
@@ -43,6 +44,6 @@ export const quoteService = {
 
   async bookAppointment(_dealerId: string, _dateLabel: string, _time: string) {
     await delay(600);
-    return { ok: true, reminder: '1 day before', pointsEarned: 50 }; // "Book service via app"
+    return { ok: true, reminder: '1 day before', pointsEarned: EARN_RULES.bookService as number };
   },
 };

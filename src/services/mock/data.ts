@@ -1,4 +1,5 @@
 /** Mock domain data shared by the mock services. Copy mirrors the wireframe. */
+import { EARN_RULES } from '../../config/points';
 
 export interface Dealer {
   id: string;
@@ -766,15 +767,16 @@ export const MILESTONES: Milestone[] = [
   { id: 'mile-insp', icon: '📷', title: 'Free inspection', sub: 'Full 21-point', costPts: 25000 },
 ];
 
+// Point values come from the central earn schedule (src/config/points.ts).
 export const EARN_ACTIONS = [
-  { icon: '📅', title: 'Daily check-in', sub: 'Log in every day', pts: 10 },
-  { icon: '📷', title: 'Scan service receipt', sub: 'Add to service history', pts: 20 },
-  { icon: '✒️', title: 'Manual service log', sub: 'Enter service details', pts: 10 },
-  { icon: '🛢️', title: 'Book service via app', sub: 'Schedule at a dealer', pts: 50 },
-  { icon: '📸', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: 20 },
-  { icon: '💬', title: 'Post in community', sub: 'Share tips and reviews', pts: 50 },
-  { icon: '🛡️', title: 'Add insurance policy', sub: 'Link your coverage', pts: 100 },
-  { icon: '👥', title: 'Refer a friend', sub: 'They join AutoMate', pts: 100 },
+  { icon: '📅', title: 'Daily check-in', sub: 'Log in every day', pts: EARN_RULES.dailyCheckIn },
+  { icon: '📷', title: 'Scan service receipt', sub: 'Add to service history', pts: EARN_RULES.scanReceipt },
+  { icon: '✒️', title: 'Manual service log', sub: 'Enter service details', pts: EARN_RULES.manualLog },
+  { icon: '🛢️', title: 'Book service via app', sub: 'Schedule at a dealer', pts: EARN_RULES.bookService },
+  { icon: '📸', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: EARN_RULES.submitPhotos },
+  { icon: '💬', title: 'Post in community', sub: 'Share tips and reviews', pts: EARN_RULES.communityPost },
+  { icon: '🛡️', title: 'Add insurance policy', sub: 'Link your coverage', pts: EARN_RULES.addInsurance },
+  { icon: '👥', title: 'Refer a friend', sub: 'They join AutoMate', pts: EARN_RULES.referFriend },
 ];
 
 export const PAYMENT_CARD = {

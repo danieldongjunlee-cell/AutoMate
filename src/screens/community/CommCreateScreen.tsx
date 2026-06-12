@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
+import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -58,7 +59,8 @@ export function CommCreateScreen() {
       >
         <Text style={{ fontSize: 18 }}>★</Text>
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-          Earn +50 pts for posting · +10 pts with photos
+          Earn +{EARN_RULES.communityPost} pts for posting · +{EARN_RULES.communityPhotoBonus}{' '}
+          pts with photos
         </Text>
       </View>
 
@@ -215,7 +217,11 @@ export function CommCreateScreen() {
       </View>
 
       <PrimaryButton
-        label={hasPhoto ? 'Publish → earn +60 pts (photo bonus!)' : 'Publish → earn +50 pts'}
+        label={(() => {
+          const pts =
+            EARN_RULES.communityPost + (hasPhoto ? EARN_RULES.communityPhotoBonus : 0);
+          return `Publish → earn +${pts} pts · ${pointsToUsd(pts)}${hasPhoto ? ' (photo bonus!)' : ''}`;
+        })()}
         loading={publishing}
         onPress={onPublish}
       />
