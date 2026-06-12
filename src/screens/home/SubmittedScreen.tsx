@@ -18,7 +18,12 @@ export function SubmittedScreen() {
   const { colors } = useTheme();
   const damageParts = useAppStore((s) => s.damageParts);
   const isPro = useAppStore((s) => s.isPro);
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
   const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
+  // Live AI analysis from the submit response; wireframe demo values otherwise.
+  const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
+  const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
+  const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
   return (
     <Screen>
@@ -151,11 +156,11 @@ export function SubmittedScreen() {
         <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep, marginBottom: 4 }}>
           {primaryPart} dent — DIY feasible ✔
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            Shallow dent · Paint intact ·
+            Paint intact · Est. ${priceLow}–${priceHigh} ·{' '}
           </Text>
-          <Badge label="87% confidence" variant="success" />
+          <Badge label={`${confidencePct}% confidence`} variant="success" />
         </View>
       </View>
 

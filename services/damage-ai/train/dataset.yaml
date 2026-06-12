@@ -1,0 +1,17 @@
+# YOLOv8 dataset config TEMPLATE for the damage detector.
+#
+# Point `path` at a YOLO-format labelled dataset (images/ + labels/ with
+# normalized xywh boxes). The raw class-sorted photos under
+# data/damage/{dent,scratch,crack,paint}/ are the labelling inbox — run them
+# through your annotation tool (e.g. Label Studio, CVAT) and export YOLO
+# format here. See train/README.md for the CarDD conversion notes.
+
+path: ../data/damage-yolo   # dataset root (relative to this file)
+train: images/train
+val: images/val
+
+names:
+  0: dent
+  1: scratch
+  2: crack
+  3: paint

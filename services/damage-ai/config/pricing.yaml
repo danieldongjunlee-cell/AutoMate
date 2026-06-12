@@ -1,0 +1,71 @@
+# Damage repair pricing table — Fairfax, VA market (body-shop quotes, 2025/26).
+#
+# Keyed part x damage_type x severity bucket -> [price_low, price_high] in USD.
+# Part lookup is fuzzy: the request part name is lowercased and matched against
+# the longest table key it contains ("L. Rear Fender" -> "fender",
+# "Rear bumper" -> "rear bumper"). Unknown parts use `default`.
+#
+# The rear-bumper x dent x moderate range (285-480) matches the wireframe's
+# AI-estimate demo numbers.
+
+currency: USD
+market: Fairfax, VA
+
+# severity score (0..1) -> bucket. Upper bound exclusive except the last.
+severity_buckets:
+  minor: [0.0, 0.33]
+  moderate: [0.33, 0.66]
+  severe: [0.66, 1.0]
+
+parts:
+  rear bumper:
+    dent:    { minor: [140, 260], moderate: [285, 480], severe: [520, 980] }
+    scratch: { minor: [90, 180],  moderate: [180, 360], severe: [380, 700] }
+    crack:   { minor: [220, 380], moderate: [380, 620], severe: [650, 1100] }
+    paint:   { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }
+  front bumper:
+    dent:    { minor: [150, 280], moderate: [300, 520], severe: [550, 1050] }
+    scratch: { minor: [90, 190],  moderate: [190, 380], severe: [400, 720] }
+    crack:   { minor: [240, 400], moderate: [400, 660], severe: [700, 1200] }
+    paint:   { minor: [130, 250], moderate: [260, 470], severe: [500, 880] }
+  fender:
+    dent:    { minor: [120, 230], moderate: [250, 430], severe: [480, 900] }
+    scratch: { minor: [80, 170],  moderate: [170, 330], severe: [350, 650] }
+    crack:   { minor: [260, 430], moderate: [430, 700], severe: [750, 1300] }
+    paint:   { minor: [110, 220], moderate: [230, 420], severe: [450, 800] }
+  door:
+    dent:    { minor: [130, 250], moderate: [270, 460], severe: [500, 950] }
+    scratch: { minor: [85, 180],  moderate: [180, 350], severe: [370, 680] }
+    crack:   { minor: [280, 460], moderate: [460, 750], severe: [800, 1400] }
+    paint:   { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }
+  hood:
+    dent:    { minor: [150, 280], moderate: [300, 510], severe: [550, 1000] }
+    scratch: { minor: [90, 190],  moderate: [190, 370], severe: [390, 700] }
+    crack:   { minor: [320, 520], moderate: [520, 850], severe: [900, 1600] }
+    paint:   { minor: [140, 270], moderate: [280, 500], severe: [530, 950] }
+  trunk:
+    dent:    { minor: [140, 260], moderate: [280, 480], severe: [520, 960] }
+    scratch: { minor: [85, 180],  moderate: [180, 350], severe: [370, 680] }
+    crack:   { minor: [280, 460], moderate: [460, 750], severe: [800, 1400] }
+    paint:   { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }
+  roof:
+    dent:    { minor: [180, 330], moderate: [350, 600], severe: [650, 1250] }
+    scratch: { minor: [100, 210], moderate: [210, 410], severe: [430, 780] }
+    crack:   { minor: [350, 580], moderate: [580, 950], severe: [1000, 1800] }
+    paint:   { minor: [160, 300], moderate: [310, 560], severe: [600, 1100] }
+  windshield:
+    dent:    { minor: [180, 320], moderate: [320, 550], severe: [600, 1100] }
+    scratch: { minor: [60, 140],  moderate: [140, 300], severe: [320, 600] }
+    crack:   { minor: [80, 160],  moderate: [250, 450], severe: [480, 900] }
+    paint:   { minor: [60, 140],  moderate: [140, 300], severe: [320, 600] }
+  rear window:
+    dent:    { minor: [160, 300], moderate: [300, 520], severe: [560, 1050] }
+    scratch: { minor: [60, 140],  moderate: [140, 290], severe: [310, 580] }
+    crack:   { minor: [80, 160],  moderate: [230, 420], severe: [450, 850] }
+    paint:   { minor: [60, 140],  moderate: [140, 290], severe: [310, 580] }
+
+default:
+  dent:    { minor: [130, 250], moderate: [270, 460], severe: [500, 950] }
+  scratch: { minor: [85, 180],  moderate: [180, 350], severe: [370, 680] }
+  crack:   { minor: [260, 430], moderate: [430, 700], severe: [750, 1300] }
+  paint:   { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }

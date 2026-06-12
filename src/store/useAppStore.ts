@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { BOOKABLE_SERVICES } from '../services/mock/data';
+import { AiEstimateSummary, BOOKABLE_SERVICES } from '../services/mock/data';
 
 /** A service row in the multi-service booking cart (maint-schedule-book). */
 export interface CartService {
@@ -94,6 +94,9 @@ interface AppState {
   resetDraft: () => void;
   removePart: (index: number) => void;
   resetDamageFlow: () => void;
+  /** AI estimate from the latest submit (Submitted + DealerQuotes headers). */
+  aiEstimate: AiEstimateSummary | null;
+  setAiEstimate: (estimate: AiEstimateSummary | null) => void;
 
   // Maintenance booking cart (multi-service selection)
   cart: BookingCart;
@@ -125,6 +128,7 @@ export const useAppStore = create<AppState>((set) => ({
       user: null,
       damageParts: [],
       ...emptyDraft,
+      aiEstimate: null,
       cart: emptyCart,
       points: SEED_POINTS,
       isPro: false,
@@ -164,7 +168,9 @@ export const useAppStore = create<AppState>((set) => ({
   resetDraft: () => set({ ...emptyDraft }),
   removePart: (index) =>
     set((s) => ({ damageParts: s.damageParts.filter((_, i) => i !== index) })),
-  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft }),
+  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null }),
+  aiEstimate: null,
+  setAiEstimate: (aiEstimate) => set({ aiEstimate }),
 
   cart: emptyCart,
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),

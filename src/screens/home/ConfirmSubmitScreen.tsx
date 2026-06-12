@@ -119,13 +119,17 @@ export function ConfirmSubmitScreen() {
   const removePart = useAppStore((s) => s.removePart);
   const resetDraft = useAppStore((s) => s.resetDraft);
   const addPoints = useAppStore((s) => s.addPoints);
+  const setAiEstimate = useAppStore((s) => s.setAiEstimate);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async () => {
     setSubmitting(true);
     // The service decides after-hours routing (backend-owned rule).
-    const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(damageParts);
+    const { afterHours, pointsEarned, aiEstimate } =
+      await quoteService.submitDamageRequest(damageParts);
     addPoints(pointsEarned);
+    // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
+    setAiEstimate(aiEstimate ?? null);
     setSubmitting(false);
     navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
   };

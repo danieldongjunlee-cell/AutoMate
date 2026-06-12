@@ -21,6 +21,12 @@ export const DEMO_OTP = '123456';
 /** Points valuation (approved decision): 1 point = $0.01. */
 export const POINT_VALUE_USD = 0.01;
 
+/** Base URL of the damage-AI FastAPI service (services/damage-ai). */
+export const DAMAGE_AI_URL = (process.env.DAMAGE_AI_URL ?? 'http://localhost:8100').replace(
+  /\/+$/,
+  '',
+);
+
 /** Where the local StorageProvider writes files. */
 export const UPLOAD_DIR = process.env.UPLOAD_DIR ?? 'uploads';
 

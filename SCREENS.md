@@ -11,6 +11,12 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 > implementation registered in React Navigation. Header titles live in
 > `src/navigation/registry.ts`; the navigation graph reference is
 > docs/wireframe-analysis.md §2 + docs/upgrade-v15.10-gap-analysis.md.
+>
+> **Phase 3 (AI services):** damage submit (`s-confirm-submit` →
+> `s-submitted`/`s-dealer-quotes`) and receipt scan (`s-maint-scan-cam` →
+> `s-maint-scan-rev`) are now backed by `services/damage-ai` (FastAPI, mock
+> mode default) in API mode; in mock mode the in-app services return the
+> wireframe demo numbers (87% confidence / $285–$480, AutoFix Pro receipt).
 
 ## Auth (Step 2)
 

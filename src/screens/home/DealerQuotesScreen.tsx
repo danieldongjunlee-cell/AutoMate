@@ -9,6 +9,7 @@ import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'DealerQuotes'>;
@@ -16,10 +17,16 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'DealerQuotes'>;
 export function DealerQuotesScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
   const { data: quotes, isLoading } = useQuery({
     queryKey: ['quotes'],
     queryFn: quoteService.getQuotes,
   });
+  // Header numbers come from the latest submit's AI analysis when available;
+  // the wireframe demo values (87% / $285–$480) otherwise.
+  const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
+  const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
+  const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
   const mapLink = (
     <Pressable
@@ -81,13 +88,13 @@ export function DealerQuotesScreen() {
             }}
           >
             <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
-              AI confidence {QUOTE_REQUEST.aiConfidencePct}%
+              AI confidence {confidencePct}%
             </Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 26, fontWeight: '800', color: colors.successDark }}>
-            ${QUOTE_REQUEST.priceRange.low} – ${QUOTE_REQUEST.priceRange.high}
+            ${priceLow} – ${priceHigh}
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             {QUOTE_REQUEST.quotesReceived} quotes · price range
@@ -105,7 +112,7 @@ export function DealerQuotesScreen() {
         >
           <View
             style={{
-              width: `${QUOTE_REQUEST.aiConfidencePct}%`,
+              width: `${confidencePct}%`,
               height: '100%',
               backgroundColor: colors.success,
               borderRadius: 3,

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { estimateDamage } from '../damageAi';
 import { awardPoints, prisma } from '../db';
 import { isAfterHours } from '../staticData';
 
@@ -70,16 +71,29 @@ quotesRouter.post('/submit', async (req, res) => {
   }
   const afterHours = isAfterHours();
   const shopsNotified = 12;
+  const photoRefs: string[] = Array.isArray(req.body?.photoRefs)
+    ? req.body.photoRefs.map(String)
+    : [];
+  // Forward the photos to the damage-AI service for the primary part.
+  // estimateDamage never throws — it degrades to the deterministic TS mock
+  // when the service is unreachable, so submission always succeeds.
+  const estimate = await estimateDamage(parts[0], photoRefs);
   await prisma.damageRequest.create({
     data: {
       userId: req.user!.id,
       title: parts.map((p) => `${p.part} ${p.type.toLowerCase()}`).join(', '),
       city: 'Fairfax, VA',
       parts,
-      photoRefs: Array.isArray(req.body?.photoRefs) ? req.body.photoRefs.map(String) : [],
+      photoRefs,
       shopsNotified,
       afterHours,
       status: 'open',
+      aiPart: estimate.part,
+      aiType: estimate.damageType,
+      aiSeverity: estimate.severityLabel,
+      aiPriceLow: estimate.priceLow,
+      aiPriceHigh: estimate.priceHigh,
+      aiConfidence: estimate.confidencePct / 100,
     },
   });
   const pointsEarned = 20; // "Submit damage photos" (s-prof-earn)
@@ -90,6 +104,11 @@ quotesRouter.post('/submit', async (req, res) => {
     submittedAt: new Date().toISOString(),
     afterHours,
     pointsEarned,
+    aiEstimate: {
+      priceLow: estimate.priceLow,
+      priceHigh: estimate.priceHigh,
+      confidencePct: estimate.confidencePct,
+    },
   });
 });
 

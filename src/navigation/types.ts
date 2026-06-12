@@ -1,5 +1,7 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 
+import type { ScannedReceipt } from '../services/mock/data';
+
 export type AuthStackParamList = {
   Splash: undefined;
   SignUp: undefined;
@@ -30,7 +32,7 @@ export type MaintStackParamList = {
   MaintDashboard: undefined;
   MaintHistory: undefined;
   MaintScanCam: undefined;
-  MaintScanRev: undefined;
+  MaintScanRev: { receipt?: ScannedReceipt } | undefined;
   MaintManual: undefined;
   MaintDiy: undefined;
   DiyUnlock: undefined;

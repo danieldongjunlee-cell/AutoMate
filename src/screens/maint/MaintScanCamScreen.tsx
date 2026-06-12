@@ -1,12 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
+import { maintService } from '../../services';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScanCam'>;
@@ -22,6 +23,19 @@ const BRACKETS = [
 export function MaintScanCamScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const [scanning, setScanning] = useState(false);
+
+  const onReview = async () => {
+    setScanning(true);
+    try {
+      // Mock: canonical receipt after a delay. API: POST /maintenance/scan,
+      // which forwards to the damage-ai /receipt OCR endpoint.
+      const receipt = await maintService.scanReceipt();
+      navigation.navigate('MaintScanRev', { receipt });
+    } finally {
+      setScanning(false);
+    }
+  };
 
   return (
     <Screen>
@@ -144,11 +158,7 @@ export function MaintScanCamScreen() {
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>← Retake</Text>
         </Pressable>
-        <PrimaryButton
-          label="Review scan →"
-          onPress={() => navigation.navigate('MaintScanRev')}
-          style={{ flex: 2 }}
-        />
+        <PrimaryButton label="Review scan →" loading={scanning} onPress={onReview} style={{ flex: 2 }} />
       </View>
     </Screen>
   );

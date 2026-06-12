@@ -1,5 +1,5 @@
 /** Real quote service (server/) — mirrors services/mock/quoteService. */
-import { Quote, QUOTE_REQUEST } from '../mock/data';
+import { AiEstimateSummary, Quote, QUOTE_REQUEST } from '../mock/data';
 import { request } from './client';
 
 export const quoteService = {
@@ -18,6 +18,8 @@ export const quoteService = {
       submittedAt: string;
       afterHours: boolean;
       pointsEarned: number;
+      /** From the damage-ai service (or the server's deterministic fallback). */
+      aiEstimate: AiEstimateSummary;
     }>('/quotes/submit', { body: { parts } });
   },
 

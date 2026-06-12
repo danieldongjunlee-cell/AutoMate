@@ -1,9 +1,17 @@
 import { Router } from 'express';
+import multer from 'multer';
 
+import { extractReceipt } from '../damageAi';
 import { awardPoints, prisma } from '../db';
 import { UPCOMING_SERVICES } from '../staticData';
+import { storage } from '../storage';
 
 export const maintenanceRouter = Router();
+
+const scanUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024, files: 1 },
+});
 
 // GET /maintenance/vehicle — the user's primary vehicle (VEHICLE shape)
 maintenanceRouter.get('/vehicle', async (req, res) => {
@@ -49,6 +57,38 @@ maintenanceRouter.get('/history', async (req, res) => {
       icon: r.icon,
     })),
   );
+});
+
+// POST /maintenance/scan — receipt photo (multipart "file", optional while the
+// RN camera is simulated) → extracted fields for the scan-review screen.
+// Forwards to the damage-AI /receipt endpoint; extractReceipt degrades to the
+// canonical mock receipt when the service is down, so this never 500s.
+maintenanceRouter.post('/scan', scanUpload.single('file'), async (req, res) => {
+  const file = req.file
+    ? { buffer: req.file.buffer, mimeType: req.file.mimetype }
+    : undefined;
+  // Keep the original scan for the history record's imageRef.
+  const stored = req.file
+    ? await storage.save({
+        buffer: req.file.buffer,
+        originalName: req.file.originalname,
+        mimeType: req.file.mimetype,
+      })
+    : null;
+  const receipt = await extractReceipt(file);
+  return res.json({
+    // SCANNED_RECEIPT shape, ready for the scan-review screen
+    serviceType: receipt.serviceType,
+    shop: receipt.vendor,
+    date: receipt.date,
+    mileage: receipt.mileage,
+    amount: `$${receipt.total.toFixed(2)}`,
+    // raw extraction extras
+    lineItems: receipt.lineItems,
+    total: receipt.total,
+    modelMode: receipt.modelMode,
+    imageRef: stored?.ref ?? null,
+  });
 });
 
 // POST /maintenance/history { record: { type, shop, dateLabel, year, mileage, cost },

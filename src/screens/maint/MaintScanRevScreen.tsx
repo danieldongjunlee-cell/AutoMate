@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -8,14 +8,15 @@ import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
-import { SCANNED_RECEIPT } from '../../services/mock/data';
+import { SCANNED_RECEIPT, ScannedReceipt } from '../../services/mock/data';
 import { maintService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScanRev'>;
+type Route = RouteProp<MaintStackParamList, 'MaintScanRev'>;
 
-const FIELDS: { key: keyof typeof SCANNED_RECEIPT; label: string }[] = [
+const FIELDS: { key: keyof ScannedReceipt; label: string }[] = [
   { key: 'serviceType', label: 'Service type' },
   { key: 'shop', label: 'Shop' },
   { key: 'date', label: 'Date' },
@@ -26,21 +27,27 @@ const FIELDS: { key: keyof typeof SCANNED_RECEIPT; label: string }[] = [
 /** Wireframe s-maint-scan-rev: verify parsed receipt fields, save → history. */
 export function MaintScanRevScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const queryClient = useQueryClient();
   const { colors } = useTheme();
   const addPoints = useAppStore((s) => s.addPoints);
   const [saving, setSaving] = useState(false);
+  // Fields extracted by the scan service (mock OCR or damage-ai /receipt);
+  // the constant covers deep links that skip the scan step.
+  const receipt = route.params?.receipt ?? SCANNED_RECEIPT;
 
   const onSave = async () => {
     setSaving(true);
     const { pointsEarned } = await maintService.saveServiceRecord(
       {
-        type: 'Oil change',
-        shop: SCANNED_RECEIPT.shop,
-        dateLabel: 'Mar 12',
-        year: 2025,
-        mileage: SCANNED_RECEIPT.mileage,
-        cost: 49,
+        // "Oil change — synthetic" → history row type "Oil change"
+        type: receipt.serviceType.split('—')[0].trim() || 'Service',
+        shop: receipt.shop,
+        // "Mar 12, 2025" → dateLabel "Mar 12" + year 2025
+        dateLabel: receipt.date.split(',')[0].trim(),
+        year: Number(receipt.date.match(/\d{4}/)?.[0] ?? new Date().getFullYear()),
+        mileage: receipt.mileage,
+        cost: Number(receipt.amount.replace(/[^0-9.]/g, '')) || 0,
       },
       'scan',
     );
@@ -98,7 +105,7 @@ export function MaintScanRevScreen() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
-                {SCANNED_RECEIPT[key]}
+                {receipt[key]}
               </Text>
               <Pressable
                 onPress={() => Alert.alert('Edit field', 'Field editing arrives with real OCR.')}

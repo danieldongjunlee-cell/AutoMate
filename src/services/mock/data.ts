@@ -390,6 +390,16 @@ export const SCANNED_RECEIPT = {
   amount: '$49.00',
 };
 
+/** Shape returned by maintService.scanReceipt (mock + /maintenance/scan). */
+export type ScannedReceipt = typeof SCANNED_RECEIPT;
+
+/** AI damage estimate carried on the submit response (mock + damage-ai). */
+export interface AiEstimateSummary {
+  priceLow: number;
+  priceHigh: number;
+  confidencePct: number;
+}
+
 export interface DiyGuide {
   id: string;
   level: 'EASY' | 'MED' | 'HARD';

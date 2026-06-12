@@ -1,4 +1,4 @@
-import { Quote, QUOTE_REQUEST, QUOTES } from './data';
+import { AiEstimateSummary, Quote, QUOTE_REQUEST, QUOTES } from './data';
 import { delay } from './delay';
 
 /**
@@ -27,6 +27,12 @@ export const quoteService = {
       submittedAt: new Date().toISOString(),
       afterHours: isAfterHours(),
       pointsEarned: 20, // "Submit damage photos" (s-prof-earn)
+      // Wireframe demo numbers (87% / $285–$480) so mock copy stays exact.
+      aiEstimate: {
+        priceLow: QUOTE_REQUEST.priceRange.low,
+        priceHigh: QUOTE_REQUEST.priceRange.high,
+        confidencePct: QUOTE_REQUEST.aiConfidencePct,
+      } as AiEstimateSummary,
     };
   },
 

@@ -1,0 +1,21 @@
+# Core — enough to run the service in MODEL_MODE=mock (the default).
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pillow>=10.0
+pyyaml>=6.0
+python-multipart>=0.0.9
+
+# Optional model extras — heavy downloads; install only when switching modes.
+# All imports are guarded, the service runs (and falls back to mock) without them.
+#
+# MODEL_MODE=yolo — YOLOv8 damage detector (weights at models/damage.pt):
+#   ultralytics>=8.2
+#
+# RECEIPT_MODE=ocr — PaddleOCR receipt pipeline:
+#   paddleocr>=2.7
+#   paddlepaddle>=2.6
+#
+# Donut upgrade path for end-to-end receipt understanding (see README):
+#   transformers>=4.40
+#   torch>=2.2
+#   sentencepiece>=0.2

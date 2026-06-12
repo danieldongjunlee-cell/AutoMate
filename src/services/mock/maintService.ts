@@ -1,4 +1,6 @@
 import {
+  SCANNED_RECEIPT,
+  ScannedReceipt,
   ServiceRecord,
   SERVICE_HISTORY_SEED,
   UPCOMING_SERVICES,
@@ -24,6 +26,13 @@ export const maintService = {
   async getServiceHistory(): Promise<ServiceRecord[]> {
     await delay(300);
     return [...history];
+  },
+
+  /** "OCR" a captured receipt — mock returns the canonical AutoFix Pro
+   * receipt after a scanning delay (api twin posts to /maintenance/scan). */
+  async scanReceipt(): Promise<ScannedReceipt> {
+    await delay(900);
+    return { ...SCANNED_RECEIPT };
   },
 
   /** Save a scanned or manually-entered record; returns points earned. */
