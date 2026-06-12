@@ -585,13 +585,9 @@ export const INSURANCE_POLICY = {
   claimReference: 'REF-AM-9821-VA',
 };
 
-/** 3-year cost table rows (s-comp-deep-dive). */
-export const DEEP_DIVE_ROWS = [
-  { item: 'Repair cost', sub: '', cash: '$320', insure: '$0', risk: false },
-  { item: 'Deductible', sub: '', cash: '—', insure: '$500', risk: false },
-  { item: 'Premium hike', sub: 'Yr 1–3 (~15%/yr)', cash: '—', insure: '+$540', risk: true },
-  { item: 'Claim on record', sub: '', cash: '—', insure: '3 yrs', risk: false },
-];
+// The s-comp-deep-dive table is no longer static data: it is computed by the
+// actuarial model (src/services/actuarial/predict.ts via compareService) and
+// reproduces the wireframe rows exactly for the seeded inputs.
 
 // ── Community domain ───────────────────────────────────────────────────
 

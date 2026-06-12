@@ -1,29 +1,35 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CompareStackParamList } from '../../navigation/types';
-import {
-  acceptedQuoteById,
-  dealerById,
-  DEEP_DIVE_ROWS,
-  INSURANCE_POLICY,
-} from '../../services/mock/data';
+import { compareService } from '../../services';
+import { acceptedQuoteById, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompDeepDive'>;
 type Route = RouteProp<CompareStackParamList, 'CompDeepDive'>;
 
-/** Wireframe s-comp-deep-dive: 3-year cash vs. insurance cost table + verdict. */
+const usd = (n: number) => `$${Math.round(n).toLocaleString('en-US')}`;
+
+/** Wireframe s-comp-deep-dive: 3-year cash vs. insurance cost table + verdict,
+ * numbers from the actuarial model via compareService (+ assumptions disclosure). */
 export function CompDeepDiveScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const aq = acceptedQuoteById(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
+  const [assumptionsOpen, setAssumptionsOpen] = useState(false);
+
+  const { data: comparison, isLoading } = useQuery({
+    queryKey: ['comparison', aq.id],
+    queryFn: () => compareService.getComparison({ quoteId: aq.id }),
+  });
 
   const headCell = (label: string, color: string, align: 'left' | 'center' = 'center') => (
     <Text
@@ -39,6 +45,46 @@ export function CompDeepDiveScreen() {
       {label}
     </Text>
   );
+
+  if (isLoading || !comparison) {
+    return (
+      <Screen>
+        <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
+          <ActivityIndicator color={colors.primary} />
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.sm }}>
+            Crunching 3-year costs…
+          </Text>
+        </View>
+      </Screen>
+    );
+  }
+
+  const { input, result } = comparison;
+  const cashWins = result.recommendation === 'cash';
+  const savings = Math.abs(result.insuranceTotal3yr - result.cashTotal3yr);
+
+  // Table rows mirror the wireframe, fed by the model output.
+  const rows = [
+    { item: 'Repair cost', sub: '', cash: usd(result.cashTotal3yr), insure: '$0', risk: false },
+    { item: 'Deductible', sub: '', cash: '—', insure: usd(input.deductible), risk: false },
+    {
+      item: 'Premium hike',
+      sub: `Yr 1–${result.surchargeYears} (~${result.surchargePctPerYear}%/yr)`,
+      cash: '—',
+      insure: `+${usd(result.totalSurcharge)}`,
+      risk: true,
+    },
+    { item: 'Claim on record', sub: '', cash: '—', insure: `${result.surchargeYears} yrs`, risk: false },
+  ];
+
+  const breakEvenTitle =
+    result.breakEvenMonth === null ? 'Break-even: Never' : `Break-even: Month ${result.breakEvenMonth}`;
+  const breakEvenSub =
+    result.breakEvenMonth === 1
+      ? `${usd(input.deductible)} deductible alone exceeds the repair cost — cash wins immediately`
+      : result.breakEvenMonth === null
+        ? 'The insurance path stays below the cash cost for the whole 3-year window'
+        : `Deductible + monthly premium hikes pass the cash cost in month ${result.breakEvenMonth}`;
 
   return (
     <Screen>
@@ -62,8 +108,8 @@ export function CompDeepDiveScreen() {
             {dealer.name} — Rear bumper
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            ${aq.priceLow}–${aq.priceHigh} est. · {INSURANCE_POLICY.carrier} $
-            {INSURANCE_POLICY.deductible} ded.
+            ${aq.priceLow}–${aq.priceHigh} est. · {INSURANCE_POLICY.carrier} {usd(input.deductible)}{' '}
+            ded.
           </Text>
         </View>
       </View>
@@ -91,7 +137,7 @@ export function CompDeepDiveScreen() {
           {headCell('Cash', colors.success)}
           {headCell('Insure', colors.danger)}
         </View>
-        {DEEP_DIVE_ROWS.map((row) => (
+        {rows.map((row) => (
           <View
             key={row.item}
             style={{
@@ -149,12 +195,12 @@ export function CompDeepDiveScreen() {
           <Text
             style={{ flex: 1, fontSize: 18, fontWeight: '800', textAlign: 'center', color: colors.successDark }}
           >
-            $320
+            {usd(result.cashTotal3yr)}
           </Text>
           <Text
             style={{ flex: 1, fontSize: 18, fontWeight: '800', textAlign: 'center', color: colors.danger }}
           >
-            $1,040
+            {usd(result.insuranceTotal3yr)}
           </Text>
         </View>
       </View>
@@ -175,17 +221,14 @@ export function CompDeepDiveScreen() {
         <Text style={{ fontSize: 16 }}>📊</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary, marginBottom: 1 }}>
-            Break-even: Month 1
+            {breakEvenTitle}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            ${INSURANCE_POLICY.deductible} deductible alone exceeds the repair cost — cash wins
-            immediately
-          </Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{breakEvenSub}</Text>
         </View>
       </View>
 
       {/* Verdict */}
-      <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md }}>
+      <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.sm }}>
         <View
           style={{
             flex: 1,
@@ -209,10 +252,12 @@ export function CompDeepDiveScreen() {
             Verdict
           </Text>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
-            Pay cash ✔
+            {cashWins ? 'Pay cash ✔' : 'File insurance'}
           </Text>
           <Text style={{ fontSize: 11, color: colors.successDark, marginTop: 3, lineHeight: 15 }}>
-            Saves $720 · No rate hike · No claim
+            {cashWins
+              ? `Saves ${usd(savings)} · No rate hike · No claim`
+              : `Saves ${usd(savings)} vs paying cash`}
           </Text>
         </View>
         <View
@@ -237,11 +282,64 @@ export function CompDeepDiveScreen() {
           >
             Filing risk
           </Text>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>High ⚠</Text>
+          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>
+            {cashWins ? 'High ⚠' : 'Moderate'}
+          </Text>
           <Text style={{ fontSize: 11, color: colors.dangerDeep, marginTop: 3, lineHeight: 15 }}>
-            ${INSURANCE_POLICY.deductible} ded. {'>'} repair · 3-yr hike
+            {input.deductible >= result.cashTotal3yr
+              ? `${usd(input.deductible)} ded. > repair · ${result.surchargeYears}-yr hike`
+              : `+${usd(result.totalSurcharge)} hikes over ${result.surchargeYears} yrs`}
           </Text>
         </View>
+      </View>
+
+      {/* Assumptions disclosure */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.sm,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          marginBottom: spacing.md,
+          overflow: 'hidden',
+        }}
+      >
+        <Pressable
+          onPress={() => setAssumptionsOpen((open) => !open)}
+          style={({ pressed }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.xs,
+            padding: spacing.sm,
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 13 }}>ⓘ</Text>
+          <Text style={{ flex: 1, fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
+            Assumptions behind these numbers
+          </Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            {assumptionsOpen ? '▾' : '▸'}
+          </Text>
+        </Pressable>
+        {assumptionsOpen ? (
+          <View
+            style={{
+              paddingHorizontal: spacing.sm,
+              paddingBottom: spacing.sm,
+              gap: 5,
+            }}
+          >
+            {result.assumptions.map((line) => (
+              <View key={line} style={{ flexDirection: 'row', gap: 6 }}>
+                <Text style={{ fontSize: 11, color: colors.textPlaceholder }}>•</Text>
+                <Text style={{ flex: 1, fontSize: 11, color: colors.textTertiary, lineHeight: 15 }}>
+                  {line}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       <PrimaryButton

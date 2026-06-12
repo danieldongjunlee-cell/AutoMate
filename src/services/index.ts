@@ -11,12 +11,14 @@
 import { authService as apiAuthService } from './api/authService';
 import { apiEnabled } from './api/client';
 import { communityService as apiCommunityService } from './api/communityService';
+import { compareService as apiCompareService } from './api/compareService';
 import { maintService as apiMaintService } from './api/maintService';
 import { notificationService as apiNotificationService } from './api/notificationService';
 import { proService as apiProService } from './api/proService';
 import { quoteService as apiQuoteService } from './api/quoteService';
 import { authService as mockAuthService } from './mock/authService';
 import { communityService as mockCommunityService } from './mock/communityService';
+import { compareService as mockCompareService } from './mock/compareService';
 import { maintService as mockMaintService } from './mock/maintService';
 import { notificationService as mockNotificationService } from './mock/notificationService';
 import { proService as mockProService } from './mock/proService';
@@ -35,9 +37,13 @@ export const communityService: typeof mockCommunityService = USE_API
   ? apiCommunityService
   : mockCommunityService;
 export const proService: typeof mockProService = USE_API ? apiProService : mockProService;
+export const compareService: typeof mockCompareService = USE_API
+  ? apiCompareService
+  : mockCompareService;
 
 // Shared constants/types that screens use alongside the services.
 export { DEMO_EMAIL, DEMO_OTP, DEMO_PASSWORD, MOCK_PHONE } from './mock/authService';
 export type { SignUpInput } from './mock/authService';
 export { isAfterHours } from './mock/quoteService';
 export type { AppNotification } from './mock/notificationService';
+export type { Comparison, ComparisonRequest } from './mock/compareService';

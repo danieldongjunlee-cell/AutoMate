@@ -1,10 +1,12 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { CompareStackParamList } from '../../navigation/types';
+import { compareService } from '../../services';
 import { acceptedQuoteById, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { Screen } from '../../components/ui';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -16,13 +18,24 @@ type Route = RouteProp<CompareStackParamList, 'CompCashIns'>;
 const SALMON_BG = '#FAECE7';
 const SALMON_FG = '#4A1B0C';
 
-/** Wireframe s-comp-cash-ins: pay cash vs. file insurance side-by-side. */
+/** Wireframe s-comp-cash-ins: pay cash vs. file insurance side-by-side.
+ * Verdict + numbers come from the actuarial model via compareService. */
 export function CompCashInsScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const aq = acceptedQuoteById(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
+
+  const { data: comparison } = useQuery({
+    queryKey: ['comparison', aq.id],
+    queryFn: () => compareService.getComparison({ quoteId: aq.id }),
+  });
+  // Wireframe defaults while the model loads (same numbers for seeded data).
+  const cashTotal = comparison?.result.cashTotal3yr ?? aq.priceLow;
+  const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;
+  const premiumPerYear = comparison?.input.premiumPerYear ?? INSURANCE_POLICY.premiumPerYear;
+  const cashRecommended = (comparison?.result.recommendation ?? 'cash') === 'cash';
 
   return (
     <Screen>
@@ -64,8 +77,8 @@ export function CompCashInsScreen() {
         <Text style={{ fontSize: 20 }}>🛡️</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 13, fontWeight: '500', color: SALMON_FG }}>
-            {INSURANCE_POLICY.carrier} · ${INSURANCE_POLICY.deductible} ded. · $
-            {INSURANCE_POLICY.premiumPerYear.toLocaleString()}/yr
+            {INSURANCE_POLICY.carrier} · ${deductible} ded. · ${premiumPerYear.toLocaleString()}
+            /yr
           </Text>
           <Text style={{ fontSize: 12, color: '#888' }}>
             Policy #{INSURANCE_POLICY.policyNumber} · from your profile
@@ -93,19 +106,21 @@ export function CompCashInsScreen() {
             Pay cash
           </Text>
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.successDark }}>
-            ${aq.priceLow}
+            ${cashTotal}
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>est.</Text>
-          <View
-            style={{
-              backgroundColor: colors.success,
-              borderRadius: radii.pill,
-              paddingHorizontal: 11,
-              paddingVertical: 3,
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
-          </View>
+          {cashRecommended ? (
+            <View
+              style={{
+                backgroundColor: colors.success,
+                borderRadius: radii.pill,
+                paddingHorizontal: 11,
+                paddingVertical: 3,
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
+            </View>
+          ) : null}
         </Pressable>
 
         <Pressable
@@ -127,20 +142,33 @@ export function CompCashInsScreen() {
           </Text>
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.success }}>$0</Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>today</Text>
-          <View
-            style={{
-              backgroundColor: colors.dangerSurface,
-              borderRadius: radii.pill,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.dangerBorder,
-              paddingHorizontal: 11,
-              paddingVertical: 3,
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.dangerDeep }}>
-              ⚠ Rate hike
-            </Text>
-          </View>
+          {cashRecommended ? (
+            <View
+              style={{
+                backgroundColor: colors.dangerSurface,
+                borderRadius: radii.pill,
+                borderWidth: StyleSheet.hairlineWidth,
+                borderColor: colors.dangerBorder,
+                paddingHorizontal: 11,
+                paddingVertical: 3,
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.dangerDeep }}>
+                ⚠ Rate hike
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                backgroundColor: colors.success,
+                borderRadius: radii.pill,
+                paddingHorizontal: 11,
+                paddingVertical: 3,
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
+            </View>
+          )}
         </Pressable>
       </View>
 
