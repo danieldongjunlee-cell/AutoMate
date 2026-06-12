@@ -5,6 +5,7 @@ import { Tappable } from './Tappable';
 
 import { Dealer, Quote } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
+import { RatingLink } from './RatingLink';
 import { AvatarCircle } from './ui';
 
 /** Detailed quote card from s-dealer-quotes (note + accept / hours row). */
@@ -37,9 +38,13 @@ export function QuoteCard({
           <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
             {dealer.name}
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-            ★ {dealer.rating} · {dealer.distanceMi} mi
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Tappable rating → Google reviews (feedback pass 2) */}
+            <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 13 }} />
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+              {' '}· {dealer.distanceMi} mi
+            </Text>
+          </View>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={{ fontSize: 21, fontWeight: '700', color: colors.successDark }}>

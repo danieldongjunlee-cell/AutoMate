@@ -1,75 +1,31 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
-import { Alert, Share, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Share, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
-import Svg, { Path } from 'react-native-svg';
 
+import { DealerMap } from '../../components/DealerMap';
+import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Badge, Card } from '../../components/ui';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById } from '../../services/mock/data';
+import { dealerById, USER_LOCATION } from '../../services/mock/data';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { openDirections } from '../../utils/links';
 
 type Route = RouteProp<HomeStackParamList, 'DealerMap'>;
 
-const ADDRESS = '11020 Fairfax Blvd, Fairfax, VA 22030';
-const HOURS = 'Mon–Fri 8AM–6PM · Sat 8AM–4PM';
-
-/** Zoom button on the stylized map — adjusts the map scale state. */
-function ZoomButton({
-  label,
-  onPress,
-  disabled,
-}: {
-  label: string;
-  onPress: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <Tappable
-      onPress={onPress}
-      disabled={disabled}
-      hitSlop={6}
-      style={({ pressed }) => ({
-        width: 32,
-        height: 32,
-        backgroundColor: '#fff',
-        borderRadius: radii.sm,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.15,
-        shadowRadius: 3,
-        shadowOffset: { width: 0, height: 1 },
-        elevation: 2,
-        opacity: disabled ? 0.45 : pressed ? 0.7 : 1,
-      })}
-    >
-      <Text style={{ fontSize: 16, fontWeight: '700', color: '#555' }}>{label}</Text>
-    </Tappable>
-  );
-}
-
-const MIN_ZOOM = 0.6;
-const MAX_ZOOM = 1.8;
-const ZOOM_STEP = 0.2;
-
 /**
- * Wireframe s-dealer-map: dealer detail map (booking-confirm "View on map").
- * Same stylized gradient-map approach as AllQuotesMap — swappable for
- * react-native-maps once real dealer geodata exists.
+ * Wireframe s-dealer-map, feedback pass 2: REAL tile map (Leaflet/OSM on web,
+ * react-native-maps in Expo Go) centered on the dealer, with working
+ * Get-directions (Google Maps) and tappable rating (Google reviews).
  */
 export function DealerMapScreen() {
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const dealer = dealerById(route.params?.dealerId);
-  const [zoom, setZoom] = useState(1);
 
   const driveMin = Math.max(3, Math.round(dealer.distanceMi * 5));
-  const zoomBy = (delta: number) =>
-    setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round((z + delta) * 10) / 10)));
 
   return (
     <Screen>
@@ -78,11 +34,8 @@ export function DealerMapScreen() {
         <Badge label={dealer.openStatus === 'Closed' ? 'Closed' : 'Open'} variant="success" />
       </View>
 
-      {/* Stylized light map */}
-      <LinearGradient
-        colors={['#E9EFE6', '#DDE8E0']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.35, y: 1 }}
+      {/* Real tile map: dealer pin + you-are-here dot */}
+      <View
         style={{
           borderRadius: radii.lg,
           height: 320,
@@ -92,150 +45,30 @@ export function DealerMapScreen() {
           borderColor: '#C8D5CC',
         }}
       >
-        {/* Scaled map contents (zoom +/- adjusts this wrapper's scale) */}
-        <View
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            transform: [{ scale: zoom }],
-          }}
-        >
-        {/* Roads */}
-        <View
-          style={{
-            position: 'absolute',
-            top: -20,
-            bottom: -20,
-            left: '34%',
-            width: 16,
-            backgroundColor: '#FDE293',
-            opacity: 0.9,
-            transform: [{ rotate: '8deg' }],
-            borderWidth: 1.5,
-            borderColor: '#F5D060',
-          }}
+        <DealerMap
+          style={{ flex: 1 }}
+          zoom={12}
+          center={{ lat: dealer.lat, lng: dealer.lng }}
+          userLocation={USER_LOCATION}
+          markers={[
+            {
+              id: dealer.id,
+              lat: dealer.lat,
+              lng: dealer.lng,
+              label: `🔧 ${dealer.name}`,
+              color: palette.danger,
+              selected: true,
+            },
+          ]}
         />
-        <View
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: '42%',
-            height: 12,
-            backgroundColor: '#fff',
-            opacity: 0.9,
-          }}
-        />
-        <View
-          style={{
-            position: 'absolute',
-            left: -10,
-            right: -10,
-            top: '70%',
-            height: 9,
-            backgroundColor: '#fff',
-            opacity: 0.75,
-            transform: [{ rotate: '-3deg' }],
-          }}
-        />
-        {/* Parks / blocks */}
-        <View style={{ position: 'absolute', top: '8%', right: '6%', width: 86, height: 60, backgroundColor: '#D5E3D0', borderRadius: 12, opacity: 0.7 }} />
-        <View style={{ position: 'absolute', bottom: '10%', left: '5%', width: 72, height: 48, backgroundColor: '#D5E3D0', borderRadius: 12, opacity: 0.7 }} />
-        <View style={{ position: 'absolute', top: '14%', left: '10%', width: 54, height: 40, backgroundColor: '#E3E0D5', borderRadius: 10, opacity: 0.8 }} />
-
-        {/* Dashed route user → dealer */}
-        <Svg style={StyleSheet.absoluteFill} pointerEvents="none">
-          <Path
-            d="M 105 245 Q 140 185 178 135"
-            stroke={palette.info}
-            strokeWidth={3}
-            strokeDasharray="7 6"
-            fill="none"
-            opacity={0.8}
-          />
-        </Svg>
-
-        {/* Dealership pin */}
-        <View style={{ position: 'absolute', top: '36%', left: '50%', marginLeft: -24, marginTop: -48 }}>
-          <View
-            style={{
-              width: 48,
-              height: 48,
-              backgroundColor: palette.danger,
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              borderBottomRightRadius: 24,
-              transform: [{ rotate: '-45deg' }],
-              borderWidth: 3,
-              borderColor: '#fff',
-              alignItems: 'center',
-              justifyContent: 'center',
-              shadowColor: '#000',
-              shadowOpacity: 0.3,
-              shadowRadius: 6,
-              shadowOffset: { width: 0, height: 3 },
-              elevation: 4,
-            }}
-          >
-            <Text style={{ fontSize: 18, transform: [{ rotate: '45deg' }] }}>🔧</Text>
-          </View>
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            top: '38%',
-            left: '50%',
-            transform: [{ translateX: -50 }],
-            backgroundColor: '#fff',
-            borderRadius: radii.sm,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            shadowColor: '#000',
-            shadowOpacity: 0.18,
-            shadowRadius: 5,
-            shadowOffset: { width: 0, height: 2 },
-            elevation: 3,
-          }}
-        >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>
-            {dealer.name}
-          </Text>
-        </View>
-
-        {/* User location */}
-        <View style={{ position: 'absolute', top: '74%', left: '28%' }}>
-          <View
-            style={{
-              width: 18,
-              height: 18,
-              borderRadius: 9,
-              backgroundColor: palette.info,
-              borderWidth: 3,
-              borderColor: '#fff',
-              shadowColor: palette.info,
-              shadowOpacity: 0.4,
-              shadowRadius: 6,
-              elevation: 3,
-            }}
-          />
-        </View>
-        </View>
-
-        {/* Zoom controls */}
-        <View style={{ position: 'absolute', bottom: 10, right: 10, gap: 6 }}>
-          <ZoomButton label="+" onPress={() => zoomBy(ZOOM_STEP)} disabled={zoom >= MAX_ZOOM} />
-          <ZoomButton label="−" onPress={() => zoomBy(-ZOOM_STEP)} disabled={zoom <= MIN_ZOOM} />
-        </View>
 
         {/* Distance chip */}
         <View
+          pointerEvents="none"
           style={{
             position: 'absolute',
             bottom: 10,
-            left: 10,
+            right: 10,
             backgroundColor: 'rgba(255,255,255,.92)',
             borderRadius: radii.sm,
             paddingHorizontal: 10,
@@ -246,7 +79,7 @@ export function DealerMapScreen() {
             🛣️ {dealer.distanceMi} mi · ~{driveMin} min drive
           </Text>
         </View>
-      </LinearGradient>
+      </View>
 
       {/* Dealer info card */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
@@ -266,40 +99,46 @@ export function DealerMapScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
               {dealer.name} Service Center
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{ADDRESS}</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{dealer.address}</Text>
           </View>
         </View>
-        {(
-          [
-            ['🕐 Hours', HOURS, false],
-            ['⭐ Rating', `${dealer.rating} (${dealer.reviews} reviews)`, false],
-            ['📅 Your appointment', 'Thu, Apr 12 · 10:30 AM', true],
-          ] as const
-        ).map(([label, value, accent]) => (
-          <View
-            key={label}
-            style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
-          >
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: accent ? '600' : '500',
-                color: accent ? colors.primaryDark : colors.textPrimary,
-              }}
-            >
-              {value}
-            </Text>
-          </View>
-        ))}
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
+        >
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>🕐 Hours</Text>
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
+            {dealer.hours}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingVertical: 6,
+          }}
+        >
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>⭐ Rating</Text>
+          <RatingLink
+            dealer={dealer}
+            label={`${dealer.rating} (${dealer.reviews} reviews)`}
+            style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}
+          />
+        </View>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
+        >
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>📅 Your appointment</Text>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>
+            Thu, Apr 12 · 10:30 AM
+          </Text>
+        </View>
       </Card>
 
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Tappable
-          onPress={() =>
-            Alert.alert('Get directions', `Turn-by-turn navigation to ${ADDRESS} opens in your maps app.`)
-          }
+          onPress={() => openDirections(dealer)}
           style={({ pressed }) => ({
             flex: 2,
             backgroundColor: colors.info,
@@ -313,7 +152,9 @@ export function DealerMapScreen() {
         </Tappable>
         <Tappable
           onPress={() =>
-            Share.share({ message: `${dealer.name} Service Center — ${ADDRESS}` }).catch(() => {})
+            Share.share({ message: `${dealer.name} Service Center — ${dealer.address}` }).catch(
+              () => {},
+            )
           }
           style={({ pressed }) => ({
             flex: 1,

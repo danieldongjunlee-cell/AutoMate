@@ -1,14 +1,17 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
+import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, QUOTES } from '../../services/mock/data';
+import { addToCalendar, dateAtTime } from '../../services/calendar';
+import { BOOKING_MONTH, dealerById, QUOTES } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookingConfirm'>;
@@ -25,6 +28,7 @@ export function BookingConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
+  const reminderPref = useAppStore((s) => s.reminderPref);
 
   const dealer = dealerById(route.params?.dealerId);
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
@@ -36,9 +40,26 @@ export function BookingConfirmScreen() {
     route.params?.priceLabel ??
     (quote?.priceHigh ? `$${quote.price} – $${quote.priceHigh}` : `$${quote?.price ?? 330}`);
 
+  /** Real calendar export (pass 2): expo-calendar native / Google Calendar web. */
+  const onAddToCalendar = () => {
+    const day = parseInt(dateLabel.replace(/[^0-9]/g, ''), 10) || 12;
+    const startDate = dateAtTime(BOOKING_MONTH.year, BOOKING_MONTH.month, day, time);
+    const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+    void addToCalendar({
+      title: `${dealer.name} — Rear bumper dent repair`,
+      startDate,
+      endDate,
+      location: dealer.address,
+      notes: `AutoMate booking · Estimate ${priceLabel} · ${quote?.parts ?? 'OEM'} parts`,
+    });
+  };
+
   return (
     <Screen>
-      <SuccessHeader title="You're all set!" subtitle="Reminder set · We'll notify you 1 day before" />
+      <SuccessHeader
+        title="You're all set!"
+        subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
+      />
 
       {/* Booking summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
@@ -59,9 +80,13 @@ export function BookingConfirmScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
               {dealer.name} Service Center
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {dealer.distanceMi} mi away · ★ {dealer.rating} ({dealer.reviews} reviews)
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                {dealer.distanceMi} mi away ·{' '}
+              </Text>
+              <RatingLink dealer={dealer} />
+            </View>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>🕐 {dealer.hours}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -72,7 +97,7 @@ export function BookingConfirmScreen() {
         </View>
       </Card>
 
-      <ReminderRow sub="1 day before at 9:00 AM" />
+      <ReminderRow />
 
       {/* What to bring */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
@@ -98,7 +123,7 @@ export function BookingConfirmScreen() {
       {/* Actions — wireframe v15.10: "View on map" → dealer-map */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Tappable
-          onPress={() => Alert.alert('Calendar', 'Calendar export will use the device calendar.')}
+          onPress={onAddToCalendar}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.primary,

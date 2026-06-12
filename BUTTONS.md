@@ -59,9 +59,9 @@ bar) are listed once at the top instead of 68×.
 | s-photo-example | ← Change part | `back()` | `goBack()` | ✅ |
 | s-photo-example | Take photos → | `nav('camera')` | → Camera | ✅ |
 | s-camera | Damage-type chips (Dent/Scratch/Crack/Paint) | `pickDmg(this)` | store `setDraftType`, tagged at capture time | ✅ |
-| s-camera | Viewfinder (tap to capture) | (cursor) | `addDraftPhoto()` — adds draft photo with ✔ thumb | ✅ |
-| s-camera | "+ Angle n" empty slot | (cursor) | next slot tappable → `addDraftPhoto()` | ✅ |
-| s-camera | 📁 Upload | (cursor) | `addDraftPhoto()` (mock picker) | ✅ |
+| s-camera | Viewfinder (tap to capture) | (cursor) | **REAL device camera** (expo-image-picker; web: file picker w/ capture hint) — stores the actual uri, last shot previews in the frame | ✅ |
+| s-camera | "+ Angle n" empty slot | (cursor) | next slot tappable → device camera; filled slots render the real photo thumbnails | ✅ |
+| s-camera | 📁 Upload | (cursor) | **REAL gallery picker** (`pickFromGallery`, web: file picker) | ✅ |
 | s-camera | Submit photos → | `nav('confirm-submit')` | `commitDraftPart()` → ConfirmSubmit; disabled <1 photo | ✅ |
 | s-confirm-submit | ✎ Edit (per part) | `nav('car-diagram')` | seeds draft with part → CarDiagram | ✅ |
 | s-confirm-submit | 📷 + Photos (per part) | `nav('camera')` | seeds draft → Camera | ✅ |
@@ -78,19 +78,23 @@ bar) are listed once at the top instead of 68×.
 | s-after-hours | View available quotes → | `nav('dealer-quotes')` | → DealerQuotes | ✅ |
 | s-after-hours | 🏠 Back to home | `nav('home')` | → Home | ✅ |
 | s-dealer-quotes | Accept quote (×8) | `nav('accept-booking')` | → AcceptBooking with `dealerId` | ✅ |
+| s-dealer-quotes | ★ rating (per card) | (feedback pass 2) | tappable → confirm → Google reviews | ✅ |
 | s-dealer-quotes | 🕐 hours chip (×8) | cursor:pointer, **no onclick** | informational chip, non-interactive (matches wireframe) | n/a |
 | s-dealer-quotes | 📍 See all 8 quotes on map | `nav('all-quotes-map')` | → AllQuotesMap | ✅ |
-| s-all-quotes-map | 8 price pins (incl. BEST PRICE / RECOMMENDED) | `nav('accept-booking')` | each pin → AcceptBooking with its dealer | ✅ |
-| s-all-quotes-map | Top picks rows (×3) | `nav('accept-booking')` | → AcceptBooking | ✅ |
+| s-all-quotes-map | 8 price pins (incl. BEST PRICE / RECOMMENDED) | `nav('accept-booking')` | **REAL tile map** (feedback pass 2: Leaflet+OSM web / react-native-maps native); pin tap selects + highlights its dealer card and scrolls it into view (two-way sync) | ✅ |
+| s-all-quotes-map | ➕ Distance / Price range dropdowns | (feedback pass 2) | `Select` filters — hide pins **and** cards together; empty-state copy when nothing matches | ✅ |
+| s-all-quotes-map | Quote cards (×8, was "Top picks" ×3) | `nav('accept-booking')` | tap selects + highlights its map pin (two-way sync); selected card reveals "Accept & book →" → AcceptBooking; meta shows tappable ★ rating + 🕐 hours | ✅ |
+| s-all-quotes-map | ★ rating (per card) | (feedback pass 2) | confirm → Google reviews for the dealer | ✅ |
 | s-accept-booking | Calendar ‹ › month arrows | cursor:pointer, no onclick | Alert: only April 2027 has demo availability | 🔌 |
 | s-accept-booking | Calendar day cells | (cursor) | selectable days (unavailable disabled) | ✅ |
 | s-accept-booking | Time slots (9:00…4:00) | (cursor) | single-select chips | ✅ |
 | s-accept-booking | Confirm booking — Apr 12 at 10:30 AM | `nav('booking-confirm')` | `acceptQuote` + `bookAppointment` (parallel), loading + **blocking overlay** → BookingConfirm | ✅ |
-| s-booking-confirm | Edit (reminder row) | (cursor) | Alert (reminder editing = backend) | 🔌 |
-| s-booking-confirm | Add to calendar | (cursor) | Alert (device calendar export) | 🔌 |
+| s-booking-confirm | Edit (reminder row) | (cursor) | **timing modal** (1 day / 2 days / 2 hours before / morning of) saved to store `reminderPref`; row + header copy update live | ✅ |
+| s-booking-confirm | Add to calendar | (cursor) | **real export** — native: expo-calendar event in the default calendar (permission-gated); web: confirm → pre-filled Google Calendar template | ✅ |
 | s-booking-confirm | View on map | `nav('dealer-map')` | → DealerMap with dealer | ✅ |
-| s-dealer-map | Zoom + / − | cursor:pointer, no onclick | Adjusts map scale state (0.6×–1.8×, disabled at limits) | ✅ |
-| s-dealer-map | 🧭 Get directions | (cursor) | Alert (opens device maps app) | 🔌 |
+| s-dealer-map | Map + zoom | cursor:pointer, no onclick | **REAL tile map** (Leaflet+OSM web with built-in zoom control / react-native-maps pinch-zoom native), dealer pin + you-are-here dot | ✅ |
+| s-dealer-map | ⭐ Rating row | (feedback pass 2) | tappable → confirm → Google reviews | ✅ |
+| s-dealer-map | 🧭 Get directions | (cursor) | confirm → Google Maps directions to the dealer address | ✅ |
 | s-dealer-map | Share | (cursor) | Native `Share.share` sheet with dealer + address | ✅ |
 | s-home-bundle-deals | Claim this bundle → | `nav('maint-schedule-book')` | cross-tab → MaintTab/MaintScheduleBook (seeds cart) | ✅ |
 | s-home-bundle-deals | Claim this deal → | `nav('maint-schedule-book')` | same | ✅ |
@@ -114,8 +118,8 @@ bar) are listed once at the top instead of 68×.
 | s-maint-history | ✏️ Manual input | `nav('maint-manual')` | → MaintManual | ✅ |
 | s-maint-history | Type filter (All types/Oil/Tires/Brakes/Body) | (cursor) | **dropdown `Select`** (feedback pass 1) — modal option list, filters the list | ✅ |
 | s-maint-history | Time filter (All time/6 months/2024/2023) | (cursor) | **dropdown `Select`** side-by-side with Type, filters the list | ✅ |
-| s-maint-scan-cam | 📷 Capture receipt | cursor:pointer, no onclick | Mock capture: viewfinder shows 🧾 "receipt captured ✓", label flips | ✅ |
-| s-maint-scan-cam | 🗂 Gallery instead | cursor:pointer, no onclick | Mock import: "✓ Imported from gallery" preview | ✅ |
+| s-maint-scan-cam | 📷 Capture receipt | cursor:pointer, no onclick | **REAL camera capture** (expo-image-picker) — the photographed receipt fills the viewfinder; OCR stays mocked | ✅ |
+| s-maint-scan-cam | 🗂 Gallery instead | cursor:pointer, no onclick | **REAL gallery import** — picked image previews in the viewfinder | ✅ |
 | s-maint-scan-cam | ← Retake | `back()` | clears capture; goBack when nothing captured | ✅ |
 | s-maint-scan-cam | Review scan → | `nav('maint-scan-rev')` | `maintService.scanReceipt` (OCR) with **animated scan-line shimmer** on the viewfinder while pending → MaintScanRev | ✅ |
 | s-maint-scan-rev | ✎ field edit icons | (cursor) | Alert (field editing arrives with real OCR) | 🔌 |
@@ -144,6 +148,7 @@ bar) are listed once at the top instead of 68×.
 | s-diy-future | ▲ vote buttons (×4) | cursor:pointer, no onclick | toggleable votes, count increments locally | ✅ |
 | s-maint-schedule | Service chips (All/Oil/Tires/Brakes/Insp.) | `selectSvc(this, …)` | single-select chips | ✅ |
 | s-maint-schedule | Dealer rows (×3) | `nav('maint-schedule-book')` | `startBooking(dealerId)` → MaintScheduleBook | ✅ |
+| s-maint-schedule | ★ rating + 🕐 hours (per dealer card) | (feedback pass 2) | rating tappable → Google reviews; hours line added to every dealer card | ✅ |
 | s-maint-schedule-book | Service rows (oil/tires/inspection/brakes) | `toggleSvcItem(this)` | cart toggle; dynamic totals (price + duration) | ✅ |
 | s-maint-schedule-book | Calendar ‹ › arrows | cursor:pointer, no onclick | Alert: demo availability is April 2027 | 🔌 |
 | s-maint-schedule-book | Calendar days + time slots | (cursor) | `setCartSlot` | ✅ |
@@ -151,9 +156,9 @@ bar) are listed once at the top instead of 68×.
 | s-maint-payment | Payment-method rows (Visa / Apple Pay) | (cursor) | single-select; Apple Pay row opens the simulated ** Pay sheet** (total shown) — confirming completes payment via the same onPay | ✅ |
 | s-maint-payment | ➕ Use points toggle | (app-only, Phase 6) | redemption applied to total | ✅ |
 | s-maint-payment | Confirm & pay $… → | `nav('maint-schedule-confirm')` | `pointsService.redeem` + `maintService.payForBooking`, loading + **blocking overlay** → confirm | ✅ |
-| s-maint-schedule-confirm | Edit (reminder row) | (cursor) | Alert (reminder editing = backend) | 🔌 |
+| s-maint-schedule-confirm | Edit (reminder row) | (cursor) | **timing modal** (shared `ReminderRow`) saved to store `reminderPref`; copy updates live | ✅ |
 | s-maint-schedule-confirm | Done | `nav('maint-dashboard')` | clears cart → MaintDashboard | ✅ |
-| s-maint-schedule-confirm | Add to calendar | (cursor) | Alert (device calendar export) | 🔌 |
+| s-maint-schedule-confirm | Add to calendar | (cursor) | **real export** — native: expo-calendar event (services + paid total in notes); web: confirm → Google Calendar template | ✅ |
 
 ## Compare tab
 
@@ -203,7 +208,7 @@ bar) are listed once at the top instead of 68×.
 | s-prof-hub | 💳 Payment method | `nav('prof-payment')` | → ProfPayment | ✅ |
 | s-prof-hub | ⚙️ Settings | `nav('prof-settings')` | → ProfSettings | ✅ |
 | s-prof-miles | Milestone cards (×3) | (cursor) | → ProfMileDet | ✅ |
-| s-prof-mile-det | Get directions (×2) | (cursor) | Alert (device maps app) | 🔌 |
+| s-prof-mile-det | Get directions (×2) | (cursor) | confirm → Google Maps directions to the partner dealer; ★ ratings are tappable → Google reviews | ✅ |
 | s-prof-mile-det | Redeem here (×2) | (cursor) | Alert (in-shop QR redemption = backend) | 🔌 |
 | s-prof-earn | (history list, no interactive elements) | — | — | — |
 | s-prof-cars | Edit car | (cursor) | inline edit modal (name + odometer) → `vehiclesService.updateVehicle` | ✅ |
@@ -216,7 +221,7 @@ bar) are listed once at the top instead of 68×.
 | s-prof-ins-edit | Provider picker + carrier chips | (cursor) | inline carrier options | ✅ |
 | s-prof-ins-edit | Cancel | `back()` | `goBack()` | ✅ |
 | s-prof-ins-edit | Save changes | `nav('prof-insurance')` | `insuranceService.updatePolicy` ("Saving…") + policies/comparison invalidate → back | ✅ |
-| s-prof-ins-add | 📷 Scan insurance card | (cursor) | OCR scan, spinner → autofills form | ✅ |
+| s-prof-ins-add | 📷 Scan insurance card | (cursor) | **REAL camera capture first** (cancel aborts), then OCR spinner → autofills form | ✅ |
 | s-prof-ins-add | ✍️ Enter manually | (cursor) | informational (the form *is* below) | n/a |
 | s-prof-ins-add | Connect my insurer rows | (app-only, Phase 4) | aggregator connect with per-row spinner (insurance sync) | ✅ |
 | s-prof-ins-add | Add policy | `nav('prof-insurance')` | `insuranceService.addPolicy` + earn rule, validation errors → back | ✅ |

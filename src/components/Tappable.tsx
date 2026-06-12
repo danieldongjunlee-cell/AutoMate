@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native';
+import { Platform, Pressable, PressableProps, StyleProp, View, ViewStyle } from 'react-native';
 
 export interface TappableState {
   pressed: boolean;
@@ -11,6 +11,8 @@ interface Props extends Omit<PressableProps, 'style' | 'children'> {
   children?: React.ReactNode | ((state: TappableState) => React.ReactNode);
   /** Skip the built-in hover/press feedback (caller draws its own). */
   noFeedback?: boolean;
+  /** Underlying view ref (React 19 ref-as-prop; web: the DOM node). */
+  ref?: React.Ref<View>;
 }
 
 /**

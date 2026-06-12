@@ -5,6 +5,7 @@ import { Tappable } from './Tappable';
 
 import { Dealer } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
+import { RatingLink } from './RatingLink';
 
 /**
  * Partner-dealer card from s-maint-schedule: square brand avatar, open
@@ -53,10 +54,17 @@ export function DealerCard({
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             {dealer.name}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            {dealer.distanceMi} mi · ★ {dealer.rating} ·{' '}
-            {open ? `Open until ${dealer.closesAt}` : `Closes ${dealer.closesAt}`}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              {dealer.distanceMi} mi ·{' '}
+            </Text>
+            {/* Tappable rating → Google reviews (feedback pass 2) */}
+            <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              {' '}· {open ? `Open until ${dealer.closesAt}` : `Closes ${dealer.closesAt}`}
+            </Text>
+          </View>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>🕐 {dealer.hours}</Text>
         </View>
         <View
           style={{

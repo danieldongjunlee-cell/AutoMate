@@ -10,6 +10,7 @@ import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, pointsService } from '../../services';
 import { VEHICLE } from '../../services/mock/data';
+import { capturePhoto } from '../../services/photos';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList>;
@@ -356,9 +357,12 @@ export function ProfInsAddScreen() {
     await queryClient.invalidateQueries({ queryKey: ['comparison'] });
   };
 
-  /** "Scan insurance card" → loading → autofill the visible form fields. */
+  /** "Scan insurance card" → REAL camera capture → OCR autofill (pass 2). */
   const scanCard = async () => {
     if (scanning) return;
+    // Take the card photo first (web: file picker); cancel aborts the scan.
+    const photo = await capturePhoto();
+    if (!photo) return;
     setScanning(true);
     setError('');
     try {

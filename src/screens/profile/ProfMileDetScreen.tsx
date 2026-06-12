@@ -4,11 +4,13 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
 import { dealerById, MILESTONE_PARTNERS, MILESTONES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { openDirections } from '../../utils/links';
 
 /** Wireframe s-prof-mile-det: free oil change milestone + partner dealers. */
 export function ProfMileDetScreen() {
@@ -81,9 +83,13 @@ export function ProfMileDetScreen() {
                 <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                   {dealer.name}
                 </Text>
-                <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-                  ★ {dealer.rating} · {dealer.distanceMi} mi
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  {/* Tappable rating → Google reviews (feedback pass 2) */}
+                  <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 13 }} />
+                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+                    {' '}· {dealer.distanceMi} mi
+                  </Text>
+                </View>
               </View>
               <View
                 style={{
@@ -98,7 +104,7 @@ export function ProfMileDetScreen() {
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.xs }}>
               <Tappable
-                onPress={() => Alert.alert('Directions', 'Opens the device maps app when wired.')}
+                onPress={() => openDirections(dealer)}
                 style={({ pressed }) => ({
                   flex: 1,
                   backgroundColor: colors.primarySurface,

@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -10,6 +10,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPES } from '../../services/mock/data';
+import { capturePhoto, pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -28,13 +29,11 @@ function Bracket({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
   return <View style={s} />;
 }
 
-/** Slot tints for the captured placeholder photos. */
-const PHOTO_TINTS = ['#2D1A1A', '#3A2A1A', '#1A2A3A', '#1A2D1F', '#2A1A2D'];
-
 /**
- * Mock camera: tapping the viewfinder "captures" a placeholder photo.
- * Real capture (expo-camera / image picker) is wired when the backend lands —
- * the rest of the flow only consumes the draft part from the store.
+ * Real camera (user-feedback pass 2, expo-image-picker): the viewfinder and
+ * Capture button open the device camera (web: file picker w/ capture hint),
+ * Upload opens the gallery. Captured uris live in the store draft and render
+ * as real thumbnails here and on ConfirmSubmit.
  * Wireframe v15.10: damage type is tagged here at capture time (pickDmg chips).
  */
 export function CameraScreen() {
@@ -43,15 +42,29 @@ export function CameraScreen() {
   const draftPart = useAppStore((s) => s.draftPart);
   const draftType = useAppStore((s) => s.draftType);
   const setDraftType = useAppStore((s) => s.setDraftType);
-  const photoCount = useAppStore((s) => s.draftPhotos);
+  const photoUris = useAppStore((s) => s.draftPhotos);
   const addPhoto = useAppStore((s) => s.addDraftPhoto);
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
+  const [picking, setPicking] = useState(false);
 
+  const photoCount = photoUris.length;
   const firstPart = (draftPart ?? 'rear bumper').toLowerCase();
   const canSubmit = photoCount >= 1;
 
+  /** Device camera (Capture) or gallery (Upload) → push the real uri. */
+  const addVia = async (source: 'camera' | 'gallery') => {
+    if (picking) return;
+    setPicking(true);
+    try {
+      const photo = source === 'camera' ? await capturePhoto() : await pickFromGallery();
+      if (photo) addPhoto(photo.uri);
+    } finally {
+      setPicking(false);
+    }
+  };
+
   const onSubmit = () => {
-    commitDraftPart(); // merge this part (type + photos) into the request
+    commitDraftPart(); // merge this part (type + photo uris) into the request
     navigation.navigate('ConfirmSubmit');
   };
 
@@ -101,8 +114,8 @@ export function CameraScreen() {
         })}
       </View>
 
-      {/* Viewfinder */}
-      <Tappable onPress={addPhoto}>
+      {/* Viewfinder — opens the device camera */}
+      <Tappable onPress={() => addVia('camera')} disabled={picking}>
         {({ pressed }) => (
           <LinearGradient
             colors={['#1A1A1A', '#111']}
@@ -145,8 +158,22 @@ export function CameraScreen() {
                 }}
               />
             ))}
-            <Text style={{ fontSize: 44, marginBottom: 6 }}>📷</Text>
-            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.6)' }}>Tap to capture</Text>
+            {/* Last shot fills the viewfinder once something is captured */}
+            {photoUris.length > 0 ? (
+              <Image
+                source={{ uri: photoUris[photoUris.length - 1] }}
+                style={[StyleSheet.absoluteFill, { opacity: 0.55 }]}
+                resizeMode="cover"
+              />
+            ) : null}
+            {picking ? (
+              <ActivityIndicator color={palette.primaryLight} style={{ marginBottom: 6 }} />
+            ) : (
+              <Text style={{ fontSize: 44, marginBottom: 6 }}>📷</Text>
+            )}
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.75)' }}>
+              {picking ? 'Opening camera…' : 'Tap to capture'}
+            </Text>
             <Bracket pos="tl" />
             <Bracket pos="tr" />
             <Bracket pos="bl" />
@@ -169,12 +196,16 @@ export function CameraScreen() {
                   width: 86,
                   height: 74,
                   borderRadius: radii.sm,
-                  backgroundColor: PHOTO_TINTS[i % PHOTO_TINTS.length],
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  backgroundColor: '#1A1A1A',
+                  overflow: 'hidden',
                 }}
               >
-                <Text style={{ fontSize: 26 }}>🚗</Text>
+                {/* Real captured/picked photo */}
+                <Image
+                  source={{ uri: photoUris[i] }}
+                  style={StyleSheet.absoluteFill}
+                  resizeMode="cover"
+                />
                 <View
                   style={{
                     position: 'absolute',
@@ -195,7 +226,8 @@ export function CameraScreen() {
           return (
             <Tappable
               key={`slot-${i}`}
-              onPress={isNext ? addPhoto : undefined}
+              onPress={isNext ? () => addVia('camera') : undefined}
+              disabled={picking && isNext}
               style={{
                 width: 86,
                 height: 74,
@@ -235,7 +267,8 @@ export function CameraScreen() {
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <Tappable
-          onPress={addPhoto}
+          onPress={() => addVia('gallery')}
+          disabled={picking}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.surface,
@@ -244,7 +277,7 @@ export function CameraScreen() {
             borderRadius: radii.md,
             alignItems: 'center',
             justifyContent: 'center',
-            opacity: pressed ? 0.7 : 1,
+            opacity: pressed || picking ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>📁 Upload</Text>

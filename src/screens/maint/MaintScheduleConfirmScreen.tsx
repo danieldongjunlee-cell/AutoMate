@@ -1,13 +1,15 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useRef } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
+import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
+import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -35,15 +37,33 @@ export function MaintScheduleConfirmScreen() {
   const dealer = dealerById(booking.dealerId);
   const { total, totalMin } = cartTotals(booking);
   const serviceNames = booking.services.map((s) => s.name).join(' + ');
+  const reminderPref = useAppStore((s) => s.reminderPref);
 
   const onDone = () => {
     navigation.navigate('MaintDashboard');
     clearCart();
   };
 
+  /** Real calendar export (pass 2): expo-calendar native / Google Calendar web. */
+  const onAddToCalendar = () => {
+    const [y, m, d] = (booking.date ?? '2027-04-07').split('-').map(Number);
+    const startDate = dateAtTime(y, m, d, booking.time ?? '8:00 AM');
+    const endDate = new Date(startDate.getTime() + Math.max(totalMin, 30) * 60 * 1000);
+    void addToCalendar({
+      title: `${dealer.name} — ${serviceNames}`,
+      startDate,
+      endDate,
+      location: dealer.address,
+      notes: `AutoMate booking · Paid $${total}`,
+    });
+  };
+
   return (
     <Screen>
-      <SuccessHeader title="You're booked!" subtitle="Reminder set for the day before" />
+      <SuccessHeader
+        title="You're booked!"
+        subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
+      />
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
         <SectionLabel>Summary</SectionLabel>
@@ -63,9 +83,13 @@ export function MaintScheduleConfirmScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
               {dealer.name}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {dealer.distanceMi} mi · ★ {dealer.rating}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                {dealer.distanceMi} mi ·{' '}
+              </Text>
+              <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
+            </View>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>🕐 {dealer.hours}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -81,7 +105,7 @@ export function MaintScheduleConfirmScreen() {
         </View>
       </Card>
 
-      <ReminderRow sub="Day before at 9:00 AM" />
+      <ReminderRow />
 
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Tappable
@@ -98,7 +122,7 @@ export function MaintScheduleConfirmScreen() {
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>Done</Text>
         </Tappable>
         <Tappable
-          onPress={() => Alert.alert('Calendar', 'Calendar export will use the device calendar.')}
+          onPress={onAddToCalendar}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.surface,

@@ -47,9 +47,20 @@ export interface DamagePart {
   part: string;
   type: string; // Dent / Scratch / Crack / Paint
   photos: number;
+  /** Real captured/picked image uris (feedback pass 2 — count mirrors `photos`). */
+  photoUris?: string[];
 }
 
 const DEFAULT_DAMAGE_TYPE = 'Dent';
+
+/** Reminder timing options (booking-confirm "Reminder set … Edit" modal). */
+export const REMINDER_OPTIONS = [
+  '1 day before',
+  '2 days before',
+  '2 hours before',
+  'Morning of',
+] as const;
+export type ReminderPref = (typeof REMINDER_OPTIONS)[number];
 
 /** Authenticated user context (set by the auth service after the OTP step). */
 export interface AuthUser {
@@ -93,11 +104,12 @@ interface AppState {
   damageParts: DamagePart[];
   draftPart: string | null;
   draftType: string;
-  draftPhotos: number;
+  /** Captured photo uris for the in-progress part (real camera/gallery uris). */
+  draftPhotos: string[];
   /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its type/photos for editing. */
   pickPart: (part: string) => void;
   setDraftType: (t: string) => void;
-  addDraftPhoto: () => void;
+  addDraftPhoto: (uri: string) => void;
   /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
   commitDraftPart: () => void;
   /** Clear only the draft ("+ Add another damaged part" starts a fresh pass). */
@@ -107,6 +119,10 @@ interface AppState {
   /** AI estimate from the latest submit (Submitted + DealerQuotes headers). */
   aiEstimate: AiEstimateSummary | null;
   setAiEstimate: (estimate: AiEstimateSummary | null) => void;
+
+  // Booking reminder timing (booking-confirm / maint-schedule-confirm rows)
+  reminderPref: ReminderPref;
+  setReminderPref: (pref: ReminderPref) => void;
 
   // Maintenance booking cart (multi-service selection)
   cart: BookingCart;
@@ -120,7 +136,7 @@ interface AppState {
 const emptyDraft = {
   draftPart: null as string | null,
   draftType: DEFAULT_DAMAGE_TYPE,
-  draftPhotos: 0,
+  draftPhotos: [] as string[],
 };
 
 export const useAppStore = create<AppState>((set) => ({
@@ -165,15 +181,20 @@ export const useAppStore = create<AppState>((set) => ({
     set((s) => {
       const existing = s.damageParts.find((p) => p.part === part);
       return existing
-        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photos }
-        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: 0 };
+        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photoUris ?? [] }
+        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: [] };
     }),
   setDraftType: (draftType) => set({ draftType }),
-  addDraftPhoto: () => set((s) => ({ draftPhotos: s.draftPhotos + 1 })),
+  addDraftPhoto: (uri) => set((s) => ({ draftPhotos: [...s.draftPhotos, uri] })),
   commitDraftPart: () =>
     set((s) => {
-      if (!s.draftPart || s.draftPhotos < 1) return {};
-      const next: DamagePart = { part: s.draftPart, type: s.draftType, photos: s.draftPhotos };
+      if (!s.draftPart || s.draftPhotos.length < 1) return {};
+      const next: DamagePart = {
+        part: s.draftPart,
+        type: s.draftType,
+        photos: s.draftPhotos.length,
+        photoUris: [...s.draftPhotos],
+      };
       const i = s.damageParts.findIndex((p) => p.part === s.draftPart);
       const damageParts =
         i >= 0
@@ -187,6 +208,9 @@ export const useAppStore = create<AppState>((set) => ({
   resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null }),
   aiEstimate: null,
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
+
+  reminderPref: '1 day before',
+  setReminderPref: (reminderPref) => set({ reminderPref }),
 
   cart: emptyCart,
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),

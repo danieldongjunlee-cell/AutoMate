@@ -15,13 +15,17 @@ import { radii, spacing, useTheme } from '../theme';
 export function Screen({
   children,
   style,
+  scrollRef,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  /** Access the underlying ScrollView (e.g. scroll-into-view on AllQuotesMap). */
+  scrollRef?: React.Ref<ScrollView>;
 }) {
   const { colors } = useTheme();
   return (
     <ScrollView
+      ref={scrollRef}
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={[
         { padding: spacing.screenH, paddingBottom: spacing.xxxl },

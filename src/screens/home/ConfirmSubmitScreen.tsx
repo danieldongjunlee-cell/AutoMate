@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -79,18 +79,27 @@ function PartCard({
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-        <View
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: radii.sm,
-            backgroundColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 20 }}>🚗</Text>
-        </View>
+        {/* Real captured photo as the leading thumbnail (feedback pass 2) */}
+        {item.photoUris?.[0] ? (
+          <Image
+            source={{ uri: item.photoUris[0] }}
+            style={{ width: 44, height: 44, borderRadius: radii.sm }}
+            resizeMode="cover"
+          />
+        ) : (
+          <View
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: radii.sm,
+              backgroundColor: colors.primary,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>🚗</Text>
+          </View>
+        )}
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primaryDeep }}>
@@ -103,6 +112,19 @@ function PartCard({
           </Text>
         </View>
       </View>
+      {/* Remaining photo thumbnails */}
+      {item.photoUris && item.photoUris.length > 1 ? (
+        <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.sm }}>
+          {item.photoUris.slice(1, 5).map((uri, i) => (
+            <Image
+              key={`${uri}-${i}`}
+              source={{ uri }}
+              style={{ width: 52, height: 44, borderRadius: radii.sm }}
+              resizeMode="cover"
+            />
+          ))}
+        </View>
+      ) : null}
       <View style={{ flexDirection: 'row', gap: 6 }}>
         <ActionChip label="✎ Edit" onPress={onEdit} />
         <ActionChip label="📷 + Photos" onPress={onAddPhotos} />

@@ -1,8 +1,9 @@
-import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
 
+import { REMINDER_OPTIONS, ReminderPref, useAppStore } from '../store/useAppStore';
 import { radii, spacing, useTheme } from '../theme';
 
 /**
@@ -72,9 +73,24 @@ export function SummaryCell({
   );
 }
 
-/** 🔔 tinted reminder row with an Edit affordance. */
-export function ReminderRow({ sub }: { sub: string }) {
+/** Row copy per reminder timing (the row updates live as the pref changes). */
+export const REMINDER_COPY: Record<ReminderPref, string> = {
+  '1 day before': '1 day before at 9:00 AM',
+  '2 days before': '2 days before at 9:00 AM',
+  '2 hours before': '2 hours before your appointment',
+  'Morning of': 'Morning of at 8:00 AM',
+};
+
+/**
+ * 🔔 tinted reminder row. Edit opens a timing modal (1 day / 2 days /
+ * 2 hours before / morning of) saved to the store (user-feedback pass 2).
+ */
+export function ReminderRow() {
   const { colors } = useTheme();
+  const pref = useAppStore((s) => s.reminderPref);
+  const setPref = useAppStore((s) => s.setReminderPref);
+  const [open, setOpen] = useState(false);
+
   return (
     <View
       style={{
@@ -94,14 +110,88 @@ export function ReminderRow({ sub }: { sub: string }) {
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
           Reminder set
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{REMINDER_COPY[pref]}</Text>
       </View>
-      <Tappable
-        onPress={() => Alert.alert('Reminder', 'Reminder editing comes with the backend.')}
-        hitSlop={6}
-      >
+      <Tappable onPress={() => setOpen(true)} hitSlop={6}>
         <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
       </Tappable>
+
+      {/* Timing picker modal */}
+      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+        <Tappable
+          noFeedback
+          onPress={() => setOpen(false)}
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,.45)',
+            justifyContent: 'center',
+            padding: spacing.xl,
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              borderRadius: radii.md,
+              overflow: 'hidden',
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: colors.border,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: '700',
+                letterSpacing: 0.6,
+                textTransform: 'uppercase',
+                color: colors.textTertiary,
+                paddingHorizontal: spacing.md,
+                paddingTop: spacing.md,
+                paddingBottom: spacing.xs,
+              }}
+            >
+              🔔 Remind me
+            </Text>
+            {REMINDER_OPTIONS.map((option, i) => {
+              const on = option === pref;
+              return (
+                <Tappable
+                  key={option}
+                  onPress={() => {
+                    setPref(option);
+                    setOpen(false);
+                  }}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: spacing.md,
+                    paddingVertical: 13,
+                    backgroundColor: on ? colors.primarySurface : 'transparent',
+                    borderBottomWidth:
+                      i < REMINDER_OPTIONS.length - 1 ? StyleSheet.hairlineWidth : 0,
+                    borderBottomColor: colors.divider,
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        fontWeight: on ? '600' : '400',
+                        color: on ? colors.primaryDeep : colors.textPrimary,
+                      }}
+                    >
+                      {option}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                      {REMINDER_COPY[option]}
+                    </Text>
+                  </View>
+                  {on ? <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text> : null}
+                </Tappable>
+              );
+            })}
+          </View>
+        </Tappable>
+      </Modal>
     </View>
   );
 }

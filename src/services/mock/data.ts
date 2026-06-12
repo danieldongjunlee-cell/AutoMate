@@ -12,7 +12,14 @@ export interface Dealer {
   hours: string;
   openStatus: 'Open' | 'Closes soon' | 'Closed';
   closesAt: string;
+  /** Real Fairfax-area coordinates (feedback pass 2: real tile maps). */
+  lat: number;
+  lng: number;
+  address: string;
 }
+
+/** The demo user's location — Fairfax, VA (s-all-quotes-map "📍 Fairfax, VA"). */
+export const USER_LOCATION = { lat: 38.846, lng: -77.306 };
 
 export const DEALERS: Dealer[] = [
   {
@@ -26,6 +33,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.858,
+    lng: -77.29,
+    address: '11020 Fairfax Blvd, Fairfax, VA 22030',
   },
   {
     id: 'autofix-pro',
@@ -38,6 +48,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.874,
+    lng: -77.291,
+    address: '3960 Chain Bridge Rd, Fairfax, VA 22030',
   },
   {
     id: 'vienna-auto',
@@ -50,6 +63,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Closes soon',
     closesAt: '6PM',
+    lat: 38.881,
+    lng: -77.261,
+    address: '127 Maple Ave E, Vienna, VA 22180',
   },
   {
     id: 'fairfax-collision',
@@ -62,6 +78,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.81,
+    lng: -77.33,
+    address: '9520 Lee Hwy, Fairfax, VA 22031',
   },
   {
     id: 'chantilly-body',
@@ -74,6 +93,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.876,
+    lng: -77.394,
+    address: '14500 Lee Rd, Chantilly, VA 20151',
   },
   {
     id: 'nova-dent',
@@ -86,6 +108,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.806,
+    lng: -77.36,
+    address: '6420 Rolling Rd, Springfield, VA 22152',
   },
   {
     id: 'arlington-spa',
@@ -98,6 +123,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.886,
+    lng: -77.205,
+    address: '2611 Columbia Pike, Arlington, VA 22204',
   },
   {
     id: 'premier-body',
@@ -110,6 +138,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
+    lat: 38.786,
+    lng: -77.195,
+    address: '6231 Richmond Hwy, Alexandria, VA 22303',
   },
   {
     id: 'city-body',
@@ -122,6 +153,9 @@ export const DEALERS: Dealer[] = [
     hours: 'Mon–Fri 8AM–5PM',
     openStatus: 'Open',
     closesAt: '5PM',
+    lat: 38.856,
+    lng: -77.354,
+    address: '10912 Main St, Fairfax, VA 22030',
   },
 ];
 

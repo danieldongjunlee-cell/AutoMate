@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -11,6 +11,7 @@ import { Screen } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
+import { capturePhoto, pickFromGallery } from '../../services/photos';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScanCam'>;
@@ -24,13 +25,33 @@ const BRACKETS = [
 
 const VIEWFINDER_H = 190;
 
-/** Mock receipt scanner; swaps to expo-camera when capture is wired. */
+/**
+ * Receipt scanner with REAL capture (user-feedback pass 2): the camera /
+ * gallery buttons use expo-image-picker and show the actual image in the
+ * viewfinder. The OCR itself stays mocked — Review scan parses the canonical
+ * receipt regardless of pixels.
+ */
 export function MaintScanCamScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(false);
-  // Mock capture: 'camera' / 'gallery' shows the receipt preview in the frame.
-  const [captured, setCaptured] = useState<'camera' | 'gallery' | null>(null);
+  const [picking, setPicking] = useState(false);
+  // Real capture: shows the photographed/imported receipt in the frame.
+  const [captured, setCaptured] = useState<{ source: 'camera' | 'gallery'; uri: string } | null>(
+    null,
+  );
+
+  /** Capture (camera) or import (gallery) the receipt image. */
+  const grab = async (source: 'camera' | 'gallery') => {
+    if (picking) return;
+    setPicking(true);
+    try {
+      const photo = source === 'camera' ? await capturePhoto() : await pickFromGallery();
+      if (photo) setCaptured({ source, uri: photo.uri });
+    } finally {
+      setPicking(false);
+    }
+  };
 
   // Scan-line sweep + shimmer, animated only while the OCR call is pending.
   const sweep = useRef(new Animated.Value(0)).current;
@@ -98,12 +119,29 @@ export function MaintScanCamScreen() {
               right: 0,
               bottom: 0,
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'flex-end',
             }}
           >
-            <Text style={{ fontSize: 40, marginBottom: 4 }}>🧾</Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.75)', fontWeight: '600' }}>
-              AutoFix Pro receipt {captured === 'gallery' ? 'imported' : 'captured'} ✓
+            {/* The real captured/imported image fills the viewfinder */}
+            <Image
+              source={{ uri: captured.uri }}
+              style={StyleSheet.absoluteFill}
+              resizeMode="cover"
+            />
+            <Text
+              style={{
+                fontSize: 12,
+                color: '#fff',
+                fontWeight: '600',
+                backgroundColor: 'rgba(0,0,0,.55)',
+                paddingHorizontal: 10,
+                paddingVertical: 3,
+                borderRadius: radii.pill,
+                overflow: 'hidden',
+                marginBottom: 34,
+              }}
+            >
+              🧾 Receipt {captured.source === 'gallery' ? 'imported' : 'captured'} ✓
             </Text>
           </View>
         ) : null}
@@ -203,12 +241,20 @@ export function MaintScanCamScreen() {
       </View>
 
       <PrimaryButton
-        label={captured === 'camera' ? '✓ Receipt captured — retake' : '📷 Capture receipt'}
-        onPress={() => setCaptured('camera')}
+        label={
+          picking
+            ? 'Opening camera…'
+            : captured?.source === 'camera'
+              ? '✓ Receipt captured — retake'
+              : '📷 Capture receipt'
+        }
+        disabled={picking}
+        onPress={() => grab('camera')}
         style={{ marginBottom: spacing.sm }}
       />
       <Tappable
-        onPress={() => setCaptured('gallery')}
+        onPress={() => grab('gallery')}
+        disabled={picking}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
           borderWidth: StyleSheet.hairlineWidth,
@@ -217,11 +263,11 @@ export function MaintScanCamScreen() {
           paddingVertical: 12,
           alignItems: 'center',
           marginBottom: spacing.md,
-          opacity: pressed ? 0.7 : 1,
+          opacity: pressed || picking ? 0.7 : 1,
         })}
       >
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          {captured === 'gallery' ? '✓ Imported from gallery' : '🗂 Gallery instead'}
+          {captured?.source === 'gallery' ? '✓ Imported from gallery — repick' : '🗂 Gallery instead'}
         </Text>
       </Tappable>
 
