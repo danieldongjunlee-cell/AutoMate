@@ -1,129 +1,150 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
-import { INSURANCE_POLICY } from '../../services/mock/data';
+import { insuranceService, Policy } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
 
-const DETAILS = [
-  ['Policy number', INSURANCE_POLICY.accountNumber],
-  ['Deductible', `$${INSURANCE_POLICY.deductible} (collision)`],
-  ['Annual premium', `$${INSURANCE_POLICY.premiumPerYear.toLocaleString()}/yr`],
-  ['Covers', INSURANCE_POLICY.covers],
-  ['Renewal date', INSURANCE_POLICY.renewal],
-] as const;
+function PolicyCard({ policy, onEdit }: { policy: Policy; onEdit: () => void }) {
+  const { colors } = useTheme();
+  const details = [
+    ['Policy number', policy.policyNumber],
+    ['Deductible', `$${policy.deductible} (collision)`],
+    ['Annual premium', `$${policy.premiumPerYear.toLocaleString()}/yr`],
+    ['Covers', policy.covers],
+    ['Renewal date', policy.renewal],
+  ] as const;
 
-/** Wireframe s-prof-insurance: policy card + compare cash-vs-insurance link. */
+  return (
+    <View
+      style={{
+        backgroundColor: colors.surface,
+        borderRadius: radii.md,
+        borderWidth: 1.5,
+        borderColor: colors.warning,
+        overflow: 'hidden',
+        marginBottom: spacing.sm,
+      }}
+    >
+      <LinearGradient
+        colors={['#633806', '#854F0B']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          padding: spacing.md,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+        }}
+      >
+        <View
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: radii.sm,
+            backgroundColor: 'rgba(255,255,255,.2)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 22 }}>🛡️</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{policy.carrier}</Text>
+          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>{policy.coverage}</Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: 'rgba(29,158,117,.3)',
+            borderRadius: radii.pill,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: 'rgba(29,158,117,.5)',
+            paddingHorizontal: 10,
+            paddingVertical: 3,
+          }}
+        >
+          <Text style={{ fontSize: 12, color: palette.successLight }}>{policy.status}</Text>
+        </View>
+      </LinearGradient>
+      <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
+        {details.map(([label, value]) => (
+          <View
+            key={label}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingVertical: 7,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: colors.divider,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
+            <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
+              {value}
+            </Text>
+          </View>
+        ))}
+      </View>
+      <View
+        style={{
+          padding: spacing.sm,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.divider,
+        }}
+      >
+        <Pressable
+          onPress={onEdit}
+          style={({ pressed }) => ({
+            backgroundColor: colors.primary,
+            borderRadius: radii.sm,
+            paddingVertical: 11,
+            alignItems: 'center',
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
+            ✎ Edit policy details
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+/** Wireframe s-prof-insurance: live policy cards + compare cash-vs-insurance link. */
 export function ProfInsuranceScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
 
+  const { data: policies, isLoading } = useQuery({
+    queryKey: ['policies'],
+    queryFn: () => insuranceService.listPolicies(),
+  });
+
   return (
     <Screen>
       <SectionLabel>Your policies</SectionLabel>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderColor: colors.warning,
-          overflow: 'hidden',
-          marginBottom: spacing.sm,
-        }}
-      >
-        <LinearGradient
-          colors={['#633806', '#854F0B']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            padding: spacing.md,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-          }}
-        >
-          <View
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: radii.sm,
-              backgroundColor: 'rgba(255,255,255,.2)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 22 }}>🛡️</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>
-              {INSURANCE_POLICY.carrier}
-            </Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>
-              {INSURANCE_POLICY.coverage}
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: 'rgba(29,158,117,.3)',
-              borderRadius: radii.pill,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: 'rgba(29,158,117,.5)',
-              paddingHorizontal: 10,
-              paddingVertical: 3,
-            }}
-          >
-            <Text style={{ fontSize: 12, color: palette.successLight }}>Active</Text>
-          </View>
-        </LinearGradient>
-        <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
-          {DETAILS.map(([label, value]) => (
-            <View
-              key={label}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingVertical: 7,
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderBottomColor: colors.divider,
-              }}
-            >
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
-              <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
-                {value}
-              </Text>
-            </View>
-          ))}
+      {isLoading ? (
+        <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
+          <ActivityIndicator color={colors.primary} />
         </View>
-        <View
-          style={{
-            padding: spacing.sm,
-            borderTopWidth: StyleSheet.hairlineWidth,
-            borderTopColor: colors.divider,
-          }}
-        >
-          <Pressable
-            onPress={() => navigation.navigate('ProfInsEdit')}
-            style={({ pressed }) => ({
-              backgroundColor: colors.primary,
-              borderRadius: radii.sm,
-              paddingVertical: 11,
-              alignItems: 'center',
-              opacity: pressed ? 0.8 : 1,
-            })}
-          >
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
-              ✎ Edit policy details
-            </Text>
-          </Pressable>
-        </View>
-      </View>
+      ) : (
+        (policies ?? []).map((policy) => (
+          <PolicyCard
+            key={policy.id}
+            policy={policy}
+            onEdit={() => navigation.navigate('ProfInsEdit', { policyId: policy.id })}
+          />
+        ))
+      )}
 
       {/* Add policy */}
       <Pressable

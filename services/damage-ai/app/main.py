@@ -1,9 +1,10 @@
 """AutoMate damage-AI service (FastAPI).
 
 Endpoints
-  GET  /health    — liveness + active model modes
-  POST /estimate  — multipart images[] + part + damage_type -> repair estimate
-  POST /receipt   — receipt image/PDF -> extracted fields
+  GET  /health          — liveness + active model modes
+  POST /estimate        — multipart images[] + part + damage_type -> repair estimate
+  POST /receipt         — receipt image/PDF -> extracted fields
+  POST /insurance-card  — insurance card image -> policy fields (prof-ins-add scan)
 
 Modes (env)
   MODEL_MODE   mock (default) | yolo  — damage estimator
@@ -26,7 +27,7 @@ from typing import List, Optional
 from fastapi import FastAPI, File, Form, UploadFile
 from PIL import Image
 
-from .mock_engine import mock_estimate, mock_receipt
+from .mock_engine import mock_estimate, mock_insurance_card, mock_receipt
 from .pricing import load_pricing, normalize_damage_type, price_range, severity_bucket
 
 logger = logging.getLogger("damage-ai")
@@ -157,6 +158,52 @@ def _ocr_receipt(blob: bytes) -> Optional[dict]:
     }
 
 
+_KNOWN_CARRIERS = (
+    "State Farm",
+    "Geico",
+    "Progressive",
+    "Allstate",
+    "USAA",
+    "Liberty Mutual",
+    "Nationwide",
+    "Farmers",
+    "Travelers",
+    "Erie",
+)
+
+
+def _ocr_insurance_card(blob: bytes) -> Optional[dict]:
+    """Card scan reuses the receipt OCR pipeline (RECEIPT_MODE=ocr) with
+    insurance-specific field heuristics. Mock mode never reaches this."""
+    import re
+
+    engine = _get_ocr()
+    if engine is None:
+        return None
+    result = engine.ocr(blob, cls=True)
+    lines = [w[1][0] for page in (result or []) for w in (page or [])]
+    if not lines:
+        return None
+    text = "\n".join(lines)
+    carrier = next((c for c in _KNOWN_CARRIERS if c.lower() in text.lower()), lines[0].strip())
+    policy_m = re.search(r"\b[A-Z]{1,4}-?\d{5,12}\b", text)
+    ded_m = re.search(r"deductible\D{0,12}\$?\s*([\d,]+)", text, re.IGNORECASE)
+    prem_m = re.search(r"premium\D{0,12}\$?\s*([\d,]+)", text, re.IGNORECASE)
+    date_m = re.search(
+        r"\b(?:\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|[A-Z][a-z]{2,8}\.? \d{1,2},? \d{4})\b", text
+    )
+    coverage = "Comprehensive + Collision" if "comprehensive" in text.lower() else "Liability"
+    return {
+        "provider": carrier,
+        "policy_number": policy_m.group(0) if policy_m else "",
+        "deductible": int(ded_m.group(1).replace(",", "")) if ded_m else 500,
+        "premium_per_year": int(prem_m.group(1).replace(",", "")) if prem_m else 0,
+        "coverage_type": coverage,
+        "renewal_date": date_m.group(0) if date_m else "",
+        "model_mode": "ocr",
+    }
+
+
 # ── Routes ───────────────────────────────────────────────────────────────
 
 
@@ -207,3 +254,16 @@ async def receipt(file: UploadFile = File(...)):
         except Exception:
             logger.exception("OCR pipeline failed — falling back to mock")
     return mock_receipt(blob)
+
+
+@app.post("/insurance-card")
+async def insurance_card(file: UploadFile = File(...)):
+    blob = await file.read()
+    if RECEIPT_MODE == "ocr" and not (file.content_type or "").endswith("pdf"):
+        try:
+            result = _ocr_insurance_card(blob)
+            if result is not None:
+                return result
+        except Exception:
+            logger.exception("Card OCR failed — falling back to mock")
+    return mock_insurance_card(blob)

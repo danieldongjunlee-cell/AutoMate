@@ -39,6 +39,16 @@ export interface AiReceipt {
   modelMode: string;
 }
 
+export interface AiInsuranceCard {
+  provider: string;
+  policyNumber: string;
+  deductible: number;
+  premiumPerYear: number;
+  coverageType: string;
+  renewalDate: string;
+  modelMode: string;
+}
+
 // ── Shared pricing constants (mirror of config/pricing.yaml) ─────────────
 
 type Range = [number, number];
@@ -176,6 +186,18 @@ export const MOCK_RECEIPT: AiReceipt = {
   modelMode: 'mock-fallback',
 };
 
+/** Canonical demo insurance card — matches the seeded State Farm policy and
+ * the Python mock (services/damage-ai/app/mock_engine.py MOCK_INSURANCE_CARD). */
+export const MOCK_INSURANCE_CARD: AiInsuranceCard = {
+  provider: 'State Farm',
+  policyNumber: 'SF-8847234',
+  deductible: 500,
+  premiumPerYear: 1200,
+  coverageType: 'Comprehensive + Collision',
+  renewalDate: 'Aug 15, 2027',
+  modelMode: 'mock-fallback',
+};
+
 // ── Photo loading ─────────────────────────────────────────────────────────
 
 /** 1x1 grey PNG used when a request has no stored photo files (the RN camera
@@ -292,5 +314,50 @@ export async function extractReceipt(file?: { buffer: Buffer; mimeType: string }
   } catch (err) {
     console.warn(`damage-ai unreachable (${DAMAGE_AI_URL}) — using mock receipt:`, err);
     return MOCK_RECEIPT;
+  }
+}
+
+/**
+ * Extract insurance-card fields via the damage-ai service (the card-scan
+ * autofill on prof-ins-add). Never throws — degrades to the canonical mock
+ * card when the service is down.
+ */
+export async function extractInsuranceCard(file?: {
+  buffer: Buffer;
+  mimeType: string;
+}): Promise<AiInsuranceCard> {
+  const buffer = file?.buffer ?? PLACEHOLDER_PNG;
+  const mimeType = file?.mimeType ?? 'image/png';
+  try {
+    const form = new FormData();
+    const ext = mimeType === 'application/pdf' ? 'pdf' : 'png';
+    form.append('file', new Blob([new Uint8Array(buffer)], { type: mimeType }), `card.${ext}`);
+    const res = await fetch(`${DAMAGE_AI_URL}/insurance-card`, {
+      method: 'POST',
+      body: form,
+      signal: AbortSignal.timeout(AI_TIMEOUT_MS),
+    });
+    if (!res.ok) throw new Error(`damage-ai /insurance-card responded ${res.status}`);
+    const data = (await res.json()) as {
+      provider: string;
+      policy_number: string;
+      deductible: number;
+      premium_per_year: number;
+      coverage_type: string;
+      renewal_date: string;
+      model_mode: string;
+    };
+    return {
+      provider: data.provider,
+      policyNumber: data.policy_number,
+      deductible: data.deductible,
+      premiumPerYear: data.premium_per_year,
+      coverageType: data.coverage_type,
+      renewalDate: data.renewal_date,
+      modelMode: data.model_mode,
+    };
+  } catch (err) {
+    console.warn(`damage-ai unreachable (${DAMAGE_AI_URL}) — using mock insurance card:`, err);
+    return MOCK_INSURANCE_CARD;
   }
 }

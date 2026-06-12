@@ -67,3 +67,21 @@ MOCK_RECEIPT = {
 
 def mock_receipt(_blob: bytes) -> dict:
     return {**MOCK_RECEIPT, "model_mode": "mock"}
+
+
+# Canonical demo insurance card — matches the seeded State Farm policy
+# (server/prisma/seed.ts) and the server's TS fallback
+# (server/src/damageAi.ts MOCK_INSURANCE_CARD), so the prof-ins-add scan
+# autofills the same fields regardless of which layer answered.
+MOCK_INSURANCE_CARD = {
+    "provider": "State Farm",
+    "policy_number": "SF-8847234",
+    "deductible": 500,
+    "premium_per_year": 1200,
+    "coverage_type": "Comprehensive + Collision",
+    "renewal_date": "Aug 15, 2027",
+}
+
+
+def mock_insurance_card(_blob: bytes) -> dict:
+    return {**MOCK_INSURANCE_CARD, "model_mode": "mock"}

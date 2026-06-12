@@ -12,6 +12,7 @@ import { authService as apiAuthService } from './api/authService';
 import { apiEnabled } from './api/client';
 import { communityService as apiCommunityService } from './api/communityService';
 import { compareService as apiCompareService } from './api/compareService';
+import { insuranceService as apiInsuranceService } from './api/insuranceService';
 import { maintService as apiMaintService } from './api/maintService';
 import { notificationService as apiNotificationService } from './api/notificationService';
 import { proService as apiProService } from './api/proService';
@@ -19,6 +20,7 @@ import { quoteService as apiQuoteService } from './api/quoteService';
 import { authService as mockAuthService } from './mock/authService';
 import { communityService as mockCommunityService } from './mock/communityService';
 import { compareService as mockCompareService } from './mock/compareService';
+import { insuranceService as mockInsuranceService } from './mock/insuranceService';
 import { maintService as mockMaintService } from './mock/maintService';
 import { notificationService as mockNotificationService } from './mock/notificationService';
 import { proService as mockProService } from './mock/proService';
@@ -40,6 +42,9 @@ export const proService: typeof mockProService = USE_API ? apiProService : mockP
 export const compareService: typeof mockCompareService = USE_API
   ? apiCompareService
   : mockCompareService;
+export const insuranceService: typeof mockInsuranceService = USE_API
+  ? apiInsuranceService
+  : mockInsuranceService;
 
 // Shared constants/types that screens use alongside the services.
 export { DEMO_EMAIL, DEMO_OTP, DEMO_PASSWORD, MOCK_PHONE } from './mock/authService';
@@ -47,3 +52,10 @@ export type { SignUpInput } from './mock/authService';
 export { isAfterHours } from './mock/quoteService';
 export type { AppNotification } from './mock/notificationService';
 export type { Comparison, ComparisonRequest } from './mock/compareService';
+export type {
+  ConnectResult,
+  InsuranceProviderInfo,
+  Policy,
+  PolicyInput,
+  ScannedInsuranceCard,
+} from './mock/insuranceService';

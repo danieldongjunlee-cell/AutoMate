@@ -70,7 +70,7 @@ export type ProfileStackParamList = {
   ProfEarn: undefined;
   ProfCars: undefined;
   ProfInsurance: undefined;
-  ProfInsEdit: undefined;
+  ProfInsEdit: { policyId?: string } | undefined;
   ProfInsAdd: undefined;
   ProfPayment: undefined;
   ProfSettings: undefined;

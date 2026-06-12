@@ -1,11 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
+import { insuranceService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -25,6 +27,17 @@ export function ProfHubScreen() {
   const displayName = authedUser?.name ?? USER.name;
   const displayEmail = authedUser?.email ?? USER.email;
   const displayInitial = displayName.trim().charAt(0).toUpperCase() || USER.initial;
+
+  // Live primary policy for the insurance row (falls back to the wireframe
+  // constant while loading) — stays in sync with prof-ins-edit changes.
+  const { data: policies } = useQuery({
+    queryKey: ['policies'],
+    queryFn: () => insuranceService.listPolicies(),
+  });
+  const policy = policies?.[0];
+  const insuranceSub = policy
+    ? `${policy.carrier} · $${policy.deductible} deductible`
+    : `${INSURANCE_POLICY.carrier} · $${INSURANCE_POLICY.deductible} deductible`;
 
   const accountRow = (
     icon: string,
@@ -194,7 +207,7 @@ export function ProfHubScreen() {
         '🛡️',
         '#FAECE7',
         'Insurance policy',
-        `${INSURANCE_POLICY.carrier} · $${INSURANCE_POLICY.deductible} deductible`,
+        insuranceSub,
         'ProfInsurance',
         <View
           style={{

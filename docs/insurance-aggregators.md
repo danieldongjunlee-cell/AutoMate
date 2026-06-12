@@ -38,13 +38,20 @@ needs homeowners/commercial lines.
 
 ## How it plugs in here
 
-- `InsuranceProvider` interface: `server/src/insurance/InsuranceProvider.ts`.
-- `axleProvider.ts`: skeleton coded to Axle's documented API shape
+- `InsuranceProvider` interface: `server/src/insurance/InsuranceProvider.ts`;
+  adapter registry (env `INSURANCE_PROVIDER`, default `mock`):
+  `server/src/insurance/index.ts`.
+- `axleProvider.ts`: reference adapter coded to Axle's documented API shape —
+  ignition → consent widget → authCode → token exchange → `GET /policies/{id}`
   (`AXLE_API_URL`, `AXLE_CLIENT_ID`, `AXLE_CLIENT_SECRET` envs). Never
   required for the app to run.
 - `mockProvider.ts`: default (`INSURANCE_PROVIDER=mock` or unset) — returns
   the seeded State Farm policy plus a Geico sample so the connect flow demos
   offline.
+- Routes (`server/src/routes/insurance.ts`): `GET /insurance/providers`,
+  `POST /insurance/connect` (link → fetchPolicies → upsert into
+  `insurance_policies`), `POST /insurance/scan-card` (damage-ai forward with
+  the deterministic TS fallback from `server/src/damageAi.ts`).
 - Fallbacks that always work regardless of aggregator: manual entry
   (prof-ins-add form) and insurance-card scan (damage-ai OCR pipeline,
   `POST /insurance-card`).

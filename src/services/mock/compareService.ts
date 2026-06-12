@@ -4,8 +4,9 @@ import {
   PremiumImpactInput,
   PremiumImpactResult,
 } from '../actuarial/predict';
-import { acceptedQuoteById, INSURANCE_POLICY } from './data';
+import { acceptedQuoteById } from './data';
 import { delay } from './delay';
+import { primaryPolicy } from './insuranceService';
 
 export interface ComparisonRequest {
   /** Accepted quote whose low estimate is the repair (claim) amount. */
@@ -30,11 +31,16 @@ export const compareService = {
   async getComparison(req: ComparisonRequest = {}): Promise<Comparison> {
     await delay(300);
     const quote = acceptedQuoteById(req.quoteId);
+    // Live policy state (mock insuranceService) rather than the static
+    // INSURANCE_POLICY constant — editing the deductible/premium on
+    // prof-ins-edit changes the deep-dive math in mock mode too, exactly
+    // like the server resolving the stored policy on /compare/estimate.
+    const policy = primaryPolicy();
     const input: PremiumImpactInput = {
       claimType: req.claimType ?? 'collision',
       claimAmount: quote.priceLow,
-      premiumPerYear: INSURANCE_POLICY.premiumPerYear,
-      deductible: INSURANCE_POLICY.deductible,
+      premiumPerYear: policy.premiumPerYear,
+      deductible: policy.deductible,
       state: 'VA',
     };
     return { input, result: predictPremiumImpact(input) };
