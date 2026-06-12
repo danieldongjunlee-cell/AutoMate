@@ -17,11 +17,11 @@ export type HomeStackParamList = {
   AfterHours: undefined;
   DealerQuotes: undefined;
   AllQuotesMap: undefined;
-  MapFilter: undefined;
   AcceptBooking: { dealerId?: string } | undefined;
   BookingConfirm:
     | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash'; priceLabel?: string }
     | undefined;
+  DealerMap: { dealerId?: string } | undefined;
   BundleDeals: undefined;
   Notifications: undefined;
 };
@@ -33,6 +33,13 @@ export type MaintStackParamList = {
   MaintScanRev: undefined;
   MaintManual: undefined;
   MaintDiy: undefined;
+  DiyUnlock: undefined;
+  DiyPayment: undefined;
+  DiyConfirm: undefined;
+  DiyGuides: undefined;
+  DiyMatch: undefined;
+  DiyTools: undefined;
+  DiyFuture: undefined;
   MaintSchedule: undefined;
   MaintScheduleBook: undefined;
   MaintPayment: undefined;
@@ -61,6 +68,8 @@ export type ProfileStackParamList = {
   ProfEarn: undefined;
   ProfCars: undefined;
   ProfInsurance: undefined;
+  ProfInsEdit: undefined;
+  ProfInsAdd: undefined;
   ProfPayment: undefined;
   ProfSettings: undefined;
   ProfEditProfile: undefined;
@@ -69,6 +78,10 @@ export type ProfileStackParamList = {
   ProfChangePhone: undefined;
   ProfLinkedAccounts: undefined;
   ProfHelpCenter: undefined;
+  HelpPhotos: undefined;
+  HelpQuotes: undefined;
+  HelpBookings: undefined;
+  HelpContact: undefined;
   ProfTerms: undefined;
   ProfPrivacy: undefined;
   ProfLanguage: undefined;

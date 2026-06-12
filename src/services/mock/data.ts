@@ -22,19 +22,19 @@ export const DEALERS: Dealer[] = [
     rating: 4.9,
     reviews: 312,
     distanceMi: 1.2,
-    hours: 'Mon–Sat 8AM–7PM',
+    hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
-    closesAt: '7PM',
+    closesAt: '6PM',
   },
   {
     id: 'autofix-pro',
     name: 'AutoFix Pro',
     initial: 'A',
     color: '#1D9E75',
-    rating: 4.8,
+    rating: 4.7,
     reviews: 204,
-    distanceMi: 0.8,
-    hours: 'Mon–Fri 8AM–6PM',
+    distanceMi: 2.1,
+    hours: 'Mon–Sat 8–6',
     openStatus: 'Open',
     closesAt: '6PM',
   },
@@ -46,8 +46,68 @@ export const DEALERS: Dealer[] = [
     rating: 4.8,
     reviews: 156,
     distanceMi: 3.4,
-    hours: 'Mon–Sat 9AM–6PM',
+    hours: 'Mon–Sat 8–6',
     openStatus: 'Closes soon',
+    closesAt: '6PM',
+  },
+  {
+    id: 'fairfax-collision',
+    name: 'Fairfax Collision',
+    initial: 'F',
+    color: '#E24B4A',
+    rating: 4.6,
+    reviews: 142,
+    distanceMi: 2.8,
+    hours: 'Mon–Sat 8–6',
+    openStatus: 'Open',
+    closesAt: '6PM',
+  },
+  {
+    id: 'chantilly-body',
+    name: 'Chantilly Auto Body',
+    initial: 'C',
+    color: '#EF9F27',
+    rating: 4.5,
+    reviews: 98,
+    distanceMi: 5.2,
+    hours: 'Mon–Sat 8–6',
+    openStatus: 'Open',
+    closesAt: '6PM',
+  },
+  {
+    id: 'nova-dent',
+    name: 'NoVa Dent Works',
+    initial: 'N',
+    color: '#534AB7',
+    rating: 4.7,
+    reviews: 173,
+    distanceMi: 4.0,
+    hours: 'Mon–Sat 8–6',
+    openStatus: 'Open',
+    closesAt: '6PM',
+  },
+  {
+    id: 'arlington-spa',
+    name: 'Arlington Auto Spa',
+    initial: 'A',
+    color: '#0F6E56',
+    rating: 4.4,
+    reviews: 87,
+    distanceMi: 6.1,
+    hours: 'Mon–Sat 8–6',
+    openStatus: 'Open',
+    closesAt: '6PM',
+  },
+  {
+    id: 'premier-body',
+    name: 'Premier Body Shop',
+    initial: 'P',
+    color: '#888888',
+    rating: 4.3,
+    reviews: 64,
+    distanceMi: 7.3,
+    hours: 'Mon–Sat 8–6',
+    openStatus: 'Open',
     closesAt: '6PM',
   },
   {
@@ -73,18 +133,20 @@ export interface Quote {
   parts: 'OEM' | 'Aftermarket';
   /** Pin position on the stylized map (percentages). */
   pin: { top: number; left: number };
-  tier: 'lowest' | 'good' | 'fair' | 'higher';
+  /** Map/legend ranking (all-quotes-map: BEST PRICE / RECOMMENDED tags). */
+  tier: 'best' | 'recommended' | 'other';
 }
 
+/** All 8 quotes from wireframe v15.10 (s-dealer-quotes / s-all-quotes-map pins). */
 export const QUOTES: Quote[] = [
   {
     id: 'q-autofix',
     dealerId: 'autofix-pro',
     price: 285,
-    note: 'Same day available.',
+    note: 'Quick turnaround, 1-day repair for minor dents.',
     parts: 'Aftermarket',
-    pin: { top: 30, left: 42 },
-    tier: 'lowest',
+    pin: { top: 26, left: 20 },
+    tier: 'best',
   },
   {
     id: 'q-honda',
@@ -93,26 +155,62 @@ export const QUOTES: Quote[] = [
     priceHigh: 345,
     note: 'PDR possible. 2-day turnaround, OEM paint match.',
     parts: 'OEM',
-    pin: { top: 25, left: 68 },
-    tier: 'higher',
+    pin: { top: 44, left: 46 },
+    tier: 'recommended',
   },
   {
     id: 'q-vienna',
     dealerId: 'vienna-auto',
-    price: 310,
-    note: 'Free pickup within 5 miles.',
+    price: 345,
+    note: 'Includes free paint protection after repair.',
     parts: 'Aftermarket',
-    pin: { top: 60, left: 58 },
-    tier: 'fair',
+    pin: { top: 18, left: 62 },
+    tier: 'other',
   },
   {
-    id: 'q-city',
-    dealerId: 'city-body',
-    price: 295,
-    note: 'OEM parts, 3-day turnaround.',
+    id: 'q-fairfax-collision',
+    dealerId: 'fairfax-collision',
+    price: 360,
+    note: 'Certified body shop, lifetime warranty on repair.',
     parts: 'OEM',
-    pin: { top: 45, left: 28 },
-    tier: 'good',
+    pin: { top: 64, left: 24 },
+    tier: 'other',
+  },
+  {
+    id: 'q-chantilly',
+    dealerId: 'chantilly-body',
+    price: 375,
+    note: 'Same-week appointments available.',
+    parts: 'Aftermarket',
+    pin: { top: 70, left: 66 },
+    tier: 'other',
+  },
+  {
+    id: 'q-nova-dent',
+    dealerId: 'nova-dent',
+    price: 395,
+    note: 'Specialists in paintless dent removal.',
+    parts: 'OEM',
+    pin: { top: 8, left: 38 },
+    tier: 'other',
+  },
+  {
+    id: 'q-arlington',
+    dealerId: 'arlington-spa',
+    price: 420,
+    note: 'Premium service with loaner vehicle included.',
+    parts: 'OEM',
+    pin: { top: 52, left: 78 },
+    tier: 'other',
+  },
+  {
+    id: 'q-premier',
+    dealerId: 'premier-body',
+    price: 480,
+    note: 'Full-service shop with detailing add-ons.',
+    parts: 'OEM',
+    pin: { top: 82, left: 46 },
+    tier: 'other',
   },
 ];
 
@@ -123,6 +221,7 @@ export const QUOTE_REQUEST = {
   quotesReceived: 8,
   newQuotes: 3,
   priceRange: { low: 285, high: 480 },
+  aiConfidencePct: 87,
   city: 'Fairfax, VA',
 };
 
@@ -158,7 +257,16 @@ export const CAR_PART_ROWS: PartCell[][] = [
   [{ name: 'Rear bumper', kind: 'bumper' }],
 ];
 
-export const DAMAGE_TYPES = ['Dent', 'Scratch', 'Paint chip', 'Crack', 'Missing piece'];
+/** Damage-type chips on s-camera (tagged at capture time in v15.10). */
+export const DAMAGE_TYPES = ['Dent', 'Scratch', 'Crack', 'Paint'];
+
+/** AI severity blurb per damage type (confirm-submit rows: "3 photos · Paint intact"). */
+export const DAMAGE_TYPE_SEVERITY: Record<string, string> = {
+  Dent: 'Paint intact',
+  Scratch: 'Surface level',
+  Crack: 'Needs inspection',
+  Paint: 'Surface level',
+};
 
 export const PHOTO_TIPS = [
   {
@@ -329,6 +437,31 @@ export const DIY_GUIDES: DiyGuide[] = [
 ];
 
 export const DIY_CATEGORIES = ['All', 'Bumper', 'Scratches', 'Paint chips', 'Interior'];
+
+export interface ProGuide {
+  id: string;
+  icon: string;
+  title: string;
+  sub: string;
+  time: string;
+  difficulty: 'Easy' | 'Medium';
+}
+
+/** The full unlocked Pro library (s-diy-guides — 12 guides). */
+export const PRO_GUIDES: ProGuide[] = [
+  { id: 'pg-1', icon: '🚗', title: 'Bumper dent removal', sub: 'PDR with hot water & plunger', time: '25 min', difficulty: 'Easy' },
+  { id: 'pg-2', icon: '🖌️', title: 'Paint chip touch-up', sub: 'Color-match & layer like a pro', time: '20 min', difficulty: 'Easy' },
+  { id: 'pg-3', icon: '✨', title: 'Scratch buffing', sub: 'Compound & polish deep scratches', time: '30 min', difficulty: 'Easy' },
+  { id: 'pg-4', icon: '💡', title: 'Headlight restoration', sub: 'De-fog & UV-seal yellowed lenses', time: '40 min', difficulty: 'Easy' },
+  { id: 'pg-5', icon: '🪟', title: 'Windshield chip fix', sub: 'Resin kit before it spreads', time: '35 min', difficulty: 'Medium' },
+  { id: 'pg-6', icon: '🛞', title: 'Wheel scuff repair', sub: 'Curb rash sand & refinish', time: '45 min', difficulty: 'Medium' },
+  { id: 'pg-7', icon: '🌫️', title: 'Foggy trim restore', sub: 'Plastic trim back to black', time: '15 min', difficulty: 'Easy' },
+  { id: 'pg-8', icon: '🧲', title: 'Door ding pop-out', sub: 'Magnet & glue-tab technique', time: '30 min', difficulty: 'Medium' },
+  { id: 'pg-9', icon: '🎨', title: 'Clear coat repair', sub: 'Stop peeling before it grows', time: '50 min', difficulty: 'Medium' },
+  { id: 'pg-10', icon: '🔋', title: 'Battery terminal clean', sub: 'Stop corrosion & slow starts', time: '15 min', difficulty: 'Easy' },
+  { id: 'pg-11', icon: '💧', title: 'Wiper streak fix', sub: 'Refill blades vs replace', time: '10 min', difficulty: 'Easy' },
+  { id: 'pg-12', icon: '🔒', title: 'Interior scuff removal', sub: 'Leather & plastic restore', time: '25 min', difficulty: 'Easy' },
+];
 
 export const SCHEDULE_SERVICE_FILTERS = ['All', 'Oil change', 'Tires', 'Brakes', 'Inspection'];
 
@@ -652,12 +785,13 @@ export const LANGUAGES = [
   { flag: '🇨🇳', name: '中文', selected: false },
 ];
 
+/** Help-center topics → their article routes (s-prof-help-center → s-help-*). */
 export const HELP_TOPICS = [
-  { icon: '📷', title: 'How to submit damage photos' },
-  { icon: '💰', title: 'Understanding quotes & pricing' },
-  { icon: '📅', title: 'Managing bookings' },
-  { icon: '📞', title: 'Contact support' },
-];
+  { icon: '📷', title: 'How to submit damage photos', route: 'HelpPhotos' },
+  { icon: '💰', title: 'Understanding quotes & pricing', route: 'HelpQuotes' },
+  { icon: '📅', title: 'Managing bookings', route: 'HelpBookings' },
+  { icon: '📞', title: 'Contact support', route: 'HelpContact' },
+] as const;
 
 export const TERMS_SECTIONS = [
   {

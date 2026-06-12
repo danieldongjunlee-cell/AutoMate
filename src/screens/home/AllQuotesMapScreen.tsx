@@ -7,21 +7,73 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, QUOTE_REQUEST } from '../../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services/mock/quoteService';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'AllQuotesMap'>;
 
-const TIER_COLORS: Record<string, string> = {
-  lowest: palette.primary,
-  good: palette.success,
-  fair: palette.warning,
-  higher: palette.danger,
+const BEST_GREEN = '#085041';
+
+const TIER_TAG: Record<Quote['tier'], string | null> = {
+  best: 'BEST PRICE',
+  recommended: 'RECOMMENDED',
+  other: null,
 };
 
+/** Price pin on the stylized map (tagged BEST PRICE / RECOMMENDED). */
+function PricePin({ quote, onPress }: { quote: Quote; onPress: () => void }) {
+  const tag = TIER_TAG[quote.tier];
+  const pillBg =
+    quote.tier === 'best' ? BEST_GREEN : quote.tier === 'recommended' ? palette.primary : '#fff';
+  const pillFg = quote.tier === 'other' ? palette.textPrimary : '#fff';
+  return (
+    <Pressable
+      onPress={onPress}
+      style={{
+        position: 'absolute',
+        top: `${quote.pin.top}%`,
+        left: `${quote.pin.left}%`,
+        alignItems: 'center',
+        transform: [{ translateX: -24 }],
+      }}
+    >
+      <View
+        style={{
+          backgroundColor: pillBg,
+          borderRadius: radii.pill,
+          borderWidth: quote.tier === 'other' ? 0 : 1.5,
+          borderColor: '#fff',
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 5,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 3,
+        }}
+      >
+        <Text style={{ fontSize: 12, fontWeight: '800', color: pillFg }}>${quote.price}</Text>
+      </View>
+      {tag ? (
+        <Text
+          style={{
+            fontSize: 8,
+            fontWeight: '700',
+            marginTop: 2,
+            color: quote.tier === 'best' ? BEST_GREEN : palette.primaryDark,
+          }}
+        >
+          {tag}
+        </Text>
+      ) : null}
+    </Pressable>
+  );
+}
+
 /**
- * Stylized dark map with price pins — faithful to the wireframe's mock map.
+ * Wireframe s-all-quotes-map (v15.10): stylized light map with 8 priced pins,
+ * BEST PRICE / RECOMMENDED tags, legend, and the "Top picks" list.
  * Swappable for react-native-maps once real dealer geodata exists.
  */
 export function AllQuotesMapScreen() {
@@ -29,100 +81,91 @@ export function AllQuotesMapScreen() {
   const { colors } = useTheme();
   const { data: quotes } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
 
+  const goAccept = (dealerId: string) => navigation.navigate('AcceptBooking', { dealerId });
+  const topPicks = quotes?.slice(0, 3) ?? [];
+
   return (
     <Screen>
       {/* Map */}
       <LinearGradient
-        colors={[palette.navyMid, palette.navy]}
+        colors={['#E9EFE6', '#DDE8E0']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.35, y: 1 }}
         style={{
           borderRadius: radii.lg,
-          height: 240,
-          marginBottom: spacing.md,
+          height: 300,
+          marginBottom: spacing.sm,
           overflow: 'hidden',
-          borderWidth: 0.5,
-          borderColor: '#2A3A52',
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: '#C8D5CC',
         }}
       >
-        {/* Street grid */}
-        {[1, 2, 3].map((i) => (
-          <View
-            key={`gv${i}`}
-            style={{
-              position: 'absolute',
-              left: `${i * 25}%`,
-              top: 0,
-              bottom: 0,
-              width: StyleSheet.hairlineWidth,
-              backgroundColor: 'rgba(74,106,138,.45)',
-            }}
-          />
-        ))}
-        {[1, 2].map((i) => (
-          <View
-            key={`gh${i}`}
-            style={{
-              position: 'absolute',
-              top: `${i * 33}%`,
-              left: 0,
-              right: 0,
-              height: StyleSheet.hairlineWidth,
-              backgroundColor: 'rgba(74,106,138,.45)',
-            }}
-          />
-        ))}
-
-        {/* Quote pins */}
-        {quotes?.map((q) => (
-          <Pressable
-            key={q.id}
-            onPress={() => navigation.navigate('AcceptBooking', { dealerId: q.dealerId })}
-            style={{
-              position: 'absolute',
-              top: `${q.pin.top}%`,
-              left: `${q.pin.left}%`,
-              transform: [{ translateX: -22 }, { translateY: -22 }],
-              backgroundColor: TIER_COLORS[q.tier],
-              borderRadius: radii.pill,
-              borderWidth: 2,
-              borderColor: '#fff',
-              paddingHorizontal: 8,
-              paddingVertical: 4,
-            }}
-          >
-            <Text style={{ fontSize: 11, fontWeight: '700', color: q.tier === 'fair' ? palette.dark : '#fff' }}>
-              ${q.price}
-            </Text>
-          </Pressable>
-        ))}
-
-        {/* You-are-here */}
+        {/* Roads */}
         <View
           style={{
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: [{ translateX: -10 }, { translateY: -10 }],
-            width: 20,
-            height: 20,
-            borderRadius: 10,
+            top: -20,
+            bottom: -20,
+            left: '30%',
+            width: 13,
             backgroundColor: '#fff',
-            borderWidth: 4,
-            borderColor: palette.primary,
+            opacity: 0.85,
+            transform: [{ rotate: '12deg' }],
+            borderWidth: 1,
+            borderColor: '#E5E0D5',
           }}
         />
         <View
           style={{
             position: 'absolute',
+            left: -10,
+            right: -10,
+            top: '48%',
+            height: 10,
+            backgroundColor: '#fff',
+            opacity: 0.85,
+            transform: [{ rotate: '-4deg' }],
+          }}
+        />
+        {/* Parks */}
+        <View style={{ position: 'absolute', top: '10%', right: '8%', width: 76, height: 54, backgroundColor: '#D5E3D0', borderRadius: 10, opacity: 0.7 }} />
+        <View style={{ position: 'absolute', bottom: '12%', left: '6%', width: 64, height: 44, backgroundColor: '#D5E3D0', borderRadius: 10, opacity: 0.7 }} />
+
+        {/* You-are-here */}
+        <View style={{ position: 'absolute', top: '46%', left: '36%' }}>
+          <View
+            style={{
+              width: 18,
+              height: 18,
+              borderRadius: 9,
+              backgroundColor: palette.info,
+              borderWidth: 3,
+              borderColor: '#fff',
+              shadowColor: palette.info,
+              shadowOpacity: 0.35,
+              shadowRadius: 6,
+              elevation: 3,
+            }}
+          />
+        </View>
+
+        {/* Quote pins */}
+        {quotes?.map((q) => <PricePin key={q.id} quote={q} onPress={() => goAccept(q.dealerId)} />)}
+
+        {/* Location chip */}
+        <View
+          style={{
+            position: 'absolute',
             bottom: 10,
-            right: 10,
-            backgroundColor: 'rgba(255,255,255,.15)',
+            left: 10,
+            backgroundColor: 'rgba(255,255,255,.92)',
             borderRadius: radii.sm,
-            paddingHorizontal: 9,
-            paddingVertical: 4,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 11, color: '#fff', fontWeight: '500' }}>
-            {QUOTE_REQUEST.city}
+          <Text style={{ fontSize: 11, color: '#555', fontWeight: '600' }}>
+            📍 {QUOTE_REQUEST.city}
           </Text>
         </View>
       </LinearGradient>
@@ -138,30 +181,50 @@ export function AllQuotesMapScreen() {
       >
         {(
           [
-            ['lowest', 'Lowest'],
-            ['good', 'Good'],
-            ['fair', 'Fair'],
-            ['higher', 'Higher'],
+            [BEST_GREEN, 'Best price', false],
+            [palette.primary, 'AI recommended', false],
+            ['#fff', 'Other quotes', true],
           ] as const
-        ).map(([tier, label]) => (
-          <View key={tier} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <View style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: TIER_COLORS[tier] }} />
+        ).map(([color, label, bordered]) => (
+          <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <View
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: 6,
+                backgroundColor: color,
+                borderWidth: bordered ? 1 : 0,
+                borderColor: '#ccc',
+              }}
+            />
             <Text style={{ fontSize: 12, color: colors.textTertiary }}>{label}</Text>
           </View>
         ))}
       </View>
 
-      <SectionLabel>Quotes — tap to select</SectionLabel>
-      {quotes?.slice(0, 3).map((q, i) => {
+      <SectionLabel>Top picks</SectionLabel>
+      {topPicks.map((q) => {
         const dealer = dealerById(q.dealerId);
+        const tag = TIER_TAG[q.tier];
+        const tinted = q.tier !== 'other';
         return (
           <Pressable
             key={q.id}
-            onPress={() => navigation.navigate('AcceptBooking', { dealerId: q.dealerId })}
+            onPress={() => goAccept(q.dealerId)}
             style={({ pressed }) => ({
-              backgroundColor: i === 0 ? colors.primarySurface : colors.surface,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: i === 0 ? colors.primaryLight : colors.border,
+              backgroundColor:
+                q.tier === 'best'
+                  ? '#E8F5EF'
+                  : q.tier === 'recommended'
+                    ? colors.primarySurface
+                    : colors.surface,
+              borderWidth: q.tier === 'recommended' ? 1.5 : tinted ? 1 : StyleSheet.hairlineWidth,
+              borderColor:
+                q.tier === 'best'
+                  ? colors.success
+                  : q.tier === 'recommended'
+                    ? colors.primary
+                    : colors.border,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.sm,
@@ -173,42 +236,45 @@ export function AllQuotesMapScreen() {
           >
             <AvatarCircle initial={dealer.initial} color={dealer.color} size={36} />
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-                {dealer.name}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
+                  {dealer.name}
+                </Text>
+                {tag ? (
+                  <View
+                    style={{
+                      backgroundColor: q.tier === 'best' ? BEST_GREEN : palette.primary,
+                      borderRadius: radii.pill,
+                      paddingHorizontal: 8,
+                      paddingVertical: 1,
+                    }}
+                  >
+                    <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>{tag}</Text>
+                  </View>
+                ) : null}
+              </View>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>
                 {dealer.distanceMi} mi · ★ {dealer.rating}
+                {q.tier === 'recommended' ? ' · OEM parts' : ''}
               </Text>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: '700',
-                  color: q.tier === 'fair' ? colors.warning : colors.successDark,
-                }}
-              >
-                ${q.price}
-              </Text>
-              <Text style={{ fontSize: 11, color: colors.textTertiary }}>est.</Text>
-            </View>
+            <Text
+              style={{
+                fontSize: 19,
+                fontWeight: '800',
+                color:
+                  q.tier === 'best'
+                    ? BEST_GREEN
+                    : q.tier === 'recommended'
+                      ? colors.primaryDeep
+                      : colors.textPrimary,
+              }}
+            >
+              ${q.price}
+            </Text>
           </Pressable>
         );
       })}
-
-      {/* Filters view (wireframe s-map) */}
-      <Pressable
-        onPress={() => navigation.navigate('MapFilter')}
-        style={({ pressed }) => ({ alignItems: 'center', marginTop: spacing.xs, marginBottom: spacing.sm, opacity: pressed ? 0.6 : 1 })}
-      >
-        <Text style={{ fontSize: 13, color: colors.primaryDark }}>Filter quotes on map →</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={({ pressed }) => ({ alignItems: 'center', opacity: pressed ? 0.6 : 1 })}
-      >
-        <Text style={{ fontSize: 13, color: colors.primaryDark }}>← Back to quotes list</Text>
-      </Pressable>
     </Screen>
   );
 }

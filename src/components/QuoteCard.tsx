@@ -5,19 +5,17 @@ import { Dealer, Quote } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
 import { AvatarCircle } from './ui';
 
-/** Detailed quote card from s-dealer-quotes (note + accept / hours / msg row). */
+/** Detailed quote card from s-dealer-quotes (note + accept / hours row). */
 export function QuoteCard({
   quote,
   dealer,
   highlighted,
   onAccept,
-  onMessage,
 }: {
   quote: Quote;
   dealer: Dealer;
   highlighted?: boolean;
   onAccept: () => void;
-  onMessage?: () => void;
 }) {
   const { colors } = useTheme();
   return (
@@ -91,20 +89,6 @@ export function QuoteCard({
           <Text style={{ fontSize: 13 }}>🕐</Text>
           <Text style={{ fontSize: 11, color: colors.textSecondary }}>{dealer.hours}</Text>
         </View>
-        <Pressable
-          onPress={onMessage}
-          style={({ pressed }) => ({
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            backgroundColor: colors.surface,
-            borderRadius: radii.sm,
-            paddingHorizontal: spacing.md,
-            paddingVertical: 9,
-            opacity: pressed ? 0.6 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Msg</Text>
-        </Pressable>
       </View>
     </View>
   );

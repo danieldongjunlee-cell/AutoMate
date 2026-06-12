@@ -75,9 +75,6 @@ export function MaintHistoryScreen() {
 
   return (
     <Screen>
-      <FilterChips options={HISTORY_TIME_FILTERS} selected={timeFilter} onSelect={setTimeFilter} />
-      <FilterChips options={HISTORY_TYPE_FILTERS} selected={typeFilter} onSelect={setTypeFilter} />
-
       {/* Health summary */}
       <View
         style={{
@@ -87,7 +84,7 @@ export function MaintHistoryScreen() {
           flexDirection: 'row',
           alignItems: 'center',
           gap: spacing.md,
-          marginVertical: spacing.sm,
+          marginBottom: spacing.sm,
         }}
       >
         <HealthRing pct={VEHICLE.healthPct} />
@@ -145,7 +142,10 @@ export function MaintHistoryScreen() {
         </Pressable>
       </View>
 
+      {/* Wireframe v15.10: filters moved below the scan/manual cards */}
       <SectionLabel>Past services</SectionLabel>
+      <FilterChips options={HISTORY_TYPE_FILTERS} selected={typeFilter} onSelect={setTypeFilter} />
+      <FilterChips options={HISTORY_TIME_FILTERS} selected={timeFilter} onSelect={setTimeFilter} />
       {isLoading ? (
         <ActivityIndicator color={colors.primary} style={{ marginVertical: spacing.xl }} />
       ) : visible.length === 0 ? (

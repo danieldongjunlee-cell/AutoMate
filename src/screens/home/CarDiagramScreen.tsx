@@ -13,8 +13,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'CarDiagram'>;
 
 const SIDE_W = 64;
 
-/** One tappable car part. Colors follow the wireframe legend:
- *  bumpers primary, fenders orange, doors light-purple, panels neutral. */
+/** One tappable car part (wireframe v15.10: single-select, ✔ on the picked cell). */
 function PartTile({
   cell,
   selected,
@@ -29,15 +28,9 @@ function PartTile({
   minHeight?: number;
 }) {
   const { colors } = useTheme();
-  const base = {
-    bumper: { bg: palette.primary, fg: '#fff', border: 'transparent' },
-    fender: { bg: palette.warning, fg: '#fff', border: 'transparent' },
-    door: { bg: palette.primaryLight, fg: '#fff', border: 'transparent' },
-    panel: { bg: colors.surface, fg: colors.textSecondary, border: colors.border },
-  }[cell.kind];
 
-  const bg = selected ? palette.primaryDark : base.bg;
-  const fg = selected ? '#fff' : base.fg;
+  const bg = selected ? palette.primaryDark : colors.surface;
+  const fg = selected ? '#fff' : colors.textSecondary;
 
   return (
     <Pressable
@@ -48,8 +41,8 @@ function PartTile({
         alignSelf: vertical ? undefined : 'stretch',
         backgroundColor: bg,
         borderRadius: radii.sm,
-        borderWidth: selected ? 2 : cell.kind === 'panel' ? 1 : 0,
-        borderColor: selected ? palette.primary : base.border,
+        borderWidth: selected ? 2 : 1.5,
+        borderColor: selected ? palette.primary : colors.border,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: vertical ? spacing.sm : 12,
@@ -61,24 +54,23 @@ function PartTile({
       <Text
         style={{
           fontSize: vertical ? 11 : 14,
-          fontWeight: cell.kind === 'panel' && !selected ? '500' : '700',
+          fontWeight: selected ? '700' : '600',
           color: fg,
           textAlign: 'center',
         }}
       >
-        {cell.name}
+        {selected ? `✔ ${cell.name}` : cell.name}
       </Text>
     </Pressable>
   );
 }
 
+/** Wireframe s-car-diagram: pick ONE part per pass (pickPart single-select). */
 export function CarDiagramScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const togglePart = useAppStore((s) => s.togglePart);
-
-  const count = selectedParts.length;
+  const draftPart = useAppStore((s) => s.draftPart);
+  const pickPart = useAppStore((s) => s.pickPart);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -88,13 +80,14 @@ export function CarDiagramScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: spacing.sm,
             marginBottom: spacing.xs,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-            Tap any part — multiple parts supported
+          <Text style={{ flex: 1, fontSize: 14, color: colors.textTertiary }}>
+            Tap one part — you'll add photos for each part separately
           </Text>
-          <Badge label={`${count} selected`} variant="primarySoft" />
+          {draftPart ? <Badge label={draftPart} variant="primarySoft" /> : null}
         </View>
 
         {/* Top-down car grid */}
@@ -121,8 +114,8 @@ export function CarDiagramScreen() {
                     <View style={{ flex: 1 }}>
                       <PartTile
                         cell={cell}
-                        selected={selectedParts.includes(cell.name)}
-                        onPress={() => togglePart(cell.name)}
+                        selected={draftPart === cell.name}
+                        onPress={() => pickPart(cell.name)}
                       />
                     </View>
                     <View style={{ width: SIDE_W }} />
@@ -133,8 +126,8 @@ export function CarDiagramScreen() {
                 <PartTile
                   key={i}
                   cell={cell}
-                  selected={selectedParts.includes(cell.name)}
-                  onPress={() => togglePart(cell.name)}
+                  selected={draftPart === cell.name}
+                  onPress={() => pickPart(cell.name)}
                 />
               );
             }
@@ -145,22 +138,22 @@ export function CarDiagramScreen() {
                 <PartTile
                   cell={left}
                   vertical
-                  selected={selectedParts.includes(left.name)}
-                  onPress={() => togglePart(left.name)}
+                  selected={draftPart === left.name}
+                  onPress={() => pickPart(left.name)}
                 />
                 <View style={{ flex: 1 }}>
                   <PartTile
                     cell={mid}
-                    selected={selectedParts.includes(mid.name)}
-                    onPress={() => togglePart(mid.name)}
+                    selected={draftPart === mid.name}
+                    onPress={() => pickPart(mid.name)}
                     minHeight={tall ? 76 : 52}
                   />
                 </View>
                 <PartTile
                   cell={right}
                   vertical
-                  selected={selectedParts.includes(right.name)}
-                  onPress={() => togglePart(right.name)}
+                  selected={draftPart === right.name}
+                  onPress={() => pickPart(right.name)}
                 />
               </View>
             );
@@ -195,23 +188,21 @@ export function CarDiagramScreen() {
               Get AI Estimate
             </Text>
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.55)' }} numberOfLines={1}>
-              {count === 0 ? 'Tap parts above to select' : selectedParts.join(' · ')}
+              {draftPart ? `${draftPart} selected` : 'Tap a part above to select'}
             </Text>
           </View>
           <Pressable
-            disabled={count === 0}
+            disabled={!draftPart}
             onPress={() => navigation.navigate('PhotoExample')}
             style={({ pressed }) => ({
               backgroundColor: palette.primaryDark,
               borderRadius: radii.sm,
               paddingHorizontal: spacing.md,
               paddingVertical: 10,
-              opacity: count === 0 ? 0.4 : pressed ? 0.8 : 1,
+              opacity: !draftPart ? 0.4 : pressed ? 0.8 : 1,
             })}
           >
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
-              {count} part{count !== 1 ? 's' : ''} →
-            </Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Continue →</Text>
           </Pressable>
         </View>
       </Screen>

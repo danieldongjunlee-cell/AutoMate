@@ -18,9 +18,9 @@ export const SCREEN_TITLES: Record<string, string> = {
   AfterHours: 'Request submitted (after hours)', // s-after-hours
   DealerQuotes: 'Quotes received', // s-dealer-quotes
   AllQuotesMap: 'All quotes near you', // s-all-quotes-map
-  MapFilter: 'All quotes near you (filters)', // s-map
   AcceptBooking: 'Book appointment', // s-accept-booking
   BookingConfirm: 'Booking confirmed', // s-booking-confirm
+  DealerMap: 'Honda Fairfax', // s-dealer-map
   BundleDeals: 'Bundle deals', // s-home-bundle-deals
   Notifications: 'Notifications', // s-notifications
   MaintDashboard: 'Maintenance', // s-maint-dashboard
@@ -29,6 +29,13 @@ export const SCREEN_TITLES: Record<string, string> = {
   MaintScanRev: 'Review receipt', // s-maint-scan-rev
   MaintManual: 'Log service manually', // s-maint-manual
   MaintDiy: 'DIY Repair Tips', // s-maint-diy
+  DiyUnlock: 'Unlock Pro', // s-diy-unlock
+  DiyPayment: 'Payment', // s-diy-payment
+  DiyConfirm: 'Welcome to Pro', // s-diy-confirm
+  DiyGuides: 'All 12 guides', // s-diy-guides
+  DiyMatch: 'AI guide matching', // s-diy-match
+  DiyTools: 'Shopping lists', // s-diy-tools
+  DiyFuture: 'Coming soon', // s-diy-future
   MaintSchedule: 'Select service type', // s-maint-schedule
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book
   MaintPayment: 'Payment', // s-maint-payment
@@ -48,6 +55,8 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfEarn: 'How you earn', // s-prof-earn
   ProfCars: 'My cars', // s-prof-cars
   ProfInsurance: 'Insurance policy', // s-prof-insurance
+  ProfInsEdit: 'Edit policy details', // s-prof-ins-edit
+  ProfInsAdd: 'Add new policy', // s-prof-ins-add
   ProfPayment: 'Payment method', // s-prof-payment
   ProfSettings: 'Settings', // s-prof-settings
   ProfEditProfile: 'Edit profile', // s-prof-edit-profile
@@ -56,6 +65,10 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfChangePhone: 'Change phone number', // s-prof-change-phone
   ProfLinkedAccounts: 'Linked accounts', // s-prof-linked-accounts
   ProfHelpCenter: 'Help center', // s-prof-help-center
+  HelpPhotos: 'How to submit damage photos', // s-help-photos
+  HelpQuotes: 'Understanding quotes & pricing', // s-help-quotes
+  HelpBookings: 'Managing bookings', // s-help-bookings
+  HelpContact: 'Contact support', // s-help-contact
   ProfTerms: 'Terms of service', // s-prof-terms
   ProfPrivacy: 'Privacy policy', // s-prof-privacy
   ProfLanguage: 'Language', // s-prof-language

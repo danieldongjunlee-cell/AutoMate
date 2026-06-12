@@ -93,7 +93,7 @@ export function BookingConfirmScreen() {
         ))}
       </Card>
 
-      {/* Actions — wireframe: "View on map" returns home */}
+      {/* Actions — wireframe v15.10: "View on map" → dealer-map */}
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <Pressable
           onPress={() => Alert.alert('Calendar', 'Calendar export will use the device calendar.')}
@@ -111,7 +111,7 @@ export function BookingConfirmScreen() {
           </Text>
         </Pressable>
         <Pressable
-          onPress={() => navigation.popToTop()}
+          onPress={() => navigation.navigate('DealerMap', { dealerId: dealer.id })}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.surface,

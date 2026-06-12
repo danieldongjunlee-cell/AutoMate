@@ -38,13 +38,18 @@ const defaultCart = (dealerId: string): BookingCart => {
 
 const SEED_POINTS = 420;
 
-/** A captured (mock) damage photo. */
-export interface DamagePhoto {
-  id: string;
-  label: string; // e.g. "Angle 1"
-  /** Placeholder art tint until real camera capture is wired. */
-  tint: string;
+/**
+ * One damaged part in the multi-part request (wireframe v15.10 single-select
+ * loop: pick one part → photo guide → camera tags type + photos → confirm
+ * accumulates the list).
+ */
+export interface DamagePart {
+  part: string;
+  type: string; // Dent / Scratch / Crack / Paint
+  photos: number;
 }
+
+const DEFAULT_DAMAGE_TYPE = 'Dent';
 
 interface AppState {
   // Auth
@@ -56,21 +61,28 @@ interface AppState {
   darkMode: boolean;
   toggleDarkMode: () => void;
 
-  // Reward points (420 pts = $4.20 in the wireframe; earned by scans/logs/posts)
+  // Reward points (420 pts seed; earned by scans/logs/posts)
   points: number;
   addPoints: (n: number) => void;
 
-  // Damage flow: selected car parts (car-diagram multi-select)
-  selectedParts: string[];
-  togglePart: (part: string) => void;
-  clearParts: () => void;
+  // AutoMate Pro membership ($10 lifetime — diy-unlock chain)
+  isPro: boolean;
+  unlockPro: () => void;
 
-  // Damage flow: photos + damage type (camera / confirm-submit)
-  damagePhotos: DamagePhoto[];
-  addDamagePhoto: () => void;
-  removeDamagePhoto: (id: string) => void;
-  damageType: string;
-  setDamageType: (t: string) => void;
+  // Damage flow: committed parts + the in-progress draft (one part per pass)
+  damageParts: DamagePart[];
+  draftPart: string | null;
+  draftType: string;
+  draftPhotos: number;
+  /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its type/photos for editing. */
+  pickPart: (part: string) => void;
+  setDraftType: (t: string) => void;
+  addDraftPhoto: () => void;
+  /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
+  commitDraftPart: () => void;
+  /** Clear only the draft ("+ Add another damaged part" starts a fresh pass). */
+  resetDraft: () => void;
+  removePart: (index: number) => void;
   resetDamageFlow: () => void;
 
   // Maintenance booking cart (multi-service selection)
@@ -82,6 +94,12 @@ interface AppState {
   clearCart: () => void;
 }
 
+const emptyDraft = {
+  draftPart: null as string | null,
+  draftType: DEFAULT_DAMAGE_TYPE,
+  draftPhotos: 0,
+};
+
 export const useAppStore = create<AppState>((set) => ({
   isAuthenticated: false,
   signIn: () => set({ isAuthenticated: true }),
@@ -90,11 +108,11 @@ export const useAppStore = create<AppState>((set) => ({
   signOut: () =>
     set({
       isAuthenticated: false,
-      selectedParts: [],
-      damagePhotos: [],
-      damageType: 'Dent',
+      damageParts: [],
+      ...emptyDraft,
       cart: emptyCart,
       points: SEED_POINTS,
+      isPro: false,
     }),
 
   darkMode: false,
@@ -103,32 +121,35 @@ export const useAppStore = create<AppState>((set) => ({
   points: SEED_POINTS,
   addPoints: (n) => set((s) => ({ points: s.points + n })),
 
-  selectedParts: [],
-  togglePart: (part) =>
-    set((s) => ({
-      selectedParts: s.selectedParts.includes(part)
-        ? s.selectedParts.filter((p) => p !== part)
-        : [...s.selectedParts, part],
-    })),
-  clearParts: () => set({ selectedParts: [] }),
+  isPro: false,
+  unlockPro: () => set({ isPro: true }),
 
-  damagePhotos: [],
-  addDamagePhoto: () =>
+  damageParts: [],
+  ...emptyDraft,
+  pickPart: (part) =>
     set((s) => {
-      const tints = ['#2D1A1A', '#3A2A1A', '#1A2A3A', '#1A2D1F', '#2A1A2D'];
-      const n = s.damagePhotos.length;
-      return {
-        damagePhotos: [
-          ...s.damagePhotos,
-          { id: `photo-${Date.now()}-${n}`, label: `Angle ${n + 1}`, tint: tints[n % tints.length] },
-        ],
-      };
+      const existing = s.damageParts.find((p) => p.part === part);
+      return existing
+        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photos }
+        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: 0 };
     }),
-  removeDamagePhoto: (id) =>
-    set((s) => ({ damagePhotos: s.damagePhotos.filter((p) => p.id !== id) })),
-  damageType: 'Dent',
-  setDamageType: (damageType) => set({ damageType }),
-  resetDamageFlow: () => set({ selectedParts: [], damagePhotos: [], damageType: 'Dent' }),
+  setDraftType: (draftType) => set({ draftType }),
+  addDraftPhoto: () => set((s) => ({ draftPhotos: s.draftPhotos + 1 })),
+  commitDraftPart: () =>
+    set((s) => {
+      if (!s.draftPart || s.draftPhotos < 1) return {};
+      const next: DamagePart = { part: s.draftPart, type: s.draftType, photos: s.draftPhotos };
+      const i = s.damageParts.findIndex((p) => p.part === s.draftPart);
+      const damageParts =
+        i >= 0
+          ? s.damageParts.map((p, j) => (j === i ? next : p))
+          : [...s.damageParts, next];
+      return { damageParts };
+    }),
+  resetDraft: () => set({ ...emptyDraft }),
+  removePart: (index) =>
+    set((s) => ({ damageParts: s.damageParts.filter((_, i) => i !== index) })),
+  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft }),
 
   cart: emptyCart,
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),

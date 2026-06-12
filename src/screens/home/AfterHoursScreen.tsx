@@ -2,10 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -66,8 +67,9 @@ function TimelineNode({
 export function AfterHoursScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const primaryPart = selectedParts[0] ?? 'Rear bumper';
+  const damageParts = useAppStore((s) => s.damageParts);
+  const isPro = useAppStore((s) => s.isPro);
+  const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
 
   return (
     <Screen>
@@ -183,14 +185,22 @@ export function AfterHoursScreen() {
           </View>
         </View>
 
-        <ProLockOverlay
-          onDark
-          subtitle="Unlock AI-matched DIY guides based on your damage photos"
-          onUnlock={() => Alert.alert('Pro', 'Purchases will be wired to the backend later.')}
-        >
-          <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
-          <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
-        </ProLockOverlay>
+        {isPro ? (
+          // Pro members see the matched DIY methods unlocked.
+          <View>
+            <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </View>
+        ) : (
+          <ProLockOverlay
+            onDark
+            subtitle="Unlock AI-matched DIY guides based on your damage photos"
+            onUnlock={() => navigateCrossTab(navigation, 'MaintTab', 'DiyUnlock')}
+          >
+            <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </ProLockOverlay>
+        )}
 
         {/* Quote timeline */}
         <View

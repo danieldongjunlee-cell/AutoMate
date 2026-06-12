@@ -4,10 +4,13 @@ Status: ⬜ not started · 🟨 in progress · ✅ done (verified in app)
 
 Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 compare/community/profile · 6 notifications/bundles
 
-> **All build steps complete:** every one of the 55 wireframe screens has a
-> real implementation registered in React Navigation. Header titles live in
+> **Synced to wireframe v15.10** (`AutoMate Interactive Wireframe v15.html`):
+> 68 screens. v15.10 added 14 screens (dealer-map, the diy-* Pro chain, the
+> help-* articles, prof-ins-edit/add), deleted `s-map`, and reworked the
+> damage flow to single-select multi-part. Every screen has a real
+> implementation registered in React Navigation. Header titles live in
 > `src/navigation/registry.ts`; the navigation graph reference is
-> docs/wireframe-analysis.md §2.
+> docs/wireframe-analysis.md §2 + docs/upgrade-v15.10-gap-analysis.md.
 
 ## Auth (Step 2)
 
@@ -22,31 +25,41 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
-| `s-home` | Home | `src/screens/home/HomeScreen.tsx` | ✅ |
-| `s-car-diagram` | Select Part | `src/screens/home/CarDiagramScreen.tsx` | ✅ |
+| `s-home` | Home (v15.10: + Scheduled services section) | `src/screens/home/HomeScreen.tsx` | ✅ |
+| `s-car-diagram` | Select Part (v15.10: single-select `pickPart`) | `src/screens/home/CarDiagramScreen.tsx` | ✅ |
 | `s-photo-example` | Photo Guide | `src/screens/home/PhotoExampleScreen.tsx` | ✅ |
-| `s-camera` | Take Photos | `src/screens/home/CameraScreen.tsx` | ✅ |
-| `s-confirm-submit` | Confirm Damage | `src/screens/home/ConfirmSubmitScreen.tsx` | ✅ |
-| `s-submitted` | Submitted | `src/screens/home/SubmittedScreen.tsx` | ✅ |
-| `s-after-hours` | After Hours | `src/screens/home/AfterHoursScreen.tsx` | ✅ |
-| `s-dealer-quotes` | Quotes Received | `src/screens/home/DealerQuotesScreen.tsx` | ✅ |
-| `s-all-quotes-map` | All Quotes Map | `src/screens/home/AllQuotesMapScreen.tsx` | ✅ |
-| `s-map` | Map (separate screen, entry: "Filter quotes on map" on All Quotes Map) | `src/screens/home/MapFilterScreen.tsx` | ✅ |
+| `s-camera` | Take Photos (v15.10: damage-type chips at capture) | `src/screens/home/CameraScreen.tsx` | ✅ |
+| `s-confirm-submit` | Confirm Damage (v15.10: multi-part list, ✕ Remove) | `src/screens/home/ConfirmSubmitScreen.tsx` | ✅ |
+| `s-submitted` | Submitted (v15.10: Pro lock → diy-unlock, unlocked when Pro) | `src/screens/home/SubmittedScreen.tsx` | ✅ |
+| `s-after-hours` | After Hours (v15.10: Pro lock → diy-unlock) | `src/screens/home/AfterHoursScreen.tsx` | ✅ |
+| `s-dealer-quotes` | Quotes Received (v15.10: all 8 quotes, AI confidence 87%, Msg dropped) | `src/screens/home/DealerQuotesScreen.tsx` | ✅ |
+| `s-all-quotes-map` | All Quotes Map (v15.10: 8 pins, BEST PRICE/RECOMMENDED, Top picks) | `src/screens/home/AllQuotesMapScreen.tsx` | ✅ |
 | `s-accept-booking` | Accept & Book | `src/screens/home/AcceptBookingScreen.tsx` | ✅ |
-| `s-booking-confirm` | Booking Confirmed | `src/screens/home/BookingConfirmScreen.tsx` | ✅ |
+| `s-booking-confirm` | Booking Confirmed (v15.10: View on map → dealer-map) | `src/screens/home/BookingConfirmScreen.tsx` | ✅ |
+| `s-dealer-map` | Dealer Map (new in v15.10) | `src/screens/home/DealerMapScreen.tsx` | ✅ |
 | `s-home-bundle-deals` | Bundle Deals | `src/screens/home/BundleDealsScreen.tsx` | ✅ |
 | `s-notifications` | Notifications | `src/screens/home/NotificationsScreen.tsx` | ✅ |
+
+> v15.10 removed `s-map` (MapFilterScreen) — superseded by the redesigned
+> all-quotes-map + the new dealer-map.
 
 ## Maintenance tab (Step 4)
 
 | Wireframe ID | Screen | Component | Status |
 |---|---|---|---|
 | `s-maint-dashboard` | Maintenance | `src/screens/maint/MaintDashboardScreen.tsx` | ✅ |
-| `s-maint-history` | Service History | `src/screens/maint/MaintHistoryScreen.tsx` | ✅ |
+| `s-maint-history` | Service History (v15.10: filters below scan/manual cards) | `src/screens/maint/MaintHistoryScreen.tsx` | ✅ |
 | `s-maint-scan-cam` | Scan Camera | `src/screens/maint/MaintScanCamScreen.tsx` | ✅ |
 | `s-maint-scan-rev` | Scan Review | `src/screens/maint/MaintScanRevScreen.tsx` | ✅ |
 | `s-maint-manual` | Manual Log | `src/screens/maint/MaintManualScreen.tsx` | ✅ |
-| `s-maint-diy` | DIY Tips Hub | `src/screens/maint/MaintDiyScreen.tsx` | ✅ |
+| `s-maint-diy` | DIY Tips Hub (v15.10: lock → diy-unlock; lists all 12 when Pro) | `src/screens/maint/MaintDiyScreen.tsx` | ✅ |
+| `s-diy-unlock` | Unlock Pro (new in v15.10) | `src/screens/maint/DiyUnlockScreen.tsx` | ✅ |
+| `s-diy-payment` | Pro Payment (new in v15.10) | `src/screens/maint/DiyPaymentScreen.tsx` | ✅ |
+| `s-diy-confirm` | Welcome to Pro (new in v15.10) | `src/screens/maint/DiyConfirmScreen.tsx` | ✅ |
+| `s-diy-guides` | All 12 Guides (new in v15.10) | `src/screens/maint/DiyProScreens.tsx` | ✅ |
+| `s-diy-match` | AI Guide Matching (new in v15.10) | `src/screens/maint/DiyProScreens.tsx` | ✅ |
+| `s-diy-tools` | Shopping Lists (new in v15.10) | `src/screens/maint/DiyProScreens.tsx` | ✅ |
+| `s-diy-future` | Coming Soon (new in v15.10) | `src/screens/maint/DiyProScreens.tsx` | ✅ |
 | `s-maint-schedule` | Schedule Service | `src/screens/maint/MaintScheduleScreen.tsx` | ✅ |
 | `s-maint-schedule-book` | Book Appointment | `src/screens/maint/MaintScheduleBookScreen.tsx` | ✅ |
 | `s-maint-payment` | Payment | `src/screens/maint/MaintPaymentScreen.tsx` | ✅ |
@@ -80,7 +93,9 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 | `s-prof-mile-det` | Milestone Detail | `src/screens/profile/ProfMileDetScreen.tsx` | ✅ |
 | `s-prof-earn` | Earn History | `src/screens/profile/ProfEarnScreen.tsx` | ✅ |
 | `s-prof-cars` | My Cars | `src/screens/profile/ProfCarsScreen.tsx` | ✅ |
-| `s-prof-insurance` | Insurance | `src/screens/profile/ProfInsuranceScreen.tsx` | ✅ |
+| `s-prof-insurance` | Insurance (v15.10: Edit/Add wired to the new forms) | `src/screens/profile/ProfInsuranceScreen.tsx` | ✅ |
+| `s-prof-ins-edit` | Edit Policy (new in v15.10) | `src/screens/profile/ProfInsFormScreens.tsx` | ✅ |
+| `s-prof-ins-add` | Add Policy (new in v15.10) | `src/screens/profile/ProfInsFormScreens.tsx` | ✅ |
 | `s-prof-payment` | Payment | `src/screens/profile/ProfPaymentScreen.tsx` | ✅ |
 | `s-prof-settings` | Settings | `src/screens/profile/ProfSettingsScreen.tsx` | ✅ |
 | `s-prof-edit-profile` | Edit Profile | `src/screens/profile/ProfEditProfileScreen.tsx` | ✅ |
@@ -88,7 +103,11 @@ Build steps: 1 scaffold/nav · 2 auth · 3 home/damage · 4 maintenance · 5 com
 | `s-prof-change-password` | Change Password | `src/screens/profile/ProfAccountFormScreens.tsx` | ✅ |
 | `s-prof-change-phone` | Change Phone | `src/screens/profile/ProfAccountFormScreens.tsx` | ✅ |
 | `s-prof-linked-accounts` | Linked Accounts | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
-| `s-prof-help-center` | Help Center | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-prof-help-center` | Help Center (v15.10: 4 topics → real articles) | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
+| `s-help-photos` | Help: Damage Photos (new in v15.10) | `src/screens/profile/HelpArticleScreens.tsx` | ✅ |
+| `s-help-quotes` | Help: Quotes & Pricing (new in v15.10) | `src/screens/profile/HelpArticleScreens.tsx` | ✅ |
+| `s-help-bookings` | Help: Managing Bookings (new in v15.10) | `src/screens/profile/HelpArticleScreens.tsx` | ✅ |
+| `s-help-contact` | Contact Support (new in v15.10) | `src/screens/profile/HelpArticleScreens.tsx` | ✅ |
 | `s-prof-terms` | Terms of Service | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
 | `s-prof-privacy` | Privacy Policy | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |
 | `s-prof-language` | Language | `src/screens/profile/ProfMiscScreens.tsx` | ✅ |

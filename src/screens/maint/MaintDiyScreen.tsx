@@ -1,24 +1,35 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { FilterChips } from '../../components/FilterChips';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
 import { Screen } from '../../components/ui';
-import { DIY_CATEGORIES, DIY_GUIDES } from '../../services/mock/data';
+import { MaintStackParamList } from '../../navigation/types';
+import { DIY_CATEGORIES, DIY_GUIDES, PRO_GUIDES } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
+import { ProGuideRow } from './DiyProScreens';
 
-const STATS = [
-  { value: '12', label: 'Guides', tint: 'rgba(29,158,117,.25)', color: palette.successLight },
-  { value: '$10', label: 'Forever', tint: 'rgba(255,255,255,.07)', color: '#fff' },
-  { value: '5 min', label: 'Avg read', tint: 'rgba(255,255,255,.07)', color: '#fff' },
-];
+type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDiy'>;
 
-/** Wireframe s-maint-diy: guide hub with free rows + Pro-locked remainder. */
+/** Wireframe s-maint-diy: guide hub — Pro-locked until `isPro` (diy-unlock chain). */
 export function MaintDiyScreen() {
+  const navigation = useNavigation<Nav>();
   const [category, setCategory] = useState(DIY_CATEGORIES[0]);
+  const isPro = useAppStore((s) => s.isPro);
   const free = DIY_GUIDES.filter((g) => g.free);
   const locked = DIY_GUIDES.filter((g) => !g.free);
+
+  const stats = [
+    { value: '12', label: 'Guides', tint: 'rgba(29,158,117,.25)', color: palette.successLight },
+    isPro
+      ? { value: 'PRO', label: 'Unlocked', tint: 'rgba(239,159,39,.2)', color: '#F5B947' }
+      : { value: '$10', label: 'Forever', tint: 'rgba(255,255,255,.07)', color: '#fff' },
+    { value: '5 min', label: 'Avg read', tint: 'rgba(255,255,255,.07)', color: '#fff' },
+  ];
 
   return (
     <Screen>
@@ -34,47 +45,80 @@ export function MaintDiyScreen() {
           <View>
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>DIY Repair Guides</Text>
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
-              Step-by-step text instructions
+              {isPro
+                ? '12 expert guides · Pro unlocked'
+                : '12 expert guides · Locked with Pro membership'}
             </Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', gap: 6 }}>
-          {STATS.map((s) => (
-            <View
-              key={s.label}
-              style={{
-                flex: 1,
-                backgroundColor: s.tint,
-                borderRadius: radii.sm,
-                paddingVertical: 8,
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: '700', color: s.color }}>{s.value}</Text>
-              <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.45)' }}>{s.label}</Text>
-            </View>
-          ))}
+          {stats.map((s, i) => {
+            const isPriceChip = !isPro && i === 1;
+            const inner = (
+              <>
+                <Text style={{ fontSize: 18, fontWeight: '700', color: s.color }}>{s.value}</Text>
+                <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.45)' }}>{s.label}</Text>
+              </>
+            );
+            return isPriceChip ? (
+              <Pressable
+                key={s.label}
+                onPress={() => navigation.navigate('DiyUnlock')}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  backgroundColor: s.tint,
+                  borderRadius: radii.sm,
+                  borderWidth: 1,
+                  borderColor: palette.warning,
+                  paddingVertical: 8,
+                  alignItems: 'center',
+                  opacity: pressed ? 0.7 : 1,
+                })}
+              >
+                {inner}
+              </Pressable>
+            ) : (
+              <View
+                key={s.label}
+                style={{
+                  flex: 1,
+                  backgroundColor: s.tint,
+                  borderRadius: radii.sm,
+                  paddingVertical: 8,
+                  alignItems: 'center',
+                }}
+              >
+                {inner}
+              </View>
+            );
+          })}
         </View>
       </LinearGradient>
 
       <FilterChips options={DIY_CATEGORIES} selected={category} onSelect={setCategory} />
 
-      {free.map((g) => (
-        <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} free showLink />
-      ))}
-
-      <View style={{ marginTop: spacing.xs }}>
-        <ProLockOverlay
-          title="+10 more guides with Pro"
-          subtitle="All difficulty levels · AI recommendations · New guides weekly"
-          cta="Unlock Pro · $10 forever"
-          onUnlock={() => Alert.alert('AutoMate Pro', 'Purchases will be wired to the app stores.')}
-        >
-          {locked.map((g) => (
-            <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} />
+      {isPro ? (
+        // Unlocked: the full Pro library (12 guides).
+        PRO_GUIDES.map((g) => <ProGuideRow key={g.id} guide={g} />)
+      ) : (
+        <>
+          {free.map((g) => (
+            <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} free showLink />
           ))}
-        </ProLockOverlay>
-      </View>
+          <View style={{ marginTop: spacing.xs }}>
+            <ProLockOverlay
+              title="+10 more guides with Pro"
+              subtitle="All difficulty levels · AI recommendations · New guides weekly"
+              cta="Unlock Pro · $10 forever"
+              onUnlock={() => navigation.navigate('DiyUnlock')}
+            >
+              {locked.map((g) => (
+                <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} />
+              ))}
+            </ProLockOverlay>
+          </View>
+        </>
+      )}
     </Screen>
   );
 }

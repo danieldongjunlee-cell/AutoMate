@@ -19,7 +19,7 @@ export const quoteService = {
     return [...QUOTES].sort((a, b) => a.price - b.price);
   },
 
-  async submitDamageRequest(_parts: string[], _photos: number, _damageType: string) {
+  async submitDamageRequest(_parts: { part: string; type: string; photos: number }[]) {
     await delay(700);
     return {
       shopsNotified: QUOTE_REQUEST.shopsNotified,

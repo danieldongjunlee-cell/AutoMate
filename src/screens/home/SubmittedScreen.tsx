@@ -4,6 +4,7 @@ import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Badge, Screen } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { QUOTE_REQUEST } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
@@ -15,8 +16,9 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'Submitted'>;
 export function SubmittedScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const primaryPart = selectedParts[0] ?? 'Rear bumper';
+  const damageParts = useAppStore((s) => s.damageParts);
+  const isPro = useAppStore((s) => s.isPro);
+  const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
 
   return (
     <Screen>
@@ -157,13 +159,21 @@ export function SubmittedScreen() {
         </View>
       </View>
 
-      <ProLockOverlay
-        subtitle="Unlock AI-matched DIY guides based on your damage photos"
-        onUnlock={() => Alert.alert('Pro', 'Purchases will be wired to the backend later.')}
-      >
-        <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" showLink />
-        <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
-      </ProLockOverlay>
+      {isPro ? (
+        // Pro members see the matched DIY methods unlocked.
+        <View>
+          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" showLink />
+          <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
+        </View>
+      ) : (
+        <ProLockOverlay
+          subtitle="Unlock AI-matched DIY guides based on your damage photos"
+          onUnlock={() => navigateCrossTab(navigation, 'MaintTab', 'DiyUnlock')}
+        >
+          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" showLink />
+          <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
+        </ProLockOverlay>
+      )}
     </Screen>
   );
 }

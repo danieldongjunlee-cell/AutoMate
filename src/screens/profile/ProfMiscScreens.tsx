@@ -1,7 +1,10 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { ProfileStackParamList } from '../../navigation/types';
 import {
   HELP_TOPICS,
   LANGUAGES,
@@ -85,8 +88,9 @@ export function ProfLinkedAccountsScreen() {
   );
 }
 
-/** Wireframe s-prof-help-center. */
+/** Wireframe s-prof-help-center: 4 topics → the help articles (s-help-*). */
 export function ProfHelpCenterScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList, 'ProfHelpCenter'>>();
   const { colors } = useTheme();
   const [query, setQuery] = useState('');
   return (
@@ -118,7 +122,7 @@ export function ProfHelpCenterScreen() {
         {HELP_TOPICS.map((topic, i) => (
           <Pressable
             key={topic.title}
-            onPress={() => Alert.alert(topic.title, 'Help articles come with the backend.')}
+            onPress={() => navigation.navigate(topic.route)}
             style={({ pressed }) => ({
               flexDirection: 'row',
               alignItems: 'center',

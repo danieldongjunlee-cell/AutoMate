@@ -1,12 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
+import { ProfileStackParamList } from '../../navigation/types';
 import { INSURANCE_POLICY } from '../../services/mock/data';
 import { palette, radii, spacing, useTheme } from '../../theme';
+
+type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
 
 const DETAILS = [
   ['Policy number', INSURANCE_POLICY.accountNumber],
@@ -18,7 +22,7 @@ const DETAILS = [
 
 /** Wireframe s-prof-insurance: policy card + compare cash-vs-insurance link. */
 export function ProfInsuranceScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
 
   return (
@@ -105,18 +109,16 @@ export function ProfInsuranceScreen() {
           }}
         >
           <Pressable
-            onPress={() => Alert.alert('Edit policy', 'Policy editing comes with the backend.')}
+            onPress={() => navigation.navigate('ProfInsEdit')}
             style={({ pressed }) => ({
-              backgroundColor: colors.warningSurface,
+              backgroundColor: colors.primary,
               borderRadius: radii.sm,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.warning,
-              paddingVertical: 9,
+              paddingVertical: 11,
               alignItems: 'center',
-              opacity: pressed ? 0.7 : 1,
+              opacity: pressed ? 0.8 : 1,
             })}
           >
-            <Text style={{ fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
               ✎ Edit policy details
             </Text>
           </Pressable>
@@ -125,7 +127,7 @@ export function ProfInsuranceScreen() {
 
       {/* Add policy */}
       <Pressable
-        onPress={() => Alert.alert('Add policy', 'Policy linking comes with the backend.')}
+        onPress={() => navigation.navigate('ProfInsAdd')}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
           borderRadius: radii.md,

@@ -12,11 +12,20 @@ import { NotificationsScreen } from '../screens/home/NotificationsScreen';
 import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
+import { DealerMapScreen } from '../screens/home/DealerMapScreen';
 import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
 import { HomeScreen } from '../screens/home/HomeScreen';
-import { MapFilterScreen } from '../screens/home/MapFilterScreen';
 import { PhotoExampleScreen } from '../screens/home/PhotoExampleScreen';
 import { SubmittedScreen } from '../screens/home/SubmittedScreen';
+import { DiyConfirmScreen } from '../screens/maint/DiyConfirmScreen';
+import { DiyPaymentScreen } from '../screens/maint/DiyPaymentScreen';
+import {
+  DiyFutureScreen,
+  DiyGuidesScreen,
+  DiyMatchScreen,
+  DiyToolsScreen,
+} from '../screens/maint/DiyProScreens';
+import { DiyUnlockScreen } from '../screens/maint/DiyUnlockScreen';
 import { MaintDashboardScreen } from '../screens/maint/MaintDashboardScreen';
 import { MaintDiyScreen } from '../screens/maint/MaintDiyScreen';
 import { MaintHistoryScreen } from '../screens/maint/MaintHistoryScreen';
@@ -45,6 +54,13 @@ import { ProfCarsScreen } from '../screens/profile/ProfCarsScreen';
 import { ProfEarnScreen } from '../screens/profile/ProfEarnScreen';
 import { ProfEditProfileScreen } from '../screens/profile/ProfEditProfileScreen';
 import { ProfHubScreen } from '../screens/profile/ProfHubScreen';
+import {
+  HelpBookingsScreen,
+  HelpContactScreen,
+  HelpPhotosScreen,
+  HelpQuotesScreen,
+} from '../screens/profile/HelpArticleScreens';
+import { ProfInsAddScreen, ProfInsEditScreen } from '../screens/profile/ProfInsFormScreens';
 import { ProfInsuranceScreen } from '../screens/profile/ProfInsuranceScreen';
 import { ProfMileDetScreen } from '../screens/profile/ProfMileDetScreen';
 import { ProfMilesScreen } from '../screens/profile/ProfMilesScreen';
@@ -83,9 +99,9 @@ const homeScreens = buildScreens(
     'AfterHours',
     'DealerQuotes',
     'AllQuotesMap',
-    'MapFilter',
     'AcceptBooking',
     'BookingConfirm',
+    'DealerMap',
     'BundleDeals',
     'Notifications',
   ] as const,
@@ -99,9 +115,9 @@ const homeScreens = buildScreens(
     AfterHours: AfterHoursScreen,
     DealerQuotes: DealerQuotesScreen,
     AllQuotesMap: AllQuotesMapScreen,
-    MapFilter: MapFilterScreen,
     AcceptBooking: AcceptBookingScreen,
     BookingConfirm: BookingConfirmScreen,
+    DealerMap: DealerMapScreen,
     BundleDeals: BundleDealsScreen,
     Notifications: NotificationsScreen,
   },
@@ -127,6 +143,13 @@ const maintScreens = buildScreens(
     'MaintScanRev',
     'MaintManual',
     'MaintDiy',
+    'DiyUnlock',
+    'DiyPayment',
+    'DiyConfirm',
+    'DiyGuides',
+    'DiyMatch',
+    'DiyTools',
+    'DiyFuture',
     'MaintSchedule',
     'MaintScheduleBook',
     'MaintPayment',
@@ -139,6 +162,13 @@ const maintScreens = buildScreens(
     MaintScanRev: MaintScanRevScreen,
     MaintManual: MaintManualScreen,
     MaintDiy: MaintDiyScreen,
+    DiyUnlock: DiyUnlockScreen,
+    DiyPayment: DiyPaymentScreen,
+    DiyConfirm: DiyConfirmScreen,
+    DiyGuides: DiyGuidesScreen,
+    DiyMatch: DiyMatchScreen,
+    DiyTools: DiyToolsScreen,
+    DiyFuture: DiyFutureScreen,
     MaintSchedule: MaintScheduleScreen,
     MaintScheduleBook: MaintScheduleBookScreen,
     MaintPayment: MaintPaymentScreen,
@@ -220,6 +250,8 @@ const profileScreens = buildScreens(
     'ProfEarn',
     'ProfCars',
     'ProfInsurance',
+    'ProfInsEdit',
+    'ProfInsAdd',
     'ProfPayment',
     'ProfSettings',
     'ProfEditProfile',
@@ -228,6 +260,10 @@ const profileScreens = buildScreens(
     'ProfChangePhone',
     'ProfLinkedAccounts',
     'ProfHelpCenter',
+    'HelpPhotos',
+    'HelpQuotes',
+    'HelpBookings',
+    'HelpContact',
     'ProfTerms',
     'ProfPrivacy',
     'ProfLanguage',
@@ -240,6 +276,8 @@ const profileScreens = buildScreens(
     ProfEarn: ProfEarnScreen,
     ProfCars: ProfCarsScreen,
     ProfInsurance: ProfInsuranceScreen,
+    ProfInsEdit: ProfInsEditScreen,
+    ProfInsAdd: ProfInsAddScreen,
     ProfPayment: ProfPaymentScreen,
     ProfSettings: ProfSettingsScreen,
     ProfEditProfile: ProfEditProfileScreen,
@@ -248,6 +286,10 @@ const profileScreens = buildScreens(
     ProfChangePhone: ProfChangePhoneScreen,
     ProfLinkedAccounts: ProfLinkedAccountsScreen,
     ProfHelpCenter: ProfHelpCenterScreen,
+    HelpPhotos: HelpPhotosScreen,
+    HelpQuotes: HelpQuotesScreen,
+    HelpBookings: HelpBookingsScreen,
+    HelpContact: HelpContactScreen,
     ProfTerms: ProfTermsScreen,
     ProfPrivacy: ProfPrivacyScreen,
     ProfLanguage: ProfLanguageScreen,

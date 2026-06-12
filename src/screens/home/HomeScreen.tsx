@@ -20,6 +20,118 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'Home'>;
 const STREAK_DAYS = 5;
 const STREAK_TOTAL = 7;
 
+/** One "Scheduled services" row (wireframe v15.10 home: Apr 7 / Apr 12). */
+function ScheduledServiceCard({
+  month,
+  day,
+  title,
+  sub,
+  price,
+  status,
+  statusVariant,
+  onPress,
+}: {
+  month: string;
+  day: string;
+  title: string;
+  sub: string;
+  price: string;
+  status: string;
+  statusVariant: 'paid' | 'confirmed';
+  onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  const paid = statusVariant === 'paid';
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        backgroundColor: colors.surface,
+        borderRadius: radii.md,
+        borderWidth: 0.5,
+        borderColor: colors.border,
+        padding: spacing.md,
+        marginBottom: spacing.sm,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.sm,
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      {/* Calendar tile */}
+      <View
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: radii.sm,
+          backgroundColor: paid ? colors.primarySurface : colors.warningSurface,
+          borderWidth: 0.5,
+          borderColor: paid ? colors.primaryLight : palette.warningBorder,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 10,
+            fontWeight: '700',
+            textTransform: 'uppercase',
+            color: paid ? colors.primaryDark : palette.warningMid,
+          }}
+        >
+          {month}
+        </Text>
+        <Text
+          style={{
+            fontSize: 17,
+            fontWeight: '800',
+            lineHeight: 19,
+            color: paid ? colors.primaryDeep : colors.warningDeep,
+          }}
+        >
+          {day}
+        </Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 2 }}>
+          {title}
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
+      </View>
+      <View style={{ alignItems: 'flex-end' }}>
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: '700',
+            color: paid ? colors.successDark : colors.textPrimary,
+          }}
+        >
+          {price}
+        </Text>
+        <View
+          style={{
+            backgroundColor: paid ? colors.successSurface : colors.warningSurface,
+            borderRadius: radii.pill,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+            marginTop: 3,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: '600',
+              color: paid ? colors.successDeep : colors.warningDeep,
+            }}
+          >
+            {status}
+          </Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
 export function HomeScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -237,6 +349,29 @@ export function HomeScreen() {
           style={{ backgroundColor: palette.warning }}
         />
       </Pressable>
+
+      {/* Scheduled services (wireframe v15.10) */}
+      <SectionLabel style={{ marginTop: spacing.lg }}>Scheduled services</SectionLabel>
+      <ScheduledServiceCard
+        month="Apr"
+        day="7"
+        title="🛢️ Oil change"
+        sub="Honda Fairfax · Mon 8:00 AM · ~45 min"
+        price="$49"
+        status="Paid"
+        statusVariant="paid"
+        onPress={() => navigateCrossTab(navigation, 'MaintTab', 'MaintScheduleConfirm')}
+      />
+      <ScheduledServiceCard
+        month="Apr"
+        day="12"
+        title="🚗 Rear bumper repair"
+        sub="Honda Fairfax · Thu 10:30 AM · Self drop-off"
+        price="$320–345"
+        status="Confirmed"
+        statusVariant="confirmed"
+        onPress={() => navigation.navigate('BookingConfirm')}
+      />
     </Screen>
   );
 }

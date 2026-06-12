@@ -16,8 +16,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'PhotoExample'>;
 export function PhotoExampleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const firstPart = selectedParts[0] ?? 'Rear bumper';
+  const firstPart = useAppStore((s) => s.draftPart) ?? 'Rear bumper';
 
   return (
     <Screen>

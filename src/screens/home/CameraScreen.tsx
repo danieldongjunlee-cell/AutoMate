@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
+import { DAMAGE_TYPES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -25,20 +26,32 @@ function Bracket({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
   return <View style={s} />;
 }
 
+/** Slot tints for the captured placeholder photos. */
+const PHOTO_TINTS = ['#2D1A1A', '#3A2A1A', '#1A2A3A', '#1A2D1F', '#2A1A2D'];
+
 /**
  * Mock camera: tapping the viewfinder "captures" a placeholder photo.
  * Real capture (expo-camera / image picker) is wired when the backend lands —
- * the rest of the flow only consumes `damagePhotos` from the store.
+ * the rest of the flow only consumes the draft part from the store.
+ * Wireframe v15.10: damage type is tagged here at capture time (pickDmg chips).
  */
 export function CameraScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const photos = useAppStore((s) => s.damagePhotos);
-  const addPhoto = useAppStore((s) => s.addDamagePhoto);
+  const draftPart = useAppStore((s) => s.draftPart);
+  const draftType = useAppStore((s) => s.draftType);
+  const setDraftType = useAppStore((s) => s.setDraftType);
+  const photoCount = useAppStore((s) => s.draftPhotos);
+  const addPhoto = useAppStore((s) => s.addDraftPhoto);
+  const commitDraftPart = useAppStore((s) => s.commitDraftPart);
 
-  const firstPart = (selectedParts[0] ?? 'rear bumper').toLowerCase();
-  const canSubmit = photos.length >= 1;
+  const firstPart = (draftPart ?? 'rear bumper').toLowerCase();
+  const canSubmit = photoCount >= 1;
+
+  const onSubmit = () => {
+    commitDraftPart(); // merge this part (type + photos) into the request
+    navigation.navigate('ConfirmSubmit');
+  };
 
   return (
     <Screen>
@@ -49,6 +62,41 @@ export function CameraScreen() {
           different angles
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 2 of 3</Text>
+      </View>
+
+      {/* Damage type chips (tagged at capture time) */}
+      <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>
+        Damage type
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
+        {DAMAGE_TYPES.map((t) => {
+          const on = t === draftType;
+          return (
+            <Pressable
+              key={t}
+              onPress={() => setDraftType(t)}
+              style={({ pressed }) => ({
+                backgroundColor: on ? colors.primary : colors.surface,
+                borderRadius: radii.pill,
+                borderWidth: on ? 0 : StyleSheet.hairlineWidth,
+                borderColor: colors.border,
+                paddingHorizontal: 18,
+                paddingVertical: 8,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: on ? '600' : '400',
+                  color: on ? colors.onPrimary : colors.textSecondary,
+                }}
+              >
+                {t}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       {/* Viewfinder */}
@@ -107,20 +155,19 @@ export function CameraScreen() {
 
       {/* Photo slots */}
       <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>
-        Photos taken ({Math.min(photos.length, REQUIRED)} of {REQUIRED} required)
+        Photos taken ({Math.min(photoCount, REQUIRED)} of {REQUIRED} required)
       </Text>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
         {Array.from({ length: REQUIRED }).map((_, i) => {
-          const photo = photos[i];
-          if (photo) {
+          if (i < photoCount) {
             return (
               <View
-                key={photo.id}
+                key={`photo-${i}`}
                 style={{
                   width: 86,
                   height: 74,
                   borderRadius: radii.sm,
-                  backgroundColor: photo.tint,
+                  backgroundColor: PHOTO_TINTS[i % PHOTO_TINTS.length],
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -142,7 +189,7 @@ export function CameraScreen() {
               </View>
             );
           }
-          const isNext = i === photos.length;
+          const isNext = i === photoCount;
           return (
             <Pressable
               key={`slot-${i}`}
@@ -203,7 +250,7 @@ export function CameraScreen() {
         <PrimaryButton
           label="Submit photos →"
           disabled={!canSubmit}
-          onPress={() => navigation.navigate('ConfirmSubmit')}
+          onPress={onSubmit}
           style={{ flex: 2 }}
         />
       </View>

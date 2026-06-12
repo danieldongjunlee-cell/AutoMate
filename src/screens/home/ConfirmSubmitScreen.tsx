@@ -4,122 +4,79 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { Badge, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { DAMAGE_TYPES, QUOTE_REQUEST } from '../../services/mock/data';
+import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services/mock/quoteService';
-import { useAppStore } from '../../store/useAppStore';
-import { radii, spacing, useTheme } from '../../theme';
+import { DamagePart, useAppStore } from '../../store/useAppStore';
+import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
 
-export function ConfirmSubmitScreen() {
-  const navigation = useNavigation<Nav>();
+/** Per-card action chip (✎ Edit / 📷 + Photos / ✕ Remove). */
+function ActionChip({
+  label,
+  danger,
+  onPress,
+}: {
+  label: string;
+  danger?: boolean;
+  onPress: () => void;
+}) {
   const { colors } = useTheme();
-  const selectedParts = useAppStore((s) => s.selectedParts);
-  const photos = useAppStore((s) => s.damagePhotos);
-  const damageType = useAppStore((s) => s.damageType);
-  const setDamageType = useAppStore((s) => s.setDamageType);
-  const addPoints = useAppStore((s) => s.addPoints);
-  const [submitting, setSubmitting] = useState(false);
-
-  const parts = selectedParts;
-  const primaryPart = parts[0] ?? '—';
-
-  const onSubmit = async () => {
-    setSubmitting(true);
-    // The service decides after-hours routing (backend-owned rule).
-    const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(
-      parts,
-      photos.length,
-      damageType,
-    );
-    addPoints(pointsEarned);
-    setSubmitting(false);
-    navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
-  };
-
   return (
-    <Screen>
-      <SectionLabel>Parts selected ({parts.length})</SectionLabel>
-      <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        {parts.map((part, i) => (
-          <View
-            key={part}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
-              padding: spacing.md,
-              backgroundColor: i === 0 ? colors.primarySurface : undefined,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: colors.divider,
-            }}
-          >
-            <View
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: radii.sm,
-                backgroundColor: colors.primary,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 18 }}>🚗</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                <Text style={{ fontSize: 15, fontWeight: '600', color: colors.primaryDeep }}>
-                  {part}
-                </Text>
-                <Badge label={damageType} variant="primary" />
-              </View>
-              <Text style={{ fontSize: 12, color: colors.primaryDark }}>
-                {photos.length} photo{photos.length !== 1 ? 's' : ''} · Paint intact
-              </Text>
-            </View>
-            <View style={{ alignItems: 'flex-end', gap: 4 }}>
-              <Pressable onPress={() => navigation.navigate('CarDiagram')} hitSlop={6}>
-                <Text style={{ fontSize: 12, color: colors.primaryDark }}>Edit ✎</Text>
-              </Pressable>
-              <Pressable onPress={() => navigation.navigate('Camera')} hitSlop={6}>
-                <Text style={{ fontSize: 12, color: colors.primaryDark }}>+ Photos</Text>
-              </Pressable>
-            </View>
-          </View>
-        ))}
-        <Pressable
-          onPress={() => navigation.navigate('CarDiagram')}
-          style={({ pressed }) => ({
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            padding: spacing.md,
-            opacity: pressed ? 0.6 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 16, color: colors.primary }}>➕</Text>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
-            Add another damaged part
-          </Text>
-        </Pressable>
-      </Card>
-
-      {/* Damage location */}
-      <View
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        flex: 1,
+        backgroundColor: danger ? colors.dangerSurface : colors.primarySurface,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: danger ? colors.dangerBorder : colors.primaryLight,
+        borderRadius: radii.sm,
+        paddingVertical: 9,
+        alignItems: 'center',
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <Text
         style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.md,
-          borderWidth: 1,
-          borderColor: colors.primaryLight,
-          padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
+          fontSize: 13,
+          fontWeight: '600',
+          color: danger ? colors.dangerDeep : colors.primaryDark,
         }}
       >
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+/** One committed part card (part name + type badge + photos line + actions). */
+function PartCard({
+  item,
+  onEdit,
+  onAddPhotos,
+  onRemove,
+}: {
+  item: DamagePart;
+  onEdit: () => void;
+  onAddPhotos: () => void;
+  onRemove: () => void;
+}) {
+  const { colors } = useTheme();
+  const severity = DAMAGE_TYPE_SEVERITY[item.type] ?? 'Paint intact';
+  return (
+    <View
+      style={{
+        backgroundColor: colors.surface,
+        borderRadius: radii.md,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.border,
+        padding: spacing.md,
+        marginBottom: spacing.sm,
+      }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <View
           style={{
             width: 44,
@@ -133,137 +90,136 @@ export function ConfirmSubmitScreen() {
           <Text style={{ fontSize: 20 }}>🚗</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, fontWeight: '600', color: colors.textTertiary, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-            Damage location
-          </Text>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: colors.primaryDeep }}>
-            {primaryPart}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 3 }}>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primaryDeep }}>
+              {item.part}
+            </Text>
+            <Badge label={item.type} variant="primary" />
+          </View>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            {item.photos} photo{item.photos !== 1 ? 's' : ''} · {severity}
           </Text>
         </View>
-        <Pressable
-          onPress={() => navigation.navigate('CarDiagram')}
-          style={({ pressed }) => ({
-            backgroundColor: colors.card,
-            borderWidth: 1,
-            borderColor: colors.primaryLight,
-            borderRadius: radii.sm,
-            paddingHorizontal: spacing.md,
-            paddingVertical: 8,
-            opacity: pressed ? 0.6 : 1,
-          })}
+      </View>
+      <View style={{ flexDirection: 'row', gap: 6 }}>
+        <ActionChip label="✎ Edit" onPress={onEdit} />
+        <ActionChip label="📷 + Photos" onPress={onAddPhotos} />
+        <ActionChip label="✕ Remove" danger onPress={onRemove} />
+      </View>
+    </View>
+  );
+}
+
+/** Wireframe s-confirm-submit: multi-part list built by looping the single-select flow. */
+export function ConfirmSubmitScreen() {
+  const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
+  const damageParts = useAppStore((s) => s.damageParts);
+  const pickPart = useAppStore((s) => s.pickPart);
+  const removePart = useAppStore((s) => s.removePart);
+  const resetDraft = useAppStore((s) => s.resetDraft);
+  const addPoints = useAppStore((s) => s.addPoints);
+  const [submitting, setSubmitting] = useState(false);
+
+  const onSubmit = async () => {
+    setSubmitting(true);
+    // The service decides after-hours routing (backend-owned rule).
+    const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(damageParts);
+    addPoints(pointsEarned);
+    setSubmitting(false);
+    navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
+  };
+
+  return (
+    <Screen>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <SectionLabel>Parts selected ({damageParts.length})</SectionLabel>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 3 of 3</Text>
+      </View>
+
+      {damageParts.length === 0 ? (
+        <Text
+          style={{
+            fontSize: 13,
+            color: colors.textTertiary,
+            textAlign: 'center',
+            paddingVertical: spacing.lg,
+          }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>Edit ✎</Text>
-        </Pressable>
-      </View>
+          No parts yet — add your first damaged part below.
+        </Text>
+      ) : (
+        damageParts.map((item, i) => (
+          <PartCard
+            key={item.part}
+            item={item}
+            onEdit={() => {
+              pickPart(item.part); // seed the draft with this part for editing
+              navigation.navigate('CarDiagram');
+            }}
+            onAddPhotos={() => {
+              pickPart(item.part);
+              navigation.navigate('Camera');
+            }}
+            onRemove={() => removePart(i)}
+          />
+        ))
+      )}
 
-      {/* Damage type chips */}
-      <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: spacing.sm }}>
-        Damage type
-      </Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
-        {DAMAGE_TYPES.map((t) => {
-          const on = t === damageType;
-          return (
-            <Pressable
-              key={t}
-              onPress={() => setDamageType(t)}
-              style={({ pressed }) => ({
-                backgroundColor: on ? colors.primary : colors.surface,
-                borderRadius: radii.pill,
-                borderWidth: on ? 0 : StyleSheet.hairlineWidth,
-                borderColor: colors.border,
-                paddingHorizontal: 16,
-                paddingVertical: 8,
-                opacity: pressed ? 0.7 : 1,
-              })}
-            >
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: on ? '600' : '400',
-                  color: on ? colors.onPrimary : colors.textSecondary,
-                }}
-              >
-                {t}
-                {on ? ' ✔' : ''}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {/* Photos */}
+      {/* AI banner */}
       <View
         style={{
+          backgroundColor: colors.primarySurface,
+          borderRadius: radii.sm,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.primaryLight,
+          padding: spacing.md,
           flexDirection: 'row',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: spacing.sm,
+          gap: spacing.sm,
+          marginVertical: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-          Photos <Text style={{ color: colors.textTertiary, fontWeight: '400' }}>({photos.length} submitted)</Text>
+        <Text style={{ fontSize: 18 }}>🤖</Text>
+        <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDark, lineHeight: 18 }}>
+          AI will analyze your parts and send your request to nearby shops
         </Text>
-        <Pressable onPress={() => navigation.navigate('Camera')} hitSlop={6}>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>Add more</Text>
-        </Pressable>
       </View>
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {photos.map((p) => (
-          <View
-            key={p.id}
-            style={{
-              width: 92,
-              height: 80,
-              borderRadius: radii.sm,
-              backgroundColor: p.tint,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 26 }}>📷</Text>
-            <View
-              style={{
-                position: 'absolute',
-                bottom: 5,
-                right: 5,
-                backgroundColor: colors.success,
-                borderRadius: radii.pill,
-                paddingHorizontal: 6,
-                paddingVertical: 1,
-              }}
-            >
-              <Text style={{ fontSize: 9, color: '#fff' }}>✔</Text>
-            </View>
-          </View>
-        ))}
-        <Pressable
-          onPress={() => navigation.navigate('Camera')}
-          style={({ pressed }) => ({
-            width: 80,
-            height: 80,
-            borderRadius: radii.sm,
-            borderWidth: 1.5,
-            borderStyle: 'dashed',
-            borderColor: colors.primaryLight,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            opacity: pressed ? 0.6 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 22, color: colors.primary }}>+</Text>
-          <Text style={{ fontSize: 10, color: colors.textTertiary }}>Add</Text>
-        </Pressable>
-      </View>
+
+      {/* Add another part (loops back through the single-select flow) */}
+      <Pressable
+        onPress={() => {
+          resetDraft(); // fresh pass: nothing pre-selected on the diagram
+          navigation.navigate('CarDiagram');
+        }}
+        style={({ pressed }) => ({
+          backgroundColor: colors.surface,
+          borderRadius: radii.md,
+          borderWidth: 1.5,
+          borderStyle: 'dashed',
+          borderColor: colors.primaryLight,
+          padding: spacing.md,
+          alignItems: 'center',
+          marginBottom: spacing.md,
+          opacity: pressed ? 0.6 : 1,
+        })}
+      >
+        <Text style={{ fontSize: 22, color: colors.primary, marginBottom: 3 }}>➕</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark, marginBottom: 2 }}>
+          Add another damaged part
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          Each part gets its own photos & quotes
+        </Text>
+      </Pressable>
 
       {/* Submit */}
       <PrimaryButton
-        label={parts.length ? 'Submit for quotes → earn +20 pts' : 'Select a damaged part first'}
-        disabled={!parts.length}
+        label={damageParts.length ? 'Submit for quotes →' : 'Add a damaged part first'}
+        disabled={!damageParts.length}
         loading={submitting}
         onPress={onSubmit}
-        style={{ marginBottom: spacing.sm }}
+        style={{ marginBottom: spacing.sm, backgroundColor: palette.primaryDark }}
       />
       <Text style={{ textAlign: 'center', fontSize: 13, color: colors.textTertiary }}>
         Sending to {QUOTE_REQUEST.shopsNotified} verified shops in {QUOTE_REQUEST.city}
