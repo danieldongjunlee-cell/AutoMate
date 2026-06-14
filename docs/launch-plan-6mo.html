@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AutoMate — 6-Month Launch Plan</title>
+<style>
+  :root{
+    --primary:#7F77DD; --primary-dark:#534AB7; --primary-deep:#3C3489;
+    --navy:#0B1E3D; --navy-mid:#1A2A42;
+    --bg:#F4F2ED; --surface:#FFFFFF; --border:#E0DDD5;
+    --ink:#1A1A1A; --ink-2:#555; --ink-3:#6E6E6E;
+    --consumer:#7F77DD; --portal:#1D9E75; --ops:#EF9F27;
+    --danger:#E24B4A; --success:#1D9E75;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);
+    line-height:1.5;padding:32px 16px 64px}
+  .wrap{max-width:1040px;margin:0 auto}
+  header.hero{background:linear-gradient(135deg,var(--navy),var(--navy-mid) 60%,#122F60);
+    border-radius:18px;padding:30px 32px;color:#fff;margin-bottom:8px;box-shadow:0 16px 40px rgba(11,30,61,.25)}
+  header.hero .logo{font-size:26px;font-weight:800;letter-spacing:-.02em}
+  header.hero .logo span{color:#29ABE2}
+  header.hero h1{font-size:21px;font-weight:700;margin-top:8px}
+  header.hero .sub{font-size:13px;color:rgba(255,255,255,.65);margin-top:4px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 28px}
+  .pill{background:var(--surface);border:1px solid var(--border);border-radius:999px;
+    padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+  .pill b{color:var(--primary-deep)}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);
+    margin:34px 0 12px;display:flex;align-items:center;gap:8px}
+  h2::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--primary)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+  p{font-size:14.5px;color:var(--ink-2);margin-bottom:10px}
+  p strong{color:var(--ink)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;font-weight:600;margin-bottom:6px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .dot{width:12px;height:12px;border-radius:4px;display:inline-block}
+  table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:12px;overflow:hidden;
+    border:1px solid var(--border);font-size:13.5px}
+  th,td{text-align:left;padding:11px 13px;vertical-align:top;border-bottom:1px solid var(--border)}
+  th{background:#F0EDE6;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3)}
+  tr:last-child td{border-bottom:none}
+  .mo{font-weight:800;color:var(--primary-deep);white-space:nowrap}
+  td.consumer{border-left:3px solid var(--consumer)}
+  td.portal{border-left:3px solid var(--portal)}
+  td.ops{border-left:3px solid var(--ops)}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .total td{background:#EEEDFE;font-weight:800;color:var(--primary-deep)}
+  .gate{background:#FAEEDA;border:1px solid #EF9F27;border-radius:10px;padding:12px 14px;font-size:13px;
+    color:#633806;margin-top:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .chip-in{color:var(--success);font-weight:700}
+  .chip-out{color:var(--ink-3);font-weight:700}
+  .warn{background:#FCEBEB;border:1px solid #F09595;border-radius:10px;padding:12px 14px;font-size:13px;color:#A32D2D}
+  .foot{font-size:12px;color:var(--ink-3);margin-top:28px;text-align:center}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  @media print{body{padding:0;background:#fff}.card,table,header.hero{box-shadow:none}}
+</style></head>
+<body><div class="wrap">
+
+<header class="hero">
+  <div class="logo">Auto<span>Mate</span></div>
+  <h1>6-Month Public Launch Plan</h1>
+  <div class="sub">Consumer app + Dealer SaaS portal · Northern Virginia / Fairfax corridor</div>
+</header>
+
+<div class="meta">
+  <span class="pill">Partner: <b>Technical / dev (equity)</b></span>
+  <span class="pill">Goal: <b>App Store + Google Play + live dealer portal</b></span>
+  <span class="pill">Budget: <b>Bootstrapped &lt; $25k</b></span>
+  <span class="pill">Window: <b>6 months</b></span>
+</div>
+
+<h2>The opportunity &amp; what's new</h2>
+<div class="card">
+  <p>AutoMate is a <strong>two-sided</strong> auto-care marketplace: car owners get AI repair estimates plus real
+  dealer quotes; dealerships compete for the work. The <strong>consumer app</strong> is a working prototype today
+  (68 screens, offline demo mode, backend + AI estimate/OCR + points + insurance/actuarial modules, real
+  auth/maps/camera UI) — but it is <strong>not yet deployed</strong>, and the dealer side isn't a product.</p>
+  <p>This plan adds the missing half — a <strong>Dealer SaaS Portal</strong>: the web dashboard where dealerships
+  sign in, answer quote requests, manage bookings, set prices/hours, get paid, and see analytics. It's built on the
+  <strong>backend that already exists</strong> (dealers, quotes, bookings, services, payments are already modeled),
+  so it's a web frontend + a few endpoints — not a second platform — and it directly fixes the biggest risk: a
+  marketplace with no real supply side.</p>
+</div>
+
+<h2>Two tracks, one team</h2>
+<div class="grid2">
+  <div class="card"><p><strong>👤 You</strong><br>Product · dealer recruiting &amp; onboarding · marketing ·
+    legal/ops · QA · app-store/ASO · support</p></div>
+  <div class="card"><p><strong>💻 Dev partner (equity)</strong><br>Consumer app → stores · dealer portal ·
+    shared backend · infrastructure · payments · security</p></div>
+</div>
+<div class="warn"><strong>⚠ Capacity reality:</strong> one developer shipping the consumer app <em>and</em> a dealer
+  portal in 6 months on &lt;$25k is tight. Recommended: scope the portal to a tight <strong>MVP</strong> and keep a
+  <strong>concierge fallback</strong> (submit dealer quotes by hand during beta if the portal slips). Budget headroom
+  can fund a ~$3–6k contractor sprint to parallelize.</div>
+
+<h2>Dealer portal — MVP scope</h2>
+<div class="card">
+  <p><span class="chip-in">✅ In:</span> invite-based dealer login · view damage photos + AI estimate → submit quote
+  (price / turnaround / note) · bookings calendar + mark complete · business profile (hours, address, service menu,
+  bundle deals) · <strong>Stripe Connect</strong> payout onboarding · basic analytics (quotes sent/won, revenue,
+  response time).</p>
+  <p><span class="chip-out">🚫 Deferred (post-launch):</span> in-app chat, multi-location, staff roles/permissions,
+  self-serve marketing tools, automated payout reconciliation.</p>
+</div>
+
+<h2>6-month timeline</h2>
+<div class="legend">
+  <span><i class="dot" style="background:var(--consumer)"></i>📱 Consumer app</span>
+  <span><i class="dot" style="background:var(--portal)"></i>🏢 Dealer portal</span>
+  <span><i class="dot" style="background:var(--ops)"></i>📣 Marketing / ⚖ Ops</span>
+</div>
+<table>
+  <thead><tr><th>Month</th><th>📱 Consumer app</th><th>🏢 Dealer portal</th><th>📣 Marketing / Ops</th></tr></thead>
+  <tbody>
+    <tr><td class="mo">1</td><td class="consumer">Prod hosting, real OTP (Twilio/SendGrid), real OAuth, Apple + Play accounts, EAS Build</td><td class="portal">Scaffold web app + dealer auth on existing API</td><td class="ops">Form LLC, Privacy/Terms, landing page + waitlist, recruit 3–5 dealers</td></tr>
+    <tr><td class="mo">2</td><td class="consumer">Stripe Connect, push notifications, analytics + crash, AI "estimate mode" on CPU</td><td class="portal">Inbound requests → submit quote (core supply loop) + Stripe Connect onboarding</td><td class="ops">Content engine starts; beta recruiting</td></tr>
+    <tr><td class="mo">3</td><td class="consumer">TestFlight / Play closed beta, funnel instrumentation, bug-fix</td><td class="portal">Bookings calendar + profile/hours/service menu — dealers use it live in beta</td><td class="ops">Closed beta: ~20–50 users + pilot dealers (real two-sided test)</td></tr>
+    <tr><td class="mo">4</td><td class="consumer">Accessibility, QA matrix, security review, ASO + data-safety forms</td><td class="portal">Analytics + payout testing + polish; harden</td><td class="ops">Referral mechanics live; PR list; open beta</td></tr>
+    <tr><td class="mo">5</td><td class="consumer">Submit both stores; soft launch (budget 1–2 review cycles)</td><td class="portal">Onboard dealers for soft launch; portal stable</td><td class="ops">NoVA soft launch; dealer co-promo; Product Hunt prep</td></tr>
+    <tr><td class="mo">6</td><td class="consumer">Public launch; iterate on real data</td><td class="portal">Dealers self-serve via portal at launch</td><td class="ops">Launch push (PH, local PR, groups, small paid test); traction story</td></tr>
+  </tbody>
+</table>
+<div class="gate"><strong>Go/no-go gates:</strong> M1 real signup → OTP → login on hosted DB · M2 test-mode booking
+  pays + dealer submits a quote via the portal · M3 ≥1 real user↔dealer booking through both apps · M5 both store
+  approvals · M6 publicly downloadable + first organic cohort.</div>
+
+<h2>Budget — under $25k / 6 months</h2>
+<table>
+  <thead><tr><th>Item</th><th class="num">Estimate</th></tr></thead>
+  <tbody>
+    <tr><td>Apple Developer ($99) + Google Play ($25)</td><td class="num">$125</td></tr>
+    <tr><td>Hosting — DB + API + image storage + AI (CPU)</td><td class="num">$750</td></tr>
+    <tr><td>Portal web hosting (Vercel/Netlify, near-free at pilot)</td><td class="num">$0–120</td></tr>
+    <tr><td>SMS / email OTP (Twilio + SendGrid)</td><td class="num">$300</td></tr>
+    <tr><td>Domain, email, legal-docs tooling</td><td class="num">$300</td></tr>
+    <tr><td>Legal review (entity + ToS/privacy + marketplace/payout terms)</td><td class="num">$2,000–3,500</td></tr>
+    <tr><td>Maps API (or $0 on OpenStreetMap)</td><td class="num">$0–300</td></tr>
+    <tr><td>Design / store + portal assets</td><td class="num">$600</td></tr>
+    <tr><td>Paid marketing test (after funnel converts in beta)</td><td class="num">$1,500–3,000</td></tr>
+    <tr><td>Optional contractor sprint to parallelize the portal</td><td class="num">$3,000–6,000</td></tr>
+    <tr><td>Contingency</td><td class="num">$2,000</td></tr>
+    <tr class="total"><td>Total range</td><td class="num">~$8k–17k</td></tr>
+  </tbody>
+</table>
+<p style="font-size:12.5px;color:var(--ink-3);margin-top:8px">Under $25k even with the contractor sprint.
+  <strong>Dev-partner equity (not cash) is the linchpin of this budget.</strong></p>
+
+<h2>Top risks &amp; mitigations</h2>
+<table>
+  <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+  <tbody>
+    <tr><td>Two-sided liquidity (empty app)</td><td>Portal makes dealers self-serve; lock 2–3 before launch; concierge early quotes</td></tr>
+    <tr><td>Portal stretches one dev too thin</td><td>MVP scope + concierge fallback + optional contractor sprint; portal can trail consumer by weeks</td></tr>
+    <tr><td>Store rejection (marketplace + insurance/photo data)</td><td>Data-safety forms, account deletion, disclaimers; budget 1–2 review cycles</td></tr>
+    <tr><td>Payout / marketplace compliance</td><td>Stripe Connect handles KYC; lawyer reviews marketplace + payout terms</td></tr>
+    <tr><td>AI accuracy expectations</td><td>Ship as transparent "estimate," disclosed assumptions (already on Compare tab)</td></tr>
+    <tr><td>Prototype → production (Expo SDK, real builds)</td><td>Do EAS Build in Month 1, not Month 5</td></tr>
+  </tbody>
+</table>
+
+<h2>KPIs (from Month 3)</h2>
+<div class="grid2">
+  <div class="card"><p><strong>📱 Consumer</strong><br>Signups · activation (completed estimate) · quote→booking
+    conversion · bookings · D7/D30 retention · referral rate · crash-free rate · store rating</p></div>
+  <div class="card"><p><strong>🏢 Dealer (new)</strong><br>Active dealers · avg response time · quote-acceptance
+    rate · bookings fulfilled · GMV (gross marketplace value)</p></div>
+</div>
+
+<h2>Deliberate lean tradeoffs</h2>
+<div class="card"><p>
+  • Defer the <strong>trained</strong> damage-AI model → ship an honest "estimate range" (mock/heuristic engine, disclosed confidence); train post-raise.<br>
+  • Defer the <strong>paid insurance aggregator</strong> (Axle) → manual entry + card-scan only.<br>
+  • Dealer portal = <strong>MVP + concierge fallback</strong>, not full self-serve on day one.<br>
+  • Dev partner is <strong>equity, not cash</strong> — the budget depends on it.
+</p></div>
+
+<div class="foot">AutoMate · 6-month launch plan · prepared for partner review · figures are planning estimates, not quotes.</div>
+</div></body></html>
