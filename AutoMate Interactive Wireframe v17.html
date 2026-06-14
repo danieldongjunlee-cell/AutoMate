@@ -242,66 +242,6 @@ body{
 <div style="display:flex;gap:5px;justify-content:center;margin-bottom:12px"><div style="width:30px;height:36px;border-radius:7px;border:1px solid #E0DDD5;background:#FAFAF8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">3</div><div style="width:30px;height:36px;border-radius:7px;border:1px solid #E0DDD5;background:#FAFAF8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">8</div><div style="width:30px;height:36px;border-radius:7px;border:1px solid #E0DDD5;background:#FAFAF8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">7</div><div style="width:30px;height:36px;border-radius:7px;border:1px solid #E0DDD5;background:#FAFAF8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">4</div><div style="width:30px;height:36px;border-radius:7px;border:1px solid #E0DDD5;background:#FAFAF8;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600">2</div><div style="width:30px;height:36px;border-radius:7px;border:1.5px solid #1B4E8F;background:#E8F0FB;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600"></div></div>
 <div style="background:#1B4E8F;border-radius:7px;padding:8px;text-align:center;font-size:9px;font-weight:500;color:#fff;margin-bottom:8px">Verify →</div>
 <div style="text-align:center;font-size:8px;color:#888">Didn't receive it? <span style="color:#1B4E8F">Resend (0:42)</span></div></div>
-<div id="s-home" class="screen" data-tab="home" style="display:none">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-  <div style="display:flex;align-items:center;gap:5px"><svg width="20" height="20" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="10" fill="#0B1E3D"></rect><path d="M26 7L39 12.5L39 24C39 32 34 38 26 41C18 38 13 32 13 24L13 12.5Z" fill="rgba(41,171,226,.15)" stroke="#29ABE2" stroke-width="1.8"></path><path d="M17 28L19 23L24 22L28 22L33 23L35 28L35 30L17 30Z" fill="white"></path><circle cx="21" cy="30.5" r="2.2" fill="white"></circle><circle cx="31" cy="30.5" r="2.2" fill="white"></circle><path d="M19 25L23.5 29.5L33 19" stroke="#29ABE2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size:10px;font-weight:700">Auto<span style="color:#29ABE2">Mate</span></span></div>
-  <div style="position:relative;width:22px;height:22px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="showAnnouncement()"><span style="font-size:11px;color:#7F77DD">🔔</span><div style="position:absolute;top:0;right:0;width:6px;height:6px;border-radius:50%;background:#E24B4A;border:1px solid #fff"></div></div>
-</div>
-<div class="ttabs"><div class="tti on">🏠<br>Home</div><div class="tti">🔧<br>Maint.</div><div class="tti">⚖<br>Comp.</div><div class="tti">💬<br>Comm.</div><div class="tti">👤<br>Profile</div></div>
-<div style="background:linear-gradient(135deg,#7F77DD,#534AB7);border-radius:8px;padding:6px 10px;margin-bottom:7px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('prof-earn')">
-  <span style="font-size:13px">🔥</span>
-  <div style="flex:1"><div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><span style="font-size:8px;font-weight:500;color:#fff">Day 5 streak</span><span style="font-size:8px;font-weight:700;color:#EF9F27">+10 pts</span></div>
-  <div style="display:flex;gap:2px"><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.85);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.85);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.85);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.85);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.85);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);display:inline-block"></div><div style="width:14px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);display:inline-block"></div></div></div>
-</div>
-<div id="checkin-banner" style="background:#E1F5EE;border:1px solid #1D9E75;border-radius:8px;padding:6px 9px;margin-bottom:7px;display:flex;align-items:center;gap:6px">
-  <span style="font-size:11px">✅</span>
-  <div style="flex:1;font-size:7.5px;font-weight:500;color:#085041">Daily check-in +10 pts ($0.10) · Day 5 streak</div>
-  <span style="font-size:9px;color:#0F6E56;cursor:pointer;padding:0 2px" onclick="event.stopPropagation();document.getElementById('checkin-banner').style.display='none'">✕</span>
-</div>
-<div style="background:linear-gradient(135deg,#7F77DD,#534AB7);border-radius:12px;padding:14px 12px;margin-bottom:7px;text-align:center;position:relative;overflow:hidden" onclick="nav('car-diagram')">
-  <div style="position:absolute;top:-10px;right:-10px;width:48px;height:48px;background:rgba(255,255,255,.1);border-radius:50%"></div>
-  <div style="font-size:26px;margin-bottom:5px">📷</div>
-  <div style="font-size:10.5px;font-weight:600;color:#fff;margin-bottom:3px">Get a Repair Estimate</div>
-  <div style="font-size:7.5px;color:rgba(255,255,255,.78)">Take photos · Dealers quote you · Book or call</div>
-</div>
-<div style="background:linear-gradient(135deg,#1A1A1A,#2D2D2D);border-radius:10px;padding:8px 10px;margin-bottom:6px">
-  <div style="font-size:7px;background:#EF9F27;color:#1A1A1A;padding:1px 6px;border-radius:20px;font-weight:500;display:inline-block;margin-bottom:3px">LIMITED</div>
-  <div style="font-size:9px;font-weight:500;color:#fff;margin-bottom:4px">Honda Fairfax Summer Bundle</div>
-  <div style="background:#EF9F27;border-radius:5px;padding:3px 9px;display:inline-flex;cursor:pointer" onclick="nav('home-bundle-deals')"><span style="font-size:7.5px;font-weight:500;color:#1A1A1A">Claim deal →</span></div>
-</div>
-<div style="font-size:7.5px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Pending quotes</div>
-<div style="background:#EEEDFE;border-radius:7px;padding:5px 8px;display:flex;align-items:center;gap:5px;cursor:pointer" onclick="nav('dealer-quotes')">
-  <div style="width:20px;height:20px;border-radius:5px;background:#7F77DD;display:flex;align-items:center;justify-content:center;font-size:10px">🚗</div>
-  <div style="flex:1"><div style="font-size:8px;font-weight:500">Rear bumper dent</div><div style="font-size:7px;color:#534AB7">3 of 8 dealers quoted</div></div>
-  <span style="display:inline-block;border-radius:20px;font-size:7px;font-weight:500;padding:2px 7px;background:#EF9F27;color:#1a1a1a">3 new</span>
-</div>
-<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 6px">Scheduled services</div>
-<div style="background:#F8F7F4;border-radius:10px;padding:9px 11px;margin-bottom:5px;border:0.5px solid #E0DDD5;cursor:pointer" onclick="nav('maint-schedule-confirm')">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="width:34px;height:34px;border-radius:9px;background:#EEEDFE;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid #AFA9EC">
-      <div style="font-size:6px;font-weight:700;color:#534AB7;text-transform:uppercase">Apr</div>
-      <div style="font-size:11px;font-weight:800;color:#3C3489;line-height:1">7</div>
-    </div>
-    <div style="flex:1">
-      <div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🛢️ Oil change</div>
-      <div style="font-size:7px;color:#6E6E6E">Honda Fairfax · Mon 8:00 AM · ~45 min</div>
-    </div>
-    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:#0F6E56">$49</div><div style="font-size:6.5px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Paid</div></div>
-  </div>
-</div>
-<div style="background:#F8F7F4;border-radius:10px;padding:9px 11px;margin-bottom:4px;border:0.5px solid #E0DDD5;cursor:pointer" onclick="nav('booking-confirm')">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="width:34px;height:34px;border-radius:9px;background:#FAEEDA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid #FAC775">
-      <div style="font-size:6px;font-weight:700;color:#854F0B;text-transform:uppercase">Apr</div>
-      <div style="font-size:11px;font-weight:800;color:#633806;line-height:1">12</div>
-    </div>
-    <div style="flex:1">
-      <div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🚗 Rear bumper repair</div>
-      <div style="font-size:7px;color:#6E6E6E">Honda Fairfax · Thu 10:30 AM · Self drop-off</div>
-    </div>
-    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:#1a1a1a">$320–345</div><div style="font-size:6.5px;background:#FAEEDA;color:#633806;padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Confirmed</div></div>
-  </div>
-</div></div>
 <div id="s-car-diagram" class="screen" data-tab="home" style="display:none">
 <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
   <span style="font-size:17px;color:#1a1a1a;cursor:pointer" data-back="1">←</span>
@@ -346,7 +286,7 @@ body{
     <div style="font-size:9.5px;font-weight:700;color:#fff;margin-bottom:2px">Get AI Estimate</div>
     <div id="cd-summary" style="font-size:8px;color:rgba(255,255,255,.55)">Rear bumper selected</div>
   </div>
-  <div style="background:#534AB7;border-radius:9px;padding:8px 13px;cursor:pointer" onclick="nav('photo-example')">
+  <div style="background:#534AB7;border-radius:9px;padding:8px 13px;cursor:pointer" onclick="nav('camera')">
     <span style="font-size:9px;font-weight:700;color:#fff">Continue →</span>
   </div>
 </div>
@@ -363,37 +303,10 @@ window.pickPart = function(el, name){
   var s=document.getElementById('cd-summary'); if(s)s.textContent=name+' selected';
 };
 </script></div>
-<div id="s-photo-example" class="screen" data-tab="home" style="display:none">
-<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
-  <span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span>
-  <span style="font-size:10.5px;font-weight:600;flex:1">Photo guide</span>
-  <span style="font-size:7.5px;color:#888">Step 2 of 3</span>
-</div>
-<div style="font-size:8px;color:#534AB7;font-weight:600;margin-bottom:8px">Rear bumper — example photo</div>
-<div style="background:linear-gradient(135deg,#2D2020,#1A1010);border-radius:12px;padding:14px;margin-bottom:8px;text-align:center">
-  <div style="background:linear-gradient(160deg,#6B4A4A,#5A3A3A);border-radius:8px;height:90px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
-    <div style="position:absolute;width:70px;height:18px;border-radius:50%;background:rgba(0,0,0,.5);top:52%;left:50%;transform:translate(-50%,-50%);filter:blur(4px)"></div>
-    <div style="position:absolute;width:44px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.25);top:32%;left:50%;transform:translateX(-50%)"></div>
-    <span style="font-size:36px;position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))">🚗</span>
-  </div>
-  <div style="font-size:8px;font-weight:600;color:#fff;margin-bottom:2px">Good example: rear bumper dent</div>
-  <div style="font-size:7px;color:rgba(255,255,255,.55)">Clear · Well-lit · Paint intact visible</div>
-</div>
-<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Tips for a great photo</div>
-<div style="background:#F8F7F4;border-radius:10px;overflow:hidden;border:0.5px solid #E0DDD5;margin-bottom:10px">
-  <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-bottom:0.5px solid #F0EDE6"><span style="font-size:13px;flex-shrink:0">☀️</span><div style="font-size:7.5px;color:#555;line-height:1.4"><strong style="color:#1a1a1a">Good lighting</strong> — daylight or bright shade, avoid flash or direct sun</div></div>
-  <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-bottom:0.5px solid #F0EDE6"><span style="font-size:13px;flex-shrink:0">📏</span><div style="font-size:7.5px;color:#555;line-height:1.4"><strong style="color:#1a1a1a">3–5 ft away</strong> — close enough for detail, far enough for context</div></div>
-  <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px"><span style="font-size:13px;flex-shrink:0">📷</span><div style="font-size:7.5px;color:#555;line-height:1.4"><strong style="color:#1a1a1a">3+ angles</strong> — straight-on, left-side, right-side for accurate AI estimate</div></div>
-</div>
-<div style="display:flex;gap:6px">
-  <div style="flex:1;background:#F8F7F4;border-radius:9px;padding:10px;text-align:center;cursor:pointer;border:0.5px solid #E0DDD5" onclick="back()"><span style="font-size:8px;color:#555">← Change part</span></div>
-  <div style="flex:2;background:#7F77DD;border-radius:9px;padding:10px;text-align:center;cursor:pointer" onclick="nav('camera')"><span style="font-size:8.5px;font-weight:700;color:#fff">Take photos →</span></div>
-</div>
-</div>
 <div id="s-camera" class="screen" data-tab="home" style="display:none"><div style="display:flex;align-items:center;gap:5px;margin-bottom:6px">
   <span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span>
   <span style="font-size:10.5px;font-weight:600;flex:1">Take photos</span>
-  <span style="font-size:7.5px;color:#888">Step 2 of 3</span>
+  <span style="font-size:7.5px;color:#888">Step 1 of 2</span>
 </div>
 <div style="font-size:7.5px;color:#888;margin-bottom:8px">Take 3+ photos of your <strong style="color:#534AB7">rear bumper</strong> from different angles</div>
 <div style="font-size:7.5px;font-weight:600;color:#888;margin-bottom:5px">Damage type</div>
@@ -404,7 +317,7 @@ window.pickPart = function(el, name){
   <div class="dmg-chip" style="background:#F8F7F4;border-radius:20px;padding:5px 12px;cursor:pointer;border:0.5px solid #E0DDD5" onclick="pickDmg(this)"><span style="font-size:8px;color:#555">Paint</span></div>
 </div>
 <!-- Camera viewfinder -->
-<div style="background:linear-gradient(135deg,#1A1A1A,#111);border-radius:12px;height:130px;margin-bottom:8px;position:relative;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center">
+<div style="background:linear-gradient(135deg,#1A1A1A,#111);border-radius:12px;height:130px;margin-bottom:8px;position:relative;overflow:hidden;border:1px solid #333;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="showSheet('retake-popup')">
   <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;opacity:.25">
     <div style="border-right:0.5px solid #fff;border-bottom:0.5px solid #fff"></div>
     <div style="border-right:0.5px solid #fff;border-bottom:0.5px solid #fff"></div>
@@ -462,9 +375,19 @@ window.pickPart = function(el, name){
 <div style="background:#EEEDFE;border-radius:8px;padding:6px 10px;border:0.5px solid #AFA9EC;display:flex;align-items:center;gap:6px">
   <span style="font-size:11px">🤖</span>
   <div style="flex:1;font-size:7px;color:#534AB7;line-height:1.4">AI analyzes your photos instantly — more angles = more accurate estimates</div>
-</div></div>
+</div>
+<div id="retake-popup" style="position:absolute;inset:0;z-index:40;background:rgba(10,10,20,.6);display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)" onclick="hideSheet('retake-popup')">
+  <div style="background:#fff;border-radius:18px;padding:20px 18px;width:78%;max-width:220px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35)" onclick="event.stopPropagation()">
+    <div style="width:46px;height:46px;border-radius:50%;background:#FDECEC;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><span style="font-size:22px">⚠️</span></div>
+    <div style="font-size:11px;font-weight:800;color:#1a1a1a;margin-bottom:5px">Retake this photo</div>
+    <div style="font-size:8px;color:#888;line-height:1.55;margin-bottom:16px">This shot looks blurry and too far away. Hold steady, move 3–5 ft from the damage, and make sure it's well-lit.</div>
+    <div style="background:#7F77DD;border-radius:11px;padding:11px;cursor:pointer;margin-bottom:9px" onclick="hideSheet('retake-popup')"><span style="font-size:9px;font-weight:800;color:#fff">📷 Retake photo</span></div>
+    <div style="font-size:7.5px;color:#aaa;cursor:pointer" onclick="hideSheet('retake-popup')">Use it anyway</div>
+  </div>
+</div>
+</div>
 <div id="s-confirm-submit" class="screen" data-tab="home" style="display:none">
-<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px"><span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span><span style="font-size:11px;font-weight:600;flex:1">Confirm damage</span><span style="font-size:7.5px;color:#888">Step 3 of 3</span></div>
+<div style="display:flex;align-items:center;gap:5px;margin-bottom:8px"><span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span><span style="font-size:11px;font-weight:600;flex:1">Confirm damage</span><span style="font-size:7.5px;color:#888">Step 2 of 2</span></div>
 <div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Parts selected (2)</div>
 
 <div style="background:#F8F7F4;border-radius:11px;border:0.5px solid #E0DDD5;padding:10px 11px;margin-bottom:6px">
@@ -741,137 +664,104 @@ window.pickPart = function(el, name){
 </div></div>
 
 <div id="s-home-launcher" class="screen" data-tab="home" style="display:none">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+<!-- header: logo + notifications top-right -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
   <div style="display:flex;align-items:center;gap:5px"><svg width="20" height="20" viewBox="0 0 52 52" fill="none"><rect width="52" height="52" rx="10" fill="#0B1E3D"></rect><path d="M26 7L39 12.5L39 24C39 32 34 38 26 41C18 38 13 32 13 24L13 12.5Z" fill="rgba(41,171,226,.15)" stroke="#29ABE2" stroke-width="1.8"></path><path d="M17 28L19 23L24 22L28 22L33 23L35 28L35 30L17 30Z" fill="white"></path><circle cx="21" cy="30.5" r="2.2" fill="white"></circle><circle cx="31" cy="30.5" r="2.2" fill="white"></circle><path d="M19 25L23.5 29.5L33 19" stroke="#29ABE2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="font-size:10px;font-weight:700">Auto<span style="color:#29ABE2">Mate</span></span></div>
-  <div style="position:relative;width:22px;height:22px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="nav('notifications')"><span style="font-size:11px;color:#7F77DD">🔔</span><div style="position:absolute;top:0;right:0;width:6px;height:6px;border-radius:50%;background:#E24B4A;border:1px solid #fff"></div></div>
+  <div style="position:relative;width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="nav('notifications')"><span style="font-size:12px;color:#7F77DD">🔔</span><div style="position:absolute;top:0;right:0;width:7px;height:7px;border-radius:50%;background:#E24B4A;border:1.5px solid #fff"></div></div>
 </div>
-<div style="margin-bottom:10px"><div style="font-size:13px;font-weight:800;color:#1a1a1a">Hi Daniel 👋</div><div style="font-size:8px;color:#888">What would you like to do today?</div></div>
-<!-- points / streak strip -->
-<div style="background:linear-gradient(135deg,#7F77DD,#534AB7);border-radius:10px;padding:8px 11px;margin-bottom:11px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('prof-earn')">
-  <span style="font-size:15px">🔥</span>
-  <div style="flex:1"><div style="font-size:8.5px;font-weight:600;color:#fff">Day 5 streak · 1,240 pts</div><div style="font-size:7px;color:rgba(255,255,255,.78)">≈ $12.40 toward a free oil change</div></div>
-  <span style="font-size:11px;color:rgba(255,255,255,.85)">›</span>
+<!-- daily check-in on top -->
+<div id="checkin-banner" style="background:#E1F5EE;border:1px solid #1D9E75;border-radius:9px;padding:7px 10px;margin-bottom:10px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="nav('prof-earn')">
+  <span style="font-size:15px">✅</span>
+  <div style="flex:1"><div style="font-size:9px;font-weight:700;color:#085041">Daily check-in · +10 pts</div><div style="font-size:7px;color:#0F6E56">🔥 Day 5 streak · 1,240 pts ≈ $12.40 toward a free oil change</div></div>
+  <span style="font-size:7.5px;font-weight:700;background:#1D9E75;color:#fff;padding:3px 9px;border-radius:20px">Claim</span>
 </div>
-<!-- 2x2 launcher grid: the four current tabs -->
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
-  <div style="background:linear-gradient(150deg,#7F77DD,#534AB7);border-radius:13px;padding:13px 11px;cursor:pointer;position:relative;overflow:hidden;min-height:92px;display:flex;flex-direction:column;justify-content:space-between" onclick="nav('home')">
-    <div style="position:absolute;top:-12px;right:-12px;width:46px;height:46px;background:rgba(255,255,255,.12);border-radius:50%"></div>
-    <div style="font-size:24px">📷</div>
-    <div><div style="font-size:10px;font-weight:700;color:#fff;margin-bottom:1px">Repair Estimate</div><div style="font-size:7px;color:rgba(255,255,255,.8)">Photos → dealer quotes</div></div>
+<!-- BIG primary CTA: Get AI repair estimate -> select damaged part -->
+<div style="background:linear-gradient(135deg,#7F77DD,#534AB7);border-radius:15px;padding:17px 16px;margin-bottom:10px;cursor:pointer;position:relative;overflow:hidden" onclick="nav('car-diagram')">
+  <div style="position:absolute;top:-20px;right:-20px;width:78px;height:78px;background:rgba(255,255,255,.1);border-radius:50%"></div>
+  <div style="position:absolute;bottom:-26px;right:30px;width:50px;height:50px;background:rgba(255,255,255,.07);border-radius:50%"></div>
+  <div style="font-size:34px;margin-bottom:7px">📷</div>
+  <div style="font-size:14.5px;font-weight:800;color:#fff;margin-bottom:3px">Get an AI Repair Estimate</div>
+  <div style="font-size:8.5px;color:rgba(255,255,255,.82);margin-bottom:11px;line-height:1.4">Snap a few photos → local dealers send real quotes → book or call in minutes</div>
+  <div style="display:inline-flex;align-items:center;gap:6px;background:#fff;border-radius:20px;padding:7px 15px"><span style="font-size:9.5px;font-weight:800;color:#534AB7">Start now →</span></div>
+</div>
+<!-- two secondary buttons -->
+<div style="display:flex;gap:9px;margin-bottom:12px">
+  <div style="flex:1;background:#fff;border:0.5px solid #E0DDD5;border-radius:13px;padding:12px 11px;cursor:pointer" onclick="nav('maint-dashboard')">
+    <div style="width:32px;height:32px;border-radius:9px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:7px">🔧</div>
+    <div style="font-size:10px;font-weight:700;color:#1a1a1a">Maintenance</div>
+    <div style="font-size:7px;color:#888;margin-top:1px">Track &amp; book service</div>
   </div>
-  <div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:13px;padding:13px 11px;cursor:pointer;min-height:92px;display:flex;flex-direction:column;justify-content:space-between" onclick="nav('maint-dashboard')">
-    <div style="width:34px;height:34px;border-radius:9px;background:#E1F5EE;display:flex;align-items:center;justify-content:center;font-size:18px">🔧</div>
-    <div><div style="font-size:10px;font-weight:700;color:#1a1a1a;margin-bottom:1px">Maintenance</div><div style="font-size:7px;color:#888">Track & book service</div></div>
-  </div>
-  <div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:13px;padding:13px 11px;cursor:pointer;min-height:92px;display:flex;flex-direction:column;justify-content:space-between" onclick="nav('comp-select')">
-    <div style="width:34px;height:34px;border-radius:9px;background:#FDF0DC;display:flex;align-items:center;justify-content:center;font-size:18px">⚖️</div>
-    <div><div style="font-size:10px;font-weight:700;color:#1a1a1a;margin-bottom:1px">Compare Costs</div><div style="font-size:7px;color:#888">Cash vs insurance</div></div>
-  </div>
-  <div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:13px;padding:13px 11px;cursor:pointer;min-height:92px;display:flex;flex-direction:column;justify-content:space-between" onclick="nav('comm-channels')">
-    <div style="width:34px;height:34px;border-radius:9px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:18px">👥</div>
-    <div><div style="font-size:10px;font-weight:700;color:#1a1a1a;margin-bottom:1px">Community</div><div style="font-size:7px;color:#888">Owner groups & tips</div></div>
+  <div style="flex:1;background:#fff;border:0.5px solid #E0DDD5;border-radius:13px;padding:12px 11px;cursor:pointer" onclick="nav('comp-select')">
+    <div style="width:32px;height:32px;border-radius:9px;background:#FDF0DC;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:7px">⚖️</div>
+    <div style="font-size:10px;font-weight:700;color:#1a1a1a">Compare Costs</div>
+    <div style="font-size:7px;color:#888;margin-top:1px">Cash vs insurance</div>
   </div>
 </div>
-<!-- quick status: pending quotes -->
-<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Pick up where you left off</div>
-<div style="background:#EEEDFE;border-radius:9px;padding:7px 9px;display:flex;align-items:center;gap:7px;cursor:pointer;margin-bottom:6px" onclick="nav('dealer-quotes')">
+<!-- ad banners -->
+<div style="font-size:7px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Deals &amp; offers · Sponsored</div>
+<div style="background:linear-gradient(135deg,#1A1A1A,#2D2D2D);border-radius:11px;padding:10px 12px;margin-bottom:6px;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="nav('home-bundle-deals')">
+  <div style="font-size:23px">🛢️</div>
+  <div style="flex:1"><span style="font-size:6px;background:#EF9F27;color:#1A1A1A;padding:1px 6px;border-radius:20px;font-weight:700">LIMITED · BUNDLE</span><div style="font-size:9px;font-weight:700;color:#fff;margin-top:3px">Honda Fairfax Summer Bundle</div><div style="font-size:7px;color:rgba(255,255,255,.6)">Oil + tire rotation + 27-pt check — save $40</div></div>
+  <span style="font-size:8px;font-weight:700;color:#EF9F27;flex-shrink:0">Claim →</span>
+</div>
+<div style="background:linear-gradient(135deg,#0B1E3D,#1A2A52);border-radius:11px;padding:10px 12px;margin-bottom:13px;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="nav('prof-insurance')">
+  <div style="font-size:23px">🛡️</div>
+  <div style="flex:1"><span style="font-size:6px;background:#29ABE2;color:#04243B;padding:1px 6px;border-radius:20px;font-weight:700">SPONSORED</span><div style="font-size:9px;font-weight:700;color:#fff;margin-top:3px">Bundle auto + home insurance</div><div style="font-size:7px;color:rgba(255,255,255,.6)">Drivers near Fairfax save up to $612/yr</div></div>
+  <span style="font-size:8px;font-weight:700;color:#29ABE2;flex-shrink:0">See →</span>
+</div>
+<!-- guides: how to use the app -->
+<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">New here? How AutoMate works</div>
+<div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:11px;overflow:hidden;margin-bottom:13px">
+  <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-bottom:0.5px solid #F0EDE6;cursor:pointer" onclick="nav('help-photos')">
+    <div style="width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#7F77DD;flex-shrink:0">1</div>
+    <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#1a1a1a">📷 Take great damage photos</div><div style="font-size:7px;color:#888">Lighting, distance &amp; angle tips</div></div>
+    <span style="font-size:12px;color:#ccc">›</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-bottom:0.5px solid #F0EDE6;cursor:pointer" onclick="nav('help-quotes')">
+    <div style="width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#7F77DD;flex-shrink:0">2</div>
+    <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#1a1a1a">⚖️ Compare dealer quotes</div><div style="font-size:7px;color:#888">Cash vs insurance, side by side</div></div>
+    <span style="font-size:12px;color:#ccc">›</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;cursor:pointer" onclick="nav('help-bookings')">
+    <div style="width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#7F77DD;flex-shrink:0">3</div>
+    <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#1a1a1a">📅 Book &amp; earn points</div><div style="font-size:7px;color:#888">Redeem for free services</div></div>
+    <span style="font-size:12px;color:#ccc">›</span>
+  </div>
+</div>
+<!-- pending quotes -->
+<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Pending quotes</div>
+<div style="background:#EEEDFE;border-radius:9px;padding:7px 9px;display:flex;align-items:center;gap:7px;cursor:pointer;margin-bottom:13px" onclick="nav('dealer-quotes')">
   <div style="width:24px;height:24px;border-radius:6px;background:#7F77DD;display:flex;align-items:center;justify-content:center;font-size:11px">🚗</div>
   <div style="flex:1"><div style="font-size:8.5px;font-weight:600">Rear bumper dent</div><div style="font-size:7px;color:#534AB7">3 of 8 dealers quoted</div></div>
   <span style="display:inline-block;border-radius:20px;font-size:7px;font-weight:600;padding:2px 7px;background:#EF9F27;color:#1a1a1a">3 new</span>
 </div>
-<div style="background:#F8F7F4;border:0.5px solid #E0DDD5;border-radius:9px;padding:7px 9px;display:flex;align-items:center;gap:7px;cursor:pointer" onclick="nav('messages')">
-  <div style="width:24px;height:24px;border-radius:6px;background:#1D9E75;display:flex;align-items:center;justify-content:center;font-size:11px">💬</div>
-  <div style="flex:1"><div style="font-size:8.5px;font-weight:600">2 new messages</div><div style="font-size:7px;color:#888">Honda Fairfax replied to your quote</div></div>
-  <span style="font-size:11px;color:#bbb">›</span>
-</div>
-</div>
-
-<div id="s-messages" class="screen" data-tab="messages" style="display:none">
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
-  <div style="font-size:13px;font-weight:800;color:#1a1a1a">Messages</div>
-  <div style="width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="font-size:12px;color:#7F77DD">✎</span></div>
-</div>
-<div style="background:#F0EDE6;border-radius:9px;padding:7px 10px;display:flex;align-items:center;gap:6px;margin-bottom:11px"><span style="font-size:10px;color:#999">🔍</span><span style="font-size:8px;color:#999">Search conversations</span></div>
-<div style="font-size:7px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Customer service</div>
-<div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:11px;padding:9px 10px;display:flex;align-items:center;gap:9px;cursor:pointer;margin-bottom:11px" onclick="nav('chat-support')">
-  <div style="width:36px;height:36px;border-radius:50%;background:#0B1E3D;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:16px">🛟</span></div>
-  <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:9.5px;font-weight:700;color:#1a1a1a">AutoMate Support</span><span style="font-size:6.5px;color:#aaa">2m</span></div><div style="font-size:7.5px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">You're all set — let us know if anything else comes up!</div></div>
-  <div style="width:16px;height:16px;border-radius:50%;background:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:7px;font-weight:700;color:#fff">1</span></div>
-</div>
-<div style="font-size:7px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Dealership chats</div>
-<div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:11px;padding:9px 10px;display:flex;align-items:center;gap:9px;cursor:pointer;margin-bottom:7px" onclick="nav('chat-dealer')">
-  <div style="width:36px;height:36px;border-radius:9px;background:#7F77DD;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">H</div>
-  <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:9.5px;font-weight:700;color:#1a1a1a">Honda Fairfax Service</span><span style="font-size:6.5px;color:#aaa">14m</span></div><div style="font-size:7.5px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Your $330 quote is ready. Want to book Apr 12?</div></div>
-  <div style="width:16px;height:16px;border-radius:50%;background:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:7px;font-weight:700;color:#fff">1</span></div>
-</div>
-<div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:11px;padding:9px 10px;display:flex;align-items:center;gap:9px;cursor:pointer;margin-bottom:7px" onclick="nav('chat-dealer')">
-  <div style="width:36px;height:36px;border-radius:9px;background:#888888;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">P</div>
-  <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:9.5px;font-weight:700;color:#1a1a1a">Premier Body Shop</span><span style="font-size:6.5px;color:#aaa">1h</span></div><div style="font-size:7.5px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Thanks! We'll see you then.</div></div>
-</div>
-<div style="background:#fff;border:0.5px solid #E0DDD5;border-radius:11px;padding:9px 10px;display:flex;align-items:center;gap:9px;cursor:pointer" onclick="nav('chat-dealer')">
-  <div style="width:36px;height:36px;border-radius:9px;background:#C0322F;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;font-weight:700;color:#fff">T</div>
-  <div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:9.5px;font-weight:700;color:#1a1a1a">Toyota of Fairfax</span><span style="font-size:6.5px;color:#aaa">Yesterday</span></div><div style="font-size:7.5px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">We can match that price — happy to help.</div></div>
-</div>
-</div>
-
-<div id="s-chat-support" class="screen" data-tab="messages" style="display:none;padding:0">
-<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:0.5px solid #E0DDD5;background:#fff;position:sticky;top:0;z-index:2">
-  <span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span>
-  <div style="width:30px;height:30px;border-radius:50%;background:#0B1E3D;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:14px">🛟</span></div>
-  <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#1a1a1a">AutoMate Support</div><div style="font-size:7px;color:#1D9E75">● Online · replies in ~1 min</div></div>
-</div>
-<div style="padding:12px 12px 14px">
-  <div style="text-align:center;margin-bottom:10px"><span style="font-size:6.5px;color:#aaa;background:#F0EDE6;border-radius:10px;padding:2px 8px">Today</span></div>
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:78%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:7px 9px"><div style="font-size:8.5px;color:#1a1a1a">Hi Daniel! 👋 This is AutoMate Support. How can we help today?</div><div style="font-size:6px;color:#bbb;margin-top:2px">9:02 AM</div></div></div>
-  <!-- quick replies -->
-  <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;justify-content:flex-end">
-    <span style="font-size:7.5px;color:#7F77DD;border:0.5px solid #AFA9EC;border-radius:20px;padding:4px 9px;cursor:pointer">Booking question</span>
-    <span style="font-size:7.5px;color:#7F77DD;border:0.5px solid #AFA9EC;border-radius:20px;padding:4px 9px;cursor:pointer">Refund</span>
-    <span style="font-size:7.5px;color:#7F77DD;border:0.5px solid #AFA9EC;border-radius:20px;padding:4px 9px;cursor:pointer">Points</span>
+<!-- scheduled services -->
+<div style="font-size:7.5px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Scheduled services</div>
+<div style="background:#F8F7F4;border-radius:10px;padding:9px 11px;margin-bottom:5px;border:0.5px solid #E0DDD5;cursor:pointer" onclick="nav('maint-schedule-confirm')">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="width:34px;height:34px;border-radius:9px;background:#E1F5EE;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid #9BD9C2">
+      <div style="font-size:6px;font-weight:700;color:#085041;text-transform:uppercase">Mon</div>
+      <div style="font-size:11px;font-weight:800;color:#0F6E56;line-height:1">8a</div>
+    </div>
+    <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🛢️ Oil change</div><div style="font-size:7px;color:#6E6E6E">Honda Fairfax · Mon 8:00 AM · ~45 min</div></div>
+    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:#0F6E56">$49</div><div style="font-size:6.5px;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Paid</div></div>
   </div>
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="max-width:78%;background:#7F77DD;border-radius:11px 11px 3px 11px;padding:7px 9px"><div style="font-size:8.5px;color:#fff">My quote from Honda Fairfax — is the $330 price final?</div><div style="font-size:6px;color:rgba(255,255,255,.7);margin-top:2px;text-align:right">9:03 AM</div></div></div>
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:78%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:7px 9px"><div style="font-size:8.5px;color:#1a1a1a">Great question! $330 covers the rear-bumper dent with OEM parts. If they find hidden damage during inspection they'll message you here before any extra charge. 👍</div><div style="font-size:6px;color:#bbb;margin-top:2px">9:03 AM</div></div></div>
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:78%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:7px 9px"><div style="font-size:8.5px;color:#1a1a1a">You're all set — let us know if anything else comes up!</div><div style="font-size:6px;color:#bbb;margin-top:2px">9:04 AM</div></div></div>
 </div>
-<!-- composer -->
-<div style="display:flex;align-items:center;gap:7px;padding:8px 12px;border-top:0.5px solid #E0DDD5;background:#fff">
-  <span style="font-size:15px;color:#999">＋</span>
-  <div style="flex:1;background:#F0EDE6;border-radius:20px;padding:7px 11px"><span style="font-size:8px;color:#999">Message…</span></div>
-  <div style="width:28px;height:28px;border-radius:50%;background:#7F77DD;display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="font-size:12px;color:#fff">➤</span></div>
-</div>
-</div>
-
-<div id="s-chat-dealer" class="screen" data-tab="messages" style="display:none;padding:0">
-<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:0.5px solid #E0DDD5;background:#fff;position:sticky;top:0;z-index:2">
-  <span style="font-size:16px;color:#1a1a1a;cursor:pointer" data-back="1">←</span>
-  <div style="width:30px;height:30px;border-radius:8px;background:#7F77DD;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;font-weight:700;color:#fff">H</div>
-  <div style="flex:1"><div style="font-size:10px;font-weight:700;color:#1a1a1a">Honda Fairfax Service</div><div style="font-size:7px;color:#888">★ 4.9 · 1.2 mi · Open until 6PM</div></div>
-  <span style="font-size:13px;cursor:pointer">📞</span>
-</div>
-<div style="padding:12px 12px 14px">
-  <div style="text-align:center;margin-bottom:10px"><span style="font-size:6.5px;color:#aaa;background:#F0EDE6;border-radius:10px;padding:2px 8px">Quote · Rear bumper dent</span></div>
-  <!-- quote card bubble -->
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:82%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:9px;width:82%">
-    <div style="font-size:8px;font-weight:700;color:#1a1a1a;margin-bottom:4px">📋 Repair quote</div>
-    <div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:7.5px;color:#666">Rear bumper · OEM parts</span><span style="font-size:7.5px;font-weight:700;color:#0F6E56">$330</span></div>
-    <div style="display:flex;justify-content:space-between"><span style="font-size:7.5px;color:#666">Turnaround</span><span style="font-size:7.5px;color:#1a1a1a">1 day</span></div>
-    <div style="background:#7F77DD;border-radius:7px;padding:6px;text-align:center;cursor:pointer;margin-top:7px" onclick="nav('accept-booking')"><span style="font-size:8px;font-weight:700;color:#fff">Accept & book →</span></div>
-    <div style="font-size:6px;color:#bbb;margin-top:3px">9:14 AM</div>
-  </div></div>
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:78%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:7px 9px"><div style="font-size:8.5px;color:#1a1a1a">Your $330 quote is ready. Want to book Apr 12 at 10:30 AM?</div><div style="font-size:6px;color:#bbb;margin-top:2px">9:14 AM</div></div></div>
-  <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><div style="max-width:78%;background:#7F77DD;border-radius:11px 11px 3px 11px;padding:7px 9px"><div style="font-size:8.5px;color:#fff">Does that include a wash?</div><div style="font-size:6px;color:rgba(255,255,255,.7);margin-top:2px;text-align:right">9:16 AM</div></div></div>
-  <div style="display:flex;margin-bottom:8px"><div style="max-width:78%;background:#fff;border:0.5px solid #E0DDD5;border-radius:11px 11px 11px 3px;padding:7px 9px"><div style="font-size:8.5px;color:#1a1a1a">Yes — complimentary wash & vacuum included. 🚗✨</div><div style="font-size:6px;color:#bbb;margin-top:2px">9:17 AM</div></div></div>
-</div>
-<div style="display:flex;align-items:center;gap:7px;padding:8px 12px;border-top:0.5px solid #E0DDD5;background:#fff">
-  <span style="font-size:15px;color:#999">＋</span>
-  <div style="flex:1;background:#F0EDE6;border-radius:20px;padding:7px 11px"><span style="font-size:8px;color:#999">Message…</span></div>
-  <div style="width:28px;height:28px;border-radius:50%;background:#7F77DD;display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="font-size:12px;color:#fff">➤</span></div>
+<div style="background:#F8F7F4;border-radius:10px;padding:9px 11px;border:0.5px solid #E0DDD5;cursor:pointer" onclick="nav('booking-confirm')">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="width:34px;height:34px;border-radius:9px;background:#FAEEDA;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid #FAC775">
+      <div style="font-size:6px;font-weight:700;color:#854F0B;text-transform:uppercase">Apr</div>
+      <div style="font-size:11px;font-weight:800;color:#633806;line-height:1">12</div>
+    </div>
+    <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🚗 Rear bumper repair</div><div style="font-size:7px;color:#6E6E6E">Honda Fairfax · Thu 10:30 AM · Self drop-off</div></div>
+    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:#1a1a1a">$320–345</div><div style="font-size:6.5px;background:#FAEEDA;color:#633806;padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Confirmed</div></div>
+  </div>
 </div>
 </div>
 
     <div class="tbar" id="tbar">
       <button class="tbtn" id="tb-home" onclick="tab('home')"><span class="ico">🏠</span><span class="lbl">Home</span></button>
-      <button class="tbtn" id="tb-messages" onclick="tab('messages')"><span class="ico">💬</span><span class="lbl">Messages</span></button>
+      <button class="tbtn" id="tb-community" onclick="tab('community')"><span class="ico">👥</span><span class="lbl">Community</span></button>
       <button class="tbtn" id="tb-more" onclick="tab('more')"><span class="ico">☰</span><span class="lbl">More</span></button>
     </div>
 
@@ -2105,21 +1995,20 @@ Upcoming services</div>
 <button class="btn r" onclick="reset()">↻ Reset to start</button>
 
 <script>
-const FLOW=["splash", "signup", "verify-method", "login", "verify-otp", "home-launcher", "home", "car-diagram", "photo-example", "camera", "confirm-submit", "submitted", "after-hours", "dealer-quotes", "all-quotes-map", "accept-booking", "booking-confirm","dealer-map", "home-bundle-deals", "notifications", "maint-dashboard", "maint-history", "maint-scan-cam", "maint-scan-rev", "maint-manual", "maint-diy","diy-unlock","diy-payment","diy-confirm","diy-guides","diy-match","diy-tools","diy-future", "maint-schedule", "maint-schedule-book", "maint-payment", "maint-schedule-confirm", "comp-select", "comp-cash-ins", "comp-deep-dive", "comp-cash-book", "comp-insurance", "comm-channels", "comm-honda", "comm-post", "comm-create", "messages", "chat-support", "chat-dealer", "prof-hub", "prof-miles", "prof-mile-det", "prof-earn", "prof-cars", "prof-insurance", "prof-payment", "prof-settings", "prof-edit-profile", "prof-change-email", "prof-change-password", "prof-linked-accounts", "prof-help-center","help-photos","help-quotes","help-bookings","help-contact", "prof-terms", "prof-privacy", "prof-language", "prof-distance", "prof-change-phone"];
-const NAMES={"splash": "Splash", "signup": "Sign Up", "verify-method": "Verify Method", "login": "Log In", "verify-otp": "Verify OTP", "home-launcher": "Home", "messages": "Messages", "chat-support": "AutoMate Support", "chat-dealer": "Honda Fairfax", "home": "Repair Estimate", "car-diagram": "Select Part", "photo-example": "Photo Guide", "camera": "Take Photos", "confirm-submit": "Confirm Damage", "submitted": "Submitted", "after-hours": "After Hours", "dealer-quotes": "Quotes Received", "all-quotes-map": "All Quotes Map", "accept-booking": "Accept & Book", "booking-confirm": "Booking Confirmed", "home-bundle-deals": "Bundle Deals", "notifications": "Notifications", "maint-dashboard": "Maintenance", "maint-history": "Service History", "maint-scan-cam": "Scan Camera", "maint-scan-rev": "Scan Review", "maint-manual": "Manual Log", "maint-diy": "DIY Tips Hub", "maint-schedule": "Schedule Service", "maint-schedule-book": "Book Appointment", "maint-payment": "Payment", "maint-schedule-confirm": "Booking Confirmed", "comp-select": "Select Quote", "comp-cash-ins": "Cash vs Insurance", "comp-deep-dive": "Cost Deep Dive", "comp-cash-book": "Book (Cash)", "comp-insurance": "Contact Insurer", "comm-channels": "Community", "comm-honda": "Honda Feed", "comm-post": "Post Detail", "comm-create": "Create Post", "prof-hub": "Profile", "prof-miles": "Milestones", "prof-mile-det": "Milestone Detail", "prof-earn": "Earn History", "prof-cars": "My Cars", "prof-insurance": "Insurance", "prof-payment": "Payment", "prof-settings": "Settings", "prof-edit-profile": "Edit Profile", "prof-change-email": "Change Email", "prof-change-password": "Change Password", "prof-linked-accounts": "Linked Accounts", "prof-help-center": "Help Center", "prof-terms": "Terms of Service", "prof-privacy": "Privacy Policy", "prof-language": "Language", "prof-distance": "Distance Units", "prof-change-phone": "Change Phone"};
-const TH={"home": "home-launcher", "messages": "messages", "more": "prof-hub"};
+const FLOW=["splash", "signup", "verify-method", "login", "verify-otp", "home-launcher", "car-diagram", "camera", "confirm-submit", "submitted", "after-hours", "dealer-quotes", "all-quotes-map", "accept-booking", "booking-confirm","dealer-map", "home-bundle-deals", "notifications", "maint-dashboard", "maint-history", "maint-scan-cam", "maint-scan-rev", "maint-manual", "maint-diy","diy-unlock","diy-payment","diy-confirm","diy-guides","diy-match","diy-tools","diy-future", "maint-schedule", "maint-schedule-book", "maint-payment", "maint-schedule-confirm", "comp-select", "comp-cash-ins", "comp-deep-dive", "comp-cash-book", "comp-insurance", "comm-channels", "comm-honda", "comm-post", "comm-create", "prof-hub", "prof-miles", "prof-mile-det", "prof-earn", "prof-cars", "prof-insurance", "prof-payment", "prof-settings", "prof-edit-profile", "prof-change-email", "prof-change-password", "prof-linked-accounts", "prof-help-center","help-photos","help-quotes","help-bookings","help-contact", "prof-terms", "prof-privacy", "prof-language", "prof-distance", "prof-change-phone"];
+const NAMES={"splash": "Splash", "signup": "Sign Up", "verify-method": "Verify Method", "login": "Log In", "verify-otp": "Verify OTP", "home-launcher": "Home", "car-diagram": "Select Part", "camera": "Take Photos", "confirm-submit": "Confirm Damage", "submitted": "Submitted", "after-hours": "After Hours", "dealer-quotes": "Quotes Received", "all-quotes-map": "All Quotes Map", "accept-booking": "Accept & Book", "booking-confirm": "Booking Confirmed", "home-bundle-deals": "Bundle Deals", "notifications": "Notifications", "maint-dashboard": "Maintenance", "maint-history": "Service History", "maint-scan-cam": "Scan Camera", "maint-scan-rev": "Scan Review", "maint-manual": "Manual Log", "maint-diy": "DIY Tips Hub", "maint-schedule": "Schedule Service", "maint-schedule-book": "Book Appointment", "maint-payment": "Payment", "maint-schedule-confirm": "Booking Confirmed", "comp-select": "Select Quote", "comp-cash-ins": "Cash vs Insurance", "comp-deep-dive": "Cost Deep Dive", "comp-cash-book": "Book (Cash)", "comp-insurance": "Contact Insurer", "comm-channels": "Community", "comm-honda": "Honda Feed", "comm-post": "Post Detail", "comm-create": "Create Post", "prof-hub": "Profile", "prof-miles": "Milestones", "prof-mile-det": "Milestone Detail", "prof-earn": "Earn History", "prof-cars": "My Cars", "prof-insurance": "Insurance", "prof-payment": "Payment", "prof-settings": "Settings", "prof-edit-profile": "Edit Profile", "prof-change-email": "Change Email", "prof-change-password": "Change Password", "prof-linked-accounts": "Linked Accounts", "prof-help-center": "Help Center", "prof-terms": "Terms of Service", "prof-privacy": "Privacy Policy", "prof-language": "Language", "prof-distance": "Distance Units", "prof-change-phone": "Change Phone"};
+const TH={"home": "home-launcher", "community": "comm-channels", "more": "prof-hub"};
 const BK={"signup": "splash", "verify-method": "signup", "login": "splash", "verify-otp": "verify-method", "notifications": "home", "home-bundle-deals": "home", "car-diagram": "home", "photo-example": "car-diagram", "camera": "photo-example", "confirm-submit": "camera", "submitted": "home", "after-hours": "submitted", "dealer-quotes": "submitted", "all-quotes-map": "dealer-quotes", "accept-booking": "all-quotes-map", "booking-confirm": "accept-booking", "maint-history": "maint-dashboard", "maint-scan-cam": "maint-history", "maint-scan-rev": "maint-scan-cam", "maint-manual": "maint-dashboard", "maint-diy": "maint-dashboard", "maint-schedule": "maint-dashboard", "maint-schedule-book": "maint-schedule", "maint-payment": "maint-schedule-book", "maint-schedule-confirm": "maint-payment", "comp-cash-ins": "comp-select", "comp-deep-dive": "comp-cash-ins", "comp-cash-book": "comp-deep-dive", "comp-insurance": "comp-cash-ins", "comm-honda": "comm-channels", "comm-post": "comm-honda", "comm-create": "comm-honda", "prof-miles": "prof-hub", "prof-mile-det": "prof-miles", "prof-earn": "prof-hub", "prof-cars": "prof-hub", "prof-insurance": "prof-hub", "prof-payment": "prof-hub", "prof-settings": "prof-hub", "prof-edit-profile": "prof-settings", "prof-change-email": "prof-settings", "prof-change-password": "prof-settings", "prof-change-phone": "prof-settings", "prof-linked-accounts": "prof-settings", "prof-help-center": "prof-settings", "prof-terms": "prof-settings", "prof-privacy": "prof-settings", "prof-language": "prof-settings", "prof-distance": "prof-settings"};
 const AUTH=new Set(["splash", "login", "signup", "verify-method", "verify-otp"]);
 let cur='splash',hist=[],tmem={...TH},busy=false,dark=false;
 
 function tabOf(s){
   if(AUTH.has(s)) return null;
-  // Messages tab: chat list + threads
-  if(s==='messages'||s.startsWith('chat-')) return 'messages';
+  // Community tab: owner groups + dealer feeds
+  if(s.startsWith('comm-')) return 'community';
   // More tab: profile + help
   if(s.startsWith('prof-')||s.startsWith('help-')) return 'more';
-  // Home tab is the launcher hub for the four sections (home / maint /
-  // compare / community) plus their flows — everything else lives here.
+  // Home tab hub: repair estimate, maintenance, compare + their flows.
   return 'home';
 }
 const gs=id=>document.getElementById('s-'+id);
@@ -2200,7 +2089,7 @@ document.getElementById('vp').addEventListener('click',function(e){
   if(t.getAttribute&&t.getAttribute('data-back')==='1'){back();return;}
   const bp=t.closest&&t.closest('[data-back="1"]');if(bp){back();return;}
   const tti=t.closest&&t.closest('.tti');
-  if(tti){const tabs=['home','messages','more'],i=Array.from(tti.parentElement.children).indexOf(tti);if(i>=0&&tabs[i])tab(tabs[i]);}
+  if(tti){const tabs=['home','community','more'],i=Array.from(tti.parentElement.children).indexOf(tti);if(i>=0&&tabs[i])tab(tabs[i]);}
 });
 
 // Feature functions
