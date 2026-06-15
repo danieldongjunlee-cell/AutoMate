@@ -6,11 +6,12 @@ import { Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { QuoteCard } from '../../components/QuoteCard';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, QUOTE_REQUEST } from '../../services/mock/data';
+import { dealerById, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -124,9 +125,21 @@ export function DealerQuotesScreen() {
         </View>
       </View>
 
-      {/* Price distribution across the received quotes (wireframe bar chart) */}
-      {quotes && quotes.length > 1 ? (
-        <PriceDistribution prices={quotes.map((q) => q.price)} />
+      {/* Shops with quotes near you — real map (Leaflet web / RN-maps native) */}
+      {quotes && quotes.length > 0 ? (
+        <View style={{ marginBottom: spacing.md }}>
+          <SectionLabel>Shops near you</SectionLabel>
+          <DealerMap
+            markers={quotes.map((q): MapMarker => {
+              const d = dealerById(q.dealerId);
+              return { id: q.dealerId, lat: d.lat, lng: d.lng, label: `$${q.price}`, color: d.color };
+            })}
+            center={USER_LOCATION}
+            userLocation={USER_LOCATION}
+            onSelect={(id) => navigation.navigate('AcceptBooking', { dealerId: id })}
+            style={{ height: 190, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
+          />
+        </View>
       ) : null}
 
       {/* Disclaimer */}
@@ -169,61 +182,5 @@ export function DealerQuotesScreen() {
         ))
       )}
     </Screen>
-  );
-}
-
-/** Mini histogram of where the received quotes land; cheapest bucket = BEST. */
-function PriceDistribution({ prices }: { prices: number[] }) {
-  const { colors } = useTheme();
-  const lo = Math.min(...prices);
-  const hi = Math.max(...prices);
-  const span = Math.max(1, hi - lo);
-  const BUCKETS = 6;
-  const counts = new Array(BUCKETS).fill(0) as number[];
-  prices.forEach((p) => {
-    const idx = Math.min(BUCKETS - 1, Math.floor(((p - lo) / span) * BUCKETS));
-    counts[idx] += 1;
-  });
-  const maxCount = Math.max(...counts, 1);
-
-  return (
-    <View
-      style={{
-        backgroundColor: colors.surface,
-        borderWidth: 1,
-        borderColor: colors.border,
-        borderRadius: radii.md,
-        padding: spacing.md,
-        marginBottom: spacing.md,
-      }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>
-          Where these quotes land
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <View style={{ width: 8, height: 8, borderRadius: 2, backgroundColor: colors.success }} />
-          <Text style={{ fontSize: 10, color: colors.textTertiary }}>Best price</Text>
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, height: 54 }}>
-        {counts.map((c, i) => (
-          <View key={i} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
-            <View
-              style={{
-                width: '100%',
-                height: Math.max(4, (c / maxCount) * 48),
-                borderRadius: 3,
-                backgroundColor: i === 0 ? colors.success : colors.primaryLight,
-              }}
-            />
-          </View>
-        ))}
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
-        <Text style={{ fontSize: 10, color: colors.textTertiary }}>${lo}</Text>
-        <Text style={{ fontSize: 10, color: colors.textTertiary }}>${hi}</Text>
-      </View>
-    </View>
   );
 }
