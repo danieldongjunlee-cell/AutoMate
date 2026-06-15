@@ -88,7 +88,7 @@ const SEED_BOOKINGS: AppBooking[] = [
     day: '7',
     time: '8:00 AM',
     priceLabel: '$49',
-    status: 'paid',
+    status: 'confirmed',
     createdAt: 1,
   },
   {

@@ -1,68 +1,49 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 
 import { CommunityStackParamList } from '../../navigation/types';
-import { CHANNELS, Channel } from '../../services/mock/data';
-import { communityService } from '../../services';
-import { Screen } from '../../components/ui';
+import { brandChannels } from '../../services/mock/communityChannels';
+import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 
-/** Wireframe s-comm-channels: brand channels list + points banner. */
+/** Wireframe s-comm-channels: communities for the user's active car brand only. */
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const { brand } = useActiveVehicle();
   const [query, setQuery] = useState('');
-  const { data: channels } = useQuery({
-    queryKey: ['channels'],
-    queryFn: communityService.getChannels,
-  });
 
-  const brandLc = brand.toLowerCase();
+  // Sub-communities are derived purely from the active brand, so switching cars
+  // (Honda ↔ Toyota ↔ Kia) swaps the entire list to that brand's communities.
+  const channels = useMemo(() => brandChannels(brand), [brand]);
 
-  // The active car's brand drives which channel is "joined": override the static
-  // `joined` flag so switching cars (Honda↔Toyota) moves the highlight.
-  const baseChannels = channels ?? CHANNELS;
-  const withActiveBrand: Channel[] = baseChannels.map((channel) => ({
-    ...channel,
-    joined: channel.name.toLowerCase().includes(brandLc),
-  }));
-
-  // If no channel matches the active brand, synthesize a joined one so the active
-  // car always has a feed to land on.
-  const hasBrandChannel = withActiveBrand.some((channel) => channel.joined);
-  const allChannels: Channel[] = hasBrandChannel
-    ? withActiveBrand
-    : [
-        {
-          id: `brand-${brandLc}`,
-          name: `${brand} Owners`,
-          initial: brand.charAt(0).toUpperCase(),
-          color: colors.primary,
-          members: 0,
-          joined: true,
-        },
-        ...withActiveBrand,
-      ];
-
-  // Joined (active brand) channel sorts to the top.
-  const sortedChannels = [...allChannels].sort(
-    (a, b) => Number(b.joined) - Number(a.joined),
+  // Joined membership is local-only (no backend). Seed the first community as
+  // joined so the active brand always has somewhere to land.
+  const [joinedIds, setJoinedIds] = useState<Set<string>>(
+    () => new Set(channels.length ? [channels[0].id] : []),
   );
+
+  const toggleJoined = (id: string) => {
+    setJoinedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const q = query.trim().toLowerCase();
   const filteredChannels = q
-    ? sortedChannels.filter((channel) => channel.name.toLowerCase().includes(q))
-    : sortedChannels;
+    ? channels.filter((channel) => channel.name.toLowerCase().includes(q))
+    : channels;
 
   return (
     <Screen>
@@ -94,105 +75,100 @@ export function CommChannelsScreen() {
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Search posts, channels, owners…"
+          placeholder={`Search ${brand} communities…`}
           placeholderTextColor={colors.textTertiary}
           style={{ flex: 1, fontSize: 13, color: colors.textPrimary, padding: 0 }}
         />
       </View>
+
+      {/* Explanatory banner — scopes the list to the active brand. */}
+      <Card tinted style={{ padding: spacing.md, marginBottom: spacing.md }}>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDeep }}>
+          These are communities for your {brand}.
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.primaryDark, marginTop: 2 }}>
+          You can join communities for your registered car&apos;s brand — switch cars to see another
+          brand&apos;s communities.
+        </Text>
+      </Card>
 
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: spacing.md,
+          marginBottom: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
-          Brand channels
-        </Text>
-        <View
-          style={{
-            backgroundColor: colors.primarySurface,
-            borderRadius: radii.pill,
-            paddingHorizontal: 11,
-            paddingVertical: 4,
-          }}
-        >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>2.4k active</Text>
-        </View>
+        <SectionLabel style={{ marginBottom: 0 }}>{brand} communities</SectionLabel>
+        <Badge label={`${filteredChannels.length} channels`} variant="primarySoft" />
       </View>
 
       {filteredChannels.length === 0 ? (
         <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
-          No results for “{query.trim()}”
+          No {brand} communities match “{query.trim()}”
         </Text>
       ) : null}
 
-      {filteredChannels.map((channel) => (
-        <Tappable
-          key={channel.id}
-          onPress={() =>
-            channel.joined
-              ? navigation.navigate('CommHonda')
-              : Alert.alert('Join channel', `Joining ${channel.name} comes with the backend.`)
-          }
-          style={({ pressed }) => ({
-            backgroundColor: channel.joined ? colors.primarySurface : colors.surface,
-            borderRadius: radii.md,
-            borderWidth: channel.joined ? 1.5 : StyleSheet.hairlineWidth,
-            borderColor: channel.joined ? colors.primary : colors.border,
-            padding: spacing.sm,
-            marginBottom: spacing.sm,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: radii.sm,
-              backgroundColor: channel.color,
+      {filteredChannels.map((channel) => {
+        const joined = joinedIds.has(channel.id);
+        return (
+          <Tappable
+            key={channel.id}
+            onPress={() => navigation.navigate('CommHonda')}
+            style={({ pressed }) => ({
+              backgroundColor: joined ? colors.primarySurface : colors.surface,
+              borderRadius: radii.md,
+              borderWidth: joined ? 1.5 : StyleSheet.hairlineWidth,
+              borderColor: joined ? colors.primary : colors.border,
+              padding: spacing.sm,
+              marginBottom: spacing.sm,
+              flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'center',
-            }}
+              gap: spacing.sm,
+              opacity: pressed ? 0.8 : 1,
+            })}
           >
-            <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>{channel.initial}</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text
+            <AvatarCircle initial={channel.initial} color={channel.color} size={40} />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: joined ? '600' : '500',
+                  color: joined ? colors.primaryDeep : colors.textPrimary,
+                }}
+              >
+                {channel.emoji} {channel.name}
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                {channel.members.toLocaleString()} members
+                {channel.newPosts ? ` · ${channel.newPosts} new posts` : ''}
+              </Text>
+            </View>
+            <Tappable
+              onPress={() => toggleJoined(channel.id)}
               style={{
-                fontSize: 15,
-                fontWeight: channel.joined ? '600' : '500',
-                color: channel.joined ? colors.primaryDeep : colors.textPrimary,
-              }}
-            >
-              {channel.name}
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {channel.members.toLocaleString()} members
-              {channel.newPosts ? ` · ${channel.newPosts} new posts` : ''}
-            </Text>
-          </View>
-          {!channel.joined && (
-            <View
-              style={{
-                backgroundColor: colors.surface,
+                backgroundColor: joined ? colors.primary : colors.surface,
                 borderRadius: radii.sm,
-                borderWidth: StyleSheet.hairlineWidth,
+                borderWidth: joined ? 0 : StyleSheet.hairlineWidth,
                 borderColor: colors.border,
                 paddingHorizontal: 12,
                 paddingVertical: 5,
               }}
             >
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>Join</Text>
-            </View>
-          )}
-        </Tappable>
-      ))}
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  color: joined ? colors.onPrimary : colors.textTertiary,
+                }}
+              >
+                {joined ? 'Joined' : 'Join'}
+              </Text>
+            </Tappable>
+          </Tappable>
+        );
+      })}
 
       <View
         style={{
@@ -207,7 +183,7 @@ export function CommChannelsScreen() {
       >
         <Text style={{ fontSize: 17 }}>💬</Text>
         <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
-          Share tips, ask questions, help fellow owners
+          Share tips, ask questions, help fellow {brand} owners
         </Text>
       </View>
     </Screen>

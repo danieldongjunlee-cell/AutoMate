@@ -57,7 +57,7 @@ type HomeFlowParamList = {
   ProSuccess: { returnTo?: 'BookDeposit' } | undefined;
   HowItWorks: undefined;
   DealerMap: { dealerId?: string } | undefined;
-  BundleDeals: undefined;
+  BundleDeals: { focus?: string } | undefined;
   Notifications: undefined;
 };
 

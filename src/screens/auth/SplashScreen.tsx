@@ -122,6 +122,22 @@ export function SplashScreen() {
         ))}
       </View>
 
+      {/* ToS / Privacy disclaimer — light/translucent on the navy background. */}
+      <Text
+        style={{
+          fontSize: 12,
+          lineHeight: 18,
+          color: 'rgba(255,255,255,.5)',
+          textAlign: 'center',
+          marginTop: spacing.lg,
+        }}
+      >
+        By continuing, you agree to our{' '}
+        <Text style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}>Terms of Service</Text>
+        {' & '}
+        <Text style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}>Privacy Policy</Text>.
+      </Text>
+
       <SocialSignInSheet
         provider={sheetProvider}
         onClose={() => setSheetProvider(null)}

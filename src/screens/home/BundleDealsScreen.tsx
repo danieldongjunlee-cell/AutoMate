@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -100,6 +100,8 @@ export function BundleDealsScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
+  // The home ad-banner that was tapped highlights its matching deal.
+  const focus = (useRoute().params as { focus?: string } | undefined)?.focus;
 
   const claim = (dealerId: string) => {
     startBooking(dealerId);
@@ -119,8 +121,8 @@ export function BundleDealsScreen() {
           style={{
             backgroundColor: colors.surface,
             borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: deal.borderColor,
+            borderWidth: focus === deal.dealerId ? 2 : StyleSheet.hairlineWidth,
+            borderColor: focus === deal.dealerId ? colors.primary : deal.borderColor,
             overflow: 'hidden',
             marginBottom: spacing.md,
           }}

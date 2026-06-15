@@ -41,10 +41,20 @@ export function HomeLauncherScreen() {
     </Tappable>
   );
 
-  const dealItem = (emoji: string, badge: string, badgeBg: string, badgeFg: string, title: string, sub: string) => (
+  const dealItem = (
+    emoji: string,
+    badge: string,
+    badgeBg: string,
+    badgeFg: string,
+    title: string,
+    sub: string,
+    bg: string,
+    border: string,
+    dealerId: string,
+  ) => (
     <Tappable
-      onPress={() => navigation.navigate('BundleDeals')}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, minHeight: 86 }}
+      onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.md, minHeight: 86 }}
     >
       <Text style={{ fontSize: 26 }}>{emoji}</Text>
       <View style={{ flex: 1 }}>
@@ -177,18 +187,18 @@ export function HomeLauncherScreen() {
       </Tappable>
 
       {/* Deals & offers — paged carousel (one at a time, dots) */}
-      <SectionLabel>Deals &amp; offers · Sponsored</SectionLabel>
+      <SectionLabel>{t('Deals & offers · Sponsored')}</SectionLabel>
       <PagedCarousel
         items={[
-          dealItem('🛢️', 'LIMITED · BUNDLE', colors.warningSurface, colors.warningDeep, 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40'),
-          dealItem('🔧', '20% OFF', colors.primarySurface, colors.primaryDeep, 'AutoFix Pro — new customer', 'Free inspection w/ any oil change'),
-          dealItem('🛡️', 'SPONSORED', colors.infoSurface, colors.infoDeep, 'Bundle auto + home insurance', 'Drivers near Fairfax save up to $612/yr'),
+          dealItem('🛢️', 'LIMITED · BUNDLE', colors.warning, palette.dark, 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', colors.warningSurface, colors.warning, 'honda-fairfax'),
+          dealItem('🔧', '20% OFF', colors.primary, '#fff', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', colors.primarySurface, colors.primary, 'autofix-pro'),
+          dealItem('🛡️', 'SPONSORED', colors.success, '#fff', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', colors.successSurface, colors.success, 'vienna-auto'),
         ]}
       />
       <View style={{ marginBottom: spacing.xl }} />
 
       {/* How it works */}
-      <SectionLabel>New here?</SectionLabel>
+      <SectionLabel>{t('New here?')}</SectionLabel>
       <Tappable
         onPress={() => navigation.navigate('HowItWorks')}
         style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
@@ -200,18 +210,7 @@ export function HomeLauncherScreen() {
         </View>
         <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
       </Tappable>
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {([
-          ['📷', '1 · Snap photos'],
-          ['⚖️', '2 · Compare quotes'],
-          ['📅', '3 · Book & save'],
-        ] as const).map(([emoji, label]) => (
-          <View key={label} style={{ flex: 1, alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, paddingVertical: spacing.sm }}>
-            <Text style={{ fontSize: 18, marginBottom: 2 }}>{emoji}</Text>
-            <Text style={{ fontSize: 10, fontWeight: '700', color: colors.textSecondary, textAlign: 'center' }}>{label}</Text>
-          </View>
-        ))}
-      </View>
+      <View style={{ marginBottom: spacing.lg }} />
 
       {/* Why choose */}
       <SectionLabel>{t('Why choose AutoMate?')}</SectionLabel>

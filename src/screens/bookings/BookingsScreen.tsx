@@ -9,8 +9,10 @@ import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { BookingsStackParamList } from '../../navigation/types';
+import { QUOTE_REQUEST, QUOTES } from '../../services/mock/data';
 import { AppBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { useT } from '../../i18n';
 
 type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 
@@ -18,10 +20,14 @@ type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const t = useT();
   const { brand } = useActiveVehicle();
   const allBookings = useAppStore((s) => s.bookings);
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
+  // Pending-quotes counts reflect the actual received quotes / dealers invited.
+  const quotesReceived = QUOTES.length;
+  const dealersInvited = QUOTE_REQUEST.shopsNotified;
 
   const openBooking = (b: AppBooking) => {
     if (b.kind === 'maintenance') {
@@ -86,7 +92,7 @@ export function BookingsScreen() {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Bookings</Text>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             Scheduled services & pending quotes
           </Text>
@@ -108,12 +114,12 @@ export function BookingsScreen() {
         </Tappable>
       </View>
 
-      <SectionLabel>Scheduled services</SectionLabel>
+      <SectionLabel>{t('Scheduled services')}</SectionLabel>
       {bookings.length === 0 ? (
         <Card style={{ padding: spacing.xl, alignItems: 'center', marginBottom: spacing.md }}>
           <Text style={{ fontSize: 28, marginBottom: 6 }}>📅</Text>
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-            No bookings yet
+            {t('No bookings yet')}
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2, textAlign: 'center' }}>
             Book a repair or schedule a service and it will show up here.
@@ -166,7 +172,7 @@ export function BookingsScreen() {
           marginTop: spacing.sm,
         }}
       >
-        <SectionLabel>Pending quotes</SectionLabel>
+        <SectionLabel>{t('Pending quotes')}</SectionLabel>
         <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primaryDark }}>1 active</Text>
       </View>
       <Card tinted style={{ padding: spacing.md, borderColor: colors.primaryLight, borderWidth: 1 }}>
@@ -176,22 +182,22 @@ export function BookingsScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>Rear bumper dent</Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>Requested Apr 3 · 8 dealers invited</Text>
+            <Text style={{ fontSize: 11, color: colors.textTertiary }}>Requested Apr 3 · {dealersInvited} dealers invited</Text>
           </View>
-          <Badge label="3 new" variant="warning" />
+          <Badge label={`${quotesReceived} new`} variant="warning" />
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: spacing.sm }}>
           <View style={{ flex: 1, height: 5, backgroundColor: colors.surfaceAlt, borderRadius: 3, overflow: 'hidden' }}>
-            <View style={{ width: '38%', height: '100%', backgroundColor: colors.primary }} />
+            <View style={{ width: `${Math.round((quotesReceived / dealersInvited) * 100)}%`, height: '100%', backgroundColor: colors.primary }} />
           </View>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>3 of 8 quoted</Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{quotesReceived} of {dealersInvited} quoted</Text>
         </View>
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           <Tappable
             onPress={() => navigateCrossTab(navigation, 'HomeTab', 'DealerQuotes')}
             style={{ flex: 2, backgroundColor: colors.primary, borderRadius: radii.sm, paddingVertical: 10, alignItems: 'center' }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Review 3 new quotes →</Text>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Review {quotesReceived} new quotes →</Text>
           </Tappable>
           <Tappable
             onPress={() => navigateCrossTab(navigation, 'HomeTab', 'AllQuotesMap')}
