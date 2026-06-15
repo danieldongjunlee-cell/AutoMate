@@ -81,6 +81,7 @@ import {
 } from '../screens/profile/ProfMiscScreens';
 import { ProfPaymentScreen } from '../screens/profile/ProfPaymentScreen';
 import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
+import { useT } from '../i18n';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
@@ -325,6 +326,7 @@ const TAB_COMPONENTS: Record<keyof MainTabParamList, React.ComponentType> = {
 
 export function MainTabs() {
   const theme = useTheme();
+  const t = useT();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -345,7 +347,7 @@ export function MainTabs() {
           name={name}
           component={TAB_COMPONENTS[name]}
           options={{
-            tabBarLabel: label,
+            tabBarLabel: t(label),
             tabBarIcon: ({ color }) => <TabIcon tab={name} color={color} />,
           }}
         />

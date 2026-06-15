@@ -13,6 +13,7 @@ import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKING_MONTH, dealerById, QUOTES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
+import { useDistance } from '../../i18n';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookingConfirm'>;
@@ -29,6 +30,7 @@ export function BookingConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
+  const dist = useDistance();
   const reminderPref = useAppStore((s) => s.reminderPref);
 
   const dealer = dealerById(route.params?.dealerId);
@@ -83,7 +85,7 @@ export function BookingConfirmScreen() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-                {dealer.distanceMi} mi away ·{' '}
+                {dist.format(dealer.distanceMi)} away ·{' '}
               </Text>
               <RatingLink dealer={dealer} />
             </View>

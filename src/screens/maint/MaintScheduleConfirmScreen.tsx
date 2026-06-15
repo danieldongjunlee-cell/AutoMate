@@ -13,6 +13,7 @@ import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
+import { useDistance } from '../../i18n';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
@@ -22,6 +23,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>
 export function MaintScheduleConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const dist = useDistance();
   const clearCart = useAppStore((s) => s.clearCart);
 
   // Snapshot once on mount: keeps the summary stable while Done clears the
@@ -87,7 +89,7 @@ export function MaintScheduleConfirmScreen() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-                {dealer.distanceMi} mi ·{' '}
+                {dist.format(dealer.distanceMi)} ·{' '}
               </Text>
               <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
             </View>

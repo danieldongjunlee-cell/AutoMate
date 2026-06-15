@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
 
+import { useDistance } from '../i18n';
 import { Dealer } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
 import { RatingLink } from './RatingLink';
@@ -23,6 +24,7 @@ export function DealerCard({
   onPress: () => void;
 }) {
   const { colors } = useTheme();
+  const dist = useDistance();
   const open = dealer.openStatus === 'Open';
   return (
     <Tappable
@@ -56,7 +58,7 @@ export function DealerCard({
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
             <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {dealer.distanceMi} mi ·{' '}
+              {dist.format(dealer.distanceMi)} ·{' '}
             </Text>
             {/* Tappable rating → Google reviews (feedback pass 2) */}
             <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />

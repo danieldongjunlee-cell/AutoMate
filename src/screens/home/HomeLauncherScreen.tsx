@@ -9,6 +9,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useT } from '../../i18n';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
@@ -20,6 +21,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeLauncher'>;
 export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const t = useT();
   const { vehicles, active, brand } = useActiveVehicle();
   const checkedIn = useAppStore((s) => s.dailyCheckedIn);
   const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
@@ -144,20 +146,20 @@ export function HomeLauncherScreen() {
           style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
         >
           <Text style={{ fontSize: 30, marginBottom: 6 }}>📷</Text>
-          <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Get an AI Repair Estimate</Text>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>{t('Get an AI Repair Estimate')}</Text>
           <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)', marginBottom: spacing.sm }}>
             Snap a few photos → local dealers send real quotes → book or call in minutes
           </Text>
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 15, paddingVertical: 8 }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>Start now →</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>{t('Start now →')}</Text>
           </View>
         </LinearGradient>
       </Tappable>
 
       {/* Maintenance / Compare */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {tile('🔧', colors.successSurface, 'Maintenance', 'Track & book service', () => navigation.navigate('MaintDashboard'))}
-        {tile('⚖️', colors.warningSurface, 'Compare Costs', 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
+        {tile('🔧', colors.successSurface, t('Maintenance'), 'Track & book service', () => navigation.navigate('MaintDashboard'))}
+        {tile('⚖️', colors.warningSurface, t('Compare Costs'), 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
       </View>
 
       {/* Deals & offers */}
@@ -206,7 +208,7 @@ export function HomeLauncherScreen() {
       </View>
 
       {/* Why choose */}
-      <SectionLabel>Why choose AutoMate?</SectionLabel>
+      <SectionLabel>{t('Why choose AutoMate?')}</SectionLabel>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
         {why('💸', 'Shops compete', 'Local shops bid for your repair — you pick the best')}
         {why('🤝', 'No upfront pay', 'Book now, pay the shop after the work')}
@@ -228,7 +230,7 @@ export function HomeLauncherScreen() {
       </Tappable>
 
       {/* Real customer reviews — horizontally scrollable photo reviews */}
-      <SectionLabel style={{ marginTop: spacing.md }}>Real customer reviews</SectionLabel>
+      <SectionLabel style={{ marginTop: spacing.md }}>{t('Real customer reviews')}</SectionLabel>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

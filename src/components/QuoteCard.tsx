@@ -5,6 +5,7 @@ import { Tappable } from './Tappable';
 
 import { Dealer, Quote } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
+import { useDistance } from '../i18n';
 import { RatingLink } from './RatingLink';
 import { AvatarCircle } from './ui';
 
@@ -21,6 +22,7 @@ export function QuoteCard({
   onAccept: () => void;
 }) {
   const { colors } = useTheme();
+  const dist = useDistance();
   return (
     <View
       style={{
@@ -42,7 +44,7 @@ export function QuoteCard({
             {/* Tappable rating → Google reviews (feedback pass 2) */}
             <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 13 }} />
             <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-              {' '}· {dealer.distanceMi} mi
+              {' '}· {dist.format(dealer.distanceMi)}
             </Text>
           </View>
         </View>
