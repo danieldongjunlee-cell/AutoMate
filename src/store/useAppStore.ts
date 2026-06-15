@@ -38,6 +38,19 @@ const defaultCart = (dealerId: string): BookingCart => {
 
 const SEED_POINTS = 420;
 
+/** Refundable booking deposit (v17 book-deposit). Repair bookings hold $25;
+ *  maintenance bookings need none, and Pro members are always waived. */
+export const DEPOSIT_CENTS = 2500;
+export const depositForBooking = (kind: 'repair' | 'maintenance', isPro: boolean): number =>
+  kind === 'maintenance' || isPro ? 0 : DEPOSIT_CENTS;
+
+/** v17 Pro plans (annual ≈ $3.25/mo; monthly $4.99). 1 pt = $0.01 economy. */
+export const PRO_PLANS = {
+  annual: { id: 'annual' as const, priceCents: 3900, label: 'Annual', per: '$3.25/mo' },
+  monthly: { id: 'monthly' as const, priceCents: 499, label: 'Monthly', per: '$4.99/mo' },
+};
+export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
+
 /**
  * One damaged part in the multi-part request (wireframe v15.10 single-select
  * loop: pick one part → photo guide → camera tags type + photos → confirm
@@ -96,9 +109,22 @@ interface AppState {
   /** Set the absolute balance (api mode reconciles from server responses). */
   setPoints: (n: number) => void;
 
-  // AutoMate Pro membership ($10 lifetime — diy-unlock chain)
+  // AutoMate Pro (v17): subscription (annual/monthly) that includes DIY +
+  // waives booking deposits, OR a separate $10 one-time DIY-only unlock.
   isPro: boolean;
-  unlockPro: () => void;
+  proPlan: 'annual' | 'monthly' | null;
+  diyUnlocked: boolean; // true via Pro OR the $10 DIY-only purchase
+  unlockPro: () => void; // legacy entry — defaults to annual
+  subscribePro: (plan: 'annual' | 'monthly') => void;
+  unlockDiyOnly: () => void;
+
+  // No-show strikes (booking agreement: 3 strikes removes the account)
+  noShowCount: number;
+  addNoShow: () => void;
+
+  // Active vehicle (v17 car switcher — shown when >2 cars registered)
+  activeVehicleId: string | null;
+  setActiveVehicle: (id: string) => void;
 
   // Damage flow: committed parts + the in-progress draft (one part per pass)
   damageParts: DamagePart[];
@@ -158,6 +184,10 @@ export const useAppStore = create<AppState>((set) => ({
       cart: emptyCart,
       points: SEED_POINTS,
       isPro: false,
+      proPlan: null,
+      diyUnlocked: false,
+      noShowCount: 0,
+      activeVehicleId: null,
     }),
 
   darkMode: false,
@@ -173,7 +203,18 @@ export const useAppStore = create<AppState>((set) => ({
   setPoints: (points) => set({ points }),
 
   isPro: false,
-  unlockPro: () => set({ isPro: true }),
+  proPlan: null,
+  diyUnlocked: false,
+  // Pro includes DIY guides, so unlocking Pro also flips diyUnlocked.
+  unlockPro: () => set({ isPro: true, proPlan: 'annual', diyUnlocked: true }),
+  subscribePro: (plan) => set({ isPro: true, proPlan: plan, diyUnlocked: true }),
+  unlockDiyOnly: () => set({ diyUnlocked: true }),
+
+  noShowCount: 0,
+  addNoShow: () => set((s) => ({ noShowCount: s.noShowCount + 1 })),
+
+  activeVehicleId: null,
+  setActiveVehicle: (activeVehicleId) => set({ activeVehicleId }),
 
   damageParts: [],
   ...emptyDraft,
