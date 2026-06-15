@@ -7,6 +7,7 @@ import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, Screen } from '../../components/ui';
+import { SubmitProgress } from '../../components/SubmitProgress';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { QUOTE_REQUEST } from '../../services/mock/data';
@@ -32,6 +33,7 @@ export function SubmittedScreen() {
 
   return (
     <Screen>
+      <SubmitProgress step={3} left="Submitted" right="Done 🎉" />
       {/* Success header */}
       <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
         <View

@@ -274,23 +274,30 @@ export const CAR_PART_ROWS: PartCell[][] = [
     { name: 'R. Fender', kind: 'fender' },
   ],
   [
-    { name: 'L. Door', kind: 'door' },
+    { name: 'L. Front door', kind: 'door' },
     { name: 'Windshield', kind: 'panel' },
-    { name: 'R. Door', kind: 'door' },
+    { name: 'R. Front door', kind: 'door' },
+  ],
+  [
+    { name: 'L. Step', kind: 'panel' },
+    { name: 'Roof', kind: 'panel' },
+    { name: 'R. Step', kind: 'panel' },
   ],
   [
     { name: 'L. Rear door', kind: 'door' },
-    { name: 'Roof', kind: 'panel' },
+    { name: 'Trunk', kind: 'panel' },
     { name: 'R. Rear door', kind: 'door' },
   ],
-  [{ name: 'Rear window', kind: 'panel' }],
   [
     { name: 'L. Rear fender', kind: 'fender' },
-    { name: 'Trunk', kind: 'panel' },
+    { name: 'Rear glass', kind: 'panel' },
     { name: 'R. Rear fender', kind: 'fender' },
   ],
   [{ name: 'Rear bumper', kind: 'bumper' }],
 ];
+
+/** Extra parts reached via the s-car-diagram "Side mirror / Glass / Wheel / Light" button. */
+export const SIDE_MISC_PART = 'Side mirror / Glass / Wheel / Light';
 
 /** Damage-type chips on s-camera (tagged at capture time in v15.10). */
 export const DAMAGE_TYPES = ['Dent', 'Scratch', 'Crack', 'Paint'];

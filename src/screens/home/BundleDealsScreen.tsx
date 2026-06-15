@@ -100,7 +100,7 @@ export function BundleDealsScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
-  // The home ad-banner that was tapped highlights its matching deal.
+  // The home ad-banner that was tapped opens that one deal's detail.
   const focus = (useRoute().params as { focus?: string } | undefined)?.focus;
 
   const claim = (dealerId: string) => {
@@ -109,141 +109,167 @@ export function BundleDealsScreen() {
     navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleBook');
   };
 
-  return (
-    <Screen>
-      <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
-        Exclusive deals from AutoMate partner dealerships · This week only
-      </Text>
+  // Clear the focus to fall back to the full list (← See all deals).
+  const clearFocus = () =>
+    (navigation.setParams as unknown as (params: { focus?: string }) => void)({
+      focus: undefined,
+    });
 
-      {DEALS.map((deal) => (
+  // When focused on a single deal (e.g. tapped ad banner), show only that one.
+  const focusedDeal = focus ? DEALS.find((d) => d.dealerId === focus) : undefined;
+  const visibleDeals = focusedDeal ? [focusedDeal] : DEALS;
+  const isDetail = !!focusedDeal;
+
+  const renderDeal = (deal: Deal) => (
+    <View
+      key={deal.dealerId}
+      style={{
+        backgroundColor: colors.surface,
+        borderRadius: radii.md,
+        borderWidth: isDetail ? 2 : StyleSheet.hairlineWidth,
+        borderColor: isDetail ? colors.primary : deal.borderColor,
+        overflow: 'hidden',
+        marginBottom: spacing.md,
+      }}
+    >
+      {/* Header */}
+      <LinearGradient
+        colors={deal.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          padding: spacing.md,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+        }}
+      >
         <View
-          key={deal.dealerId}
           style={{
-            backgroundColor: colors.surface,
-            borderRadius: radii.md,
-            borderWidth: focus === deal.dealerId ? 2 : StyleSheet.hairlineWidth,
-            borderColor: focus === deal.dealerId ? colors.primary : deal.borderColor,
-            overflow: 'hidden',
-            marginBottom: spacing.md,
+            width: 44,
+            height: 44,
+            borderRadius: radii.sm,
+            backgroundColor: deal.avatarColor,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          {/* Header */}
-          <LinearGradient
-            colors={deal.headerGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>{deal.initial}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>{deal.name}</Text>
+          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>{deal.sub}</Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: deal.badgeBg,
+            borderRadius: radii.pill,
+            paddingHorizontal: 10,
+            paddingVertical: 3,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '700', color: deal.badgeFg }}>{deal.badge}</Text>
+        </View>
+      </LinearGradient>
+
+      {/* Body */}
+      <View style={{ padding: spacing.md }}>
+        {deal.body ? (
+          <Text
             style={{
-              padding: spacing.md,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
+              fontSize: 14,
+              color: colors.textSecondary,
+              lineHeight: 21,
+              marginBottom: deal.cells.length ? spacing.sm : spacing.md,
             }}
           >
-            <View
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: radii.sm,
-                backgroundColor: deal.avatarColor,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>{deal.initial}</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>{deal.name}</Text>
-              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>{deal.sub}</Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: deal.badgeBg,
-                borderRadius: radii.pill,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 12, fontWeight: '700', color: deal.badgeFg }}>
-                {deal.badge}
-              </Text>
-            </View>
-          </LinearGradient>
-
-          {/* Body */}
-          <View style={{ padding: spacing.md }}>
-            {deal.body ? (
-              <Text
+            {deal.body}
+          </Text>
+        ) : null}
+        {deal.cells.length > 0 && (
+          <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md }}>
+            {deal.cells.map((cell) => (
+              <View
+                key={cell.label}
                 style={{
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                  lineHeight: 21,
-                  marginBottom: deal.cells.length ? spacing.sm : spacing.md,
+                  flex: 1,
+                  backgroundColor: cell.highlight ? colors.successSurface : colors.surface,
+                  borderRadius: radii.sm,
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: cell.highlight ? colors.success : colors.border,
+                  paddingVertical: spacing.sm,
+                  alignItems: 'center',
                 }}
               >
-                {deal.body}
-              </Text>
-            ) : null}
-            {deal.cells.length > 0 && (
-              <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md }}>
-                {deal.cells.map((cell) => (
-                  <View
-                    key={cell.label}
-                    style={{
-                      flex: 1,
-                      backgroundColor: cell.highlight ? colors.successSurface : colors.surface,
-                      borderRadius: radii.sm,
-                      borderWidth: StyleSheet.hairlineWidth,
-                      borderColor: cell.highlight ? colors.success : colors.border,
-                      paddingVertical: spacing.sm,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: cell.highlight ? colors.successDeep : colors.textTertiary,
-                        marginBottom: 2,
-                      }}
-                    >
-                      {cell.label}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '700',
-                        color: cell.highlight ? colors.successDeep : colors.textPrimary,
-                      }}
-                    >
-                      {cell.price}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        color: cell.highlight ? colors.successDark : colors.textPlaceholder,
-                        textDecorationLine: cell.highlight ? 'none' : 'line-through',
-                      }}
-                    >
-                      {cell.was}
-                    </Text>
-                  </View>
-                ))}
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: cell.highlight ? colors.successDeep : colors.textTertiary,
+                    marginBottom: 2,
+                  }}
+                >
+                  {cell.label}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: '700',
+                    color: cell.highlight ? colors.successDeep : colors.textPrimary,
+                  }}
+                >
+                  {cell.price}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 11,
+                    color: cell.highlight ? colors.successDark : colors.textPlaceholder,
+                    textDecorationLine: cell.highlight ? 'none' : 'line-through',
+                  }}
+                >
+                  {cell.was}
+                </Text>
               </View>
-            )}
-            <Tappable
-              onPress={() => claim(deal.dealerId)}
-              style={({ pressed }) => ({
-                backgroundColor: deal.ctaBg,
-                borderRadius: radii.sm,
-                paddingVertical: 12,
-                alignItems: 'center',
-                opacity: pressed ? 0.8 : 1,
-              })}
-            >
-              <Text style={{ fontSize: 15, fontWeight: '700', color: deal.ctaFg }}>{deal.cta}</Text>
-            </Tappable>
+            ))}
           </View>
-        </View>
-      ))}
+        )}
+        <Tappable
+          onPress={() => claim(deal.dealerId)}
+          style={({ pressed }) => ({
+            backgroundColor: deal.ctaBg,
+            borderRadius: radii.sm,
+            paddingVertical: 12,
+            alignItems: 'center',
+            opacity: pressed ? 0.8 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 15, fontWeight: '700', color: deal.ctaFg }}>{deal.cta}</Text>
+        </Tappable>
+      </View>
+    </View>
+  );
+
+  return (
+    <Screen>
+      {isDetail ? (
+        <Tappable
+          onPress={clearFocus}
+          style={({ pressed }) => ({
+            alignSelf: 'flex-start',
+            marginBottom: spacing.md,
+            opacity: pressed ? 0.6 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
+            ← See all deals
+          </Text>
+        </Tappable>
+      ) : (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+          Exclusive deals from AutoMate partner dealerships · This week only
+        </Text>
+      )}
+
+      {visibleDeals.map((deal) => renderDeal(deal))}
     </Screen>
   );
 }

@@ -7,6 +7,7 @@ import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, SectionLabel, Screen } from '../../components/ui';
+import { SubmitProgress } from '../../components/SubmitProgress';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services';
@@ -256,6 +257,7 @@ export function ConfirmSubmitScreen() {
 
   return (
     <Screen>
+      <SubmitProgress step={2} left="Confirm parts" right="Almost there" />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <SectionLabel>Parts selected ({damageParts.length})</SectionLabel>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 2 of 2</Text>
@@ -283,7 +285,7 @@ export function ConfirmSubmitScreen() {
             }}
             onAddPhotos={() => {
               pickPart(item.part);
-              navigation.navigate('Camera');
+              navigation.navigate('CarDiagram');
             }}
             onRemove={() => removePart(i)}
           />

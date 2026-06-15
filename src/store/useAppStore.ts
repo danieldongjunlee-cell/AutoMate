@@ -359,7 +359,7 @@ export const useAppStore = create<AppState>((set) => ({
         : [...s.draftTypes, t],
     })),
   setDraftNote: (draftNote) => set({ draftNote }),
-  addDraftPhoto: (uri) => set((s) => (s.draftPhotos.length >= 5 ? {} : { draftPhotos: [...s.draftPhotos, uri] })),
+  addDraftPhoto: (uri) => set((s) => (s.draftPhotos.length >= 10 ? {} : { draftPhotos: [...s.draftPhotos, uri] })),
   commitDraftPart: () =>
     set((s) => {
       if (!s.draftPart || s.draftPhotos.length < 1) return {};
