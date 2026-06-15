@@ -7,7 +7,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // Pooled connection for the app (Supabase PgBouncer / transaction mode).
   url      = env("DATABASE_URL")
+  // Direct (non-pooled) connection for migrations + introspection. Locally this
+  // can equal DATABASE_URL; on Supabase it must be the direct 5432 connection.
+  directUrl = env("DIRECT_URL")
 }
 
 // ── Auth + profile ─────────────────────────────────────────────────────
