@@ -1,13 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { TextInput, Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { radii, spacing, useTheme } from '../../theme';
+import { useAppStore } from '../../store/useAppStore';
+import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'WriteReview'>;
 const LABELS = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
@@ -16,7 +17,19 @@ const LABELS = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
 export function WriteReviewScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const addReview = useAppStore((s) => s.addReview);
   const [stars, setStars] = useState(5);
+  const [body, setBody] = useState('');
+
+  const onPost = () => {
+    addReview({
+      stars,
+      body: body.trim() || 'Great experience — the price matched my quote and the work was solid.',
+      dealerName: 'Honda Fairfax Service',
+      meta: 'Rear bumper · Apr 2027',
+    });
+    navigation.navigate('Reviews');
+  };
 
   return (
     <Screen>
@@ -42,23 +55,27 @@ export function WriteReviewScreen() {
       </View>
 
       <SectionLabel>Your review</SectionLabel>
-      <View
+      <TextInput
+        value={body}
+        onChangeText={setBody}
+        multiline
+        placeholder="Was the price what you were quoted? How was the work and the wait?"
+        placeholderTextColor={palette.textPlaceholder}
         style={{
           borderWidth: 1,
           borderColor: colors.border,
           borderRadius: radii.sm,
           padding: spacing.md,
-          minHeight: 64,
+          minHeight: 96,
           marginBottom: spacing.md,
           backgroundColor: colors.surface,
+          fontSize: 13,
+          color: colors.textPrimary,
+          textAlignVertical: 'top',
         }}
-      >
-        <Text style={{ fontSize: 13, color: colors.textPlaceholder }}>
-          Was the price what you were quoted? How was the work and the wait?
-        </Text>
-      </View>
+      />
 
-      <PrimaryButton label="Post review →" onPress={() => navigation.navigate('Reviews')} />
+      <PrimaryButton label="Post review →" onPress={onPost} />
     </Screen>
   );
 }

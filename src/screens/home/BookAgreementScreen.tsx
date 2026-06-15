@@ -7,8 +7,8 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { depositForBooking } from '../../store/useAppStore';
-import { useAppStore } from '../../store/useAppStore';
+import { dealerById } from '../../services/mock/data';
+import { dateBadgeParts, depositForBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookAgreement'>;
@@ -20,6 +20,7 @@ export function BookAgreementScreen() {
   const { params } = useRoute<Rt>();
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
+  const addBooking = useAppStore((s) => s.addBooking);
   const [agreed, setAgreed] = useState(false);
 
   const kind = params?.kind ?? 'repair';
@@ -31,9 +32,26 @@ export function BookAgreementScreen() {
     if (!agreed) return;
     if (deposit > 0) {
       navigation.navigate('BookDeposit', { kind, dealerId: params?.dealerId, next, nextParams });
-    } else {
-      (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
+      return;
     }
+    // No deposit. Repair (Pro-waived) goes straight to confirmation, so record
+    // the booking here; maintenance still routes through payment (recorded there).
+    if (kind === 'repair') {
+      const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
+      addBooking({
+        kind: 'repair',
+        dealerId: params?.dealerId,
+        icon: '🚗',
+        title: 'Rear bumper repair',
+        dealerName: dealerById(params?.dealerId).name,
+        dateLabel,
+        ...dateBadgeParts(dateLabel),
+        time: nextParams?.time ?? '10:30 AM',
+        priceLabel: nextParams?.priceLabel ?? '$320–345',
+        status: 'confirmed',
+      });
+    }
+    (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
   };
 
   return (

@@ -139,7 +139,16 @@ export function ProfSettingsScreen() {
         <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>Sign out</Text>
       </Tappable>
       <Tappable
-        onPress={() => Alert.alert('Delete account', 'Account deletion comes with the backend.')}
+        onPress={() =>
+          Alert.alert(
+            'Delete account',
+            'This permanently deletes your AutoMate account and clears all local data. This cannot be undone.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Delete account', style: 'destructive', onPress: () => signOut() },
+            ],
+          )
+        }
         style={{ alignItems: 'center', marginBottom: spacing.sm }}
       >
         <Text style={{ fontSize: 13, color: colors.disabled }}>Delete account</Text>

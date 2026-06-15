@@ -7,6 +7,7 @@ import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { BookingsStackParamList } from '../../navigation/types';
+import { AppBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
@@ -15,37 +16,57 @@ type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const bookings = useAppStore((s) => s.bookings);
 
-  const dateBadge = (mon: string, day: string, fg: string, bg: string) => (
-    <View style={{ width: 34, height: 34, borderRadius: 9, backgroundColor: bg, alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: 7, fontWeight: '700', color: fg, textTransform: 'uppercase' }}>{mon}</Text>
-      <Text style={{ fontSize: 12, fontWeight: '800', color: fg, lineHeight: 13 }}>{day}</Text>
-    </View>
-  );
+  const openBooking = (b: AppBooking) => {
+    if (b.kind === 'maintenance') {
+      navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleConfirm');
+    } else {
+      navigateCrossTab(navigation, 'HomeTab', 'BookingConfirm', {
+        dealerId: b.dealerId,
+        dateLabel: b.dateLabel,
+        time: b.time,
+        priceLabel: b.priceLabel,
+      });
+    }
+  };
 
-  const serviceRow = (
-    badge: React.ReactNode,
-    title: string,
-    sub: string,
-    price: string,
-    status: React.ReactNode,
-    go: () => void,
-  ) => (
-    <Tappable
-      onPress={go}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.sm, marginBottom: spacing.sm }}
-    >
-      {badge}
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>{title}</Text>
-        <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
+  const dateBadge = (b: AppBooking) => {
+    const paid = b.status === 'paid';
+    return (
+      <View
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: 9,
+          backgroundColor: paid ? colors.successSurface : colors.warningSurface,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 7,
+            fontWeight: '700',
+            color: paid ? colors.successDeep : colors.warningDeep,
+            textTransform: 'uppercase',
+          }}
+        >
+          {b.mon}
+        </Text>
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: '800',
+            color: paid ? colors.successDeep : colors.warningDeep,
+            lineHeight: 13,
+          }}
+        >
+          {b.day}
+        </Text>
       </View>
-      <View style={{ alignItems: 'flex-end' }}>
-        <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>{price}</Text>
-        {status}
-      </View>
-    </Tappable>
-  );
+    );
+  };
 
   return (
     <Screen>
@@ -54,38 +75,54 @@ export function BookingsScreen() {
         Scheduled services & pending quotes
       </Text>
 
-      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary, textAlign: 'center', marginBottom: spacing.sm }}>
-          April 2027
-        </Text>
-        <View style={{ flexDirection: 'row', gap: spacing.md, justifyContent: 'center' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: colors.success }} />
-            <Text style={{ fontSize: 11, color: colors.textSecondary }}>Oil change · Apr 7</Text>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: colors.warning }} />
-            <Text style={{ fontSize: 11, color: colors.textSecondary }}>Rear bumper · Apr 12</Text>
-          </View>
-        </View>
-      </Card>
-
-      <SectionLabel>Scheduled services</SectionLabel>
-      {serviceRow(
-        dateBadge('Apr', '7', colors.successDeep, colors.successSurface),
-        '🛢️ Oil change',
-        'Honda Fairfax · Mon 8:00 AM',
-        '$49',
-        <Badge label="Paid" variant="success" />,
-        () => navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleConfirm'),
-      )}
-      {serviceRow(
-        dateBadge('Apr', '12', colors.warningDeep, colors.warningSurface),
-        '🚗 Rear bumper repair',
-        'Honda Fairfax · Thu 10:30 AM',
-        '$320–345',
-        <Badge label="Confirmed" variant="warning" />,
-        () => navigateCrossTab(navigation, 'HomeTab', 'BookingConfirm'),
+      <SectionLabel>Your bookings</SectionLabel>
+      {bookings.length === 0 ? (
+        <Card style={{ padding: spacing.xl, alignItems: 'center', marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 28, marginBottom: 6 }}>📅</Text>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
+            No bookings yet
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2, textAlign: 'center' }}>
+            Book a repair or schedule a service and it will show up here.
+          </Text>
+        </Card>
+      ) : (
+        bookings.map((b) => (
+          <Tappable
+            key={b.id}
+            onPress={() => openBooking(b)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.sm,
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: radii.md,
+              padding: spacing.sm,
+              marginBottom: spacing.sm,
+            }}
+          >
+            {dateBadge(b)}
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
+                {b.icon} {b.title}
+              </Text>
+              <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                {b.dealerName} · {b.dateLabel} · {b.time}
+              </Text>
+            </View>
+            <View style={{ alignItems: 'flex-end', gap: 3 }}>
+              <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
+                {b.priceLabel}
+              </Text>
+              <Badge
+                label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
+                variant={b.status === 'paid' ? 'success' : 'warning'}
+              />
+            </View>
+          </Tappable>
+        ))
       )}
 
       <SectionLabel style={{ marginTop: spacing.sm }}>Pending quotes</SectionLabel>

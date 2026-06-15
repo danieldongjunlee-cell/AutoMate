@@ -52,6 +52,78 @@ export const PRO_PLANS = {
 export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
 
 /**
+ * A booking the user has made (v17 Bookings tab). Persisted client-side so a
+ * completed repair/maintenance booking actually shows up in the Bookings tab
+ * and can be reopened. Seeded with two demo entries so the tab isn't empty.
+ */
+export interface AppBooking {
+  id: string;
+  kind: 'repair' | 'maintenance';
+  dealerId?: string;
+  icon: string;
+  title: string;
+  dealerName: string;
+  dateLabel: string; // "Thu, Apr 12"
+  mon: string; // "Apr"
+  day: string; // "12"
+  time: string; // "10:30 AM"
+  priceLabel: string; // "$320–345" / "$49"
+  status: 'confirmed' | 'paid';
+  createdAt: number;
+}
+
+const SEED_BOOKINGS: AppBooking[] = [
+  {
+    id: 'bk-seed-oil',
+    kind: 'maintenance',
+    dealerId: 'honda-fairfax',
+    icon: '🛢️',
+    title: 'Oil change',
+    dealerName: 'Honda Fairfax',
+    dateLabel: 'Mon, Apr 7',
+    mon: 'Apr',
+    day: '7',
+    time: '8:00 AM',
+    priceLabel: '$49',
+    status: 'paid',
+    createdAt: 1,
+  },
+  {
+    id: 'bk-seed-bumper',
+    kind: 'repair',
+    dealerId: 'honda-fairfax',
+    icon: '🚗',
+    title: 'Rear bumper repair',
+    dealerName: 'Honda Fairfax',
+    dateLabel: 'Thu, Apr 12',
+    mon: 'Apr',
+    day: '12',
+    time: '10:30 AM',
+    priceLabel: '$320–345',
+    status: 'confirmed',
+    createdAt: 2,
+  },
+];
+
+/** Split a "Thu, Apr 12" / "Apr 12" label into { mon, day } for the date badge. */
+export const dateBadgeParts = (dateLabel: string): { mon: string; day: string } => {
+  const parts = dateLabel.replace(/,/g, '').split(/\s+/).filter(Boolean);
+  if (parts.length >= 3) return { mon: parts[1], day: parts[2] };
+  if (parts.length === 2) return { mon: parts[0], day: parts[1] };
+  return { mon: 'Apr', day: '1' };
+};
+
+/** A review the signed-in user has written (v17 write-review → reviews). */
+export interface UserReview {
+  id: string;
+  stars: number;
+  body: string;
+  dealerName: string;
+  meta: string; // "Rear bumper · Apr 2027"
+  createdAt: number;
+}
+
+/**
  * One damaged part in the multi-part request (wireframe v15.10 single-select
  * loop: pick one part → photo guide → camera tags type + photos → confirm
  * accumulates the list).
@@ -157,6 +229,15 @@ interface AppState {
   toggleCartService: (service: CartService) => void;
   setCartSlot: (date: string, time: string) => void;
   clearCart: () => void;
+
+  // Bookings (v17 Bookings tab) — confirmed/paid bookings the user has made.
+  bookings: AppBooking[];
+  /** Record a new booking; the latest one shows first in the Bookings tab. */
+  addBooking: (booking: Omit<AppBooking, 'id' | 'createdAt'>) => void;
+
+  // Reviews the user has written (v17 write-review → reviews).
+  reviews: UserReview[];
+  addReview: (review: Omit<UserReview, 'id' | 'createdAt'>) => void;
 }
 
 const emptyDraft = {
@@ -188,6 +269,8 @@ export const useAppStore = create<AppState>((set) => ({
       diyUnlocked: false,
       noShowCount: 0,
       activeVehicleId: null,
+      bookings: SEED_BOOKINGS,
+      reviews: [],
     }),
 
   darkMode: false,
@@ -269,4 +352,19 @@ export const useAppStore = create<AppState>((set) => ({
     }),
   setCartSlot: (date, time) => set((s) => ({ cart: { ...s.cart, date, time } })),
   clearCart: () => set({ cart: emptyCart }),
+
+  bookings: SEED_BOOKINGS,
+  addBooking: (booking) =>
+    set((s) => ({
+      bookings: [
+        { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() },
+        ...s.bookings,
+      ],
+    })),
+
+  reviews: [],
+  addReview: (review) =>
+    set((s) => ({
+      reviews: [{ ...review, id: `rv-${Date.now()}`, createdAt: Date.now() }, ...s.reviews],
+    })),
 }));

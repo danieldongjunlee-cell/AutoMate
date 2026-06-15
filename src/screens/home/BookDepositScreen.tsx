@@ -8,7 +8,8 @@ import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Card, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { DEPOSIT_CENTS, useAppStore } from '../../store/useAppStore';
+import { dealerById } from '../../services/mock/data';
+import { dateBadgeParts, DEPOSIT_CENTS, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookDeposit'>;
@@ -22,6 +23,7 @@ export function BookDepositScreen() {
   const { params } = useRoute<Rt>();
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
+  const addBooking = useAppStore((s) => s.addBooking);
   const [booking, setBooking] = useState(false);
 
   const next = params?.next ?? 'BookingConfirm';
@@ -31,6 +33,20 @@ export function BookDepositScreen() {
   const confirm = async () => {
     setBooking(true);
     await new Promise((r) => setTimeout(r, 600));
+    // Record the booking so it appears in the Bookings tab (deposit path = repair).
+    const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
+    addBooking({
+      kind: 'repair',
+      dealerId: params?.dealerId,
+      icon: '🚗',
+      title: 'Rear bumper repair',
+      dealerName: dealerById(params?.dealerId).name,
+      dateLabel,
+      ...dateBadgeParts(dateLabel),
+      time: nextParams?.time ?? '10:30 AM',
+      priceLabel: nextParams?.priceLabel ?? '$320–345',
+      status: 'confirmed',
+    });
     setBooking(false);
     (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
   };

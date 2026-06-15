@@ -6,7 +6,8 @@ import { Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Badge, Card, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { radii, spacing, useTheme } from '../../theme';
+import { useAppStore } from '../../store/useAppStore';
+import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Reviews'>;
 
@@ -24,6 +25,7 @@ const BARS: [number, number][] = [
 export function ReviewsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const userReviews = useAppStore((s) => s.reviews);
   return (
     <Screen>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
@@ -56,6 +58,25 @@ export function ReviewsScreen() {
       <View style={{ marginBottom: spacing.md }}>
         <PrimaryButton label="★ Write a review" onPress={() => navigation.navigate('WriteReview')} />
       </View>
+
+      {userReviews.map((r) => (
+        <Card key={r.id} style={{ padding: spacing.md, marginBottom: spacing.sm }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs }}>
+            <AvatarCircle initial="JD" color={colors.primary} size={24} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>You</Text>
+              <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.meta}</Text>
+            </View>
+            <Badge label="✓ Verified" variant="success" />
+          </View>
+          <Text style={{ color: '#F5B84E', fontSize: 13, marginBottom: 3 }}>
+            {'★'.repeat(r.stars)}
+            {'☆'.repeat(5 - r.stars)}
+          </Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{r.body}</Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary, marginTop: spacing.xs }}>👍 Helpful (0)</Text>
+        </Card>
+      ))}
 
       {REVIEWS.map((r) => (
         <Card key={r.name} style={{ padding: spacing.md, marginBottom: spacing.sm }}>
