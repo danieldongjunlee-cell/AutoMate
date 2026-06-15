@@ -15,8 +15,6 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDashboard'>;
 
-const DIY_TAGS = ['Bumper dent', 'Scratch', 'Paint chip', 'Door ding'];
-
 export function MaintDashboardScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -144,87 +142,79 @@ export function MaintDashboardScreen() {
         </View>
       </Tappable>
 
-      {/* DIY tips */}
-      <Tappable
-        onPress={() => navigation.navigate('MaintDiy')}
-        style={({ pressed }) => ({
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.success,
-          padding: spacing.md,
-          marginBottom: spacing.sm,
-          opacity: pressed ? 0.8 : 1,
-        })}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: spacing.sm,
-          }}
+      {/* DIY tips + Book a service (side-by-side) */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <Tappable
+          onPress={() => navigation.navigate('MaintDiy')}
+          style={({ pressed }) => ({
+            flex: 1,
+            backgroundColor: colors.successSurface,
+            borderRadius: radii.md,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.success,
+            padding: spacing.md,
+            opacity: pressed ? 0.8 : 1,
+          })}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>
-            <Text style={{ fontSize: 18 }}>🔧</Text>
-            <View>
-              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.successDeep }}>
-                DIY Repair Tips
-              </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-                Browse free · Full guides with Pro
-              </Text>
-            </View>
-          </View>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.success }}>View all →</Text>
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {DIY_TAGS.map((tag) => (
-            <View
-              key={tag}
-              style={{
-                backgroundColor: colors.successSurface,
-                borderRadius: radii.pill,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: colors.success,
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 11, color: colors.successDeep }}>{tag}</Text>
-            </View>
-          ))}
-        </View>
-      </Tappable>
-
-      {/* Book a service */}
-      <Tappable onPress={() => navigation.navigate('MaintSchedule')}>
-        {({ pressed }) => (
-          <LinearGradient
-            colors={[palette.primary, palette.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+          <View
             style={{
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: spacing.md,
-              flexDirection: 'row',
+              width: 36,
+              height: 36,
+              borderRadius: radii.sm,
+              backgroundColor: colors.success,
               alignItems: 'center',
-              gap: spacing.sm,
-              opacity: pressed ? 0.85 : 1,
+              justifyContent: 'center',
+              marginBottom: spacing.sm,
             }}
           >
-            <Text style={{ fontSize: 26 }}>📅</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>Book a service</Text>
-              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>
-                Oil change · Tires · Brakes · Inspection
+            <Text style={{ fontSize: 18 }}>🔧</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
+              DIY Repair Tips
+            </Text>
+            <Badge label="PRO" variant="primarySoft" />
+          </View>
+          <Text style={{ fontSize: 12, color: colors.successDeep }}>
+            Step-by-step guides & videos
+          </Text>
+        </Tappable>
+
+        <Tappable onPress={() => navigation.navigate('MaintSchedule')} style={{ flex: 1 }}>
+          {({ pressed }) => (
+            <LinearGradient
+              colors={[palette.primary, palette.primaryDark]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                borderRadius: radii.md,
+                padding: spacing.md,
+                opacity: pressed ? 0.85 : 1,
+              }}
+            >
+              <View
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: radii.sm,
+                  backgroundColor: 'rgba(255,255,255,.2)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: spacing.sm,
+                }}
+              >
+                <Text style={{ fontSize: 18 }}>📅</Text>
+              </View>
+              <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 2 }}>
+                Book a Service
               </Text>
-            </View>
-            <Text style={{ fontSize: 22, color: 'rgba(255,255,255,.8)' }}>→</Text>
-          </LinearGradient>
-        )}
-      </Tappable>
+              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.72)' }}>
+                Oil · Tires · Brakes · Inspection
+              </Text>
+            </LinearGradient>
+          )}
+        </Tappable>
+      </View>
 
       {/* Upcoming services */}
       <SectionLabel>Upcoming services</SectionLabel>

@@ -4,7 +4,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { Card, Screen } from '../../components/ui';
+import { Badge, Card, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { PRO_PLANS, useAppStore } from '../../store/useAppStore';
 import { spacing, useTheme } from '../../theme';
@@ -49,8 +49,10 @@ export function ProSuccessScreen() {
           </Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>{p.per} · cancel anytime</Text>
         </View>
+        <Badge label="Active" variant="success" />
       </Card>
       <PrimaryButton
+        variant="success"
         label="Back to confirm booking →"
         onPress={() =>
           navigation.canGoBack() ? navigation.goBack() : navigation.navigate('HomeLauncher')

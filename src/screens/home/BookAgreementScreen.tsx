@@ -82,7 +82,7 @@ export function BookAgreementScreen() {
             No payment for the repair today
           </Text>
           <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
-            You pay the shop after the work — your estimate isn't charged now.
+            You pay the shop after the work. Your <Text style={{ fontWeight: '700' }}>$320–$345</Text> estimate is not charged now.
           </Text>
         </View>
       </Card>

@@ -123,6 +123,7 @@ export function ProSubscribeScreen() {
 
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
+          variant="success"
           label={`Start Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} →`}
           loading={busy}
           onPress={startPro}

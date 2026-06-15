@@ -49,7 +49,7 @@ export function MaintDiyScreen() {
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
               {isPro
                 ? '12 expert guides · Pro unlocked'
-                : '12 expert guides · Locked with Pro membership'}
+                : '12 expert guides · Free samples below · unlock all for $10 or with Pro'}
             </Text>
           </View>
         </View>
@@ -111,7 +111,7 @@ export function MaintDiyScreen() {
             <ProLockOverlay
               title="+10 more guides with Pro"
               subtitle="All difficulty levels · AI recommendations · New guides weekly"
-              cta="Unlock Pro · $10 forever"
+              cta="Unlock — $10 or with Pro →"
               onUnlock={() => navigation.navigate('DiyUnlock')}
             >
               {locked.map((g) => (

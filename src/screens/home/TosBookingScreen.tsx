@@ -14,9 +14,9 @@ const SECTIONS: [string, string, string][] = [
   ['1 · Book in good faith', 'success', 'Show up for your appointment, or reschedule / cancel at least 12 hours ahead.'],
   ['2 · No-show policy', 'danger', 'Missing an appointment without 12h notice forfeits your deposit and adds a strike. 3 strikes permanently removes your account.'],
   ['3 · Security deposit', 'primary', 'A small refundable hold reserves your slot and is released after you show up. Pro members are exempt.'],
-  ['4 · Estimates, not final bills', 'warning', 'Quotes are honest estimates ± genuine in-person inspection findings, which the shop must message before charging.'],
-  ['5 · Keep it on AutoMate', 'primary', "Don't accept off-platform 'cash discount' or '10% below quote' offers to bypass AutoMate. Shops sign a matching no-poaching Partner Agreement."],
-  ['6 · Honest reviews', 'info', 'Only verified bookings can review, and reviews must reflect a genuine experience.'],
+  ['4 · Estimates, not final bills', 'warning', 'Quotes are honest estimates ± genuine in-person inspection findings, which the shop must message you before charging.'],
+  ['5 · Keep it on AutoMate', 'primary', 'You agree not to accept off-platform "cash discount" or "10% below quote" offers from a shop to bypass AutoMate. Shops sign a matching no-poaching Partner Agreement.'],
+  ['6 · Honest reviews', 'info', 'Only verified bookings can leave a review, and reviews must reflect a genuine experience.'],
 ];
 
 /** Wireframe s-tos-booking: the booking Terms of Service. */
@@ -44,11 +44,28 @@ export function TosBookingScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 3 }}>
             {title}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
+          {title.startsWith('5') ? (
+            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>
+              You agree not to accept off-platform "cash discount" or "10% below quote" offers from a
+              shop to bypass AutoMate. Shops sign a matching{' '}
+              <Text
+                style={{ color: colors.primary, fontWeight: '700' }}
+                onPress={() => navigation.navigate('PartnerAgreement')}
+              >
+                no-poaching Partner Agreement
+              </Text>
+              .
+            </Text>
+          ) : (
+            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
+          )}
         </Card>
       ))}
+      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs }}>
+        Last updated Jun 2026 · v1.2 · This summary is part of your booking agreement.
+      </Text>
       <View style={{ marginTop: spacing.sm }}>
-        <PrimaryButton label="Got it — back to booking" onPress={() => navigation.goBack()} />
+        <PrimaryButton variant="success" label="Got it — back to booking" onPress={() => navigation.goBack()} />
       </View>
     </Screen>
   );

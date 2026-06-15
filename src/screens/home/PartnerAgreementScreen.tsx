@@ -53,6 +53,7 @@ export function PartnerAgreementScreen() {
         </Text>
         <Text style={{ fontSize: 12, color: colors.warningDeep, lineHeight: 18 }}>
           Poaching or quote-dodging → warning → suspension → permanent removal plus a recovery fee.
+          Customers get the same fair-use pledge in their booking agreement.
         </Text>
       </View>
       <Tappable
@@ -77,7 +78,7 @@ export function PartnerAgreementScreen() {
           As the shop owner, I agree to these terms.
         </Text>
       </Tappable>
-      <PrimaryButton label="Accept & continue →" disabled={!agreed} onPress={() => navigation.goBack()} />
+      <PrimaryButton variant="success" label="Accept & continue →" disabled={!agreed} onPress={() => navigation.goBack()} />
     </Screen>
   );
 }

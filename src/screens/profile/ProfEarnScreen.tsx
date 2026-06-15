@@ -63,9 +63,7 @@ export function ProfEarnScreen() {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 12, color: colors.warningDeep }}>
-              +{action.pts} pts · {pointsToUsd(action.pts)}
-            </Text>
+            <Text style={{ fontSize: 12, color: colors.warningDeep }}>+{action.pts} pts</Text>
           </View>
         </View>
       ))}

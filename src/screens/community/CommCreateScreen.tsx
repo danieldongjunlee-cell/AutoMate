@@ -8,7 +8,6 @@ import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
-import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -45,13 +44,13 @@ export function CommCreateScreen() {
 
   return (
     <Screen>
-      {/* Points banner */}
+      {/* Community guidelines banner */}
       <View
         style={{
-          backgroundColor: colors.warningSurface,
+          backgroundColor: colors.primarySurface,
           borderRadius: radii.sm,
-          borderWidth: 1.5,
-          borderColor: colors.warning,
+          borderWidth: 1,
+          borderColor: colors.primaryLight,
           padding: spacing.sm,
           flexDirection: 'row',
           alignItems: 'center',
@@ -59,10 +58,9 @@ export function CommCreateScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 18 }}>★</Text>
-        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-          Earn +{EARN_RULES.communityPost} pts for posting · +{EARN_RULES.communityPhotoBonus}{' '}
-          pts with photos
+        <Text style={{ fontSize: 16 }}>💬</Text>
+        <Text style={{ flex: 1, fontSize: 14, color: colors.primaryDark }}>
+          Keep it helpful and on-topic — no spam or self-promotion.
         </Text>
       </View>
 
@@ -222,15 +220,7 @@ export function CommCreateScreen() {
         </Text>
       </View>
 
-      <PrimaryButton
-        label={(() => {
-          const pts =
-            EARN_RULES.communityPost + (hasPhoto ? EARN_RULES.communityPhotoBonus : 0);
-          return `Publish → earn +${pts} pts · ${pointsToUsd(pts)}${hasPhoto ? ' (photo bonus!)' : ''}`;
-        })()}
-        loading={publishing}
-        onPress={onPublish}
-      />
+      <PrimaryButton label="Publish post" loading={publishing} onPress={onPublish} />
     </Screen>
   );
 }

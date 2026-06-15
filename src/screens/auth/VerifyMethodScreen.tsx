@@ -43,10 +43,10 @@ export function VerifyMethodScreen() {
       <View style={{ alignItems: 'center', marginVertical: spacing.xxl }}>
         <Text style={{ fontSize: 52, marginBottom: spacing.md }}>🔐</Text>
         <Text style={{ fontSize: 18, fontWeight: '600', color: '#fff', marginBottom: spacing.xs }}>
-          How should we send your code?
+          Almost there
         </Text>
         <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.6)', textAlign: 'center' }}>
-          We'll send a 6-digit verification code to confirm it's you.
+          Where should we send your verification code?
         </Text>
       </View>
 
@@ -83,7 +83,7 @@ export function VerifyMethodScreen() {
       ))}
 
       <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.45)', textAlign: 'center', marginTop: spacing.sm }}>
-        Demo: any method works — the code is always 123456.
+        Codes expire after 10 minutes
       </Text>
     </AuthScreenShell>
   );

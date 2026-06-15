@@ -53,7 +53,10 @@ export function HomeLauncherScreen() {
         <Text style={{ fontSize: 16 }}>✅</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>Daily check-in · +10 pts</Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>🔥 Day 5 streak · 1,240 pts ≈ $12.40</Text>
+          <Text style={{ fontSize: 11, color: colors.successDark }}>🔥 Day 5 streak · 1,240 pts ≈ $12.40 toward a free oil change</Text>
+        </View>
+        <View style={{ backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 5 }}>
+          <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff' }}>Claim</Text>
         </View>
       </Tappable>
 
@@ -66,7 +69,7 @@ export function HomeLauncherScreen() {
           <Text style={{ fontSize: 30, marginBottom: 6 }}>📷</Text>
           <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>Get an AI Repair Estimate</Text>
           <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)', marginBottom: spacing.sm }}>
-            Snap a few photos → local shops send real quotes → book in minutes
+            Snap a few photos → local dealers send real quotes → book or call in minutes
           </Text>
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 15, paddingVertical: 8 }}>
             <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>Start now →</Text>

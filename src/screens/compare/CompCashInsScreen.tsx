@@ -34,7 +34,6 @@ export function CompCashInsScreen() {
     queryFn: () => compareService.getComparison({ quoteId: aq.id }),
   });
   // Wireframe defaults while the model loads (same numbers for seeded data).
-  const cashTotal = comparison?.result.cashTotal3yr ?? aq.priceLow;
   const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;
   const premiumPerYear = comparison?.input.premiumPerYear ?? INSURANCE_POLICY.premiumPerYear;
   const cashRecommended = (comparison?.result.recommendation ?? 'cash') === 'cash';
@@ -88,6 +87,31 @@ export function CompCashInsScreen() {
         </View>
       </View>
 
+      {/* No money upfront explainer */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.md,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
+          💳 No money upfront — how you pay
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 19 }}>
+          The shop inspects, confirms a{' '}
+          <Text style={{ fontWeight: '700' }}>
+            final price within ${aq.priceLow}–${aq.priceHigh}
+          </Text>
+          , then charges your{' '}
+          <Text style={{ fontWeight: '700' }}>card on file after the repair</Text> — your refundable
+          deposit is released. You only choose how to cover it:
+        </Text>
+      </View>
+
       {/* Cash vs insurance */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <Tappable
@@ -103,14 +127,16 @@ export function CompCashInsScreen() {
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 30, marginBottom: 6 }}>💰</Text>
+          <Text style={{ fontSize: 30, marginBottom: 6 }}>💳</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.successDeep, marginBottom: 4 }}>
-            Pay cash
+            Pay it yourself
           </Text>
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.successDark }}>
-            ${cashTotal}
+            ${aq.priceLow}–${aq.priceHigh}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>est.</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>
+            final, at the shop
+          </Text>
           {cashRecommended ? (
             <View
               style={{
@@ -120,7 +146,9 @@ export function CompCashInsScreen() {
                 paddingVertical: 3,
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>
+                ✔ Best for this repair
+              </Text>
             </View>
           ) : null}
         </Tappable>
@@ -140,10 +168,14 @@ export function CompCashInsScreen() {
         >
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🛡️</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.dangerDeep, marginBottom: 4 }}>
-            File insurance
+            Use insurance
           </Text>
-          <Text style={{ fontSize: 27, fontWeight: '700', color: colors.success }}>$0</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>today</Text>
+          <Text style={{ fontSize: 27, fontWeight: '700', color: colors.textPrimary }}>
+            ${deductible}
+          </Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>
+            your deductible
+          </Text>
           {cashRecommended ? (
             <View
               style={{
@@ -156,7 +188,7 @@ export function CompCashInsScreen() {
               }}
             >
               <Text style={{ fontSize: 12, fontWeight: '600', color: colors.dangerDeep }}>
-                ⚠ Rate hike
+                ⚠ Premium ↑
               </Text>
             </View>
           ) : (
@@ -173,6 +205,33 @@ export function CompCashInsScreen() {
           )}
         </Tappable>
       </View>
+
+      {/* Deductible-exceeds-repair warning */}
+      {cashRecommended ? (
+        <View
+          style={{
+            backgroundColor: colors.warningSurface,
+            borderRadius: radii.sm,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.warning,
+            padding: spacing.sm,
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: spacing.sm,
+            marginBottom: spacing.md,
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>⚠</Text>
+          <Text style={{ flex: 1, fontSize: 12, color: colors.warningDeep, lineHeight: 19 }}>
+            Your{' '}
+            <Text style={{ fontWeight: '700' }}>
+              ${deductible} deductible is more than this ${aq.priceLow}–${aq.priceHigh} repair
+            </Text>{' '}
+            — a claim won't save money here and can raise your premium 12–18%/yr. Paying yourself is
+            cheaper.
+          </Text>
+        </View>
+      ) : null}
 
       {/* Deep dive link */}
       <Tappable onPress={() => navigation.navigate('CompDeepDive', { quoteId: aq.id })}>

@@ -42,16 +42,6 @@ export function SplashScreen() {
         </Text>
         <Text
           style={{
-            fontSize: 12,
-            color: 'rgba(255,255,255,.45)',
-            letterSpacing: 1.6,
-            marginTop: spacing.sm,
-          }}
-        >
-          YOUR CAR. YOUR RIGHTS. YOUR SAVINGS.
-        </Text>
-        <Text
-          style={{
             fontSize: 14,
             color: 'rgba(255,255,255,.7)',
             lineHeight: 22,
@@ -59,12 +49,12 @@ export function SplashScreen() {
             marginTop: spacing.lg,
           }}
         >
-          Submit photos · Get real dealer quotes{'\n'}Book instantly or call directly
+          Snap a photo. Compare real quotes.{'\n'}Book without paying upfront.
         </Text>
       </LinearGradient>
 
       <PrimaryButton
-        label="Get started →"
+        label="Get started — it's free"
         variant="auth"
         onPress={() => navigation.navigate('SignUp')}
         style={{ marginBottom: spacing.sm }}

@@ -6,7 +6,6 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
-import { EARN_RULES, pointsToUsd } from '../../config/points';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -26,6 +25,34 @@ export function CommChannelsScreen() {
 
   return (
     <Screen>
+      {/* Community title */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
+        <Text style={{ flex: 1, fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>
+          Community
+        </Text>
+      </View>
+
+      {/* Search bar (presentational) */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 15, color: colors.textTertiary }}>🔍</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+          Search posts, channels, owners…
+        </Text>
+      </View>
+
       <View
         style={{
           flexDirection: 'row',
@@ -116,7 +143,7 @@ export function CommChannelsScreen() {
 
       <View
         style={{
-          backgroundColor: colors.warningSurface,
+          backgroundColor: colors.primarySurface,
           borderRadius: radii.sm,
           padding: spacing.sm,
           flexDirection: 'row',
@@ -125,10 +152,9 @@ export function CommChannelsScreen() {
           marginTop: spacing.xs,
         }}
       >
-        <Text style={{ fontSize: 17 }}>★</Text>
-        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
-          Post in any channel → earn +{EARN_RULES.communityPost} pts ·{' '}
-          {pointsToUsd(EARN_RULES.communityPost)}
+        <Text style={{ fontSize: 17 }}>💬</Text>
+        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+          Share tips, ask questions, help fellow owners
         </Text>
       </View>
     </Screen>

@@ -91,7 +91,7 @@ export function BookDepositScreen() {
               Refundable security deposit
             </Text>
             <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-              Held, not charged · released after your visit
+              Held, not charged · auto-released after your visit
             </Text>
           </View>
           {waived ? (

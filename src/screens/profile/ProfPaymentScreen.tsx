@@ -351,7 +351,7 @@ export function ProfPaymentScreen() {
           <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
             Apple Pay
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Configured · ready to use</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Configured · opens  Pay sheet</Text>
         </View>
         <View
           style={{

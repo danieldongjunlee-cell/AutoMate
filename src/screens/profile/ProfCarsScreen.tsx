@@ -320,7 +320,7 @@ export function ProfCarsScreen() {
           Add another car
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          Enter name & odometer (VIN scan coming soon)
+          Scan VIN barcode or enter manually
         </Text>
       </Tappable>
 
