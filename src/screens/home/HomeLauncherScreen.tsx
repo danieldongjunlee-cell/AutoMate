@@ -1,15 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 
-import { DotCarousel } from '../../components/DotCarousel';
+import { CarSwitcherSheet } from '../../components/CarSwitcherSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeLauncher'>;
@@ -18,6 +20,10 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeLauncher'>;
 export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const { vehicles, active, brand } = useActiveVehicle();
+  const checkedIn = useAppStore((s) => s.dailyCheckedIn);
+  const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
+  const [carSheet, setCarSheet] = useState(false);
 
   const tile = (emoji: string, bg: string, title: string, sub: string, onPress: () => void) => (
     <Tappable
@@ -59,22 +65,75 @@ export function HomeLauncherScreen() {
 
   return (
     <Screen>
-      {/* Greeting + daily check-in */}
-      <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
-      <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.md }}>
-        What would you like to do today?
-      </Text>
+      {/* Greeting + active-car switcher */}
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.md }}>
+            What would you like to do today?
+          </Text>
+        </View>
+        {active ? (
+          <Tappable
+            onPress={() => (vehicles.length > 1 ? setCarSheet(true) : navigateCrossTab(navigation, 'MoreTab', 'ProfCars'))}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 6,
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              borderWidth: 1,
+              borderRadius: radii.pill,
+              paddingLeft: spacing.sm,
+              paddingRight: vehicles.length > 1 ? 8 : spacing.sm,
+              paddingVertical: 6,
+            }}
+          >
+            <Text style={{ fontSize: 13 }}>🚗</Text>
+            <View>
+              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
+                {brand}
+              </Text>
+              <Text style={{ fontSize: 9, color: colors.textTertiary }} numberOfLines={1}>
+                {active.name.replace(new RegExp(`^\\d{4}\\s+${brand}\\s+`), '')}
+              </Text>
+            </View>
+            {vehicles.length > 1 ? <Text style={{ fontSize: 12, color: colors.primary }}>⇅</Text> : null}
+          </Tappable>
+        ) : null}
+      </View>
+
+      {/* Daily check-in — interactive claim (stays on screen) */}
       <Tappable
-        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfEarn')}
+        onPress={checkedIn ? undefined : claimCheckIn}
+        disabled={checkedIn}
         style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successSurface, borderColor: colors.successLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.sm, marginBottom: spacing.md }}
       >
-        <Text style={{ fontSize: 16 }}>✅</Text>
+        <Text style={{ fontSize: 16 }}>{checkedIn ? '🎉' : '✅'}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>Daily check-in · +10 pts</Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>🔥 Day 5 streak · 1,240 pts ≈ $12.40 toward a free oil change</Text>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>
+            {checkedIn ? 'Checked in today · +10 pts' : 'Daily check-in · +10 pts'}
+          </Text>
+          <Text style={{ fontSize: 11, color: colors.successDark }}>
+            🔥 Day {checkedIn ? 6 : 5} streak · earning toward a free oil change
+          </Text>
         </View>
-        <View style={{ backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 5 }}>
-          <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff' }}>Claim</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            backgroundColor: checkedIn ? 'transparent' : colors.success,
+            borderWidth: checkedIn ? 1.5 : 0,
+            borderColor: colors.success,
+            borderRadius: radii.pill,
+            paddingHorizontal: 12,
+            paddingVertical: 5,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
+            {checkedIn ? '✓ Claimed' : 'Claim'}
+          </Text>
         </View>
       </Tappable>
 
@@ -168,27 +227,52 @@ export function HomeLauncherScreen() {
         <Text style={{ color: colors.successDark }}>›</Text>
       </Tappable>
 
-      {/* Real customer reviews — dot-controlled carousel (wireframe rev-track) */}
+      {/* Real customer reviews — horizontally scrollable photo reviews */}
       <SectionLabel style={{ marginTop: spacing.md }}>Real customer reviews</SectionLabel>
-      <DotCarousel
-        items={REVIEWS.map((r) => (
-          <Card key={r.car} style={{ padding: spacing.md }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs }}>
-              <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>
-                {r.car}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: spacing.sm, paddingBottom: spacing.sm, paddingRight: spacing.md }}
+      >
+        {REVIEWS.map((r) => (
+          <Card key={r.car} style={{ width: 250, padding: 0, overflow: 'hidden' }}>
+            {/* Before/after repair photo */}
+            <LinearGradient
+              colors={[r.tint, palette.navyDeep]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{ height: 110, alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Text style={{ fontSize: 38 }}>{r.icon}</Text>
+              <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>Repair photo</Text>
+            </LinearGradient>
+            <View style={{ padding: spacing.md }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
+                  {r.car}
+                </Text>
+                <Text style={{ color: palette.gold, fontSize: 11 }}>★★★★★</Text>
+              </View>
+              <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.xs }}>
+                🔧 {r.repair} · ⏱ {r.time} · {r.paid}
               </Text>
-              <Text style={{ color: palette.gold, fontSize: 12 }}>★★★★★</Text>
-            </View>
-            <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.xs }}>
-              🔧 {r.repair} · ⏱ {r.time} · {r.paid}
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{r.body}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm }}>
-              <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.shop}</Text>
-              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.success }}>✓ Verified</Text>
+              <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 17 }} numberOfLines={4}>
+                {r.body}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm }}>
+                <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.shop}</Text>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: colors.success }}>✓ Verified</Text>
+              </View>
             </View>
           </Card>
         ))}
+      </ScrollView>
+
+      <CarSwitcherSheet
+        visible={carSheet}
+        vehicles={vehicles}
+        activeId={active?.id}
+        onClose={() => setCarSheet(false)}
       />
     </Screen>
   );
@@ -201,6 +285,8 @@ const REVIEWS = [
     time: '2 days',
     paid: 'Insurance',
     shop: 'Honda Fairfax',
+    icon: '🚙',
+    tint: '#1e4fcc',
     body: "Quoted $330 on AutoMate and that's exactly what I paid — no surprises. Looks brand new and they finished a day early.",
   },
   {
@@ -209,6 +295,8 @@ const REVIEWS = [
     time: '1 day',
     paid: 'Cash',
     shop: 'AutoFix Pro',
+    icon: '🚗',
+    tint: '#16a34a',
     body: 'Compared 2 shops in minutes and saved ~$90 vs the first place I called. Smooth booking, no deposit drama.',
   },
   {
@@ -217,6 +305,8 @@ const REVIEWS = [
     time: '2 days',
     paid: 'Insurance',
     shop: 'Vienna Auto Care',
+    icon: '🚐',
+    tint: '#7F77DD',
     body: 'Insurance claim was painless — AutoMate had three quotes before my agent even called back. Fender looks factory-fresh.',
   },
 ];

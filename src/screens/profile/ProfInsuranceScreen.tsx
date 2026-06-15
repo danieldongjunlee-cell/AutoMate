@@ -8,11 +8,20 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';
+import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, Policy } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
+
+/** Loose match: does a policy's "covers" text refer to this vehicle? */
+function policyCoversVehicle(covers: string, vehicleName: string): boolean {
+  const c = covers.toLowerCase();
+  const brand = brandOf(vehicleName).toLowerCase();
+  const model = vehicleName.toLowerCase().split(/\s+/).filter((w) => !/^\d{4}$/.test(w))[1];
+  return c.includes(brand) || (!!model && c.includes(model));
+}
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
 
@@ -152,6 +161,8 @@ export function ProfInsuranceScreen() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
 
+  const { active } = useActiveVehicle();
+
   const { data: policies, isLoading } = useQuery({
     queryKey: ['policies'],
     queryFn: () => insuranceService.listPolicies(),
@@ -162,8 +173,39 @@ export function ProfInsuranceScreen() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['policies'] }),
   });
 
+  const linkedPolicy = active
+    ? (policies ?? []).find((p) => policyCoversVehicle(p.covers, active.name))
+    : undefined;
+
   return (
     <Screen>
+      {/* Active-car context — updates when you switch cars on Home */}
+      {active ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            backgroundColor: linkedPolicy ? colors.successSurface : colors.warningSurface,
+            borderWidth: 1,
+            borderColor: linkedPolicy ? colors.successLight : colors.warning,
+            borderRadius: radii.md,
+            padding: spacing.sm,
+            marginBottom: spacing.md,
+          }}
+        >
+          <Text style={{ fontSize: 16 }}>🚗</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
+            <Text style={{ fontSize: 11, color: linkedPolicy ? colors.successDark : colors.warningDeep }}>
+              {linkedPolicy
+                ? `Covered by ${linkedPolicy.carrier} · $${linkedPolicy.deductible} deductible`
+                : 'No policy linked to this car yet'}
+            </Text>
+          </View>
+        </View>
+      ) : null}
+
       <SectionLabel>Your policies</SectionLabel>
       {isLoading ? (
         <SkeletonList variant="card" count={1} tall />

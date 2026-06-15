@@ -192,6 +192,10 @@ interface AppState {
   subscribePro: (plan: 'annual' | 'monthly') => void;
   unlockDiyOnly: () => void;
 
+  // Daily check-in (Home): claim once → award points + show the checked state.
+  dailyCheckedIn: boolean;
+  claimDailyCheckIn: () => void;
+
   // No-show strikes (booking agreement: 3 strikes removes the account)
   noShowCount: number;
   addNoShow: () => void;
@@ -275,6 +279,7 @@ export const useAppStore = create<AppState>((set) => ({
       isPro: false,
       proPlan: null,
       diyUnlocked: false,
+      dailyCheckedIn: false,
       noShowCount: 0,
       activeVehicleId: null,
       bookings: SEED_BOOKINGS,
@@ -301,6 +306,10 @@ export const useAppStore = create<AppState>((set) => ({
   unlockPro: () => set({ isPro: true, proPlan: 'annual', diyUnlocked: true }),
   subscribePro: (plan) => set({ isPro: true, proPlan: plan, diyUnlocked: true }),
   unlockDiyOnly: () => set({ diyUnlocked: true }),
+
+  dailyCheckedIn: false,
+  claimDailyCheckIn: () =>
+    set((s) => (s.dailyCheckedIn ? {} : { dailyCheckedIn: true, points: s.points + 10 })),
 
   noShowCount: 0,
   addNoShow: () => set((s) => ({ noShowCount: s.noShowCount + 1 })),
