@@ -123,12 +123,18 @@ export function BookingConfirmScreen() {
 
       {/* Primary action: manage (reschedule / cancel) the booking. */}
       <PrimaryButton
-        label="Reschedule booking"
+        label="🗓 Reschedule"
         onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
       />
+      <Tappable
+        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
+        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel</Text>
+      </Tappable>
 
       {/* Secondary, smaller: add to calendar + view on map (wireframe v15.10). */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xs }}>
         <Tappable
           onPress={onAddToCalendar}
           style={({ pressed }) => ({
@@ -143,7 +149,7 @@ export function BookingConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
-            Add to calendar
+            📅 Add to calendar
           </Text>
         </Tappable>
         <Tappable
@@ -160,15 +166,18 @@ export function BookingConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
-            View on map
+            📍 View on map
           </Text>
         </Tappable>
       </View>
+
       <Tappable
-        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
-        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
+        onPress={() => navigation.navigate('WriteReview', { dealerId: dealer.id })}
+        style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.xs }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primary }}>
+          ★ Leave a review after your visit
+        </Text>
       </Tappable>
     </Screen>
   );

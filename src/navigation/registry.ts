@@ -41,7 +41,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   MaintScanRev: 'Review receipt', // s-maint-scan-rev
   MaintManual: 'Log service manually', // s-maint-manual
   MaintDiy: 'DIY Repair Tips', // s-maint-diy
-  DiyUnlock: 'Unlock Pro', // s-diy-unlock
+  DiyUnlock: 'Unlock DIY Repairs', // s-diy-unlock
   DiyPayment: 'Payment', // s-diy-payment
   DiyConfirm: 'Welcome to Pro', // s-diy-confirm
   DiyGuides: 'All 12 guides', // s-diy-guides
