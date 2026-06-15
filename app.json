@@ -7,9 +7,11 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.automate.consumer"
     },
     "android": {
+      "package": "com.automate.consumer",
       "adaptiveIcon": {
         "backgroundColor": "#0B1E3D",
         "foregroundImage": "./assets/android-icon-foreground.png",
