@@ -52,7 +52,6 @@ type HomeFlowParamList = {
   TosBooking: undefined;
   PartnerAgreement: undefined;
   ProSubscribe: undefined;
-  ProPayment: { plan: 'annual' | 'monthly' } | undefined;
   ProSuccess: { returnTo?: 'BookDeposit' } | undefined;
   HowItWorks: undefined;
   DealerMap: { dealerId?: string } | undefined;

@@ -124,13 +124,13 @@ export function MaintScheduleBookScreen() {
       </View>
 
       <PrimaryButton
-        label="Continue →"
+        label="Continue to booking →"
         disabled={!canContinue}
         onPress={() =>
           navigation.navigate('BookAgreement', {
             kind: 'maintenance',
             dealerId: cart.dealerId ?? undefined,
-            next: 'MaintPayment',
+            next: 'MaintScheduleConfirm',
           })
         }
       />

@@ -102,7 +102,7 @@ export function MaintScheduleConfirmScreen() {
             sub={booking.time ?? '8:00 AM'}
             subColor={colors.primaryDark}
           />
-          <SummaryCell label="Paid" value={`$${total}`} subColor={colors.successDark} />
+          <SummaryCell label="Pay at shop" value={`$${total}`} sub="$0 today" subColor={colors.successDark} />
           <SummaryCell label="Duration" value={`~${totalMin} min`} />
         </View>
       </Card>

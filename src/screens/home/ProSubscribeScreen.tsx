@@ -6,8 +6,10 @@ import { Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
+import { ProcessingOverlay } from '../../components/Skeleton';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
+import { proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
@@ -25,6 +27,16 @@ export function ProSubscribeScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const [plan, setPlan] = useState<Plan>('annual');
+  const [busy, setBusy] = useState(false);
+
+  // v17: the plan-pick screen is the commit point — subscribe → success (no
+  // separate payment screen). Real IAP billing is wired at store launch.
+  const startPro = async () => {
+    setBusy(true);
+    await proService.subscribe(plan);
+    setBusy(false);
+    navigation.navigate('ProSuccess');
+  };
 
   const planRow = (id: Plan, title: string, sub: string, badge?: string) => {
     const active = plan === id;
@@ -112,9 +124,11 @@ export function ProSubscribeScreen() {
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
           label={`Start Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} →`}
-          onPress={() => navigation.navigate('ProPayment', { plan })}
+          loading={busy}
+          onPress={startPro}
         />
       </View>
+      <ProcessingOverlay visible={busy} label="Activating Pro…" />
       <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Cancel anytime · used here to waive your booking deposit.
       </Text>

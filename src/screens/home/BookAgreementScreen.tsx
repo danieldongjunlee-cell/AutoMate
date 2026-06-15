@@ -8,8 +8,9 @@ import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
-import { dateBadgeParts, depositForBooking, useAppStore } from '../../store/useAppStore';
+import { cartTotals, dateBadgeParts, depositForBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookAgreement'>;
 type Rt = RouteProp<HomeStackParamList, 'BookAgreement'>;
@@ -34,9 +35,9 @@ export function BookAgreementScreen() {
       navigation.navigate('BookDeposit', { kind, dealerId: params?.dealerId, next, nextParams });
       return;
     }
-    // No deposit. Repair (Pro-waived) goes straight to confirmation, so record
-    // the booking here; maintenance still routes through payment (recorded there).
+    // No deposit → goes straight to the confirmation, so record the booking here.
     if (kind === 'repair') {
+      // Repair, Pro-waived deposit.
       const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
       addBooking({
         kind: 'repair',
@@ -48,6 +49,24 @@ export function BookAgreementScreen() {
         ...dateBadgeParts(dateLabel),
         time: nextParams?.time ?? '10:30 AM',
         priceLabel: nextParams?.priceLabel ?? '$320–345',
+        status: 'confirmed',
+      });
+    } else {
+      // Maintenance — v17 is pay-at-shop (no upfront payment), so record the
+      // scheduled service from the cart now that there's no payment screen.
+      const cart = useAppStore.getState().cart;
+      const { total } = cartTotals(cart);
+      const dateLabel = formatDayLabel(cart.date, 'Mon, Apr 7');
+      addBooking({
+        kind: 'maintenance',
+        dealerId: cart.dealerId ?? undefined,
+        icon: '🛢️',
+        title: cart.services.map((s) => s.name).join(' + ') || 'Service',
+        dealerName: dealerById(cart.dealerId).name,
+        dateLabel,
+        ...dateBadgeParts(dateLabel),
+        time: cart.time ?? '8:00 AM',
+        priceLabel: `$${total}`,
         status: 'confirmed',
       });
     }

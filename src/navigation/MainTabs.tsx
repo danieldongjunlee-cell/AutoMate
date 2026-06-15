@@ -19,7 +19,6 @@ import { HomeLauncherScreen } from '../screens/home/HomeLauncherScreen';
 import { HowItWorksScreen } from '../screens/home/HowItWorksScreen';
 import { NotificationsScreen } from '../screens/home/NotificationsScreen';
 import { PartnerAgreementScreen } from '../screens/home/PartnerAgreementScreen';
-import { ProPaymentScreen } from '../screens/home/ProPaymentScreen';
 import { ProSubscribeScreen } from '../screens/home/ProSubscribeScreen';
 import { ProSuccessScreen } from '../screens/home/ProSuccessScreen';
 import { RescheduleScreen } from '../screens/home/RescheduleScreen';
@@ -113,7 +112,6 @@ const homeScreens = buildScreens(
     'TosBooking',
     'PartnerAgreement',
     'ProSubscribe',
-    'ProPayment',
     'ProSuccess',
     'HowItWorks',
     'DealerMap',
@@ -161,7 +159,6 @@ const homeScreens = buildScreens(
     TosBooking: TosBookingScreen,
     PartnerAgreement: PartnerAgreementScreen,
     ProSubscribe: ProSubscribeScreen,
-    ProPayment: ProPaymentScreen,
     ProSuccess: ProSuccessScreen,
     HowItWorks: HowItWorksScreen,
     DealerMap: DealerMapScreen,

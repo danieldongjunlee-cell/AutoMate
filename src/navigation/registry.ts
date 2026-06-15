@@ -29,8 +29,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   TosBooking: 'Terms of Service', // s-tos-booking
   PartnerAgreement: 'Partner Agreement', // s-partner-agreement
   ProSubscribe: 'AutoMate Pro', // s-pro-subscribe
-  ProPayment: 'Payment', // pro-subscribe → pro-payment
-  ProSuccess: 'Pro activated', // s-pro-success
+  ProSuccess: 'Pro activated', // s-pro-success (v17: subscribe → success, no payment screen)
   HowItWorks: 'How AutoMate works', // s-how-it-works
   Bookings: 'Bookings', // s-bookings (new tab root)
   DealerMap: 'Honda Fairfax', // s-dealer-map
