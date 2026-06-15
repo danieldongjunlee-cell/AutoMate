@@ -1,21 +1,22 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
-import { MaintStackParamList } from '../../navigation/types';
+import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
-type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScheduleConfirm'>;
+type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>;
 
 /** Wireframe s-maint-schedule-confirm: paid-booking success summary. */
 export function MaintScheduleConfirmScreen() {
@@ -39,10 +40,11 @@ export function MaintScheduleConfirmScreen() {
   const serviceNames = booking.services.map((s) => s.name).join(' + ');
   const reminderPref = useAppStore((s) => s.reminderPref);
 
-  const onDone = () => {
-    navigation.navigate('MaintDashboard');
+  // The summary is snapshotted in `booking` above, so we can clear the live
+  // cart immediately — leaving via reschedule/back/tab no longer strands it.
+  useEffect(() => {
     clearCart();
-  };
+  }, [clearCart]);
 
   /** Real calendar export (pass 2): expo-calendar native / Google Calendar web. */
   const onAddToCalendar = () => {
@@ -107,36 +109,36 @@ export function MaintScheduleConfirmScreen() {
 
       <ReminderRow />
 
-      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-        <Tappable
-          onPress={onDone}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.primary,
-            borderRadius: radii.sm,
-            paddingVertical: 12,
-            alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>Done</Text>
-        </Tappable>
-        <Tappable
-          onPress={onAddToCalendar}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: radii.sm,
-            paddingVertical: 12,
-            alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 14, color: colors.textSecondary }}>Add to calendar</Text>
-        </Tappable>
-      </View>
+      {/* Primary action: manage (reschedule / cancel) the booking. */}
+      <PrimaryButton
+        label="Reschedule booking"
+        onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
+      />
+
+      {/* Secondary, smaller: add to calendar. */}
+      <Tappable
+        onPress={onAddToCalendar}
+        style={({ pressed }) => ({
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.sm,
+          paddingVertical: 9,
+          alignItems: 'center',
+          marginTop: spacing.sm,
+          opacity: pressed ? 0.7 : 1,
+        })}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+          Add to calendar
+        </Text>
+      </Tappable>
+      <Tappable
+        onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
+        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
+      </Tappable>
     </Screen>
   );
 }

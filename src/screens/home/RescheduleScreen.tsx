@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -11,6 +11,7 @@ import { HomeStackParamList } from '../../navigation/types';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Reschedule'>;
+type Rt = RouteProp<HomeStackParamList, 'Reschedule'>;
 
 const DAYS = [
   ['Thu', '12'],
@@ -24,9 +25,13 @@ const TIMES = ['9:00 AM', '11:00 AM', '3:30 PM'];
 /** Wireframe s-reschedule: reschedule or cancel a booking. */
 export function RescheduleScreen() {
   const navigation = useNavigation<Nav>();
+  const { params } = useRoute<Rt>();
   const { colors } = useTheme();
   const [day, setDay] = useState('14');
   const [time, setTime] = useState('11:00 AM');
+
+  const isMaint = params?.kind === 'maintenance';
+  const confirmScreen = isMaint ? 'MaintScheduleConfirm' : 'BookingConfirm';
 
   const pill = (active: boolean) => ({
     borderWidth: 1,
@@ -73,7 +78,7 @@ export function RescheduleScreen() {
         </View>
         <PrimaryButton
           label={`Confirm new time — Apr ${day} · ${time} →`}
-          onPress={() => navigation.navigate('BookingConfirm')}
+          onPress={() => navigation.navigate(confirmScreen as never)}
         />
       </Card>
 

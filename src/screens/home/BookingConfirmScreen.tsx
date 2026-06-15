@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
 import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
@@ -120,20 +121,28 @@ export function BookingConfirmScreen() {
         ))}
       </Card>
 
-      {/* Actions — wireframe v15.10: "View on map" → dealer-map */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+      {/* Primary action: manage (reschedule / cancel) the booking. */}
+      <PrimaryButton
+        label="Reschedule booking"
+        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
+      />
+
+      {/* Secondary, smaller: add to calendar + view on map (wireframe v15.10). */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm }}>
         <Tappable
           onPress={onAddToCalendar}
           style={({ pressed }) => ({
             flex: 1,
-            backgroundColor: colors.primary,
+            backgroundColor: colors.surface,
+            borderWidth: 1,
+            borderColor: colors.border,
             borderRadius: radii.sm,
-            paddingVertical: 12,
+            paddingVertical: 9,
             alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
+            opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
             Add to calendar
           </Text>
         </Tappable>
@@ -145,16 +154,22 @@ export function BookingConfirmScreen() {
             borderWidth: 1,
             borderColor: colors.border,
             borderRadius: radii.sm,
-            paddingVertical: 12,
+            paddingVertical: 9,
             alignItems: 'center',
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
             View on map
           </Text>
         </Tappable>
       </View>
+      <Tappable
+        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
+        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
+      </Tappable>
     </Screen>
   );
 }
