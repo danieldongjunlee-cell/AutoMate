@@ -8,7 +8,8 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService } from '../../services';
-import { spacing } from '../../theme';
+import { palette, spacing } from '../../theme';
+import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -124,6 +125,43 @@ export function SignUpScreen() {
           Passwords don't match
         </Text>
       ) : null}
+
+      {/* ToS / Privacy disclaimer — no terms screen in the auth navigator,
+          so the links surface a short Alert instead of navigating. */}
+      <Text
+        style={{
+          fontSize: 12,
+          lineHeight: 18,
+          color: 'rgba(255,255,255,.55)',
+          marginBottom: spacing.md,
+        }}
+      >
+        By creating an account, you agree to our{' '}
+        <Text
+          style={{ color: palette.primaryLight, fontWeight: '700' }}
+          onPress={() =>
+            showAlert(
+              'Terms of Service',
+              'By using AutoMate you agree to use the service lawfully, accept that quotes are estimates from third-party dealers, and acknowledge that bookings are subject to dealer confirmation.',
+            )
+          }
+        >
+          Terms of Service
+        </Text>{' '}
+        and{' '}
+        <Text
+          style={{ color: palette.primaryLight, fontWeight: '700' }}
+          onPress={() =>
+            showAlert(
+              'Privacy Policy',
+              'We collect your name, contact details, and vehicle info to match you with dealers. We do not sell your personal data. You can request deletion of your account at any time.',
+            )
+          }
+        >
+          Privacy Policy
+        </Text>
+        .
+      </Text>
 
       <PrimaryButton
         label="Create account"

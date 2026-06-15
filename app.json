@@ -11,6 +11,7 @@
       "bundleIdentifier": "com.anonymous.automate"
     },
     "android": {
+      "package": "com.automate.consumer",
       "adaptiveIcon": {
         "backgroundColor": "#0B1E3D",
         "foregroundImage": "./assets/android-icon-foreground.png",

@@ -66,7 +66,7 @@ export function MaintPaymentScreen() {
         ...dateBadgeParts(dateLabel),
         time: cart.time ?? '8:00 AM',
         priceLabel: `$${total}`,
-        status: 'paid',
+        status: 'confirmed',
       });
       navigation.navigate('MaintScheduleConfirm');
     } finally {

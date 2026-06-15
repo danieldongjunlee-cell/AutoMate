@@ -13,6 +13,7 @@ import { dealerById, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { useT } from '../../i18n';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'DealerQuotes'>;
 
@@ -33,6 +34,7 @@ const TIER_PIN_COLOR: Record<Quote['tier'], string> = {
 export function DealerQuotesScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const t = useT();
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   const { data: quotes, isLoading } = useQuery({
     queryKey: ['quotes'],
@@ -117,7 +119,7 @@ export function DealerQuotesScreen() {
             }}
           >
             <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
-              AI confidence {confidencePct}%
+              {t('AI confidence')} {confidencePct}%
             </Text>
           </View>
         </View>
@@ -153,7 +155,7 @@ export function DealerQuotesScreen() {
       {/* Shops with quotes near you — real map (Leaflet web / RN-maps native) */}
       {quotes && quotes.length > 0 ? (
         <View style={{ marginBottom: spacing.md }}>
-          <SectionLabel>Shops near you</SectionLabel>
+          <SectionLabel>{t('Shops near you')}</SectionLabel>
           <DealerMap
             markers={markers}
             center={USER_LOCATION}

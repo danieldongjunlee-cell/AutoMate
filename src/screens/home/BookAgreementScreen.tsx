@@ -23,6 +23,7 @@ export function BookAgreementScreen() {
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
   const addBooking = useAppStore((s) => s.addBooking);
+  const cart = useAppStore((s) => s.cart);
   const { brand } = useActiveVehicle();
   const [agreed, setAgreed] = useState(false);
 
@@ -30,6 +31,9 @@ export function BookAgreementScreen() {
   const next = params?.next ?? 'BookingConfirm';
   const nextParams = params?.nextParams;
   const deposit = depositForBooking(kind, isPro);
+  // Repair shows the AI estimate range; scheduled services show their cart total.
+  const estimateLabel = nextParams?.priceLabel ?? '$320–$345';
+  const serviceTotalLabel = `$${cartTotals(cart).total}`;
 
   const onContinue = () => {
     if (!agreed) return;
@@ -83,11 +87,18 @@ export function BookAgreementScreen() {
         <Text style={{ fontSize: 20 }}>✅</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDeep }}>
-            No payment for the repair today
+            No payment today
           </Text>
-          <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
-            You pay the shop after the work. Your <Text style={{ fontWeight: '700' }}>$320–$345</Text> estimate is not charged now.
-          </Text>
+          {kind === 'maintenance' ? (
+            <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
+              Your <Text style={{ fontWeight: '700' }}>{serviceTotalLabel}</Text> for the selected
+              services is paid at the shop after your visit.
+            </Text>
+          ) : (
+            <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
+              You pay the shop after the work. Your <Text style={{ fontWeight: '700' }}>{estimateLabel}</Text> estimate is not charged now.
+            </Text>
+          )}
         </View>
       </Card>
 

@@ -154,6 +154,20 @@ function GoogleChooser({
       <Tappable onPress={onClose} disabled={loading} style={{ paddingTop: spacing.md, alignItems: 'center' }}>
         <Text style={{ fontSize: 13, color: '#5F6368' }}>Cancel</Text>
       </Tappable>
+
+      {/* ToS / Privacy disclaimer near the confirm action. */}
+      <Text
+        style={{
+          fontSize: 11,
+          lineHeight: 16,
+          color: '#5F6368',
+          textAlign: 'center',
+          marginTop: spacing.md,
+          paddingHorizontal: spacing.xl,
+        }}
+      >
+        By continuing, you agree to our Terms of Service & Privacy Policy.
+      </Text>
     </View>
   );
 }
@@ -274,6 +288,19 @@ function AppleSheet({
       <Tappable onPress={onClose} disabled={loading} style={{ paddingVertical: 10, alignItems: 'center' }}>
         <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.7)' }}>Cancel</Text>
       </Tappable>
+
+      {/* ToS / Privacy disclaimer near the confirm action. */}
+      <Text
+        style={{
+          fontSize: 11,
+          lineHeight: 16,
+          color: 'rgba(255,255,255,.5)',
+          textAlign: 'center',
+          marginTop: spacing.sm,
+        }}
+      >
+        By continuing, you agree to our Terms of Service & Privacy Policy.
+      </Text>
     </View>
   );
 }

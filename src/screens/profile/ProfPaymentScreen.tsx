@@ -46,6 +46,8 @@ function CardFormModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      {/* Backdrop tap dismisses; the inner card claims the touch responder so
+          taps/typing inside it never bubble up to the dismiss handler. */}
       <Tappable
         noFeedback
         onPress={saving ? undefined : onClose}

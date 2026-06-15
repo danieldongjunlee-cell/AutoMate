@@ -24,6 +24,11 @@ const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
     'Book a Service': '서비스 예약', 'Get an AI Repair Estimate': 'AI 수리 견적 받기',
     'Submit for quotes →': '견적 요청하기 →', 'Select damaged part': '손상 부위 선택',
     'Account details': '계정 정보',
+    'Shops near you': '근처 정비소', 'AI confidence': 'AI 신뢰도', 'Write a review': '리뷰 작성',
+    'Scheduled services': '예약된 서비스', 'Pending quotes': '대기 중인 견적', 'No bookings yet': '아직 예약이 없습니다',
+    'Your vehicles': '내 차량', 'Your policies': '내 보험', 'Payment method': '결제 수단',
+    'Choose a plan': '플랜 선택', 'New here?': '처음이신가요?', Join: '가입', Joined: '가입됨',
+    'Deals & offers · Sponsored': '혜택 & 제안 · 광고', 'What to bring': '준비물', 'Booking summary': '예약 요약',
   },
   es: {
     Home: 'Inicio', Bookings: 'Reservas', Community: 'Comunidad', More: 'Más',
@@ -35,6 +40,11 @@ const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
     'Book a Service': 'Reservar servicio', 'Get an AI Repair Estimate': 'Estimación de reparación con IA',
     'Submit for quotes →': 'Pedir cotizaciones →', 'Select damaged part': 'Selecciona la parte dañada',
     'Account details': 'Detalles de la cuenta',
+    'Shops near you': 'Talleres cercanos', 'AI confidence': 'Confianza de IA', 'Write a review': 'Escribir reseña',
+    'Scheduled services': 'Servicios programados', 'Pending quotes': 'Cotizaciones pendientes', 'No bookings yet': 'Aún no hay reservas',
+    'Your vehicles': 'Tus vehículos', 'Your policies': 'Tus pólizas', 'Payment method': 'Método de pago',
+    'Choose a plan': 'Elige un plan', 'New here?': '¿Nuevo aquí?', Join: 'Unirse', Joined: 'Unido',
+    'Deals & offers · Sponsored': 'Ofertas · Patrocinado', 'What to bring': 'Qué llevar', 'Booking summary': 'Resumen de la reserva',
   },
   zh: {
     Home: '首页', Bookings: '预约', Community: '社区', More: '更多',
@@ -46,6 +56,11 @@ const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
     'Book a Service': '预约服务', 'Get an AI Repair Estimate': '获取 AI 维修估价',
     'Submit for quotes →': '提交报价请求 →', 'Select damaged part': '选择受损部位',
     'Account details': '账户信息',
+    'Shops near you': '附近的店', 'AI confidence': 'AI 置信度', 'Write a review': '写评价',
+    'Scheduled services': '已预约服务', 'Pending quotes': '待处理报价', 'No bookings yet': '暂无预约',
+    'Your vehicles': '我的车辆', 'Your policies': '我的保单', 'Payment method': '支付方式',
+    'Choose a plan': '选择套餐', 'New here?': '新用户？', Join: '加入', Joined: '已加入',
+    'Deals & offers · Sponsored': '优惠 · 赞助', 'What to bring': '需要携带', 'Booking summary': '预约摘要',
   },
 };
 
