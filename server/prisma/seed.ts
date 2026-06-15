@@ -9,6 +9,8 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+import { makeAdapter } from '../src/prismaAdapter';
+
 // Load server/.env if present (real env vars take precedence).
 try {
   process.loadEnvFile();
@@ -16,7 +18,8 @@ try {
   // no .env file — rely on the actual environment
 }
 
-const prisma = new PrismaClient();
+// makeAdapter() reads DATABASE_URL, so it runs after the .env load above.
+const prisma = new PrismaClient({ adapter: makeAdapter() });
 
 const DEMO_EMAIL = 'demo@automate.app';
 const DEMO_PASSWORD = 'Demo1234!';

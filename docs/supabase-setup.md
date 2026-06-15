@@ -47,17 +47,16 @@ Copy `server/.env.example` → `server/.env` and fill in the two Supabase URLs
 
 ```bash
 cd server
-npm install                        # MUST run first — installs the project's Prisma v6 locally
-npm run migrate:deploy             # creates automate.* tables (uses DIRECT_URL)
+npm install                        # MUST run first — installs the project's Prisma 7 locally
+npm run migrate:deploy             # creates automate.* tables (uses DIRECT_URL via prisma.config.ts)
 psql "$DIRECT_URL" -f prisma/sql/automate_rls.sql   # or paste it into the Supabase SQL editor
 npm run seed                       # demo user + Accord + State Farm + quotes/bookings
 ```
 
-> Use the `npm run …` scripts, **not** bare `npx prisma …`. `npm run` puts the
-> project's local `node_modules/.bin` first on PATH, so it always uses the pinned
-> **Prisma 6**. Running `npx prisma` before `npm install` (or from the repo root)
-> makes npx download the **latest Prisma 7**, which rejects this schema — see
-> Troubleshooting below.
+> Use the `npm run …` scripts (or `./node_modules/.bin/prisma`), **not** bare
+> `npx prisma …`. `npm run` puts the project's local `node_modules/.bin` first on
+> PATH, so it uses the version the repo is pinned to — and ignores any global
+> Prisma you may have installed.
 
 `npm run migrate:deploy && npm run seed` is also available as one step:
 `npm run db:setup`.
@@ -87,37 +86,41 @@ for its `./api` twin. Unset it to go back to mocks.
 
 ---
 
+## Prisma 7 setup (how connections are wired)
+
+This project runs on **Prisma 7**, which uses a driver adapter instead of a
+`url` in the `datasource` block. Three pieces work together:
+
+- **`server/prisma/schema.prisma`** — `datasource db` has only `provider`.
+- **`server/prisma.config.ts`** — supplies `datasource.url` = `DIRECT_URL` for
+  the migrate/CLI commands, and loads `.env` itself (Prisma no longer auto-loads
+  it once a config file exists).
+- **`server/src/prismaAdapter.ts`** — builds the `@prisma/adapter-pg` adapter the
+  running app passes to `new PrismaClient({ adapter })` (`src/db.ts`, `prisma/seed.ts`).
+  It reads `DATABASE_URL` and forwards the `?schema=` param to the adapter.
+
+You don't edit any of that — just fill in `DATABASE_URL` / `DIRECT_URL` in `.env`.
+
 ## Troubleshooting
 
-**`P1012 — The datasource property 'url' is no longer supported … move to prisma.config.ts`**
-You ran Prisma **7** against this Prisma **6** schema. Prisma 7 removed
-`url`/`directUrl` from the `datasource` block. You don't need v7. This comes from
-one of two stale-binary situations, **even if `./node_modules/.bin/prisma` is on
-the command line**:
+**`P1012 — The datasource property 'url' is no longer supported …`**
+This means a **Prisma 6** CLI/client is running against the v7 schema (a stale
+install). Reinstall and regenerate:
 
-1. **Stale local install** — `server/node_modules` still holds a Prisma 7 from an
-   earlier `npm install prisma@latest` / `npx prisma@7`, locked in
-   `package-lock.json`. A plain `npm install` may not downgrade it. Force a clean
-   install (deps are pinned to exactly `6.19.3`):
+```bash
+cd server
+rm -rf node_modules package-lock.json
+npm install
+./node_modules/.bin/prisma --version    # should say 7.x
+./node_modules/.bin/prisma generate
+npm run migrate:deploy
+```
 
-   ```bash
-   cd server
-   rm -rf node_modules package-lock.json
-   npm install
-   ./node_modules/.bin/prisma --version    # MUST say 6.x
-   ./node_modules/.bin/prisma migrate deploy
-   ```
-
-2. **Global Prisma 7 on PATH** — bare `prisma`/`npx prisma` resolves to it. Either
-   remove it (`npm rm -g prisma @prisma/cli`) or always call the local binary
-   (`./node_modules/.bin/prisma`) / the `npm run …` scripts, which ignore globals.
-
-Rule of thumb: never run bare `npx prisma`; use `npm run migrate:deploy` or
-`./node_modules/.bin/prisma` so you always get the pinned **Prisma 6**.
-
-> Staying on Prisma 6 is intentional for now: v7 also requires a driver adapter on
-> `new PrismaClient()` (see `server/src/db.ts`) and a `prisma.config.ts`. That's a
-> separate migration we can do later — it isn't needed to connect to Supabase.
+**`Error: DATABASE_URL is not set` (from the running server) or `P1001` (from
+migrate)** — `.env` isn't filled in or the host is unreachable. Confirm both
+URLs use the **pooler** host (IPv4) and that `DIRECT_URL` is the **5432** session
+pooler. Always invoke Prisma via `npm run …` or `./node_modules/.bin/prisma`,
+never a global `prisma`.
 
 ---
 

@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
-/** Single PrismaClient for the whole process. */
-export const prisma = new PrismaClient();
+import './config'; // ensure .env is loaded before the adapter reads DATABASE_URL
+import { makeAdapter } from './prismaAdapter';
+
+/** Single PrismaClient for the whole process (Prisma 7 pg driver adapter). */
+export const prisma = new PrismaClient({ adapter: makeAdapter() });
 
 /**
  * Append a points-ledger entry and return the new balance.

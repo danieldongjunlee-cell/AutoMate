@@ -1,17 +1,17 @@
 // AutoMate backend schema — phase 2 (DB + auth).
-// PostgreSQL via DATABASE_URL (see ../.env.example / repo-root docker-compose.yml).
+// PostgreSQL via a pg driver adapter (Prisma 7). Connection URLs live in
+// ../prisma.config.ts (migrations) and ../src/prismaAdapter.ts (runtime),
+// both read from DATABASE_URL / DIRECT_URL — see ../.env.example.
 
 generator client {
   provider = "prisma-client-js"
 }
 
+// Prisma 7: the datasource block carries only the provider; the connection URL
+// is supplied by the driver adapter at runtime and by prisma.config.ts for the
+// migrate/CLI commands.
 datasource db {
   provider = "postgresql"
-  // Pooled connection for the app (Supabase PgBouncer / transaction mode).
-  url      = env("DATABASE_URL")
-  // Direct (non-pooled) connection for migrations + introspection. Locally this
-  // can equal DATABASE_URL; on Supabase it must be the direct 5432 connection.
-  directUrl = env("DIRECT_URL")
 }
 
 // ── Auth + profile ─────────────────────────────────────────────────────
