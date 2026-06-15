@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
+import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
@@ -18,13 +19,22 @@ type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const [query, setQuery] = useState('');
   const { data: channels } = useQuery({
     queryKey: ['channels'],
     queryFn: communityService.getChannels,
   });
 
+  const allChannels = channels ?? CHANNELS;
+  const q = query.trim().toLowerCase();
+  const filteredChannels = q
+    ? allChannels.filter((channel) => channel.name.toLowerCase().includes(q))
+    : allChannels;
+
   return (
     <Screen>
+      <CarSwitchHeader />
+
       {/* Community title */}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
         <Text style={{ flex: 1, fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>
@@ -32,7 +42,7 @@ export function CommChannelsScreen() {
         </Text>
       </View>
 
-      {/* Search bar (presentational) */}
+      {/* Search bar */}
       <View
         style={{
           backgroundColor: colors.surface,
@@ -48,9 +58,13 @@ export function CommChannelsScreen() {
         }}
       >
         <Text style={{ fontSize: 15, color: colors.textTertiary }}>🔍</Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          Search posts, channels, owners…
-        </Text>
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search posts, channels, owners…"
+          placeholderTextColor={colors.textTertiary}
+          style={{ flex: 1, fontSize: 13, color: colors.textPrimary, padding: 0 }}
+        />
       </View>
 
       <View
@@ -76,7 +90,13 @@ export function CommChannelsScreen() {
         </View>
       </View>
 
-      {(channels ?? CHANNELS).map((channel) => (
+      {filteredChannels.length === 0 ? (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+          No results for “{query.trim()}”
+        </Text>
+      ) : null}
+
+      {filteredChannels.map((channel) => (
         <Tappable
           key={channel.id}
           onPress={() =>

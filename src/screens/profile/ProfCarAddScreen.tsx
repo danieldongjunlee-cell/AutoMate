@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { Dropdown } from '../../components/Dropdown';
 import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
@@ -15,6 +16,49 @@ import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCarAdd'>;
 
+const YEARS = Array.from({ length: 2026 - 2000 + 1 }, (_, i) => String(2026 - i));
+
+const BRANDS = [
+  'Honda', 'Toyota', 'Subaru', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'Hyundai',
+  'Kia', 'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Tesla', 'Jeep', 'Lexus',
+  'Acura', 'GMC', 'Ram', 'Dodge', 'Volvo', 'Porsche',
+];
+
+const MODELS_BY_BRAND: Record<string, string[]> = {
+  Honda: ['Accord', 'Civic', 'CR-V', 'Pilot', 'Odyssey', 'HR-V'],
+  Toyota: ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Tacoma'],
+  Subaru: ['Outback', 'Forester', 'Crosstrek', 'Impreza'],
+  Ford: ['F-150', 'Escape', 'Explorer', 'Mustang'],
+  Chevrolet: ['Silverado', 'Equinox', 'Malibu', 'Tahoe', 'Traverse'],
+  Nissan: ['Altima', 'Sentra', 'Rogue', 'Pathfinder', 'Frontier'],
+  Mazda: ['Mazda3', 'CX-5', 'CX-30', 'CX-9', 'MX-5 Miata'],
+  Hyundai: ['Elantra', 'Sonata', 'Tucson', 'Santa Fe', 'Kona'],
+  Kia: ['Forte', 'Sorento', 'Sportage', 'Telluride', 'Soul'],
+  BMW: ['3 Series', '5 Series', 'X3', 'X5', 'X1'],
+  Mercedes: ['C-Class', 'E-Class', 'GLC', 'GLE', 'A-Class'],
+  Audi: ['A4', 'A6', 'Q5', 'Q7', 'Q3'],
+  Volkswagen: ['Jetta', 'Passat', 'Tiguan', 'Atlas', 'Golf'],
+  Tesla: ['Model 3', 'Model Y', 'Model S', 'Model X'],
+  Jeep: ['Wrangler', 'Grand Cherokee', 'Cherokee', 'Compass', 'Gladiator'],
+  Lexus: ['ES', 'RX', 'NX', 'IS', 'GX'],
+  Acura: ['MDX', 'RDX', 'TLX', 'Integra'],
+  GMC: ['Sierra', 'Terrain', 'Acadia', 'Yukon', 'Canyon'],
+  Ram: ['1500', '2500', '3500', 'ProMaster'],
+  Dodge: ['Charger', 'Challenger', 'Durango', 'Hornet'],
+  Volvo: ['XC40', 'XC60', 'XC90', 'S60', 'S90'],
+  Porsche: ['911', 'Cayenne', 'Macan', 'Panamera', 'Taycan'],
+};
+
+const GENERIC_MODELS = ['Base', 'Sport', 'Touring', 'Limited', 'Premium'];
+
+const COLORS = [
+  'White', 'Black', 'Silver', 'Gray', 'Lunar Silver Metallic', 'Blue', 'Red', 'Green', 'Beige',
+];
+
+const OIL_SPECS = [
+  '0W-20', '5W-20 Full Synthetic', '5W-30 Full Synthetic', '5W-30 Conventional', '10W-30',
+];
+
 /** Wireframe s-prof-car-add: add a vehicle (same fields as the registered car). */
 export function ProfCarAddScreen() {
   const navigation = useNavigation<Nav>();
@@ -25,7 +69,7 @@ export function ProfCarAddScreen() {
   const [vinScanned, setVinScanned] = useState(false);
 
   const [year, setYear] = useState('');
-  const [make, setMake] = useState('');
+  const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [trim, setTrim] = useState('');
   const [color, setColor] = useState('');
@@ -33,8 +77,10 @@ export function ProfCarAddScreen() {
   const [odometer, setOdometer] = useState('');
   const [oilSpec, setOilSpec] = useState('');
 
-  const name = [year, make, model, trim].map((s) => s.trim()).filter(Boolean).join(' ');
-  const canSave = make.trim().length > 0 && model.trim().length > 0;
+  const modelOptions = brand ? MODELS_BY_BRAND[brand] ?? GENERIC_MODELS : [];
+
+  const name = [year, brand, model, trim].map((s) => s.trim()).filter(Boolean).join(' ');
+  const canSave = brand.trim().length > 0 && model.trim().length > 0;
 
   const addMutation = useMutation({
     mutationFn: () =>
@@ -110,28 +156,44 @@ export function ProfCarAddScreen() {
         <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
-              <TextField label="Year" value={year} onChangeText={(t) => setYear(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="2019" />
+              <Dropdown label="Year" value={year} options={YEARS} onChange={setYear} placeholder="2019" />
             </View>
             <View style={{ flex: 1 }}>
-              <TextField label="Make" value={make} onChangeText={setMake} placeholder="Honda" />
+              <Dropdown
+                label="Brand"
+                value={brand}
+                options={BRANDS}
+                placeholder="Honda"
+                onChange={(b) => {
+                  setBrand(b);
+                  setModel('');
+                }}
+              />
             </View>
           </View>
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
-              <TextField label="Model" value={model} onChangeText={setModel} placeholder="Accord" />
+              <Dropdown
+                label="Model"
+                value={model}
+                options={modelOptions}
+                onChange={setModel}
+                disabled={!brand}
+                placeholder={brand ? 'Accord' : 'Select brand first'}
+              />
             </View>
             <View style={{ flex: 1 }}>
               <TextField label="Trim" value={trim} onChangeText={setTrim} placeholder="EX-L" />
             </View>
           </View>
-          <TextField label="Color" value={color} onChangeText={setColor} placeholder="Lunar Silver Metallic" />
+          <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Lunar Silver Metallic" />
           <TextField label="VIN" value={vin} onChangeText={setVin} placeholder="Enter or scan VIN" autoCapitalize="characters" />
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
               <TextField label="Odometer (mi)" value={odometer} onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="0" />
             </View>
             <View style={{ flex: 1 }}>
-              <TextField label="Oil spec" value={oilSpec} onChangeText={setOilSpec} placeholder="5W-30 Full Synthetic" />
+              <Dropdown label="Oil spec" value={oilSpec} options={OIL_SPECS} onChange={setOilSpec} placeholder="5W-30 Full Synthetic" />
             </View>
           </View>
         </Card>

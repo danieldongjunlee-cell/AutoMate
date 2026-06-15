@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -91,6 +92,7 @@ export function ProfHubScreen() {
 
   return (
     <Screen>
+      <CarSwitchHeader />
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />

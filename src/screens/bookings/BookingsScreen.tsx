@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -71,6 +72,7 @@ export function BookingsScreen() {
 
   return (
     <Screen>
+      <CarSwitchHeader />
       <View
         style={{
           flexDirection: 'row',

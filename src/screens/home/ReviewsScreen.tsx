@@ -26,6 +26,8 @@ export function ReviewsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const userReviews = useAppStore((s) => s.reviews);
+  // You can only review a shop you've completed a service/booking with.
+  const hasCompletedService = useAppStore((s) => s.bookings.length > 0);
   return (
     <Screen>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
@@ -56,7 +58,25 @@ export function ReviewsScreen() {
       </Card>
 
       <View style={{ marginBottom: spacing.md }}>
-        <PrimaryButton label="★ Write a review" onPress={() => navigation.navigate('WriteReview')} />
+        {hasCompletedService ? (
+          <PrimaryButton label="★ Write a review" onPress={() => navigation.navigate('WriteReview')} />
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.sm,
+              backgroundColor: colors.surfaceAlt,
+              borderRadius: 10,
+              padding: spacing.md,
+            }}
+          >
+            <Text style={{ fontSize: 16 }}>🔒</Text>
+            <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary }}>
+              You can write a review once you've completed a service with this shop.
+            </Text>
+          </View>
+        )}
       </View>
 
       {userReviews.map((r) => (

@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { CarSwitcherSheet } from '../../components/CarSwitcherSheet';
+import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
@@ -40,15 +41,15 @@ export function HomeLauncherScreen() {
     </Tappable>
   );
 
-  const dealCard = (emoji: string, badge: string, title: string, sub: string) => (
+  const dealItem = (emoji: string, badge: string, badgeBg: string, badgeFg: string, title: string, sub: string) => (
     <Tappable
       onPress={() => navigation.navigate('BundleDeals')}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, minHeight: 86 }}
     >
-      <Text style={{ fontSize: 24 }}>{emoji}</Text>
+      <Text style={{ fontSize: 26 }}>{emoji}</Text>
       <View style={{ flex: 1 }}>
-        <View style={{ alignSelf: 'flex-start', backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3 }}>
-          <Text style={{ fontSize: 9, fontWeight: '800', color: colors.primaryDeep }}>{badge}</Text>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, fontWeight: '800', color: badgeFg }}>{badge}</Text>
         </View>
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
         <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
@@ -162,24 +163,29 @@ export function HomeLauncherScreen() {
         {tile('⚖️', colors.warningSurface, t('Compare Costs'), 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
       </View>
 
-      {/* Deals & offers */}
-      <SectionLabel>Deals &amp; offers · Sponsored</SectionLabel>
-      <Tappable onPress={() => navigation.navigate('BundleDeals')}>
-        <LinearGradient colors={[palette.navyMid, palette.navyDeep]} style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Text style={{ fontSize: 24 }}>🛢️</Text>
-          <View style={{ flex: 1 }}>
-            <View style={{ alignSelf: 'flex-start', backgroundColor: colors.warningSurface, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3 }}>
-              <Text style={{ fontSize: 9, fontWeight: '800', color: colors.warningDeep }}>LIMITED · BUNDLE</Text>
-            </View>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Honda Fairfax Summer Bundle</Text>
-            <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>Oil + rotation + 27-pt check · Save $40</Text>
-          </View>
-          <Text style={{ color: palette.warning, fontWeight: '800' }}>→</Text>
-        </LinearGradient>
+      {/* Earn points — right above Deals & offers */}
+      <Tappable
+        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfEarn')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successSurface, borderColor: colors.successLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }}
+      >
+        <Text style={{ fontSize: 20 }}>🎁</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>Earn points on every booking</Text>
+          <Text style={{ fontSize: 11, color: colors.successDark }}>Rewards add up to a free oil change & more</Text>
+        </View>
+        <Text style={{ color: colors.successDark }}>›</Text>
       </Tappable>
-      {dealCard('🔧', '20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change')}
-      {dealCard('🛡️', 'SPONSORED', 'Bundle auto + home insurance', 'Drivers near Fairfax save up to $612/yr')}
-      <View style={{ marginBottom: spacing.md }} />
+
+      {/* Deals & offers — paged carousel (one at a time, dots) */}
+      <SectionLabel>Deals &amp; offers · Sponsored</SectionLabel>
+      <PagedCarousel
+        items={[
+          dealItem('🛢️', 'LIMITED · BUNDLE', colors.warningSurface, colors.warningDeep, 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40'),
+          dealItem('🔧', '20% OFF', colors.primarySurface, colors.primaryDeep, 'AutoFix Pro — new customer', 'Free inspection w/ any oil change'),
+          dealItem('🛡️', 'SPONSORED', colors.infoSurface, colors.infoDeep, 'Bundle auto + home insurance', 'Drivers near Fairfax save up to $612/yr'),
+        ]}
+      />
+      <View style={{ marginBottom: spacing.xl }} />
 
       {/* How it works */}
       <SectionLabel>New here?</SectionLabel>
@@ -217,58 +223,46 @@ export function HomeLauncherScreen() {
         {why('✅', 'Verified shops', 'Ratings from real, completed AutoMate bookings')}
         {why('⏱️', 'Save hours', 'Quotes in 1–3 hrs — no calling around')}
       </View>
-      <Tappable
-        onPress={() => navigation.navigate('Reviews')}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successSurface, borderColor: colors.successLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.md }}
-      >
-        <Text style={{ fontSize: 20 }}>🎁</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>Earn points on every booking</Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>Rewards add up to a free oil change & more</Text>
-        </View>
-        <Text style={{ color: colors.successDark }}>›</Text>
-      </Tappable>
 
-      {/* Real customer reviews — horizontally scrollable photo reviews */}
-      <SectionLabel style={{ marginTop: spacing.md }}>{t('Real customer reviews')}</SectionLabel>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: spacing.sm, paddingBottom: spacing.sm, paddingRight: spacing.md }}
-      >
-        {REVIEWS.map((r) => (
-          <Card key={r.car} style={{ width: 250, padding: 0, overflow: 'hidden' }}>
-            {/* Before/after repair photo */}
-            <LinearGradient
-              colors={[r.tint, palette.navyDeep]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ height: 110, alignItems: 'center', justifyContent: 'center' }}
-            >
-              <Text style={{ fontSize: 38 }}>{r.icon}</Text>
-              <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>Repair photo</Text>
-            </LinearGradient>
-            <View style={{ padding: spacing.md }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
-                <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
-                  {r.car}
+      {/* Real customer reviews — paged carousel (one at a time, dots) */}
+      <SectionLabel style={{ marginTop: spacing.xl }}>{t('Real customer reviews')}</SectionLabel>
+      <PagedCarousel
+        items={REVIEWS.map((r) => (
+          <Tappable key={r.car} onPress={() => navigation.navigate('Reviews')}>
+            <Card style={{ padding: 0, overflow: 'hidden' }}>
+              {/* Before/after repair photo */}
+              <LinearGradient
+                colors={[r.tint, palette.navyDeep]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ height: 120, alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Text style={{ fontSize: 40 }}>{r.icon}</Text>
+                <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>Repair photo</Text>
+              </LinearGradient>
+              <View style={{ padding: spacing.md }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                  <Text style={{ flex: 1, fontSize: 14, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
+                    {r.car}
+                  </Text>
+                  <Text style={{ color: palette.gold, fontSize: 12 }}>★★★★★</Text>
+                </View>
+                <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.xs }}>
+                  🔧 {r.repair} · ⏱ {r.time} · {r.paid}
                 </Text>
-                <Text style={{ color: palette.gold, fontSize: 11 }}>★★★★★</Text>
+                <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }} numberOfLines={3}>
+                  {r.body}
+                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm }}>
+                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.shop}</Text>
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: colors.success }}>✓ Verified</Text>
+                </View>
               </View>
-              <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.xs }}>
-                🔧 {r.repair} · ⏱ {r.time} · {r.paid}
-              </Text>
-              <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 17 }} numberOfLines={4}>
-                {r.body}
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm }}>
-                <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.shop}</Text>
-                <Text style={{ fontSize: 11, fontWeight: '700', color: colors.success }}>✓ Verified</Text>
-              </View>
-            </View>
-          </Card>
+            </Card>
+          </Tappable>
         ))}
-      </ScrollView>
+      />
+      <View style={{ marginBottom: spacing.lg }} />
 
       <CarSwitcherSheet
         visible={carSheet}

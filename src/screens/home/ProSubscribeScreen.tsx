@@ -11,6 +11,7 @@ import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
 type Plan = 'annual' | 'monthly';
@@ -31,11 +32,18 @@ export function ProSubscribeScreen() {
 
   // v17: the plan-pick screen is the commit point — subscribe → success (no
   // separate payment screen). Real IAP billing is wired at store launch.
-  const startPro = async () => {
-    setBusy(true);
-    await proService.subscribe(plan);
-    setBusy(false);
-    navigation.navigate('ProSuccess');
+  const startPro = () => {
+    confirmAction(
+      'Confirm subscription',
+      `Start AutoMate Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} on Visa ••••4242?`,
+      async () => {
+        setBusy(true);
+        await proService.subscribe(plan);
+        setBusy(false);
+        navigation.navigate('ProSuccess');
+      },
+      'Confirm & subscribe',
+    );
   };
 
   const planRow = (id: Plan, title: string, sub: string, badge?: string) => {
@@ -120,6 +128,28 @@ export function ProSubscribeScreen() {
       <SectionLabel>Choose a plan</SectionLabel>
       {planRow('annual', 'Annual', '$39/yr — just $3.25/mo', 'SAVE 35%')}
       {planRow('monthly', 'Monthly', '$4.99 / month')}
+
+      <SectionLabel>Payment method</SectionLabel>
+      <Card
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 20 }}>💳</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+            Visa ••••4242
+          </Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>default</Text>
+        </View>
+        <Tappable onPress={() => {}} hitSlop={8}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Change</Text>
+        </Tappable>
+      </Card>
 
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton

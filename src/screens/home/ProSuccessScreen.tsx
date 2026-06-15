@@ -55,7 +55,7 @@ export function ProSuccessScreen() {
         variant="success"
         label="Back to confirm booking →"
         onPress={() =>
-          navigation.canGoBack() ? navigation.goBack() : navigation.navigate('HomeLauncher')
+          navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' })
         }
       />
     </Screen>

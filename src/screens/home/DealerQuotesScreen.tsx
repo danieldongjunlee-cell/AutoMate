@@ -1,22 +1,34 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
-import { Text, View } from 'react-native';
-
-import { Tappable } from '../../components/Tappable';
+import React, { useRef, useState } from 'react';
+import { Platform, ScrollView, Text, View } from 'react-native';
 
 import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { QuoteCard } from '../../components/QuoteCard';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'DealerQuotes'>;
+
+const BEST_GREEN = '#085041';
+
+const TIER_TAG: Record<Quote['tier'], string | null> = {
+  best: 'BEST PRICE',
+  recommended: 'RECOMMENDED',
+  other: null,
+};
+
+const TIER_PIN_COLOR: Record<Quote['tier'], string> = {
+  best: BEST_GREEN,
+  recommended: palette.primary,
+  other: '#fff',
+};
 
 export function DealerQuotesScreen() {
   const navigation = useNavigation<Nav>();
@@ -32,35 +44,48 @@ export function DealerQuotesScreen() {
   const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
   const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
-  const mapLink = (
-    <Tappable
-      onPress={() => navigation.navigate('AllQuotesMap')}
-      style={({ pressed }) => ({
-        backgroundColor: palette.aiPanel,
-        borderRadius: radii.sm,
-        padding: spacing.md,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.sm,
-        marginVertical: spacing.sm,
-        opacity: pressed ? 0.8 : 1,
-      })}
-    >
-      <Text style={{ fontSize: 22 }}>📍</Text>
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
-          See all {QUOTE_REQUEST.quotesReceived} quotes on map
-        </Text>
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
-          Compare prices by location
-        </Text>
-      </View>
-      <Text style={{ fontSize: 18, color: 'rgba(255,255,255,.7)' }}>→</Text>
-    </Tappable>
-  );
+  // Pin ↔ card selection sync (see AllQuotesMap for the same pattern).
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const cardRefs = useRef<Record<string, View | null>>({});
+
+  const markers: MapMarker[] = (quotes ?? []).map((q) => {
+    const dealer = dealerById(q.dealerId);
+    return {
+      id: q.dealerId,
+      lat: dealer.lat,
+      lng: dealer.lng,
+      label: `$${q.price}`,
+      color: TIER_PIN_COLOR[q.tier],
+      tag: TIER_TAG[q.tier] ?? undefined,
+      tagColor: q.tier === 'best' ? BEST_GREEN : palette.primaryDark,
+      selected: q.dealerId === selectedId,
+    };
+  });
+
+  /** Pin tap: select + scroll the matching dealer card into view. */
+  const onPinSelect = (dealerId: string) => {
+    setSelectedId(dealerId);
+    requestAnimationFrame(() => {
+      const node = cardRefs.current[dealerId];
+      if (!node) return;
+      if (Platform.OS === 'web') {
+        (node as any).scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const scroller = scrollRef.current;
+      const inner = (scroller as any)?.getInnerViewNode?.();
+      if (!scroller || !inner) return;
+      (node as any).measureLayout(
+        inner,
+        (_x: number, y: number) => scroller.scrollTo({ y: Math.max(0, y - 90), animated: true }),
+        () => {},
+      );
+    });
+  };
 
   return (
-    <Screen>
+    <Screen scrollRef={scrollRef}>
       {/* AI estimate summary */}
       <View
         style={{
@@ -130,13 +155,10 @@ export function DealerQuotesScreen() {
         <View style={{ marginBottom: spacing.md }}>
           <SectionLabel>Shops near you</SectionLabel>
           <DealerMap
-            markers={quotes.map((q): MapMarker => {
-              const d = dealerById(q.dealerId);
-              return { id: q.dealerId, lat: d.lat, lng: d.lng, label: `$${q.price}`, color: d.color };
-            })}
+            markers={markers}
             center={USER_LOCATION}
             userLocation={USER_LOCATION}
-            onSelect={(id) => navigation.navigate('AcceptBooking', { dealerId: id })}
+            onSelect={onPinSelect}
             style={{ height: 190, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
           />
         </View>
@@ -168,18 +190,34 @@ export function DealerQuotesScreen() {
       {isLoading ? (
         <SkeletonList variant="card" count={4} />
       ) : (
-        quotes?.map((quote, i) => (
-          <React.Fragment key={quote.id}>
-            <QuoteCard
-              quote={quote}
-              dealer={dealerById(quote.dealerId)}
-              highlighted={i === 0}
-              onAccept={() => navigation.navigate('AcceptBooking', { dealerId: quote.dealerId })}
-            />
-            {/* Wireframe: the map card sits after the third quote */}
-            {i === 2 ? mapLink : null}
-          </React.Fragment>
-        ))
+        quotes?.map((quote, i) => {
+          const isSelected = quote.dealerId === selectedId;
+          return (
+            <View
+              key={quote.id}
+              ref={(node) => {
+                cardRefs.current[quote.dealerId] = node;
+              }}
+              // Selecting a pin outlines the matching card below.
+              style={
+                isSelected
+                  ? {
+                      borderWidth: 2,
+                      borderColor: colors.primary,
+                      borderRadius: radii.md,
+                    }
+                  : undefined
+              }
+            >
+              <QuoteCard
+                quote={quote}
+                dealer={dealerById(quote.dealerId)}
+                highlighted={i === 0}
+                onAccept={() => navigation.navigate('AcceptBooking', { dealerId: quote.dealerId })}
+              />
+            </View>
+          );
+        })
       )}
     </Screen>
   );
