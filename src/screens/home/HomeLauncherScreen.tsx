@@ -202,7 +202,7 @@ export function HomeLauncherScreen() {
       <SectionLabel style={{ marginTop: spacing.xl }}>{t('Real customer reviews')}</SectionLabel>
       <PagedCarousel
         items={REVIEWS.map((r) => (
-          <Tappable key={r.car} onPress={() => navigation.navigate('Reviews')}>
+          <View key={r.car}>
             <Card style={{ padding: 0, overflow: 'hidden' }}>
               {/* Before / after repair photos */}
               <View style={{ flexDirection: 'row', height: 120 }}>
@@ -244,7 +244,7 @@ export function HomeLauncherScreen() {
                 </View>
               </View>
             </Card>
-          </Tappable>
+          </View>
         ))}
       />
       <View style={{ marginBottom: spacing.lg }} />

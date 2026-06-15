@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -149,41 +149,20 @@ const ANALYZE_STAGES = [
   `📡 Contacting ${QUOTE_REQUEST.shopsNotified} shops…`,
 ];
 
-/** In-screen AI analyzing state: pulsing 🤖 + staged status text (wireframe-consistent). */
+/** In-screen AI analyzing state: circular spinner + staged status text. */
 function AnalyzingState({ partCount }: { partCount: number }) {
   const { colors } = useTheme();
   const [stage, setStage] = useState(0);
-  const pulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 1.18,
-          duration: 520,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulse, {
-          toValue: 1,
-          duration: 520,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
     // Stage copy flips halfway through the (~2s) service call.
     const t = setTimeout(() => setStage(1), 1100);
-    return () => {
-      loop.stop();
-      clearTimeout(t);
-    };
-  }, [pulse]);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <View style={{ alignItems: 'center', paddingVertical: 72 }}>
-      <Animated.Text style={{ fontSize: 58, transform: [{ scale: pulse }] }}>🤖</Animated.Text>
+      <ActivityIndicator size="large" color={colors.primary} />
       <Text
         style={{
           fontSize: 17,

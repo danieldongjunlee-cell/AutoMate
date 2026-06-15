@@ -6,69 +6,109 @@ import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'rea
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
 import { Tappable } from '../../components/Tappable';
-import { Card, Screen, SectionLabel } from '../../components/ui';
+import { Card, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { CAR_PART_ROWS, DAMAGE_TYPES, PartCell, SIDE_MISC_PART } from '../../services/mock/data';
+import { DAMAGE_TYPES, SIDE_MISC_PART } from '../../services/mock/data';
 import { pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'CarDiagram'>;
 
-const SIDE_W = 64;
 const MAX_PHOTOS = 10;
+const PANEL_H = 300;
 
-/** One tappable car part (single-select; ✓ when photos have been captured). */
-function PartTile({
-  name,
+/** Side-profile parts (front→rear). `suffix` builds the stored name ("L. Fender"). */
+const SIDE_PARTS = [
+  { suffix: 'Fender', label: 'Front\nfender', flex: 1.05 },
+  { suffix: 'Front door', label: 'Front\ndoor', flex: 1 },
+  { suffix: 'Rear door', label: 'Rear\ndoor', flex: 1 },
+  { suffix: 'Rear fender', label: 'Rear\nfender', flex: 1.15 },
+] as const;
+
+/** Top-down parts (front→rear). `h` set → fixed thin band; otherwise flex. */
+const TOP_PARTS = [
+  { name: 'Front bumper', label: 'Front bumper', flex: 0, h: 30, narrow: true },
+  { name: 'Hood', label: 'Hood', flex: 1.1, h: 0, narrow: false },
+  { name: 'Windshield', label: 'Windshield', flex: 0, h: 22, narrow: false },
+  { name: 'Roof', label: 'Roof', flex: 1.5, h: 0, narrow: false },
+  { name: 'Rear glass', label: 'Rear glass', flex: 0, h: 22, narrow: false },
+  { name: 'Trunk', label: 'Trunk', flex: 1.1, h: 0, narrow: false },
+  { name: 'Rear bumper', label: 'Rear bumper', flex: 0, h: 30, narrow: true },
+] as const;
+
+/** One tappable car-part region (single-select; ✓ once photos have been added). */
+function PartBand({
+  label,
   selected,
   done,
-  vertical,
   onPress,
-  minHeight,
+  flex,
+  height,
+  narrow,
+  fontSize = 10,
 }: {
-  name: string;
+  label: string;
   selected: boolean;
-  done?: boolean;
-  vertical?: boolean;
+  done: boolean;
   onPress: () => void;
-  minHeight?: number;
+  flex?: number;
+  height?: number;
+  narrow?: boolean;
+  fontSize?: number;
 }) {
   const { colors } = useTheme();
   const bg = selected ? palette.primaryDark : done ? colors.successSurface : colors.surface;
   const fg = selected ? '#fff' : done ? colors.successDark : colors.textSecondary;
-  const borderColor = selected ? palette.primary : done ? colors.success : colors.border;
-  const showCheck = selected || done;
+  const bc = selected ? palette.primary : done ? colors.success : colors.border;
   return (
     <Tappable
       onPress={onPress}
       style={({ pressed }) => ({
-        flex: vertical ? 1 : undefined,
-        width: vertical ? SIDE_W : undefined,
-        alignSelf: vertical ? undefined : 'stretch',
+        flex: flex || undefined,
+        height,
+        marginHorizontal: narrow ? 16 : 0,
         backgroundColor: bg,
+        borderWidth: selected || done ? 2 : 1,
+        borderColor: bc,
         borderRadius: radii.sm,
-        borderWidth: selected || done ? 2 : 1.5,
-        borderColor,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: vertical ? spacing.sm : 12,
-        paddingHorizontal: 4,
-        minHeight,
+        paddingHorizontal: 2,
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <Text style={{ fontSize: vertical ? 11 : 14, fontWeight: showCheck ? '700' : '600', color: fg, textAlign: 'center' }}>
-        {showCheck ? `✓ ${name}` : name}
+      <Text style={{ fontSize, fontWeight: '700', color: fg, textAlign: 'center', lineHeight: fontSize + 2 }}>
+        {(selected || done ? '✓ ' : '') + label}
       </Text>
     </Tappable>
   );
 }
 
+/** Decorative wheel circle (tyre with rim) layered over the body edges. */
+function Wheel({ style }: { style: object }) {
+  return (
+    <View
+      style={[
+        {
+          position: 'absolute',
+          width: 15,
+          height: 24,
+          borderRadius: 5,
+          backgroundColor: '#1c2230',
+          borderWidth: 2,
+          borderColor: '#0d111a',
+        },
+        style,
+      ]}
+    />
+  );
+}
+
 /**
- * Wireframe s-car-diagram (v17 redesign): pick a part, then the upload section
- * expands inline below (photos + description) — the separate upload screen is
- * gone. Save commits the part and continues to confirm.
+ * Wireframe s-car-diagram (v17 redesign): three car views — left side profile,
+ * top-down, right side profile — each part tappable. Picking a part expands the
+ * upload section inline below (the separate upload screen is gone).
  */
 export function CarDiagramScreen() {
   const navigation = useNavigation<Nav>();
@@ -103,6 +143,49 @@ export function CarDiagramScreen() {
     navigation.navigate('ConfirmSubmit');
   };
 
+  /** Render one side profile (front at top) with two wheels on the ground edge. */
+  const sidePanel = (side: 'L' | 'R') => {
+    const onLeft = side === 'L';
+    return (
+      <View style={{ flex: 1, height: PANEL_H, position: 'relative' }}>
+        <View
+          style={{
+            flex: 1,
+            gap: 5,
+            paddingLeft: onLeft ? 16 : 0,
+            paddingRight: onLeft ? 0 : 16,
+          }}
+        >
+          {SIDE_PARTS.map((p) => {
+            const name = `${side}. ${p.suffix}`;
+            return (
+              <PartBand
+                key={name}
+                label={p.label}
+                flex={p.flex}
+                fontSize={9}
+                selected={draftPart === name}
+                done={isDone(name)}
+                onPress={() => pickPart(name)}
+              />
+            );
+          })}
+          <PartBand
+            label="Step"
+            height={20}
+            fontSize={9}
+            selected={draftPart === `${side}. Step`}
+            done={isDone(`${side}. Step`)}
+            onPress={() => pickPart(`${side}. Step`)}
+          />
+        </View>
+        {/* Wheels sit in the outer gutter (the side that touches the ground) */}
+        <Wheel style={onLeft ? { left: 0, top: 52 } : { right: 0, top: 52 }} />
+        <Wheel style={onLeft ? { left: 0, top: PANEL_H - 116 } : { right: 0, top: PANEL_H - 116 }} />
+      </View>
+    );
+  };
+
   return (
     <Screen>
       <SubmitProgress step={1} left="Avg 2 min" right="Let's go 🚗" />
@@ -110,13 +193,11 @@ export function CarDiagramScreen() {
       <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.xs }}>
         Where is it damaged?
       </Text>
+      <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>
+        Tap the panel on the car — left side, top, or right side.
+      </Text>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.xs }}>
-        <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>[ DRIVER ]</Text>
-        <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>[ PASSENGER ]</Text>
-      </View>
-
-      {/* Top-down car grid */}
+      {/* Three car views: left side · top-down · right side */}
       <View
         style={{
           backgroundColor: colors.surfaceAlt,
@@ -124,35 +205,60 @@ export function CarDiagramScreen() {
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: colors.border,
           padding: spacing.sm,
-          marginTop: spacing.sm,
           marginBottom: spacing.sm,
-          gap: 6,
         }}
       >
-        {CAR_PART_ROWS.map((row, i) => {
-          if (row.length === 1) {
-            return (
-              <PartTile
-                key={i}
-                name={row[0].name}
-                selected={draftPart === row[0].name}
-                done={isDone(row[0].name)}
-                onPress={() => pickPart(row[0].name)}
-              />
-            );
-          }
-          const [left, mid, right] = row;
-          const tall = mid.name === 'Roof';
-          return (
-            <View key={i} style={{ flexDirection: 'row', gap: 6, alignItems: 'stretch' }}>
-              <PartTile name={left.name} vertical selected={draftPart === left.name} done={isDone(left.name)} onPress={() => pickPart(left.name)} />
-              <View style={{ flex: 1 }}>
-                <PartTile name={mid.name} selected={draftPart === mid.name} done={isDone(mid.name)} onPress={() => pickPart(mid.name)} minHeight={tall ? 76 : 52} />
-              </View>
-              <PartTile name={right.name} vertical selected={draftPart === right.name} done={isDone(right.name)} onPress={() => pickPart(right.name)} />
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'stretch' }}>
+          {/* Left side profile (driver) */}
+          {sidePanel('L')}
+
+          {/* Top-down view */}
+          <View style={{ flex: 1.35, height: PANEL_H, position: 'relative' }}>
+            <View style={{ flex: 1, gap: 5 }}>
+              {TOP_PARTS.map((p) => (
+                <PartBand
+                  key={p.name}
+                  label={p.label}
+                  flex={p.flex || undefined}
+                  height={p.h || undefined}
+                  narrow={p.narrow}
+                  fontSize={p.h && p.h <= 22 ? 9 : 10}
+                  selected={draftPart === p.name}
+                  done={isDone(p.name)}
+                  onPress={() => pickPart(p.name)}
+                />
+              ))}
             </View>
-          );
-        })}
+            {/* Four wheels at the corners of the roof line */}
+            <Wheel style={{ left: -4, top: 56 }} />
+            <Wheel style={{ right: -4, top: 56 }} />
+            <Wheel style={{ left: -4, bottom: 56 }} />
+            <Wheel style={{ right: -4, bottom: 56 }} />
+          </View>
+
+          {/* Right side profile (passenger) */}
+          {sidePanel('R')}
+        </View>
+
+        {/* Panel captions */}
+        <View style={{ flexDirection: 'row', gap: 8, marginTop: 6 }}>
+          {['Driver side', 'Top view', 'Passenger side'].map((cap, i) => (
+            <Text
+              key={cap}
+              style={{
+                flex: i === 1 ? 1.35 : 1,
+                textAlign: 'center',
+                fontSize: 10,
+                fontWeight: '700',
+                color: colors.textTertiary,
+                textTransform: 'uppercase',
+                letterSpacing: 0.4,
+              }}
+            >
+              {cap}
+            </Text>
+          ))}
+        </View>
       </View>
 
       {/* Side mirror / glass / wheel / light */}

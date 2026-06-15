@@ -11,7 +11,7 @@ import { Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
 import { PRO_GUIDES, ProGuide } from '../../services/mock/data';
-import { DIY_GUIDES, DiyGuide } from '../../services/mock/diyGuides';
+import { DIY_GUIDES, DiyGuide, matchGuide } from '../../services/mock/diyGuides';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList>;
@@ -238,6 +238,7 @@ export function DiyGuidesScreen() {
 export function DiyMatchScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const [selected, setSelected] = useState<DiyGuide | null>(null);
   return (
     <Screen>
       <View style={{ marginBottom: spacing.sm }}>
@@ -285,7 +286,7 @@ export function DiyMatchScreen() {
         </View>
         <View style={{ flexDirection: 'row', gap: 6 }}>
           <Tappable
-            onPress={() => navigation.navigate('DiyGuides')}
+            onPress={() => setSelected(matchGuide('Rear bumper dent'))}
             style={({ pressed }) => ({
               flex: 1,
               backgroundColor: colors.success,
@@ -315,18 +316,22 @@ export function DiyMatchScreen() {
         </View>
       </View>
 
-      <Card style={{ padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-        <Text style={{ fontSize: 21 }}>🖌️</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textTertiary }}>
-            L. Fender scratch → Guide #3
-          </Text>
-          <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>
-            81% match · surface-level, good DIY candidate
-          </Text>
-        </View>
-        <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
-      </Card>
+      <Tappable onPress={() => setSelected(matchGuide('L. Fender scratch'))}>
+        <Card style={{ padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <Text style={{ fontSize: 21 }}>🖌️</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textTertiary }}>
+              L. Fender scratch → Guide #3
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>
+              81% match · surface-level, good DIY candidate
+            </Text>
+          </View>
+          <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
+        </Card>
+      </Tappable>
+
+      {selected ? <DiyGuideSheet guide={selected} onClose={() => setSelected(null)} /> : null}
     </Screen>
   );
 }

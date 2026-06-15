@@ -95,6 +95,7 @@ export function DiyGuideRow({
   onDark,
   free,
   showLink,
+  onReadGuide,
 }: {
   level: 'EASY' | 'MED' | 'HARD';
   title: string;
@@ -102,6 +103,8 @@ export function DiyGuideRow({
   onDark?: boolean;
   free?: boolean;
   showLink?: boolean;
+  /** When provided, "Read guide →" opens the matched guide instead of an alert. */
+  onReadGuide?: () => void;
 }) {
   const { colors } = useTheme();
   const levelBg = { EASY: colors.success, MED: colors.warning, HARD: colors.danger }[level];
@@ -149,8 +152,10 @@ export function DiyGuideRow({
       </Text>
       {showLink ? (
         <Tappable
-          onPress={() =>
-            Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`)
+          onPress={
+            onReadGuide ??
+            (() =>
+              Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`))
           }
           hitSlop={6}
         >

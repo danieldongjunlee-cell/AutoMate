@@ -14,6 +14,8 @@ import { QUOTE_REQUEST } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
+import { DiyGuideSheet } from '../maint/DiyProScreens';
+import { DiyGuide, matchGuide } from '../../services/mock/diyGuides';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Submitted'>;
 
@@ -25,6 +27,8 @@ export function SubmittedScreen() {
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   // Quote-alert opt-in (mock push permission — flips the banner state).
   const [notifyEnabled, setNotifyEnabled] = useState(false);
+  // The DIY guide opened from an "AI Repair Recommendation" row.
+  const [guide, setGuide] = useState<DiyGuide | null>(null);
   const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
   // Live AI analysis from the submit response; wireframe demo values otherwise.
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
@@ -36,21 +40,6 @@ export function SubmittedScreen() {
       <SubmitProgress step={3} left="Submitted" right="Done 🎉" />
       {/* Success header */}
       <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-        <View
-          style={{
-            width: 72,
-            height: 72,
-            borderRadius: 36,
-            backgroundColor: colors.successSurface,
-            borderWidth: 2.5,
-            borderColor: colors.success,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Text style={{ fontSize: 32 }}>✅</Text>
-        </View>
         <Text style={{ fontSize: 19, fontWeight: '600', color: colors.successDeep, marginBottom: 3 }}>
           Photos sent to {QUOTE_REQUEST.shopsNotified} shops
         </Text>
@@ -185,18 +174,32 @@ export function SubmittedScreen() {
       {isPro ? (
         // Pro members see the matched DIY methods unlocked.
         <View>
-          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" showLink />
-          <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
+          <DiyGuideRow
+            level="EASY"
+            title="Boiling water dent method"
+            meta="7 steps · ~15 min · Boiling water + plunger"
+            showLink
+            onReadGuide={() => setGuide(matchGuide('Boiling water dent method'))}
+          />
+          <DiyGuideRow
+            level="MED"
+            title="Plunger pull method"
+            meta="6 steps · ~12 min · Plunger required"
+            showLink
+            onReadGuide={() => setGuide(matchGuide('Plunger pull method'))}
+          />
         </View>
       ) : (
         <ProLockOverlay
           subtitle="Unlock AI-matched DIY guides based on your damage photos"
           onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock')}
         >
-          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" showLink />
-          <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
+          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="7 steps · ~15 min · Boiling water + plunger" showLink />
+          <DiyGuideRow level="MED" title="Plunger pull method" meta="6 steps · ~12 min · Plunger required" showLink />
         </ProLockOverlay>
       )}
+
+      {guide ? <DiyGuideSheet guide={guide} onClose={() => setGuide(null)} /> : null}
 
       <PrimaryButton
         label="View available quotes →"
@@ -215,7 +218,7 @@ export function SubmittedScreen() {
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <Text style={{ fontSize: 14, color: colors.textSecondary }}>🏠 Back to home</Text>
+        <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to home</Text>
       </Tappable>
     </Screen>
   );

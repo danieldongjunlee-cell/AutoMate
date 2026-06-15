@@ -159,4 +159,72 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'If the battery dies again soon after, it likely needs replacing or you left something on. Never let the two cars’ bodies touch, and never connect the final black clamp directly to the dead battery’s negative post.',
   },
+  {
+    id: 'boiling-water-dent',
+    title: 'Boiling water dent method',
+    emoji: '♨️',
+    minutes: 15,
+    difficulty: 'Easy',
+    tools: ['Kettle or pot of boiling water', 'Rubber gloves', 'Cup-style plunger', 'A towel'],
+    steps: [
+      'Confirm the dent is on a flexible plastic panel (most bumpers) with intact paint — this method is for plastic, not creased steel.',
+      'Boil a kettle or pot of water and put on rubber gloves to protect your hands from the heat.',
+      'Pour the boiling water slowly over the dented area so the plastic warms and becomes pliable.',
+      'Working quickly while it is still hot, reach behind the panel and push the dent outward with your hand.',
+      'If you can’t reach behind it, press a clean cup-style plunger over the dent and pull firmly to draw it out.',
+      'Pour a little cold water over the area to set the plastic in its restored shape.',
+      'Repeat once or twice if a shallow dent remains. Deep creases may still need a body shop.',
+    ],
+    tip: 'Works best on warm days and on bumpers where the plastic flexes. It will not fix dents with cracked or chipped paint.',
+  },
+  {
+    id: 'plunger-dent',
+    title: 'Plunger pull method',
+    emoji: '🪠',
+    minutes: 12,
+    difficulty: 'Medium',
+    tools: ['Clean cup-style plunger (not a flanged toilet plunger)', 'Water', 'A towel'],
+    steps: [
+      'Pick a clean cup-style sink plunger. The dent should be wider than the cup but inside a smooth, flat area.',
+      'Lightly wet both the dent and the rim of the plunger cup so it can form a tight seal.',
+      'Center the plunger over the dent and press in firmly to push out the air and create suction.',
+      'Pull straight outward with steady force — you should feel or hear the panel pop back.',
+      'Repeat, re-wetting the seal as needed, until the surface is level.',
+      'Dry the area and inspect in good light; small high spots can be tapped gently from behind.',
+    ],
+    tip: 'Keep the pull straight, not at an angle, or the seal breaks. A sharp crease likely needs paintless dent repair by a pro.',
+  },
+  {
+    id: 'scratch-buff',
+    title: 'Buff out a light scratch',
+    emoji: '✨',
+    minutes: 20,
+    difficulty: 'Easy',
+    tools: ['Car wash soap & water', 'Microfiber cloths', 'Scratch-removal compound or polish', 'Optional: car wax'],
+    steps: [
+      'Wash and dry the scratched area so grit doesn’t grind into the paint while you work.',
+      'Run a fingernail across the scratch. If it doesn’t catch, it’s in the clear coat and can usually be buffed out.',
+      'Apply a small amount of scratch-removal compound to a clean, damp microfiber cloth.',
+      'Rub the compound over the scratch with firm, even strokes for 30–60 seconds, following the scratch direction.',
+      'Wipe away the residue with a clean cloth and check progress in good light.',
+      'Repeat two or three times for stubborn marks; finish with a coat of wax to seal and protect the area.',
+    ],
+    tip: 'If your nail catches the scratch, it has gone through the clear coat and needs touch-up paint or a shop — buffing alone won’t fill it.',
+  },
 ];
+
+/**
+ * Pick the readable guide that best matches a recommended-repair label
+ * (e.g. "Rear bumper dent" → boiling-water/plunger dent guide). Matches on
+ * keywords in the guide title/id; falls back to the first guide.
+ */
+export function matchGuide(label: string): DiyGuide {
+  const q = label.toLowerCase();
+  const found = DIY_GUIDES.find((g) =>
+    `${g.id} ${g.title}`
+      .toLowerCase()
+      .split(/[\s-]+/)
+      .some((word) => word.length > 2 && q.includes(word)),
+  );
+  return found ?? DIY_GUIDES[0];
+}
