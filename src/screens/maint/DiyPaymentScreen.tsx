@@ -66,7 +66,7 @@ export function DiyPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>🔓 AutoMate Pro · lifetime</Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>📚 DIY guides · lifetime</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>$10.00</Text>
         </View>
         <View
@@ -172,7 +172,7 @@ export function DiyPaymentScreen() {
             <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
               Apple Pay
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>Touch ID to pay</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>opens  Pay sheet</Text>
           </View>
           {method === 'apple' ? (
             <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>

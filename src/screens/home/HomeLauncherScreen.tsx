@@ -31,6 +31,23 @@ export function HomeLauncherScreen() {
     </Tappable>
   );
 
+  const dealCard = (emoji: string, badge: string, title: string, sub: string) => (
+    <Tappable
+      onPress={() => navigation.navigate('BundleDeals')}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }}
+    >
+      <Text style={{ fontSize: 24 }}>{emoji}</Text>
+      <View style={{ flex: 1 }}>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, fontWeight: '800', color: colors.primaryDeep }}>{badge}</Text>
+        </View>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
+        <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
+      </View>
+      <Text style={{ color: colors.primary, fontWeight: '800' }}>→</Text>
+    </Tappable>
+  );
+
   const why = (emoji: string, title: string, sub: string) => (
     <Card style={{ flex: 1, padding: spacing.sm }}>
       <Text style={{ fontSize: 18, marginBottom: 4 }}>{emoji}</Text>
@@ -83,17 +100,24 @@ export function HomeLauncherScreen() {
         {tile('⚖️', colors.warningSurface, 'Compare Costs', 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
       </View>
 
-      {/* Deals banner */}
+      {/* Deals & offers */}
+      <SectionLabel>Deals &amp; offers · Sponsored</SectionLabel>
       <Tappable onPress={() => navigation.navigate('BundleDeals')}>
-        <LinearGradient colors={[palette.navyMid, palette.navyDeep]} style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+        <LinearGradient colors={[palette.navyMid, palette.navyDeep]} style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
           <Text style={{ fontSize: 24 }}>🛢️</Text>
           <View style={{ flex: 1 }}>
+            <View style={{ alignSelf: 'flex-start', backgroundColor: colors.warningSurface, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 3 }}>
+              <Text style={{ fontSize: 9, fontWeight: '800', color: colors.warningDeep }}>LIMITED · BUNDLE</Text>
+            </View>
             <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Honda Fairfax Summer Bundle</Text>
             <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>Oil + rotation + 27-pt check · Save $40</Text>
           </View>
           <Text style={{ color: palette.warning, fontWeight: '800' }}>→</Text>
         </LinearGradient>
       </Tappable>
+      {dealCard('🔧', '20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change')}
+      {dealCard('🛡️', 'SPONSORED', 'Bundle auto + home insurance', 'Drivers near Fairfax save up to $612/yr')}
+      <View style={{ marginBottom: spacing.md }} />
 
       {/* How it works */}
       <SectionLabel>New here?</SectionLabel>
@@ -108,16 +132,28 @@ export function HomeLauncherScreen() {
         </View>
         <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
       </Tappable>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        {([
+          ['📷', '1 · Snap photos'],
+          ['⚖️', '2 · Compare quotes'],
+          ['📅', '3 · Book & save'],
+        ] as const).map(([emoji, label]) => (
+          <View key={label} style={{ flex: 1, alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, paddingVertical: spacing.sm }}>
+            <Text style={{ fontSize: 18, marginBottom: 2 }}>{emoji}</Text>
+            <Text style={{ fontSize: 10, fontWeight: '700', color: colors.textSecondary, textAlign: 'center' }}>{label}</Text>
+          </View>
+        ))}
+      </View>
 
       {/* Why choose */}
       <SectionLabel>Why choose AutoMate?</SectionLabel>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
-        {why('💸', 'Shops compete', 'Local shops bid for your repair')}
-        {why('🤝', 'No upfront pay', 'Pay the shop after the work')}
+        {why('💸', 'Shops compete', 'Local shops bid for your repair — you pick the best')}
+        {why('🤝', 'No upfront pay', 'Book now, pay the shop after the work')}
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {why('✅', 'Verified shops', 'Ratings from real bookings')}
-        {why('⏱️', 'Save hours', 'Quotes in 1–3 hrs')}
+        {why('✅', 'Verified shops', 'Ratings from real, completed AutoMate bookings')}
+        {why('⏱️', 'Save hours', 'Quotes in 1–3 hrs — no calling around')}
       </View>
       <Tappable
         onPress={() => navigation.navigate('Reviews')}

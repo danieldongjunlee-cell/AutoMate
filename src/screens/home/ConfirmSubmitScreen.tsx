@@ -250,7 +250,7 @@ export function ConfirmSubmitScreen() {
     <Screen>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <SectionLabel>Parts selected ({damageParts.length})</SectionLabel>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 3 of 3</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 2 of 2</Text>
       </View>
 
       {damageParts.length === 0 ? (

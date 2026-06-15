@@ -87,9 +87,15 @@ export function CarDiagramScreen() {
           }}
         >
           <Text style={{ flex: 1, fontSize: 14, color: colors.textTertiary }}>
-            Tap one part — you'll add photos for each part separately
+            Tap one part — add photos for each.{'  '}
+            <Text style={{ fontWeight: '700' }}>✓ = photos added</Text>
           </Text>
           {draftPart ? <Badge label={draftPart} variant="primarySoft" /> : null}
+        </View>
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm }}>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>[ DRIVER ]</Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>[ PASSENGER ]</Text>
         </View>
 
         {/* Top-down car grid */}

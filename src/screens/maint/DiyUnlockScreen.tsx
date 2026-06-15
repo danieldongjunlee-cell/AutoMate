@@ -7,8 +7,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 
 import { Card, SectionLabel, Screen } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
-import { PAYMENT_CARD } from '../../services/mock/data';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyUnlock'>;
@@ -20,7 +20,7 @@ const BENEFITS = [
   { icon: '♾️', title: 'All future guides included', sub: 'New guides added monthly · never pay again' },
 ];
 
-/** Wireframe s-diy-unlock: Pro paywall detail ($10 lifetime). */
+/** Wireframe s-diy-unlock: DIY guide paywall — $10 lifetime OR AutoMate Pro. */
 export function DiyUnlockScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -48,35 +48,23 @@ export function DiyUnlockScreen() {
             width: 120,
             height: 120,
             borderRadius: 60,
-            backgroundColor: palette.warning,
-            opacity: 0.12,
+            backgroundColor: palette.primary,
+            opacity: 0.14,
           }}
         />
-        <Text style={{ fontSize: 40, marginBottom: 6 }}>🔓</Text>
-        <Text style={{ fontSize: 21, fontWeight: '800', color: '#fff', marginBottom: 3 }}>
-          AutoMate Pro
+        <Text style={{ fontSize: 34, marginBottom: 6 }}>📚</Text>
+        <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff', marginBottom: 4 }}>
+          DIY Repair Guides
         </Text>
-        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.55)', marginBottom: spacing.md }}>
-          Lifetime access · one-time payment
-        </Text>
-        <View
+        <Text
           style={{
-            flexDirection: 'row',
-            alignItems: 'baseline',
-            gap: 6,
-            backgroundColor: 'rgba(239,159,39,.15)',
-            borderWidth: 1,
-            borderColor: palette.warning,
-            borderRadius: radii.pill,
-            paddingHorizontal: 22,
-            paddingVertical: 8,
+            fontSize: 12,
+            color: 'rgba(255,255,255,.6)',
+            textAlign: 'center',
           }}
         >
-          <Text style={{ fontSize: 26, fontWeight: '800', color: '#F5B947' }}>$10</Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
-            forever · no subscription
-          </Text>
-        </View>
+          12 step-by-step guides · fix it yourself & save $100s in labor
+        </Text>
       </LinearGradient>
 
       <SectionLabel>What you get</SectionLabel>
@@ -105,49 +93,135 @@ export function DiyUnlockScreen() {
         ))}
       </Card>
 
-      <SectionLabel>Pay with</SectionLabel>
+      <SectionLabel>Choose how to unlock</SectionLabel>
+
+      {/* Option 1: DIY guides only — $10 one-time */}
+      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            marginBottom: spacing.md,
+          }}
+        >
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: radii.sm,
+              backgroundColor: colors.successSurface,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>📚</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
+              DIY guides only
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              All 12 guides, forever · no subscription
+            </Text>
+          </View>
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>$10</Text>
+            <Text style={{ fontSize: 11, color: colors.textTertiary }}>one-time</Text>
+          </View>
+        </View>
+        <Tappable
+          onPress={() => navigation.navigate('DiyPayment')}
+          style={({ pressed }) => ({
+            backgroundColor: colors.success,
+            borderRadius: radii.sm,
+            paddingVertical: 13,
+            alignItems: 'center',
+            opacity: pressed ? 0.85 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '800', color: '#fff' }}>Unlock DIY — $10 →</Text>
+        </Tappable>
+      </Card>
+
+      {/* Option 2: AutoMate Pro — best value */}
       <View
         style={{
-          backgroundColor: colors.primarySurface,
-          borderLeftWidth: 3,
-          borderLeftColor: colors.primary,
-          borderRadius: radii.sm,
+          backgroundColor: colors.surface,
+          borderWidth: 1.5,
+          borderColor: colors.primary,
+          borderRadius: radii.md,
           padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 18 }}>💳</Text>
-        <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
-          Visa ending {PAYMENT_CARD.last4}
-        </Text>
-        <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text>
-      </View>
-
-      <Tappable onPress={() => navigation.navigate('DiyPayment')}>
-        {({ pressed }) => (
-          <LinearGradient
-            colors={[palette.warning, '#F5B947']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+        <View
+          style={{
+            position: 'absolute',
+            top: -9,
+            left: spacing.md,
+            backgroundColor: colors.primary,
+            borderRadius: radii.pill,
+            paddingHorizontal: 10,
+            paddingVertical: 3,
+          }}
+        >
+          <Text style={{ fontSize: 10, fontWeight: '800', color: colors.onPrimary }}>BEST VALUE</Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.sm,
+            marginTop: 4,
+            marginBottom: spacing.md,
+          }}
+        >
+          <View
             style={{
-              borderRadius: radii.md,
-              paddingVertical: 15,
+              width: 40,
+              height: 40,
+              borderRadius: radii.sm,
+              backgroundColor: colors.primarySurface,
               alignItems: 'center',
-              marginBottom: spacing.sm,
-              opacity: pressed ? 0.85 : 1,
+              justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '800', color: palette.dark }}>
-              Unlock Pro for $10 →
+            <Text style={{ fontSize: 20 }}>⭐</Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
+              AutoMate Pro
             </Text>
-          </LinearGradient>
-        )}
-      </Tappable>
-      <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textTertiary }}>
-        One-time charge · 30-day money-back guarantee
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              DIY guides + no deposits + priority quotes + 2× points
+            </Text>
+          </View>
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>
+              $39<Text style={{ fontSize: 11, fontWeight: '600', color: colors.textTertiary }}>/yr</Text>
+            </Text>
+            <Text style={{ fontSize: 11, color: colors.successDark }}>DIY included</Text>
+          </View>
+        </View>
+        <Tappable
+          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')}
+          style={({ pressed }) => ({
+            backgroundColor: colors.primary,
+            borderRadius: radii.sm,
+            paddingVertical: 13,
+            alignItems: 'center',
+            opacity: pressed ? 0.85 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.onPrimary }}>
+            Get Pro — includes DIY →
+          </Text>
+        </Tappable>
+      </View>
+
+      <Text style={{ textAlign: 'center', fontSize: 11, color: colors.textTertiary }}>
+        30-day money-back guarantee on either option
       </Text>
     </Screen>
   );

@@ -54,10 +54,10 @@ export function DiyConfirmScreen() {
           <Text style={{ fontSize: 38 }}>🔓</Text>
         </LinearGradient>
         <Text style={{ fontSize: 23, fontWeight: '800', color: colors.textPrimary, marginBottom: 3 }}>
-          You're a Pro member!
+          DIY guides unlocked!
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          $10.00 paid · Lifetime access unlocked
+          $10.00 paid · 12 guides, yours forever
         </Text>
       </View>
 

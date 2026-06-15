@@ -94,7 +94,7 @@ export function AcceptBookingScreen() {
       </View>
 
       <PrimaryButton
-        label={day && time ? `Confirm booking — Apr ${day} at ${time}` : 'Select a date and time'}
+        label={day && time ? `Continue — Apr ${day} · ${time} →` : 'Select a date and time'}
         disabled={!day || !time}
         loading={booking}
         onPress={onConfirm}

@@ -76,14 +76,9 @@ export function ProfMilesScreen() {
                   <Text style={{ fontSize: 12, color: colors.textTertiary }}>{m.sub}</Text>
                 </View>
               </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
-                  {m.costPts.toLocaleString()} pts
-                </Text>
-                <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-                  {pointsToUsd(m.costPts)} value
-                </Text>
-              </View>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
+                {m.costPts.toLocaleString()} pts
+              </Text>
             </View>
             <View
               style={{

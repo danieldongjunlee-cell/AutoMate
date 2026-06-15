@@ -53,6 +53,9 @@ export function RescheduleScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Honda Fairfax · Rear bumper</Text>
           <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)' }}>📅 Thu, Apr 12 · 10:30 AM</Text>
         </View>
+        <View style={{ backgroundColor: 'rgba(255,255,255,.22)', borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3 }}>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>Confirmed</Text>
+        </View>
       </LinearGradient>
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>

@@ -6,7 +6,6 @@ import { Tappable } from '../../components/Tappable';
 
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
-import { pointsToUsd } from '../../config/points';
 import { dealerById, MILESTONE_PARTNERS, MILESTONES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -33,14 +32,9 @@ export function ProfMileDetScreen() {
             <Text style={{ fontSize: 17, fontWeight: '600', color: '#fff' }}>{milestone.title}</Text>
             <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>{milestone.sub}</Text>
           </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
-              {milestone.costPts.toLocaleString()} pts
-            </Text>
-            <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.7)' }}>
-              {pointsToUsd(milestone.costPts)} value
-            </Text>
-          </View>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
+            {milestone.costPts.toLocaleString()} pts
+          </Text>
         </View>
         <View
           style={{ height: 6, backgroundColor: 'rgba(255,255,255,.2)', borderRadius: 3, overflow: 'hidden' }}
@@ -116,26 +110,38 @@ export function ProfMileDetScreen() {
               >
                 <Text style={{ fontSize: 13, color: colors.primaryDark }}>Get directions</Text>
               </Tappable>
-              <Tappable
-                onPress={() =>
-                  Alert.alert(
-                    'Redeem',
-                    `You need ${milestone.costPts.toLocaleString()} pts to redeem (you have ${points.toLocaleString()}).`,
-                  )
-                }
-                style={({ pressed }) => ({
-                  flex: 1,
-                  backgroundColor: colors.primary,
-                  borderRadius: radii.sm,
-                  paddingVertical: 9,
-                  alignItems: 'center',
-                  opacity: pressed ? 0.8 : 1,
-                })}
-              >
-                <Text style={{ fontSize: 13, fontWeight: '500', color: colors.onPrimary }}>
-                  Redeem here
-                </Text>
-              </Tappable>
+              {(() => {
+                const locked = points < milestone.costPts;
+                const remaining = milestone.costPts - points;
+                return (
+                  <Tappable
+                    onPress={() =>
+                      Alert.alert(
+                        'Redeem',
+                        `You need ${milestone.costPts.toLocaleString()} pts to redeem (you have ${points.toLocaleString()}).`,
+                      )
+                    }
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      backgroundColor: locked ? colors.surfaceAlt : colors.primary,
+                      borderRadius: radii.sm,
+                      paddingVertical: 9,
+                      alignItems: 'center',
+                      opacity: pressed ? 0.8 : 1,
+                    })}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        fontWeight: locked ? '600' : '500',
+                        color: locked ? colors.textTertiary : colors.onPrimary,
+                      }}
+                    >
+                      {locked ? `🔒 ${remaining.toLocaleString()} pts to go` : 'Redeem here'}
+                    </Text>
+                  </Tappable>
+                );
+              })()}
             </View>
           </View>
         );

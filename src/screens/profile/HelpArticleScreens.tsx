@@ -185,7 +185,7 @@ export function HelpBookingsScreen() {
         {
           title: 'Reschedule or cancel',
           body:
-            "Open the booking and tap Edit. Free rescheduling up to 24 hours before your appointment; same-day changes depend on the shop's policy.",
+            "Open the booking and tap Edit. Free rescheduling up to 12 hours before your appointment; same-day changes depend on the shop's policy.",
         },
         {
           title: 'Reminders',

@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -46,6 +46,7 @@ export function CameraScreen() {
   const addPhoto = useAppStore((s) => s.addDraftPhoto);
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
   const [picking, setPicking] = useState(false);
+  const [note, setNote] = useState('');
 
   const photoCount = photoUris.length;
   const firstPart = (draftPart ?? 'rear bumper').toLowerCase();
@@ -76,7 +77,7 @@ export function CameraScreen() {
           <Text style={{ fontWeight: '700', color: colors.primaryDark }}>{firstPart}</Text> from
           different angles
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 2 of 3</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 1 of 2</Text>
       </View>
 
       {/* Damage type chips (tagged at capture time) */}
@@ -263,6 +264,31 @@ export function CameraScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Optional damage description */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary }}>Describe the damage</Text>
+        <Text style={{ fontSize: 11, color: colors.textTertiary }}>Optional</Text>
+      </View>
+      <TextInput
+        value={note}
+        onChangeText={setNote}
+        multiline
+        placeholder="e.g. Scraped a pole backing out — paint is chipped and there's a small dent on the lower-left corner."
+        placeholderTextColor={colors.textTertiary}
+        style={{
+          minHeight: 64,
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          fontSize: 13,
+          color: colors.textPrimary,
+          textAlignVertical: 'top',
+          marginBottom: spacing.md,
+        }}
+      />
 
       {/* Actions */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>

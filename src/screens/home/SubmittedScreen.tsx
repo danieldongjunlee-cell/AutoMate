@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
@@ -194,6 +195,26 @@ export function SubmittedScreen() {
           <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" showLink />
         </ProLockOverlay>
       )}
+
+      <PrimaryButton
+        label="View available quotes →"
+        onPress={() => navigation.navigate('DealerQuotes')}
+        style={{ marginTop: spacing.lg, marginBottom: spacing.sm }}
+      />
+      <Tappable
+        onPress={() => navigation.navigate('HomeLauncher')}
+        style={({ pressed }) => ({
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          paddingVertical: 13,
+          alignItems: 'center',
+          opacity: pressed ? 0.7 : 1,
+        })}
+      >
+        <Text style={{ fontSize: 14, color: colors.textSecondary }}>🏠 Back to home</Text>
+      </Tappable>
     </Screen>
   );
 }

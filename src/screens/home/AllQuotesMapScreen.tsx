@@ -211,7 +211,7 @@ export function AllQuotesMapScreen() {
       </View>
 
       <SectionLabel>
-        Quotes ({filtered.length}
+        Top picks ({filtered.length}
         {quotes && filtered.length !== quotes.length ? ` of ${quotes.length}` : ''})
       </SectionLabel>
       {isLoading ? <SkeletonList variant="row" count={3} /> : null}

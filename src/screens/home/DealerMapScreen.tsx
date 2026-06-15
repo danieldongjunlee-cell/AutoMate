@@ -149,6 +149,7 @@ export function DealerMapScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>🧭 Get directions</Text>
+          <Text style={{ fontSize: 9, color: 'rgba(255,255,255,.75)', marginTop: 1 }}>opens Google Maps</Text>
         </Tappable>
         <Tappable
           onPress={() =>

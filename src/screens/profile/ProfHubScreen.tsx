@@ -222,10 +222,12 @@ export function ProfHubScreen() {
         <Text style={{ fontSize: 20 }}>⭐</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
-            {isPro ? 'AutoMate Pro — active' : 'Go Pro — skip every deposit'}
+            {isPro ? 'AutoMate Pro — active' : 'Go Pro — skip deposits + DIY guides'}
           </Text>
           <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.65)' }}>
-            {isPro ? 'Manage your membership' : 'No deposits + DIY guides · from $3.25/mo'}
+            {isPro
+              ? 'Manage your membership'
+              : 'No security deposits · all DIY guides · priority quotes · from $3.25/mo'}
           </Text>
         </View>
         <View
@@ -237,7 +239,7 @@ export function ProfHubScreen() {
           }}
         >
           <Text style={{ fontSize: 12, fontWeight: '800', color: palette.dark }}>
-            {isPro ? 'Manage' : 'Get Pro →'}
+            {isPro ? 'Manage' : 'Get Pro'}
           </Text>
         </View>
       </Tappable>

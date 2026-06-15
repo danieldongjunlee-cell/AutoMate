@@ -75,6 +75,40 @@ export function WriteReviewScreen() {
         }}
       />
 
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <View
+          style={{
+            width: 52,
+            height: 52,
+            borderRadius: radii.sm,
+            borderWidth: 1.5,
+            borderStyle: 'dashed',
+            borderColor: colors.primaryLight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 16, color: colors.primary }}>+</Text>
+          <Text style={{ fontSize: 9, color: colors.textTertiary }}>Photo</Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: colors.primarySurface,
+            borderRadius: radii.sm,
+            paddingHorizontal: spacing.md,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: spacing.xs,
+          }}
+        >
+          <Text style={{ fontSize: 14 }}>🎁</Text>
+          <Text style={{ fontSize: 11, color: colors.primary, lineHeight: 16 }}>
+            Earn <Text style={{ fontWeight: '700' }}>+30 pts</Text> for a review with a photo
+          </Text>
+        </View>
+      </View>
+
       <PrimaryButton label="Post review →" onPress={onPost} />
     </Screen>
   );
