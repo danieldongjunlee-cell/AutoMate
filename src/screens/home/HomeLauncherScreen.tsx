@@ -252,6 +252,10 @@ export function HomeLauncherScreen() {
   );
 }
 
+/** Pexels CDN image (stable hotlink, no auth) cropped to the review thumb size. */
+const px = (id: number) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=440&h=280&fit=crop`;
+
 const REVIEWS = [
   {
     car: '2019 Honda Accord',
@@ -262,8 +266,8 @@ const REVIEWS = [
     icon: '🚙',
     tint: '#1e4fcc',
     body: "Quoted $330 on AutoMate and that's exactly what I paid — no surprises. Looks brand new and they finished a day early.",
-    before: 'https://loremflickr.com/440/260/car,bumper,dent?lock=11',
-    after: 'https://loremflickr.com/440/260/car,detailing,shiny?lock=12',
+    before: px(12365608), // damaged front bumper close-up
+    after: px(12808907), // shiny black car, repaired
   },
   {
     car: '2021 Toyota RAV4',
@@ -274,8 +278,8 @@ const REVIEWS = [
     icon: '🚗',
     tint: '#16a34a',
     body: 'Compared 2 shops in minutes and saved ~$90 vs the first place I called. Smooth booking, no deposit drama.',
-    before: 'https://loremflickr.com/440/260/car,scratch,paint?lock=21',
-    after: 'https://loremflickr.com/440/260/car,polish,clean?lock=22',
+    before: px(7779044), // scratched / rusty panel close-up
+    after: px(6872572), // detailing a clean car
   },
   {
     car: '2018 Subaru Outback',
@@ -286,8 +290,8 @@ const REVIEWS = [
     icon: '🚐',
     tint: '#7F77DD',
     body: 'Insurance claim was painless — AutoMate had three quotes before my agent even called back. Fender looks factory-fresh.',
-    before: 'https://loremflickr.com/440/260/car,fender,damage?lock=31',
-    after: 'https://loremflickr.com/440/260/car,bodywork,glossy?lock=32',
+    before: px(11985980), // crashed front end
+    after: px(1637859), // clean red sedan, repaired
   },
   {
     car: '2022 Kia Telluride',
@@ -298,8 +302,8 @@ const REVIEWS = [
     icon: '🚙',
     tint: '#0F6E56',
     body: 'Booked at 9am, fixed by lunch. The shop messaged me photos before and after — super transparent.',
-    before: 'https://loremflickr.com/440/260/windshield,crack?lock=41',
-    after: 'https://loremflickr.com/440/260/windshield,car,clean?lock=42',
+    before: px(2265634), // broken windshield
+    after: px(2498076), // clean reflective car
   },
   {
     car: '2020 Mazda CX-5',
@@ -310,8 +314,8 @@ const REVIEWS = [
     icon: '🚗',
     tint: '#E24B4A',
     body: 'Dealer quoted me $620, AutoMate found the same job for $410. No upsell, no waiting room runaround.',
-    before: 'https://loremflickr.com/440/260/brake,disc,worn?lock=51',
-    after: 'https://loremflickr.com/440/260/car,wheel,clean?lock=52',
+    before: px(11542692), // damaged car
+    after: px(9516301), // clean red car, repaired
   },
   {
     car: '2017 Ford F-150',
@@ -322,7 +326,7 @@ const REVIEWS = [
     icon: '🛻',
     tint: '#534AB7',
     body: 'OEM mirror, color-matched perfectly. Loved seeing real reviews from other owners before I picked the shop.',
-    before: 'https://loremflickr.com/440/260/car,mirror,broken?lock=61',
-    after: 'https://loremflickr.com/440/260/car,mirror?lock=62',
+    before: px(11360863), // broken side mirror
+    after: px(6698127), // clean car on the street, repaired
   },
 ];

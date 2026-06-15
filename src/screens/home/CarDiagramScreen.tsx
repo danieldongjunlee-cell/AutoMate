@@ -2,7 +2,6 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
@@ -59,8 +58,7 @@ function PartBand({
   fontSize?: number;
 }) {
   const { colors } = useTheme();
-  // Idle bands are transparent so the car silhouette behind shows through.
-  const bg = selected ? palette.primaryDark : done ? colors.successSurface : 'transparent';
+  const bg = selected ? palette.primaryDark : done ? colors.successSurface : colors.surface;
   const fg = selected ? '#fff' : done ? colors.successDark : colors.textSecondary;
   const bc = selected ? palette.primary : done ? colors.success : colors.border;
   return (
@@ -84,41 +82,6 @@ function PartBand({
         {(selected || done ? '✓ ' : '') + label}
       </Text>
     </Tappable>
-  );
-}
-
-// Car-body silhouette paths (front at top). Drawn behind the part bands so the
-// three panels read as a left side / top-down / right side view of the car.
-const TOP_PATH =
-  'M30,4 C16,6 8,16 7,40 C6,70 6,90 6,150 C6,210 6,230 7,260 C8,284 16,294 30,296 ' +
-  'C42,298 58,298 70,296 C84,294 92,284 93,260 C94,230 94,210 94,150 ' +
-  'C94,90 94,70 93,40 C92,16 84,6 70,4 C58,2 42,2 30,4 Z';
-const SIDE_PATH =
-  'M16,5 C8,8 4,18 4,42 C3,90 3,210 4,258 C4,282 8,292 16,295 ' +
-  'C24,298 36,298 44,295 C52,292 56,282 56,258 C57,210 57,90 56,42 ' +
-  'C56,18 52,8 44,5 C36,2 24,2 16,5 Z';
-
-/** Light car-body silhouette drawn behind a panel's part bands. */
-function CarSilhouette({ variant }: { variant: 'top' | 'side' }) {
-  const { colors } = useTheme();
-  const isTop = variant === 'top';
-  return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-      <Svg
-        width="100%"
-        height="100%"
-        viewBox={isTop ? '0 0 100 300' : '0 0 60 300'}
-        preserveAspectRatio="none"
-      >
-        <Path
-          d={isTop ? TOP_PATH : SIDE_PATH}
-          fill={colors.surface}
-          stroke={colors.textTertiary}
-          strokeOpacity={0.4}
-          strokeWidth={1.2}
-        />
-      </Svg>
-    </View>
   );
 }
 
@@ -185,11 +148,10 @@ export function CarDiagramScreen() {
     const onLeft = side === 'L';
     return (
       <View style={{ flex: 1, height: PANEL_H, position: 'relative' }}>
-        <CarSilhouette variant="side" />
         <View
           style={{
             flex: 1,
-            gap: 4,
+            gap: 5,
             paddingLeft: onLeft ? 16 : 0,
             paddingRight: onLeft ? 0 : 16,
           }}
@@ -252,8 +214,7 @@ export function CarDiagramScreen() {
 
           {/* Top-down view */}
           <View style={{ flex: 1.35, height: PANEL_H, position: 'relative' }}>
-            <CarSilhouette variant="top" />
-            <View style={{ flex: 1, gap: 4 }}>
+            <View style={{ flex: 1, gap: 5 }}>
               {TOP_PARTS.map((p) => (
                 <PartBand
                   key={p.name}
@@ -268,6 +229,11 @@ export function CarDiagramScreen() {
                 />
               ))}
             </View>
+            {/* Four wheels at the corners of the roof line */}
+            <Wheel style={{ left: -4, top: 56 }} />
+            <Wheel style={{ right: -4, top: 56 }} />
+            <Wheel style={{ left: -4, bottom: 56 }} />
+            <Wheel style={{ right: -4, bottom: 56 }} />
           </View>
 
           {/* Right side profile (passenger) */}
