@@ -225,3 +225,33 @@ After **each** phase I'll give you a precise browser test script.
 
 > On approval of this plan (and answers to #1–#5), I'll start **P1 — Wireframe sync** and
 > keep localhost running throughout.
+
+---
+
+## 9. Decisions received (2026-06-15)
+
+| # | Decision | Resolution |
+|---|---|---|
+| 1 | Backend | ✅ **Keep Express + Prisma** on Supabase `automate` via pooler |
+| 3 | Shared tables | ✅ **Defer to Phase 2** — app-owned `automate.quotes`/`automate.bookings`, mock the portal integration for now; revisit with the portal's real schema |
+| 4 | Points economy | ✅ **1 pt = $0.01** (matches v17 everywhere) |
+| 5 | Pro model | Proceeding with v17: subscription (annual/monthly) **+** separate $10 DIY-only entitlement (flag if you disagree) |
+| 2 | **Auth — separate user pool** | ⚠️ **Open conflict, see below** |
+
+### ⚠️ Auth conflict to resolve before Phase 3
+You chose a **separate consumer user pool**, but Phase 3 also asks for **real Supabase
+Auth** *in the shared project*. A single Supabase project has exactly **one** `auth.users`
+(GoTrue), shared with the portal — so "separate pool" and "Supabase Auth in the shared
+project" can't both be true. Two clean ways to honor a separate pool:
+
+- **Option A — Dedicated Supabase Auth for consumers.** A second Supabase **Auth project**
+  (real GoTrue, fully isolated pool); the `automate` **data** stays in the shared project.
+  Express (which we're keeping) verifies the consumer JWT and bridges to the shared DB.
+  *True Supabase Auth + isolated, but two projects and cross-project RLS handled in Express.*
+- **Option B — App-managed auth in `automate.users`.** Keep the current Express
+  bcrypt + JWT, storing consumer accounts in `automate.users` on the **shared project's
+  Postgres** — completely isolated from the portal's `auth.users`. *Simplest, isolated, uses
+  the shared project for data; not GoTrue.*
+
+**This blocks Phase 3 only.** Phases **P1 (wireframe sync)** and **P2 (DB schema)** do not
+depend on it and can proceed now.
