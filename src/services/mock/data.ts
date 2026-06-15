@@ -808,7 +808,6 @@ export const EARN_ACTIONS = [
   { icon: '✒️', title: 'Manual service log', sub: 'Enter service details', pts: EARN_RULES.manualLog },
   { icon: '🛢️', title: 'Book service via app', sub: 'Schedule at a dealer', pts: EARN_RULES.bookService },
   { icon: '📸', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: EARN_RULES.submitPhotos },
-  { icon: '💬', title: 'Post in community', sub: 'Share tips and reviews', pts: EARN_RULES.communityPost },
   { icon: '🛡️', title: 'Add insurance policy', sub: 'Link your coverage', pts: EARN_RULES.addInsurance },
   { icon: '👥', title: 'Refer a friend', sub: 'They join AutoMate', pts: EARN_RULES.referFriend },
 ];

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { DotCarousel } from '../../components/DotCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
@@ -166,6 +167,56 @@ export function HomeLauncherScreen() {
         </View>
         <Text style={{ color: colors.successDark }}>›</Text>
       </Tappable>
+
+      {/* Real customer reviews — dot-controlled carousel (wireframe rev-track) */}
+      <SectionLabel style={{ marginTop: spacing.md }}>Real customer reviews</SectionLabel>
+      <DotCarousel
+        items={REVIEWS.map((r) => (
+          <Card key={r.car} style={{ padding: spacing.md }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs }}>
+              <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>
+                {r.car}
+              </Text>
+              <Text style={{ color: palette.gold, fontSize: 12 }}>★★★★★</Text>
+            </View>
+            <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.xs }}>
+              🔧 {r.repair} · ⏱ {r.time} · {r.paid}
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{r.body}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm }}>
+              <Text style={{ fontSize: 11, color: colors.textTertiary }}>{r.shop}</Text>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.success }}>✓ Verified</Text>
+            </View>
+          </Card>
+        ))}
+      />
     </Screen>
   );
 }
+
+const REVIEWS = [
+  {
+    car: '2019 Honda Accord',
+    repair: 'Rear bumper',
+    time: '2 days',
+    paid: 'Insurance',
+    shop: 'Honda Fairfax',
+    body: "Quoted $330 on AutoMate and that's exactly what I paid — no surprises. Looks brand new and they finished a day early.",
+  },
+  {
+    car: '2021 Toyota RAV4',
+    repair: 'Door scratch',
+    time: '1 day',
+    paid: 'Cash',
+    shop: 'AutoFix Pro',
+    body: 'Compared 2 shops in minutes and saved ~$90 vs the first place I called. Smooth booking, no deposit drama.',
+  },
+  {
+    car: '2018 Subaru Outback',
+    repair: 'Front fender',
+    time: '2 days',
+    paid: 'Insurance',
+    shop: 'Vienna Auto Care',
+    body: 'Insurance claim was painless — AutoMate had three quotes before my agent even called back. Fender looks factory-fresh.',
+  },
+];

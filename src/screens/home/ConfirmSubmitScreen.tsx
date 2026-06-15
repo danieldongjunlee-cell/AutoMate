@@ -110,6 +110,14 @@ function PartCard({
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             {item.photos} photo{item.photos !== 1 ? 's' : ''} · {severity}
           </Text>
+          {item.note ? (
+            <Text
+              style={{ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic', marginTop: 3 }}
+              numberOfLines={2}
+            >
+              “{item.note}”
+            </Text>
+          ) : null}
         </View>
       </View>
       {/* Remaining photo thumbnails */}
