@@ -7,6 +7,7 @@ import { Text, View } from 'react-native';
 import { AppleLogo, GoogleLogo } from '../../components/BrandLogos';
 import { LogoMark } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { LegalKind, LegalSheet } from '../../components/LegalSheet';
 import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
 import { Tappable } from '../../components/Tappable';
 import { AuthStackParamList } from '../../navigation/types';
@@ -21,6 +22,7 @@ export function SplashScreen() {
   const signIn = useAppStore((s) => s.signIn);
   // Branded chooser sheet (user-feedback pass 1) instead of an inline spinner.
   const [sheetProvider, setSheetProvider] = useState<SocialProvider | null>(null);
+  const [legal, setLegal] = useState<LegalKind>(null);
 
   return (
     <AuthScreenShell centered>
@@ -133,10 +135,23 @@ export function SplashScreen() {
         }}
       >
         By continuing, you agree to our{' '}
-        <Text style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}>Terms of Service</Text>
+        <Text
+          style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}
+          onPress={() => setLegal('terms')}
+        >
+          Terms of Service
+        </Text>
         {' & '}
-        <Text style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}>Privacy Policy</Text>.
+        <Text
+          style={{ color: 'rgba(255,255,255,.8)', fontWeight: '600' }}
+          onPress={() => setLegal('privacy')}
+        >
+          Privacy Policy
+        </Text>
+        .
       </Text>
+
+      <LegalSheet kind={legal} onClose={() => setLegal(null)} />
 
       <SocialSignInSheet
         provider={sheetProvider}

@@ -13,7 +13,6 @@ import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { PaymentCard, paymentMethodsService, proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
-import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
 type Plan = 'annual' | 'monthly';
@@ -38,19 +37,18 @@ export function ProSubscribeScreen() {
   const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
 
   // v17: the plan-pick screen is the commit point — subscribe → success (no
-  // separate payment screen). Real IAP billing is wired at store launch.
-  const startPro = () => {
-    confirmAction(
-      'Confirm subscription',
-      `Start AutoMate Pro — ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} on ${cardLabel}?`,
-      async () => {
-        setBusy(true);
-        await proService.subscribe(plan);
-        setBusy(false);
-        navigation.navigate('ProSuccess');
-      },
-      'Confirm & subscribe',
-    );
+  // separate payment screen). Tapping the priced button is the confirmation,
+  // so the charge goes through directly for either plan (annual or monthly).
+  // Real IAP billing is wired at store launch.
+  const startPro = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await proService.subscribe(plan);
+      navigation.navigate('ProSuccess');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const planRow = (id: Plan, title: string, sub: string, badge?: string) => {

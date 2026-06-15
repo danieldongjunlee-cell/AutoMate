@@ -3,13 +3,13 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { LegalKind, LegalSheet } from '../../components/LegalSheet';
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService } from '../../services';
 import { palette, spacing } from '../../theme';
-import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -29,6 +29,7 @@ export function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
+  const [legal, setLegal] = useState<LegalKind>(null);
 
   const rules = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
   const rulesPass = rules.every((r) => r.ok);
@@ -126,8 +127,7 @@ export function SignUpScreen() {
         </Text>
       ) : null}
 
-      {/* ToS / Privacy disclaimer — no terms screen in the auth navigator,
-          so the links surface a short Alert instead of navigating. */}
+      {/* ToS / Privacy disclaimer — links open the full document in a sheet. */}
       <Text
         style={{
           fontSize: 12,
@@ -139,29 +139,21 @@ export function SignUpScreen() {
         By creating an account, you agree to our{' '}
         <Text
           style={{ color: palette.primaryLight, fontWeight: '700' }}
-          onPress={() =>
-            showAlert(
-              'Terms of Service',
-              'By using AutoMate you agree to use the service lawfully, accept that quotes are estimates from third-party dealers, and acknowledge that bookings are subject to dealer confirmation.',
-            )
-          }
+          onPress={() => setLegal('terms')}
         >
           Terms of Service
         </Text>{' '}
         and{' '}
         <Text
           style={{ color: palette.primaryLight, fontWeight: '700' }}
-          onPress={() =>
-            showAlert(
-              'Privacy Policy',
-              'We collect your name, contact details, and vehicle info to match you with dealers. We do not sell your personal data. You can request deletion of your account at any time.',
-            )
-          }
+          onPress={() => setLegal('privacy')}
         >
           Privacy Policy
         </Text>
         .
       </Text>
+
+      <LegalSheet kind={legal} onClose={() => setLegal(null)} />
 
       <PrimaryButton
         label="Create account"

@@ -199,7 +199,7 @@ export function DiyUnlockScreen() {
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>
-              $39<Text style={{ fontSize: 11, fontWeight: '600', color: colors.textTertiary }}>/yr</Text>
+              $48<Text style={{ fontSize: 11, fontWeight: '600', color: colors.textTertiary }}>/yr</Text>
             </Text>
             <Text style={{ fontSize: 11, color: colors.successDark }}>DIY included</Text>
           </View>

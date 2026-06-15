@@ -143,26 +143,6 @@ export function BookAgreementScreen() {
         </Text>
       </Tappable>
 
-      <View
-        style={{
-          backgroundColor: colors.warningSurface,
-          borderColor: colors.warning,
-          borderWidth: 1,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          marginBottom: spacing.md,
-          flexDirection: 'row',
-          gap: spacing.sm,
-        }}
-      >
-        <Text>{deposit > 0 ? '🔒' : '📅'}</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.warningDeep, lineHeight: 18 }}>
-          {deposit > 0
-            ? "A small refundable security deposit holds your spot — released after you show up. Pro members skip it."
-            : 'No deposit for scheduled services — just show up, or reschedule 12h ahead.'}
-        </Text>
-      </View>
-
       <PrimaryButton label="Agree & continue →" disabled={!agreed} onPress={onContinue} />
       <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Shops sign a matching{' '}
