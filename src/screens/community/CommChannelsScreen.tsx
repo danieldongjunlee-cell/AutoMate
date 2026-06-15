@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
-import { CarSwitchHeader } from '../../components/CarSwitchHeader';
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 
 import { CommunityStackParamList } from '../../navigation/types';
 import { brandChannels, channelKind } from '../../services/mock/communityChannels';
@@ -47,13 +47,12 @@ export function CommChannelsScreen() {
 
   return (
     <Screen safeTop>
-      <CarSwitchHeader />
-
-      {/* Community title */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
+      {/* Community title + active-car switch (same line) */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md }}>
         <Text style={{ flex: 1, fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>
           Community
         </Text>
+        <CarSwitchChip />
       </View>
 
       {/* Search bar */}

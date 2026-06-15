@@ -18,6 +18,26 @@ export function brandOf(name: string): string {
   return /^\d{4}$/.test(parts[0]) ? parts[1] ?? parts[0] : parts[0] ?? 'your car';
 }
 
+const BRAND_DOMAIN: Record<string, string> = {
+  Honda: 'honda.com', Toyota: 'toyota.com', Subaru: 'subaru.com', Ford: 'ford.com',
+  Chevrolet: 'chevrolet.com', Nissan: 'nissanusa.com', Mazda: 'mazdausa.com',
+  Hyundai: 'hyundaiusa.com', Kia: 'kia.com', BMW: 'bmwusa.com', Mercedes: 'mbusa.com',
+  Audi: 'audiusa.com', Volkswagen: 'vw.com', Tesla: 'tesla.com', Jeep: 'jeep.com',
+  Lexus: 'lexus.com', Acura: 'acura.com', GMC: 'gmc.com', Ram: 'ramtrucks.com',
+  Dodge: 'dodge.com', Volvo: 'volvocars.com', Porsche: 'porsche.com',
+};
+
+/** Real brand logo via the Clearbit logo CDN (null if brand unknown). */
+export function brandLogoUrl(brand: string): string | null {
+  const domain = BRAND_DOMAIN[brand];
+  return domain ? `https://logo.clearbit.com/${domain}` : null;
+}
+
+/** Strip the leading year + brand from a vehicle name → the model/trim. */
+export function modelOf(name: string, brand: string): string {
+  return name.replace(new RegExp(`^\\d{4}\\s+${brand}\\s+`, 'i'), '').trim() || name;
+}
+
 export interface ActiveVehicle {
   vehicles: Vehicle[];
   active: Vehicle | undefined;

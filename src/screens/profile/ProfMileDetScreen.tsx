@@ -1,3 +1,4 @@
+import { RouteProp, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
@@ -6,16 +7,22 @@ import { Tappable } from '../../components/Tappable';
 
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
+import { ProfileStackParamList } from '../../navigation/types';
 import { dealerById, MILESTONE_PARTNERS, MILESTONES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { openDirections } from '../../utils/links';
 
-/** Wireframe s-prof-mile-det: free oil change milestone + partner dealers. */
+type MileDetRoute = RouteProp<ProfileStackParamList, 'ProfMileDet'>;
+
+/** Wireframe s-prof-mile-det: selected reward milestone + partner dealers. */
 export function ProfMileDetScreen() {
   const { colors } = useTheme();
+  const route = useRoute<MileDetRoute>();
   const points = useAppStore((s) => s.points);
-  const milestone = MILESTONES[0];
+  // Reflect the tapped reward; fall back to the first reward if no id provided.
+  const milestone =
+    MILESTONES.find((m) => m.id === route.params?.id) ?? MILESTONES[0];
   const pct = Math.min(100, (points / milestone.costPts) * 100);
 
   return (

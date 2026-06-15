@@ -48,7 +48,7 @@ export function ProfMilesScreen() {
         return (
           <Tappable
             key={m.id}
-            onPress={() => navigation.navigate('ProfMileDet')}
+            onPress={() => navigation.navigate('ProfMileDet', { id: m.id })}
             style={({ pressed }) => ({
               backgroundColor: colors.surface,
               borderRadius: radii.sm,

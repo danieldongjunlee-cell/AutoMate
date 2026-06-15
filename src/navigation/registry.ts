@@ -12,7 +12,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
   CarDiagram: 'Select damaged part', // s-car-diagram
-  Camera: 'Take photos', // s-camera
+  Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
   ConfirmSubmit: 'Confirm damage', // s-confirm-submit
   Submitted: 'Request submitted', // s-submitted
   AfterHours: 'Request submitted (after hours)', // s-after-hours

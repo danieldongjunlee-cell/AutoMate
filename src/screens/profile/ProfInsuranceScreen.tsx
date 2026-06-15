@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Dropdown } from '../../components/Dropdown';
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
@@ -14,7 +15,7 @@ import { Screen, SectionLabel } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
-import { insuranceService, Policy } from '../../services';
+import { insuranceService, Policy, vehiclesService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
@@ -35,6 +36,7 @@ function PolicyFormModal({
   onClose,
   onSave,
   saving,
+  carOptions,
 }: {
   policy: Policy | null;
   visible: boolean;
@@ -47,6 +49,7 @@ function PolicyFormModal({
     covers: string;
   }) => void;
   saving: boolean;
+  carOptions: string[];
 }) {
   const [carrier, setCarrier] = useState('');
   const [policyNumber, setPolicyNumber] = useState('');
@@ -61,9 +64,11 @@ function PolicyFormModal({
       setPolicyNumber(policy?.policyNumber ?? '');
       setDeductible(policy ? String(policy.deductible) : '');
       setPremium(policy ? String(policy.premiumPerYear) : '');
-      setCovers(policy?.covers ?? '');
+      // Pre-select the current "covers" only if it matches a registered car.
+      const current = policy?.covers ?? '';
+      setCovers(carOptions.includes(current) ? current : '');
     }
-  }, [visible, policy]);
+  }, [visible, policy, carOptions]);
 
   const canSave = carrier.trim().length > 0;
 
@@ -95,11 +100,12 @@ function PolicyFormModal({
         keyboardType="number-pad"
         placeholder="1200"
       />
-      <TextField
+      <Dropdown
         label="Covers"
         value={covers}
-        onChangeText={setCovers}
-        placeholder="2019 Honda Accord"
+        options={carOptions}
+        onChange={setCovers}
+        placeholder="Select your car"
         containerStyle={{ marginBottom: spacing.lg }}
       />
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
@@ -269,6 +275,12 @@ export function ProfInsuranceScreen() {
     queryFn: () => insuranceService.listPolicies(),
   });
 
+  const { data: vehicles } = useQuery({
+    queryKey: ['vehicles'],
+    queryFn: vehiclesService.listVehicles,
+  });
+  const carOptions = (vehicles ?? []).map((v) => v.name);
+
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['policies'] });
 
   const saveMutation = useMutation({
@@ -413,6 +425,7 @@ export function ProfInsuranceScreen() {
         onClose={() => setFormOpen(false)}
         onSave={(fields) => saveMutation.mutate(fields)}
         saving={saveMutation.isPending}
+        carOptions={carOptions}
       />
     </Screen>
   );

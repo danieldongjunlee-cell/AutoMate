@@ -9,10 +9,15 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
-import { Screen, SectionLabel } from '../../components/ui';
+import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { PaymentCard, paymentMethodsService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
+
+/** Group a 16-digit string into blocks of 4 ("4242 4242 ..."). */
+function formatCardNumber(digits: string): string {
+  return digits.replace(/(.{4})/g, '$1 ').trim();
+}
 
 /** Edit (holder/expiry, last4 read-only) or add (all fields) card form. */
 function CardFormModal({
@@ -26,24 +31,30 @@ function CardFormModal({
   card: PaymentCard | null;
   visible: boolean;
   onClose: () => void;
-  onSave: (fields: { holder: string; expires: string; last4: string }) => void;
+  onSave: (fields: { holder: string; expires: string; last4: string; isDefault: boolean }) => void;
   saving: boolean;
 }) {
   const { colors } = useTheme();
   const [holder, setHolder] = useState('');
   const [expires, setExpires] = useState('');
-  const [last4, setLast4] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [setPrimary, setSetPrimary] = useState(false);
 
   React.useEffect(() => {
     if (visible) {
       setHolder(card?.holder ?? '');
       setExpires(card?.expires ?? '');
-      setLast4(card?.last4 ?? '');
+      setCardNumber('');
+      setSetPrimary(card?.isDefault ?? false);
     }
   }, [visible, card]);
 
+  const isEdit = !!card;
+  // Add mode requires a full 16-digit number; edit mode keeps last4 read-only.
   const canSave =
-    holder.trim().length > 0 && /^\d{2}\/\d{2}$/.test(expires) && /^\d{4}$/.test(last4);
+    holder.trim().length > 0 &&
+    /^\d{2}\/\d{2}$/.test(expires) &&
+    (isEdit || cardNumber.length === 16);
 
   return (
     <FormSheet
@@ -90,21 +101,60 @@ function CardFormModal({
         </View>
       ) : (
         <TextField
-          label="Card number — last 4 digits"
-          value={last4}
-          onChangeText={(t) => setLast4(t.replace(/\D/g, '').slice(0, 4))}
-          placeholder="4242"
+          label="Card number"
+          value={formatCardNumber(cardNumber)}
+          onChangeText={(t) => setCardNumber(t.replace(/\D/g, '').slice(0, 16))}
+          placeholder="4242 4242 4242 4242"
           keyboardType="number-pad"
-          containerStyle={{ marginBottom: spacing.lg }}
+          containerStyle={{ marginBottom: spacing.md }}
         />
       )}
+
+      <Tappable
+        onPress={() => setSetPrimary((v) => !v)}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          paddingVertical: spacing.sm,
+          marginBottom: spacing.md,
+        }}
+      >
+        <View
+          style={{
+            width: 22,
+            height: 22,
+            borderRadius: radii.sm,
+            borderWidth: 1.5,
+            borderColor: setPrimary ? colors.primary : colors.border,
+            backgroundColor: setPrimary ? colors.primary : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {setPrimary ? (
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>✓</Text>
+          ) : null}
+        </View>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
+          Set as primary card
+        </Text>
+      </Tappable>
+
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
         <PrimaryButton
           label={card ? 'Save' : 'Add card'}
           disabled={!canSave}
           loading={saving}
-          onPress={() => onSave({ holder: holder.trim(), expires, last4 })}
+          onPress={() =>
+            onSave({
+              holder: holder.trim(),
+              expires,
+              last4: isEdit ? card!.last4 : cardNumber.slice(-4),
+              isDefault: setPrimary,
+            })
+          }
           style={{ flex: 1 }}
         />
       </View>
@@ -128,14 +178,24 @@ export function ProfPaymentScreen() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['payment-cards'] });
 
   const saveMutation = useMutation({
-    mutationFn: async (fields: { holder: string; expires: string; last4: string }) => {
+    mutationFn: async (fields: {
+      holder: string;
+      expires: string;
+      last4: string;
+      isDefault: boolean;
+    }) => {
       if (editing) {
-        return paymentMethodsService.updateCard(editing.id, {
+        await paymentMethodsService.updateCard(editing.id, {
           holder: fields.holder,
           expires: fields.expires,
         });
+        // Edit form can also (re)designate the primary card.
+        if (fields.isDefault && !editing.isDefault) {
+          await paymentMethodsService.setDefault(editing.id);
+        }
+        return;
       }
-      return paymentMethodsService.addCard(fields);
+      await paymentMethodsService.addCard(fields);
     },
     onSuccess: () => {
       invalidate();
@@ -145,6 +205,11 @@ export function ProfPaymentScreen() {
 
   const removeMutation = useMutation({
     mutationFn: (id: string) => paymentMethodsService.removeCard(id),
+    onSuccess: invalidate,
+  });
+
+  const setDefaultMutation = useMutation({
+    mutationFn: (id: string) => paymentMethodsService.setDefault(id),
     onSuccess: invalidate,
   });
 
@@ -216,20 +281,7 @@ export function ProfPaymentScreen() {
                 >
                   {card.brand}
                 </Text>
-                {card.isPrimary ? (
-                  <View
-                    style={{
-                      backgroundColor: 'rgba(127,119,221,.3)',
-                      borderRadius: radii.pill,
-                      borderWidth: StyleSheet.hairlineWidth,
-                      borderColor: 'rgba(127,119,221,.5)',
-                      paddingHorizontal: 10,
-                      paddingVertical: 3,
-                    }}
-                  >
-                    <Text style={{ fontSize: 12, color: palette.primaryLight }}>Primary</Text>
-                  </View>
-                ) : null}
+                {card.isDefault ? <Badge label="Primary" variant="primarySoft" /> : null}
               </View>
               <Text
                 style={{
@@ -258,6 +310,23 @@ export function ProfPaymentScreen() {
               </View>
             </LinearGradient>
             <View style={{ padding: spacing.sm, flexDirection: 'row', gap: spacing.xs }}>
+              {!card.isDefault ? (
+                <Tappable
+                  onPress={() => setDefaultMutation.mutate(card.id)}
+                  disabled={setDefaultMutation.isPending}
+                  style={{
+                    flex: 1,
+                    backgroundColor: colors.primarySurface,
+                    borderRadius: radii.sm,
+                    paddingVertical: 9,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+                    Make primary
+                  </Text>
+                </Tappable>
+              ) : null}
               <Tappable
                 onPress={() => {
                   setEditing(card);

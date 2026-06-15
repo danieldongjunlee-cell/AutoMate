@@ -114,7 +114,7 @@ export type CommunityStackParamList = {
 export type ProfileStackParamList = {
   ProfHub: undefined;
   ProfMiles: undefined;
-  ProfMileDet: undefined;
+  ProfMileDet: { id?: string } | undefined;
   ProfEarn: undefined;
   ProfCars: undefined;
   ProfCarAdd: undefined;

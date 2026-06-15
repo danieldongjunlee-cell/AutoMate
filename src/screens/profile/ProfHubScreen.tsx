@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
-import { CarSwitchHeader } from '../../components/CarSwitchHeader';
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -92,7 +92,6 @@ export function ProfHubScreen() {
 
   return (
     <Screen safeTop>
-      <CarSwitchHeader />
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />
@@ -115,6 +114,7 @@ export function ProfHubScreen() {
             {USER.completionPct}%
           </Text>
         </View>
+        <CarSwitchChip />
       </View>
       <View
         style={{

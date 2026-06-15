@@ -290,25 +290,7 @@ export function ConfirmSubmitScreen() {
         ))
       )}
 
-      {/* AI banner */}
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.primaryLight,
-          padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginVertical: spacing.sm,
-        }}
-      >
-        <Text style={{ fontSize: 18 }}>🤖</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDark, lineHeight: 18 }}>
-          AI will analyze your parts and send your request to nearby shops
-        </Text>
-      </View>
+      <View style={{ marginVertical: spacing.sm }} />
 
       {/* Add another part (loops back through the single-select flow) */}
       <Tappable

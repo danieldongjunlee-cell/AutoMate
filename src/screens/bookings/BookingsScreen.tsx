@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { CarSwitchHeader } from '../../components/CarSwitchHeader';
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
@@ -30,6 +30,11 @@ export function BookingsScreen() {
   const dealersInvited = QUOTE_REQUEST.shopsNotified;
 
   const openBooking = (b: AppBooking) => {
+    if (b.status === 'reschedule_proposed') {
+      // Shop proposed a new time → open reschedule to accept or pick another.
+      navigateCrossTab(navigation, 'HomeTab', 'Reschedule', { kind: b.kind, bookingId: b.id });
+      return;
+    }
     if (b.kind === 'maintenance') {
       navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleConfirm');
     } else {
@@ -43,51 +48,40 @@ export function BookingsScreen() {
     }
   };
 
+  // Repair vs maintenance differentiated by color (no icons).
+  const REPAIR = { surface: colors.warningSurface, deep: colors.warningDeep, accent: colors.warning };
+  const MAINT = { surface: colors.primarySurface, deep: colors.primaryDeep, accent: colors.primary };
+  const kindStyle = (b: AppBooking) => (b.kind === 'repair' ? REPAIR : MAINT);
+
   const dateBadge = (b: AppBooking) => {
-    const paid = b.status === 'paid';
+    const k = kindStyle(b);
     return (
       <View
         style={{
           width: 34,
           height: 34,
           borderRadius: 9,
-          backgroundColor: paid ? colors.successSurface : colors.warningSurface,
+          backgroundColor: k.surface,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Text
-          style={{
-            fontSize: 7,
-            fontWeight: '700',
-            color: paid ? colors.successDeep : colors.warningDeep,
-            textTransform: 'uppercase',
-          }}
-        >
+        <Text style={{ fontSize: 7, fontWeight: '700', color: k.deep, textTransform: 'uppercase' }}>
           {b.mon}
         </Text>
-        <Text
-          style={{
-            fontSize: 12,
-            fontWeight: '800',
-            color: paid ? colors.successDeep : colors.warningDeep,
-            lineHeight: 13,
-          }}
-        >
-          {b.day}
-        </Text>
+        <Text style={{ fontSize: 12, fontWeight: '800', color: k.deep, lineHeight: 13 }}>{b.day}</Text>
       </View>
     );
   };
 
   return (
     <Screen safeTop>
-      <CarSwitchHeader />
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
+          gap: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
@@ -112,6 +106,7 @@ export function BookingsScreen() {
           <Text style={{ fontSize: 14, color: colors.onPrimary }}>＋</Text>
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Book</Text>
         </Tappable>
+        <CarSwitchChip />
       </View>
 
       <SectionLabel>{t('Scheduled services')}</SectionLabel>
@@ -137,6 +132,8 @@ export function BookingsScreen() {
               backgroundColor: colors.surface,
               borderColor: colors.border,
               borderWidth: 1,
+              borderLeftWidth: 4,
+              borderLeftColor: kindStyle(b).accent,
               borderRadius: radii.md,
               padding: spacing.sm,
               marginBottom: spacing.sm,
@@ -145,7 +142,10 @@ export function BookingsScreen() {
             {dateBadge(b)}
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
-                {b.icon} {b.title}
+                {b.title}
+              </Text>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 1 }}>
+                {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
               </Text>
               <Text style={{ fontSize: 11, color: colors.textTertiary }}>
                 {b.dealerName} · {b.dateLabel} · {b.time}
@@ -155,10 +155,14 @@ export function BookingsScreen() {
               <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
                 {b.priceLabel}
               </Text>
-              <Badge
-                label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
-                variant={b.status === 'paid' ? 'success' : 'warning'}
-              />
+              {b.status === 'reschedule_proposed' ? (
+                <Badge label="New time proposed" variant="warning" />
+              ) : (
+                <Badge
+                  label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
+                  variant={b.status === 'paid' ? 'success' : 'primarySoft'}
+                />
+              )}
             </View>
           </Tappable>
         ))

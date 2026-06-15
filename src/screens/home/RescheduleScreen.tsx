@@ -34,8 +34,16 @@ export function RescheduleScreen() {
   const [time, setTime] = useState('11:00 AM');
 
   const removeBooking = useAppStore((s) => s.removeBooking);
+  const acceptProposedTime = useAppStore((s) => s.acceptProposedTime);
+  const booking = useAppStore((s) => s.bookings.find((b) => b.id === params?.bookingId));
+  const proposedTime = booking?.proposedTime;
   const isMaint = params?.kind === 'maintenance';
   const confirmScreen = isMaint ? 'MaintScheduleConfirm' : 'BookingConfirm';
+
+  const onAcceptProposed = () => {
+    if (params?.bookingId) acceptProposedTime(params.bookingId);
+    navigateCrossTab(navigation, 'BookingsTab', 'Bookings');
+  };
 
   /** Confirm → drop the booking from the store → land on the Bookings tab. */
   const onCancel = () =>
@@ -66,13 +74,33 @@ export function RescheduleScreen() {
           <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>H</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Honda Fairfax · Rear bumper</Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)' }}>📅 Thu, Apr 12 · 10:30 AM</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
+            {booking ? `${booking.dealerName} · ${booking.title}` : 'Honda Fairfax · Rear bumper'}
+          </Text>
+          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)' }}>
+            📅 {booking ? `${booking.dateLabel} · ${booking.time}` : 'Thu, Apr 12 · 10:30 AM'}
+          </Text>
         </View>
         <View style={{ backgroundColor: 'rgba(255,255,255,.22)', borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3 }}>
-          <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>Confirmed</Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
+            {proposedTime ? 'New time' : 'Confirmed'}
+          </Text>
         </View>
       </LinearGradient>
+
+      {proposedTime ? (
+        <Card style={{ padding: spacing.md, marginBottom: spacing.md, borderColor: colors.warning, borderWidth: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.warningDeep, marginBottom: 2 }}>
+            ⏰ The shop proposed a new time
+          </Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: spacing.sm }}>
+            {booking?.dealerName ?? 'The shop'} suggested{' '}
+            <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{proposedTime}</Text>. Accept
+            it, or pick another time below.
+          </Text>
+          <PrimaryButton variant="success" label={`Accept ${proposedTime} →`} onPress={onAcceptProposed} />
+        </Card>
+      ) : null}
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.sm }}>

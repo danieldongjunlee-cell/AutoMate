@@ -1,47 +1,31 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { Tappable } from '../../components/Tappable';
-
-import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { Screen } from '../../components/ui';
+import { Tappable } from '../../components/Tappable';
+import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPES } from '../../services/mock/data';
-import { capturePhoto, pickFromGallery } from '../../services/photos';
+import { pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Camera'>;
 
-const REQUIRED = 3;
-
-/** Corner bracket for the viewfinder. */
-function Bracket({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
-  const s: any = { position: 'absolute', width: 26, height: 26 };
-  const b = { borderColor: palette.primary };
-  if (pos === 'tl') Object.assign(s, { top: 10, left: 10, borderTopWidth: 2.5, borderLeftWidth: 2.5, borderTopLeftRadius: 4, ...b });
-  if (pos === 'tr') Object.assign(s, { top: 10, right: 10, borderTopWidth: 2.5, borderRightWidth: 2.5, borderTopRightRadius: 4, ...b });
-  if (pos === 'bl') Object.assign(s, { bottom: 10, left: 10, borderBottomWidth: 2.5, borderLeftWidth: 2.5, borderBottomLeftRadius: 4, ...b });
-  if (pos === 'br') Object.assign(s, { bottom: 10, right: 10, borderBottomWidth: 2.5, borderRightWidth: 2.5, borderBottomRightRadius: 4, ...b });
-  return <View style={s} />;
-}
+const MAX_PHOTOS = 5;
 
 /**
- * Real camera (user-feedback pass 2, expo-image-picker): the viewfinder and
- * Capture button open the device camera (web: file picker w/ capture hint),
- * Upload opens the gallery. Captured uris live in the store draft and render
- * as real thumbnails here and on ConfirmSubmit.
- * Wireframe v15.10: damage type is tagged here at capture time (pickDmg chips).
+ * Wireframe s-camera, reworked (v17 feedback): upload-only (no in-app camera),
+ * multi-select damage type, up to 5 photos + an optional description.
  */
 export function CameraScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const draftPart = useAppStore((s) => s.draftPart);
-  const draftType = useAppStore((s) => s.draftType);
-  const setDraftType = useAppStore((s) => s.setDraftType);
+  const draftTypes = useAppStore((s) => s.draftTypes);
+  const toggleDraftType = useAppStore((s) => s.toggleDraftType);
   const photoUris = useAppStore((s) => s.draftPhotos);
   const addPhoto = useAppStore((s) => s.addDraftPhoto);
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
@@ -50,15 +34,14 @@ export function CameraScreen() {
   const [picking, setPicking] = useState(false);
 
   const photoCount = photoUris.length;
-  const firstPart = (draftPart ?? 'rear bumper').toLowerCase();
+  const part = (draftPart ?? 'damaged part').toLowerCase();
   const canSubmit = photoCount >= 1;
 
-  /** Device camera (Capture) or gallery (Upload) → push the real uri. */
-  const addVia = async (source: 'camera' | 'gallery') => {
-    if (picking) return;
+  const upload = async () => {
+    if (picking || photoCount >= MAX_PHOTOS) return;
     setPicking(true);
     try {
-      const photo = source === 'camera' ? await capturePhoto() : await pickFromGallery();
+      const photo = await pickFromGallery();
       if (photo) addPhoto(photo.uri);
     } finally {
       setPicking(false);
@@ -66,42 +49,42 @@ export function CameraScreen() {
   };
 
   const onSubmit = () => {
-    commitDraftPart(); // merge this part (type + photo uris) into the request
+    commitDraftPart();
     navigation.navigate('ConfirmSubmit');
   };
 
   return (
     <Screen>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          Take 3+ photos of your{' '}
-          <Text style={{ fontWeight: '700', color: colors.primaryDark }}>{firstPart}</Text> from
-          different angles
-        </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 1 of 2</Text>
-      </View>
-
-      {/* Damage type chips (tagged at capture time) */}
-      <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>
-        Damage type
+      <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.xs }}>
+        Add up to {MAX_PHOTOS} clear photos of your{' '}
+        <Text style={{ fontWeight: '700', color: colors.primaryDark }}>{part}</Text> from different
+        angles.
       </Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
-        {DAMAGE_TYPES.map((t) => {
-          const on = t === draftType;
+
+      {/* Damage type — multi-select */}
+      <SectionLabel>
+        Damage type <Text style={{ textTransform: 'none' }}>(select all that apply)</Text>
+      </SectionLabel>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.sm }}>
+        {DAMAGE_TYPES.map((tp) => {
+          const on = draftTypes.includes(tp);
           return (
             <Tappable
-              key={t}
-              onPress={() => setDraftType(t)}
-              style={({ pressed }) => ({
+              key={tp}
+              onPress={() => toggleDraftType(tp)}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
                 backgroundColor: on ? colors.primary : colors.surface,
                 borderRadius: radii.pill,
                 borderWidth: on ? 0 : StyleSheet.hairlineWidth,
                 borderColor: colors.border,
-                paddingHorizontal: 18,
+                paddingHorizontal: 16,
                 paddingVertical: 8,
-                opacity: pressed ? 0.7 : 1,
-              })}
+              }}
             >
+              {on ? <Text style={{ color: colors.onPrimary, fontSize: 12 }}>✓</Text> : null}
               <Text
                 style={{
                   fontSize: 13,
@@ -109,140 +92,70 @@ export function CameraScreen() {
                   color: on ? colors.onPrimary : colors.textSecondary,
                 }}
               >
-                {t}
+                {tp}
               </Text>
             </Tappable>
           );
         })}
       </View>
 
-      {/* Live in-app camera viewfinder — real device/web camera + shutter */}
-      <LiveCamera
-        height={210}
-        shutterLabel="Capture photo"
-        onCapture={addPhoto}
-        overlay={
-          <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-            {/* Rule-of-thirds grid */}
-            {[1, 2].map((i) => (
-              <View
-                key={`v${i}`}
-                style={{
-                  position: 'absolute',
-                  left: `${(i * 100) / 3}%`,
-                  top: 0,
-                  bottom: 0,
-                  width: StyleSheet.hairlineWidth,
-                  backgroundColor: 'rgba(255,255,255,.25)',
-                }}
-              />
-            ))}
-            {[1, 2].map((i) => (
-              <View
-                key={`h${i}`}
-                style={{
-                  position: 'absolute',
-                  top: `${(i * 100) / 3}%`,
-                  left: 0,
-                  right: 0,
-                  height: StyleSheet.hairlineWidth,
-                  backgroundColor: 'rgba(255,255,255,.25)',
-                }}
-              />
-            ))}
-            <Bracket pos="tl" />
-            <Bracket pos="tr" />
-            <Bracket pos="bl" />
-            <Bracket pos="br" />
-          </View>
-        }
-      />
-
-      {/* Photo slots */}
-      <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>
-        Photos taken ({Math.min(photoCount, REQUIRED)} of {REQUIRED} required)
-      </Text>
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
-        {Array.from({ length: REQUIRED }).map((_, i) => {
-          if (i < photoCount) {
-            return (
-              <View
-                key={`photo-${i}`}
-                style={{
-                  width: 86,
-                  height: 74,
-                  borderRadius: radii.sm,
-                  backgroundColor: '#1A1A1A',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Real captured/picked photo */}
-                <Image
-                  source={{ uri: photoUris[i] }}
-                  style={StyleSheet.absoluteFill}
-                  resizeMode="cover"
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    bottom: 4,
-                    right: 5,
-                    backgroundColor: colors.success,
-                    borderRadius: radii.pill,
-                    paddingHorizontal: 6,
-                    paddingVertical: 1,
-                  }}
-                >
-                  <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>✔</Text>
-                </View>
-              </View>
-            );
-          }
-          const isNext = i === photoCount;
-          return (
-            <Tappable
-              key={`slot-${i}`}
-              onPress={isNext ? () => addVia('camera') : undefined}
-              disabled={picking && isNext}
+      {/* Photos — uploaded thumbnails + add tile */}
+      <SectionLabel>
+        Photos ({photoCount}/{MAX_PHOTOS})
+      </SectionLabel>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
+        {photoUris.map((uri, i) => (
+          <View
+            key={`${uri}-${i}`}
+            style={{ width: 96, height: 80, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt }}
+          >
+            <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+            <View
               style={{
-                width: 86,
-                height: 74,
-                borderRadius: radii.sm,
-                borderWidth: 1.5,
-                borderStyle: 'dashed',
-                borderColor: isNext ? colors.primaryLight : colors.disabled,
-                alignItems: 'center',
-                justifyContent: 'center',
+                position: 'absolute',
+                bottom: 4,
+                right: 5,
+                backgroundColor: colors.success,
+                borderRadius: radii.pill,
+                paddingHorizontal: 6,
+                paddingVertical: 1,
               }}
             >
-              <Text style={{ fontSize: 20, color: isNext ? colors.primary : colors.disabled }}>+</Text>
-              <Text style={{ fontSize: 10, color: isNext ? colors.textTertiary : colors.disabled }}>
-                Angle {i + 1}
-              </Text>
-            </Tappable>
-          );
-        })}
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: colors.surfaceAlt,
-            borderRadius: radii.sm,
-            padding: spacing.sm,
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark, marginBottom: 2 }}>
-            AI tip
-          </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary, lineHeight: 15 }}>
-            Shoot straight-on, left 45°, right 45°
-          </Text>
-        </View>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>✔</Text>
+            </View>
+          </View>
+        ))}
+        {photoCount < MAX_PHOTOS ? (
+          <Tappable
+            onPress={upload}
+            disabled={picking}
+            style={{
+              width: 96,
+              height: 80,
+              borderRadius: radii.sm,
+              borderWidth: 1.5,
+              borderStyle: 'dashed',
+              borderColor: colors.primaryLight,
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 2,
+            }}
+          >
+            {picking ? (
+              <ActivityIndicator color={colors.primary} />
+            ) : (
+              <>
+                <Text style={{ fontSize: 20, color: colors.primary }}>＋</Text>
+                <Text style={{ fontSize: 10, color: colors.textTertiary }}>Upload photo</Text>
+              </>
+            )}
+          </Tappable>
+        ) : null}
       </View>
 
-      {/* Optional damage description */}
+      {/* Optional description */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary }}>Describe the damage</Text>
+        <SectionLabel style={{ marginTop: 0 }}>Describe the damage</SectionLabel>
         <Text style={{ fontSize: 11, color: colors.textTertiary }}>Optional</Text>
       </View>
       <TextInput
@@ -252,7 +165,7 @@ export function CameraScreen() {
         placeholder="e.g. Scraped a pole backing out — paint is chipped and there's a small dent on the lower-left corner."
         placeholderTextColor={colors.textTertiary}
         style={{
-          minHeight: 64,
+          minHeight: 72,
           backgroundColor: colors.surface,
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: colors.border,
@@ -261,53 +174,15 @@ export function CameraScreen() {
           fontSize: 13,
           color: colors.textPrimary,
           textAlignVertical: 'top',
-          marginBottom: spacing.md,
+          marginBottom: spacing.lg,
         }}
       />
 
-      {/* Actions */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Tappable
-          onPress={() => addVia('gallery')}
-          disabled={picking}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: radii.md,
-            alignItems: 'center',
-            justifyContent: 'center',
-            opacity: pressed || picking ? 0.7 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 14, color: colors.textSecondary }}>📁 Upload</Text>
-        </Tappable>
-        <PrimaryButton
-          label="Submit photos →"
-          disabled={!canSubmit}
-          onPress={onSubmit}
-          style={{ flex: 2 }}
-        />
-      </View>
-
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.primaryLight,
-          padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-        }}
-      >
-        <Text style={{ fontSize: 18 }}>🤖</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDark, lineHeight: 17 }}>
-          AI analyzes your photos instantly — more angles = more accurate estimates
-        </Text>
-      </View>
+      <PrimaryButton
+        label={canSubmit ? 'Submit photos →' : 'Upload at least one photo'}
+        disabled={!canSubmit}
+        onPress={onSubmit}
+      />
     </Screen>
   );
 }

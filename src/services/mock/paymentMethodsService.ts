@@ -8,7 +8,7 @@ export interface PaymentCard {
   last4: string;
   holder: string;
   expires: string;
-  isPrimary: boolean;
+  isDefault: boolean;
 }
 
 export interface PaymentCardInput {
@@ -16,6 +16,7 @@ export interface PaymentCardInput {
   last4: string;
   holder: string;
   expires: string;
+  isDefault?: boolean;
 }
 
 /** Module-state card list seeded with the demo Visa (user-feedback pass 1). */
@@ -26,7 +27,7 @@ let cards: PaymentCard[] = [
     last4: PAYMENT_CARD.last4,
     holder: PAYMENT_CARD.holder,
     expires: PAYMENT_CARD.expires,
-    isPrimary: true,
+    isDefault: true,
   },
 ];
 let nextId = 1;
@@ -39,14 +40,17 @@ export const paymentMethodsService = {
 
   async addCard(input: PaymentCardInput): Promise<{ ok: boolean; card: PaymentCard }> {
     await delay(450);
+    const makeDefault = input.isDefault === true || cards.length === 0;
     const card: PaymentCard = {
       id: `card-new-${nextId++}`,
       brand: input.brand?.trim() || 'VISA',
       last4: input.last4,
       holder: input.holder,
       expires: input.expires,
-      isPrimary: cards.length === 0,
+      isDefault: makeDefault,
     };
+    // A new default card unsets the default flag on every existing card.
+    if (makeDefault) cards = cards.map((c) => ({ ...c, isDefault: false }));
     cards = [...cards, card];
     return { ok: true, card };
   },
@@ -62,6 +66,13 @@ export const paymentMethodsService = {
     const card = { ...cards[idx], ...patch };
     cards = [...cards.slice(0, idx), card, ...cards.slice(idx + 1)];
     return { ok: true, card };
+  },
+
+  /** Designate one card as the default, unsetting every other card. */
+  async setDefault(id: string): Promise<{ ok: boolean }> {
+    await delay(300);
+    cards = cards.map((c) => ({ ...c, isDefault: c.id === id }));
+    return { ok: true };
   },
 
   async removeCard(id: string): Promise<{ ok: boolean }> {

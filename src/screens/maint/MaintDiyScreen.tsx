@@ -10,10 +10,11 @@ import { FilterChips } from '../../components/FilterChips';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
 import { Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
-import { DIY_CATEGORIES, DIY_GUIDES, PRO_GUIDES } from '../../services/mock/data';
+import { DIY_CATEGORIES, DIY_GUIDES } from '../../services/mock/data';
+import { DIY_GUIDES as DIY_READABLE_GUIDES, DiyGuide } from '../../services/mock/diyGuides';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
-import { ProGuideRow } from './DiyProScreens';
+import { DiyGuideRow as ReadableGuideRow, DiyGuideSheet } from './DiyProScreens';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDiy'>;
 
@@ -21,6 +22,7 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDiy'>;
 export function MaintDiyScreen() {
   const navigation = useNavigation<Nav>();
   const [category, setCategory] = useState(DIY_CATEGORIES[0]);
+  const [selected, setSelected] = useState<DiyGuide | null>(null);
   const isPro = useAppStore((s) => s.isPro);
   const free = DIY_GUIDES.filter((g) => g.free);
   const locked = DIY_GUIDES.filter((g) => !g.free);
@@ -100,8 +102,15 @@ export function MaintDiyScreen() {
       <FilterChips options={DIY_CATEGORIES} selected={category} onSelect={setCategory} />
 
       {isPro ? (
-        // Unlocked: the full Pro library (12 guides).
-        PRO_GUIDES.map((g) => <ProGuideRow key={g.id} guide={g} />)
+        // Unlocked: the full library of readable, follow-along guides.
+        <>
+          {DIY_READABLE_GUIDES.map((g) => (
+            <ReadableGuideRow key={g.id} guide={g} onPress={() => setSelected(g)} />
+          ))}
+          {selected ? (
+            <DiyGuideSheet guide={selected} onClose={() => setSelected(null)} />
+          ) : null}
+        </>
       ) : (
         <>
           {free.map((g) => (

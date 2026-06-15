@@ -70,7 +70,9 @@ export interface AppBooking {
   day: string; // "12"
   time: string; // "10:30 AM"
   priceLabel: string; // "$320–345" / "$49"
-  status: 'confirmed' | 'paid';
+  status: 'confirmed' | 'paid' | 'reschedule_proposed';
+  /** When the shop proposes a different time (status reschedule_proposed). */
+  proposedTime?: string;
   createdAt: number;
 }
 
@@ -104,7 +106,8 @@ const SEED_BOOKINGS: AppBooking[] = [
     day: '12',
     time: '10:30 AM',
     priceLabel: '$320–345',
-    status: 'confirmed',
+    status: 'reschedule_proposed',
+    proposedTime: 'Fri, Apr 13 · 2:00 PM',
     createdAt: 2,
   },
   {
@@ -157,8 +160,6 @@ export interface DamagePart {
   /** Optional free-text description the user typed at capture time. */
   note?: string;
 }
-
-const DEFAULT_DAMAGE_TYPE = 'Dent';
 
 /** Reminder timing options (booking-confirm "Reminder set … Edit" modal). */
 export const REMINDER_OPTIONS = [
@@ -228,14 +229,14 @@ interface AppState {
   // Damage flow: committed parts + the in-progress draft (one part per pass)
   damageParts: DamagePart[];
   draftPart: string | null;
-  draftType: string;
+  draftTypes: string[];
   /** Captured photo uris for the in-progress part (real camera/gallery uris). */
   draftPhotos: string[];
   /** Optional free-text damage description for the in-progress part. */
   draftNote: string;
-  /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its type/photos/note for editing. */
+  /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its types/photos/note for editing. */
   pickPart: (part: string) => void;
-  setDraftType: (t: string) => void;
+  toggleDraftType: (t: string) => void;
   setDraftNote: (note: string) => void;
   addDraftPhoto: (uri: string) => void;
   /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
@@ -266,6 +267,8 @@ interface AppState {
   addBooking: (booking: Omit<AppBooking, 'id' | 'createdAt'>) => void;
   /** Remove a booking (cancel). With no id, drops the most recent. */
   removeBooking: (id?: string) => void;
+  /** Accept the shop's proposed new time → confirmed at that time. */
+  acceptProposedTime: (id: string) => void;
 
   // Reviews the user has written (v17 write-review → reviews).
   reviews: UserReview[];
@@ -274,7 +277,7 @@ interface AppState {
 
 const emptyDraft = {
   draftPart: null as string | null,
-  draftType: DEFAULT_DAMAGE_TYPE,
+  draftTypes: [] as string[],
   draftPhotos: [] as string[],
   draftNote: '',
 };
@@ -345,18 +348,24 @@ export const useAppStore = create<AppState>((set) => ({
     set((s) => {
       const existing = s.damageParts.find((p) => p.part === part);
       return existing
-        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photoUris ?? [], draftNote: existing.note ?? '' }
-        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: [], draftNote: '' };
+        ? { draftPart: part, draftTypes: existing.type ? existing.type.split(', ').filter(Boolean) : [], draftPhotos: existing.photoUris ?? [], draftNote: existing.note ?? '' }
+        : { draftPart: part, draftTypes: [], draftPhotos: [], draftNote: '' };
     }),
-  setDraftType: (draftType) => set({ draftType }),
+  // Multi-select damage types (v17 feedback): toggle a type in/out of the draft.
+  toggleDraftType: (t) =>
+    set((s) => ({
+      draftTypes: s.draftTypes.includes(t)
+        ? s.draftTypes.filter((x) => x !== t)
+        : [...s.draftTypes, t],
+    })),
   setDraftNote: (draftNote) => set({ draftNote }),
-  addDraftPhoto: (uri) => set((s) => ({ draftPhotos: [...s.draftPhotos, uri] })),
+  addDraftPhoto: (uri) => set((s) => (s.draftPhotos.length >= 5 ? {} : { draftPhotos: [...s.draftPhotos, uri] })),
   commitDraftPart: () =>
     set((s) => {
       if (!s.draftPart || s.draftPhotos.length < 1) return {};
       const next: DamagePart = {
         part: s.draftPart,
-        type: s.draftType,
+        type: s.draftTypes.join(', ') || 'Damage',
         photos: s.draftPhotos.length,
         photoUris: [...s.draftPhotos],
         note: s.draftNote.trim() || undefined,
@@ -406,6 +415,20 @@ export const useAppStore = create<AppState>((set) => ({
   removeBooking: (id) =>
     set((s) => ({
       bookings: id ? s.bookings.filter((b) => b.id !== id) : s.bookings.slice(1),
+    })),
+  acceptProposedTime: (id) =>
+    set((s) => ({
+      bookings: s.bookings.map((b) =>
+        b.id === id && b.proposedTime
+          ? {
+              ...b,
+              status: 'confirmed',
+              dateLabel: b.proposedTime.split(' · ')[0] ?? b.dateLabel,
+              time: b.proposedTime.split(' · ')[1] ?? b.time,
+              proposedTime: undefined,
+            }
+          : b,
+      ),
     })),
 
   reviews: [],

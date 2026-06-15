@@ -2,14 +2,16 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { FormSheet } from '../../components/FormSheet';
 import { Tappable } from '../../components/Tappable';
 
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
 import { PRO_GUIDES, ProGuide } from '../../services/mock/data';
+import { DIY_GUIDES, DiyGuide } from '../../services/mock/diyGuides';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList>;
@@ -81,16 +83,153 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
   );
 }
 
-/** Wireframe s-diy-guides: the full unlocked library (12 guides). */
+/** One readable guide row — tapping opens the full step-by-step reader. */
+export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <Tappable
+      onPress={onPress}
+      style={({ pressed }) => ({
+        backgroundColor: colors.surface,
+        borderRadius: radii.sm,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.border,
+        padding: spacing.md,
+        marginBottom: 6,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.sm,
+        opacity: pressed ? 0.7 : 1,
+      })}
+    >
+      <Text style={{ fontSize: 21 }}>{guide.emoji}</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
+          {guide.title}
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          {guide.steps.length} steps · {guide.tools.length} tool
+          {guide.tools.length === 1 ? '' : 's'}
+        </Text>
+      </View>
+      <View style={{ alignItems: 'flex-end' }}>
+        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark }}>
+          {guide.minutes} min
+        </Text>
+        <Text
+          style={{
+            fontSize: 11,
+            color: guide.difficulty === 'Easy' ? colors.successDark : palette.warningMid,
+          }}
+        >
+          {guide.difficulty}
+        </Text>
+      </View>
+    </Tappable>
+  );
+}
+
+/** Full readable guide content (tools + numbered steps + tip) inside a FormSheet. */
+export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <FormSheet visible onClose={onClose} title={`${guide.emoji}  ${guide.title}`}>
+      <ScrollView style={{ maxHeight: 460 }} showsVerticalScrollIndicator={false}>
+        <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.md }}>
+          {guide.minutes} min · {guide.difficulty} · {guide.steps.length} steps
+        </Text>
+
+        <SectionLabel>What you’ll need</SectionLabel>
+        <View style={{ marginBottom: spacing.md }}>
+          {guide.tools.map((t) => (
+            <View
+              key={t}
+              style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: 4, alignItems: 'flex-start' }}
+            >
+              <Text style={{ fontSize: 13, color: colors.primaryDark }}>•</Text>
+              <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 19 }}>
+                {t}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <SectionLabel>Steps</SectionLabel>
+        <View style={{ marginBottom: spacing.sm }}>
+          {guide.steps.map((s, i) => (
+            <View
+              key={i}
+              style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm, alignItems: 'flex-start' }}
+            >
+              <View
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderRadius: 11,
+                  backgroundColor: colors.primarySurface,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 1,
+                }}
+              >
+                <Text style={{ fontSize: 11, fontWeight: '800', color: colors.primaryDark }}>
+                  {i + 1}
+                </Text>
+              </View>
+              <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary, lineHeight: 21 }}>
+                {s}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {guide.tip ? (
+          <View
+            style={{
+              backgroundColor: colors.primarySurface,
+              borderRadius: radii.sm,
+              borderWidth: StyleSheet.hairlineWidth,
+              borderColor: colors.primaryLight,
+              padding: spacing.md,
+              marginTop: spacing.xs,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: colors.primaryDeep, lineHeight: 19 }}>
+              💡 {guide.tip}
+            </Text>
+          </View>
+        ) : null}
+      </ScrollView>
+
+      <Tappable
+        onPress={onClose}
+        style={({ pressed }) => ({
+          marginTop: spacing.md,
+          backgroundColor: colors.primary,
+          borderRadius: radii.sm,
+          paddingVertical: 12,
+          alignItems: 'center',
+          opacity: pressed ? 0.8 : 1,
+        })}
+      >
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>Done</Text>
+      </Tappable>
+    </FormSheet>
+  );
+}
+
+/** Wireframe s-diy-guides: the full unlocked library with readable, follow-along guides. */
 export function DiyGuidesScreen() {
+  const [selected, setSelected] = useState<DiyGuide | null>(null);
   return (
     <Screen>
       <View style={{ marginBottom: spacing.sm }}>
         <ProBadge />
       </View>
-      {PRO_GUIDES.map((g) => (
-        <ProGuideRow key={g.id} guide={g} />
+      {DIY_GUIDES.map((g) => (
+        <DiyGuideRow key={g.id} guide={g} onPress={() => setSelected(g)} />
       ))}
+      {selected ? <DiyGuideSheet guide={selected} onClose={() => setSelected(null)} /> : null}
     </Screen>
   );
 }

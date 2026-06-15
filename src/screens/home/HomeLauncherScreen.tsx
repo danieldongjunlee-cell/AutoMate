@@ -1,15 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import React from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
-import { CarSwitcherSheet } from '../../components/CarSwitcherSheet';
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useT } from '../../i18n';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
@@ -23,10 +22,8 @@ export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const t = useT();
-  const { vehicles, active, brand } = useActiveVehicle();
   const checkedIn = useAppStore((s) => s.dailyCheckedIn);
   const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
-  const [carSheet, setCarSheet] = useState(false);
 
   const tile = (emoji: string, bg: string, title: string, sub: string, onPress: () => void) => (
     <Tappable
@@ -86,34 +83,7 @@ export function HomeLauncherScreen() {
             What would you like to do today?
           </Text>
         </View>
-        {active ? (
-          <Tappable
-            onPress={() => (vehicles.length > 1 ? setCarSheet(true) : navigateCrossTab(navigation, 'MoreTab', 'ProfCars'))}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderWidth: 1,
-              borderRadius: radii.pill,
-              paddingLeft: spacing.sm,
-              paddingRight: vehicles.length > 1 ? 8 : spacing.sm,
-              paddingVertical: 6,
-            }}
-          >
-            <Text style={{ fontSize: 13 }}>🚗</Text>
-            <View>
-              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
-                {brand}
-              </Text>
-              <Text style={{ fontSize: 9, color: colors.textTertiary }} numberOfLines={1}>
-                {active.name.replace(new RegExp(`^\\d{4}\\s+${brand}\\s+`), '')}
-              </Text>
-            </View>
-            {vehicles.length > 1 ? <Text style={{ fontSize: 12, color: colors.primary }}>⇅</Text> : null}
-          </Tappable>
-        ) : null}
+        <CarSwitchChip />
       </View>
 
       {/* Daily check-in — interactive claim (stays on screen) */}
@@ -234,16 +204,27 @@ export function HomeLauncherScreen() {
         items={REVIEWS.map((r) => (
           <Tappable key={r.car} onPress={() => navigation.navigate('Reviews')}>
             <Card style={{ padding: 0, overflow: 'hidden' }}>
-              {/* Before/after repair photo */}
-              <LinearGradient
-                colors={[r.tint, palette.navyDeep]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{ height: 120, alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Text style={{ fontSize: 40 }}>{r.icon}</Text>
-                <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.8)', marginTop: 2 }}>Repair photo</Text>
-              </LinearGradient>
+              {/* Before / after repair photos */}
+              <View style={{ flexDirection: 'row', height: 120 }}>
+                {([['Before', r.before], ['After', r.after]] as const).map(([label, uri]) => (
+                  <View key={label} style={{ flex: 1, backgroundColor: colors.surfaceAlt }}>
+                    <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: 6,
+                        left: 6,
+                        backgroundColor: 'rgba(0,0,0,.6)',
+                        borderRadius: radii.pill,
+                        paddingHorizontal: 8,
+                        paddingVertical: 2,
+                      }}
+                    >
+                      <Text style={{ fontSize: 9, fontWeight: '700', color: '#fff' }}>{label}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
               <View style={{ padding: spacing.md }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
                   <Text style={{ flex: 1, fontSize: 14, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
@@ -267,13 +248,6 @@ export function HomeLauncherScreen() {
         ))}
       />
       <View style={{ marginBottom: spacing.lg }} />
-
-      <CarSwitcherSheet
-        visible={carSheet}
-        vehicles={vehicles}
-        activeId={active?.id}
-        onClose={() => setCarSheet(false)}
-      />
     </Screen>
   );
 }
@@ -288,6 +262,8 @@ const REVIEWS = [
     icon: '🚙',
     tint: '#1e4fcc',
     body: "Quoted $330 on AutoMate and that's exactly what I paid — no surprises. Looks brand new and they finished a day early.",
+    before: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&q=60',
   },
   {
     car: '2021 Toyota RAV4',
@@ -298,6 +274,8 @@ const REVIEWS = [
     icon: '🚗',
     tint: '#16a34a',
     body: 'Compared 2 shops in minutes and saved ~$90 vs the first place I called. Smooth booking, no deposit drama.',
+    before: 'https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1542362567-b07e54358753?w=400&q=60',
   },
   {
     car: '2018 Subaru Outback',
@@ -308,6 +286,8 @@ const REVIEWS = [
     icon: '🚐',
     tint: '#7F77DD',
     body: 'Insurance claim was painless — AutoMate had three quotes before my agent even called back. Fender looks factory-fresh.',
+    before: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=400&q=60',
   },
   {
     car: '2022 Kia Telluride',
@@ -318,6 +298,8 @@ const REVIEWS = [
     icon: '🚙',
     tint: '#0F6E56',
     body: 'Booked at 9am, fixed by lunch. The shop messaged me photos before and after — super transparent.',
+    before: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&q=60',
   },
   {
     car: '2020 Mazda CX-5',
@@ -328,6 +310,8 @@ const REVIEWS = [
     icon: '🚗',
     tint: '#E24B4A',
     body: 'Dealer quoted me $620, AutoMate found the same job for $410. No upsell, no waiting room runaround.',
+    before: 'https://images.unsplash.com/photo-1493238792000-8113da705763?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&q=60',
   },
   {
     car: '2017 Ford F-150',
@@ -338,5 +322,7 @@ const REVIEWS = [
     icon: '🛻',
     tint: '#534AB7',
     body: 'OEM mirror, color-matched perfectly. Loved seeing real reviews from other owners before I picked the shop.',
+    before: 'https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?w=400&q=60',
+    after: 'https://images.unsplash.com/photo-1494905998402-395d579af36f?w=400&q=60',
   },
 ];

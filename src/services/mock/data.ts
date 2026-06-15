@@ -796,9 +796,8 @@ export interface Milestone {
 }
 
 export const MILESTONES: Milestone[] = [
-  { id: 'mile-oil', icon: '🛢️', title: 'Free oil change', sub: 'Standard synthetic', costPts: 6000 },
-  { id: 'mile-tires', icon: '🚗', title: 'Free tire rotation', sub: 'All 4 tires', costPts: 10000 },
-  { id: 'mile-insp', icon: '📷', title: 'Free inspection', sub: 'Full 21-point', costPts: 25000 },
+  { id: 'mile-oil', icon: '🛢️', title: 'Free oil change', sub: 'Standard synthetic oil & filter', costPts: 6000 },
+  { id: 'mile-tires', icon: '🚗', title: 'Free tire rotation', sub: 'All 4 tires rotated & balanced', costPts: 10000 },
 ];
 
 // Point values come from the central earn schedule (src/config/points.ts).
