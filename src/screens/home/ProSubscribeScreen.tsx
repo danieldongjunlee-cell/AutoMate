@@ -35,7 +35,7 @@ export function ProSubscribeScreen() {
   const startPro = () => {
     confirmAction(
       'Confirm subscription',
-      `Start AutoMate Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} on Visa ••••4242?`,
+      `Start AutoMate Pro — ${plan === 'annual' ? '$48/yr' : '$4.99/mo'} on Visa ••••4242?`,
       async () => {
         setBusy(true);
         await proService.subscribe(plan);
@@ -121,12 +121,12 @@ export function ProSubscribeScreen() {
         }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDark }}>
-          💚 Just $3.25 a month — cheaper than one coffee
+          💚 Just $4 a month — cheaper than one coffee
         </Text>
       </View>
 
       <SectionLabel>Choose a plan</SectionLabel>
-      {planRow('annual', 'Annual', '$39/yr — just $3.25/mo', 'SAVE 35%')}
+      {planRow('annual', 'Annual', '$48/yr — just $4/mo', 'SAVE 20%')}
       {planRow('monthly', 'Monthly', '$4.99 / month')}
 
       <SectionLabel>Payment method</SectionLabel>
@@ -154,7 +154,7 @@ export function ProSubscribeScreen() {
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
           variant="success"
-          label={`Start Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} →`}
+          label={`Start Pro — ${plan === 'annual' ? '$48/yr' : '$4.99/mo'} →`}
           loading={busy}
           onPress={startPro}
         />

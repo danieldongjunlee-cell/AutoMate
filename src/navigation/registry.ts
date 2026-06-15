@@ -71,6 +71,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfInsEdit: 'Edit policy details', // s-prof-ins-edit
   ProfInsAdd: 'Add new policy', // s-prof-ins-add
   ProfPayment: 'Payment method', // s-prof-payment
+  ProManage: 'Manage subscription', // AutoMate Pro management
   ProfSettings: 'Settings', // s-prof-settings
   ProfEditProfile: 'Edit profile', // s-prof-edit-profile
   ProfChangeEmail: 'Change email', // s-prof-change-email

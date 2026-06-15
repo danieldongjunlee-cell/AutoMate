@@ -3,8 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
@@ -34,7 +35,6 @@ function VehicleFormModal({
   onSave: (fields: { name: string; odometerMi: number }) => void;
   saving: boolean;
 }) {
-  const { colors } = useTheme();
   const [name, setName] = useState('');
   const [odometer, setOdometer] = useState('');
 
@@ -49,62 +49,37 @@ function VehicleFormModal({
   const canSave = name.trim().length > 0;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Tappable
-        noFeedback
-        onPress={saving ? undefined : onClose}
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,.45)',
-          justifyContent: 'center',
-          padding: spacing.xl,
-        }}
-      >
-        <View
-          onStartShouldSetResponder={() => true}
-          style={{
-            backgroundColor: colors.background,
-            borderRadius: radii.lg,
-            padding: spacing.lg,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: '700',
-              color: colors.textPrimary,
-              marginBottom: spacing.md,
-            }}
-          >
-            {vehicle ? 'Edit car' : 'Add a car'}
-          </Text>
-          <TextField
-            label="Vehicle name"
-            value={name}
-            onChangeText={setName}
-            placeholder="2019 Honda Accord EX-L"
-          />
-          <TextField
-            label="Odometer (mi)"
-            value={odometer}
-            onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))}
-            keyboardType="number-pad"
-            placeholder="47230"
-            containerStyle={{ marginBottom: spacing.lg }}
-          />
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
-            <PrimaryButton
-              label={vehicle ? 'Save' : 'Add car'}
-              disabled={!canSave}
-              loading={saving}
-              onPress={() => onSave({ name: name.trim(), odometerMi: Number(odometer || 0) })}
-              style={{ flex: 1 }}
-            />
-          </View>
-        </View>
-      </Tappable>
-    </Modal>
+    <FormSheet
+      visible={visible}
+      onClose={onClose}
+      title={vehicle ? 'Edit car' : 'Add a car'}
+      dismissable={!saving}
+    >
+      <TextField
+        label="Vehicle name"
+        value={name}
+        onChangeText={setName}
+        placeholder="2019 Honda Accord EX-L"
+      />
+      <TextField
+        label="Odometer (mi)"
+        value={odometer}
+        onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))}
+        keyboardType="number-pad"
+        placeholder="47230"
+        containerStyle={{ marginBottom: spacing.lg }}
+      />
+      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+        <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
+        <PrimaryButton
+          label={vehicle ? 'Save' : 'Add car'}
+          disabled={!canSave}
+          loading={saving}
+          onPress={() => onSave({ name: name.trim(), odometerMi: Number(odometer || 0) })}
+          style={{ flex: 1 }}
+        />
+      </View>
+    </FormSheet>
   );
 }
 
@@ -328,12 +303,12 @@ export function ProfCarsScreen() {
                     backgroundColor: colors.surface,
                     borderRadius: radii.sm,
                     borderWidth: StyleSheet.hairlineWidth,
-                    borderColor: colors.border,
+                    borderColor: colors.danger,
                     paddingVertical: 9,
                     alignItems: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>
                     Remove
                   </Text>
                 </Tappable>

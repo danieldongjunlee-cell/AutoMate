@@ -122,6 +122,7 @@ export type ProfileStackParamList = {
   ProfInsEdit: { policyId?: string } | undefined;
   ProfInsAdd: undefined;
   ProfPayment: undefined;
+  ProManage: undefined;
   ProfSettings: undefined;
   ProfEditProfile: undefined;
   ProfChangeEmail: undefined;

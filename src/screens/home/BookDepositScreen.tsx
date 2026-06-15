@@ -162,7 +162,7 @@ export function BookDepositScreen() {
                 Skip the deposit with Pro
               </Text>
               <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>
-                No deposits, ever · from $3.25/mo
+                No deposits, ever · from $4/mo
               </Text>
             </View>
             <View style={{ backgroundColor: colors.warning, borderRadius: radii.sm, paddingHorizontal: 11, paddingVertical: 6 }}>

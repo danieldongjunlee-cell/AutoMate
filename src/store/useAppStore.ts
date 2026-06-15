@@ -44,9 +44,9 @@ export const DEPOSIT_CENTS = 2500;
 export const depositForBooking = (kind: 'repair' | 'maintenance', isPro: boolean): number =>
   kind === 'maintenance' || isPro ? 0 : DEPOSIT_CENTS;
 
-/** v17 Pro plans (annual ≈ $3.25/mo; monthly $4.99). 1 pt = $0.01 economy. */
+/** v17 Pro plans (annual $48/yr ≈ $4/mo; monthly $4.99). 1 pt = $0.01 economy. */
 export const PRO_PLANS = {
-  annual: { id: 'annual' as const, priceCents: 3900, label: 'Annual', per: '$3.25/mo' },
+  annual: { id: 'annual' as const, priceCents: 4800, label: 'Annual', per: '$4/mo' },
   monthly: { id: 'monthly' as const, priceCents: 499, label: 'Monthly', per: '$4.99/mo' },
 };
 export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
@@ -210,6 +210,7 @@ interface AppState {
   diyUnlocked: boolean; // true via Pro OR the $10 DIY-only purchase
   unlockPro: () => void; // legacy entry — defaults to annual
   subscribePro: (plan: 'annual' | 'monthly') => void;
+  cancelPro: () => void; // cancel membership (keeps last plan for easy renew)
   unlockDiyOnly: () => void;
 
   // Daily check-in (Home): claim once → award points + show the checked state.
@@ -325,6 +326,7 @@ export const useAppStore = create<AppState>((set) => ({
   // Pro includes DIY guides, so unlocking Pro also flips diyUnlocked.
   unlockPro: () => set({ isPro: true, proPlan: 'annual', diyUnlocked: true }),
   subscribePro: (plan) => set({ isPro: true, proPlan: plan, diyUnlocked: true }),
+  cancelPro: () => set({ isPro: false }),
   unlockDiyOnly: () => set({ diyUnlocked: true }),
 
   dailyCheckedIn: false,

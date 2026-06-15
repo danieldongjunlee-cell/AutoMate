@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { ApplePaySheet } from '../../components/ApplePaySheet';
+import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
@@ -45,96 +46,69 @@ function CardFormModal({
     holder.trim().length > 0 && /^\d{2}\/\d{2}$/.test(expires) && /^\d{4}$/.test(last4);
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      {/* Backdrop tap dismisses; the inner card claims the touch responder so
-          taps/typing inside it never bubble up to the dismiss handler. */}
-      <Tappable
-        noFeedback
-        onPress={saving ? undefined : onClose}
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,.45)',
-          justifyContent: 'center',
-          padding: spacing.xl,
-        }}
-      >
-        <View
-          onStartShouldSetResponder={() => true}
-          style={{
-            backgroundColor: colors.background,
-            borderRadius: radii.lg,
-            padding: spacing.lg,
-          }}
-        >
+    <FormSheet
+      visible={visible}
+      onClose={onClose}
+      title={card ? 'Edit card' : 'Add payment method'}
+      dismissable={!saving}
+    >
+      <TextField
+        label="Cardholder name"
+        value={holder}
+        onChangeText={setHolder}
+        placeholder="John Doe"
+        autoCapitalize="words"
+      />
+      <TextField
+        label="Expiry (MM/YY)"
+        value={expires}
+        onChangeText={(t) => setExpires(t.replace(/[^\d/]/g, '').slice(0, 5))}
+        placeholder="08/27"
+        keyboardType="numbers-and-punctuation"
+      />
+      {card ? (
+        <View style={{ marginBottom: spacing.lg }}>
           <Text
+            style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary, marginBottom: 6 }}
+          >
+            Card number
+          </Text>
+          <View
             style={{
-              fontSize: 17,
-              fontWeight: '700',
-              color: colors.textPrimary,
-              marginBottom: spacing.md,
+              borderWidth: 1,
+              borderColor: colors.border,
+              borderRadius: radii.md,
+              backgroundColor: colors.surfaceAlt,
+              paddingHorizontal: spacing.md,
+              paddingVertical: 13,
             }}
           >
-            {card ? 'Edit card' : 'Add payment method'}
-          </Text>
-          <TextField
-            label="Cardholder name"
-            value={holder}
-            onChangeText={setHolder}
-            placeholder="John Doe"
-            autoCapitalize="words"
-          />
-          <TextField
-            label="Expiry (MM/YY)"
-            value={expires}
-            onChangeText={(t) => setExpires(t.replace(/[^\d/]/g, '').slice(0, 5))}
-            placeholder="08/27"
-            keyboardType="numbers-and-punctuation"
-          />
-          {card ? (
-            <View style={{ marginBottom: spacing.lg }}>
-              <Text
-                style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary, marginBottom: 6 }}
-              >
-                Card number
-              </Text>
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  borderRadius: radii.md,
-                  backgroundColor: colors.surfaceAlt,
-                  paddingHorizontal: spacing.md,
-                  paddingVertical: 13,
-                }}
-              >
-                <Text style={{ fontSize: 15, color: colors.textSecondary, letterSpacing: 1 }}>
-                  •••• •••• •••• {card.last4} (read-only)
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <TextField
-              label="Card number — last 4 digits"
-              value={last4}
-              onChangeText={(t) => setLast4(t.replace(/\D/g, '').slice(0, 4))}
-              placeholder="4242"
-              keyboardType="number-pad"
-              containerStyle={{ marginBottom: spacing.lg }}
-            />
-          )}
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
-            <PrimaryButton
-              label={card ? 'Save' : 'Add card'}
-              disabled={!canSave}
-              loading={saving}
-              onPress={() => onSave({ holder: holder.trim(), expires, last4 })}
-              style={{ flex: 1 }}
-            />
+            <Text style={{ fontSize: 15, color: colors.textSecondary, letterSpacing: 1 }}>
+              •••• •••• •••• {card.last4} (read-only)
+            </Text>
           </View>
         </View>
-      </Tappable>
-    </Modal>
+      ) : (
+        <TextField
+          label="Card number — last 4 digits"
+          value={last4}
+          onChangeText={(t) => setLast4(t.replace(/\D/g, '').slice(0, 4))}
+          placeholder="4242"
+          keyboardType="number-pad"
+          containerStyle={{ marginBottom: spacing.lg }}
+        />
+      )}
+      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+        <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
+        <PrimaryButton
+          label={card ? 'Save' : 'Add card'}
+          disabled={!canSave}
+          loading={saving}
+          onPress={() => onSave({ holder: holder.trim(), expires, last4 })}
+          style={{ flex: 1 }}
+        />
+      </View>
+    </FormSheet>
   );
 }
 
@@ -308,12 +282,12 @@ export function ProfPaymentScreen() {
                   backgroundColor: colors.surface,
                   borderRadius: radii.sm,
                   borderWidth: StyleSheet.hairlineWidth,
-                  borderColor: colors.border,
+                  borderColor: colors.danger,
                   paddingVertical: 9,
                   alignItems: 'center',
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+                <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>
                   Remove
                 </Text>
               </Tappable>

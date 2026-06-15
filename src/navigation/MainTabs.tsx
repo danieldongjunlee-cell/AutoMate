@@ -80,6 +80,7 @@ import {
   ProfTermsScreen,
 } from '../screens/profile/ProfMiscScreens';
 import { ProfPaymentScreen } from '../screens/profile/ProfPaymentScreen';
+import { ProManageScreen } from '../screens/profile/ProManageScreen';
 import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
@@ -252,6 +253,7 @@ const profileScreens = buildScreens(
     'ProfInsEdit',
     'ProfInsAdd',
     'ProfPayment',
+    'ProManage',
     'ProfSettings',
     'ProfEditProfile',
     'ProfChangeEmail',
@@ -279,6 +281,7 @@ const profileScreens = buildScreens(
     ProfInsEdit: ProfInsEditScreen,
     ProfInsAdd: ProfInsAddScreen,
     ProfPayment: ProfPaymentScreen,
+    ProManage: ProManageScreen,
     ProfSettings: ProfSettingsScreen,
     ProfEditProfile: ProfEditProfileScreen,
     ProfChangeEmail: ProfChangeEmailScreen,

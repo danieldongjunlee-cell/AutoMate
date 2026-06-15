@@ -97,9 +97,16 @@ export function ProfHubScreen() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 18, fontWeight: '500', color: colors.textPrimary }}>
-            {displayName}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ fontSize: 18, fontWeight: '500', color: colors.textPrimary }}>
+              {displayName}
+            </Text>
+            {isPro ? (
+              <View style={{ backgroundColor: palette.dark, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
+                <Text style={{ fontSize: 10, fontWeight: '800', color: palette.warning }}>★ PRO</Text>
+              </View>
+            ) : null}
+          </View>
           <Text style={{ fontSize: 13, color: colors.textTertiary }}>{displayEmail}</Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
@@ -210,7 +217,11 @@ export function ProfHubScreen() {
 
       {/* Pro membership upsell / status → AutoMate Pro (Home stack) */}
       <Tappable
-        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')}
+        onPress={() =>
+          isPro
+            ? navigation.navigate('ProManage')
+            : navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')
+        }
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -229,7 +240,7 @@ export function ProfHubScreen() {
           <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.65)' }}>
             {isPro
               ? 'Manage your membership'
-              : 'No security deposits · all DIY guides · priority quotes · from $3.25/mo'}
+              : 'No security deposits · all DIY guides · priority quotes · from $4/mo'}
           </Text>
         </View>
         <View

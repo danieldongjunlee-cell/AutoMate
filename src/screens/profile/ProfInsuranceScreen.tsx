@@ -2,11 +2,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { FormSheet } from '../../components/FormSheet';
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
+import { TextField } from '../../components/TextField';
 import { Screen, SectionLabel } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
@@ -24,6 +27,102 @@ function policyCoversVehicle(covers: string, vehicleName: string): boolean {
 }
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
+
+/** Inline edit form (modal) — the editable policy fields, mirroring the My-cars modal. */
+function PolicyFormModal({
+  policy,
+  visible,
+  onClose,
+  onSave,
+  saving,
+}: {
+  policy: Policy | null;
+  visible: boolean;
+  onClose: () => void;
+  onSave: (fields: {
+    carrier: string;
+    policyNumber: string;
+    deductible: number;
+    premiumPerYear: number;
+    covers: string;
+  }) => void;
+  saving: boolean;
+}) {
+  const [carrier, setCarrier] = useState('');
+  const [policyNumber, setPolicyNumber] = useState('');
+  const [deductible, setDeductible] = useState('');
+  const [premium, setPremium] = useState('');
+  const [covers, setCovers] = useState('');
+
+  // Re-seed the fields whenever the modal opens for a different policy.
+  React.useEffect(() => {
+    if (visible) {
+      setCarrier(policy?.carrier ?? '');
+      setPolicyNumber(policy?.policyNumber ?? '');
+      setDeductible(policy ? String(policy.deductible) : '');
+      setPremium(policy ? String(policy.premiumPerYear) : '');
+      setCovers(policy?.covers ?? '');
+    }
+  }, [visible, policy]);
+
+  const canSave = carrier.trim().length > 0;
+
+  return (
+    <FormSheet visible={visible} onClose={onClose} title="Edit policy details" dismissable={!saving}>
+      <TextField
+        label="Carrier"
+        value={carrier}
+        onChangeText={setCarrier}
+        placeholder="State Farm"
+      />
+      <TextField
+        label="Policy number"
+        value={policyNumber}
+        onChangeText={setPolicyNumber}
+        placeholder="SF-8847234"
+      />
+      <TextField
+        label="Deductible ($)"
+        value={deductible}
+        onChangeText={(t) => setDeductible(t.replace(/[^\d]/g, ''))}
+        keyboardType="number-pad"
+        placeholder="500"
+      />
+      <TextField
+        label="Annual premium ($)"
+        value={premium}
+        onChangeText={(t) => setPremium(t.replace(/[^\d]/g, ''))}
+        keyboardType="number-pad"
+        placeholder="1200"
+      />
+      <TextField
+        label="Covers"
+        value={covers}
+        onChangeText={setCovers}
+        placeholder="2019 Honda Accord"
+        containerStyle={{ marginBottom: spacing.lg }}
+      />
+      <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+        <PrimaryButton label="Cancel" variant="outline" onPress={onClose} style={{ flex: 1 }} />
+        <PrimaryButton
+          label="Save"
+          disabled={!canSave}
+          loading={saving}
+          onPress={() =>
+            onSave({
+              carrier: carrier.trim(),
+              policyNumber: policyNumber.trim(),
+              deductible: Number(deductible || 0),
+              premiumPerYear: Number(premium || 0),
+              covers: covers.trim(),
+            })
+          }
+          style={{ flex: 1 }}
+        />
+      </View>
+    </FormSheet>
+  );
+}
 
 function PolicyCard({
   policy,
@@ -143,7 +242,7 @@ function PolicyCard({
             backgroundColor: colors.surface,
             borderRadius: radii.sm,
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.dangerBorder,
+            borderColor: colors.danger,
             paddingVertical: 11,
             alignItems: 'center',
           }}
@@ -160,6 +259,8 @@ export function ProfInsuranceScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const queryClient = useQueryClient();
+  const [editing, setEditing] = useState<Policy | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   const { active } = useActiveVehicle();
 
@@ -168,10 +269,25 @@ export function ProfInsuranceScreen() {
     queryFn: () => insuranceService.listPolicies(),
   });
 
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['policies'] });
+
+  const saveMutation = useMutation({
+    mutationFn: (patch: Partial<Policy>) => insuranceService.updatePolicy(editing!.id, patch),
+    onSuccess: () => {
+      invalidate();
+      setFormOpen(false);
+    },
+  });
+
   const removeMutation = useMutation({
     mutationFn: (id: string) => insuranceService.removePolicy(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['policies'] }),
   });
+
+  const openEdit = (policy: Policy) => {
+    setEditing(policy);
+    setFormOpen(true);
+  };
 
   const linkedPolicy = active
     ? (policies ?? []).find((p) => policyCoversVehicle(p.covers, active.name))
@@ -231,7 +347,7 @@ export function ProfInsuranceScreen() {
           <PolicyCard
             key={policy.id}
             policy={policy}
-            onEdit={() => navigation.navigate('ProfInsEdit', { policyId: policy.id })}
+            onEdit={() => openEdit(policy)}
             onRemove={() =>
               confirmAction(
                 'Remove policy',
@@ -290,6 +406,14 @@ export function ProfInsuranceScreen() {
           </Text>
         </View>
       </Tappable>
+
+      <PolicyFormModal
+        policy={editing}
+        visible={formOpen}
+        onClose={() => setFormOpen(false)}
+        onSave={(fields) => saveMutation.mutate(fields)}
+        saving={saveMutation.isPending}
+      />
     </Screen>
   );
 }
