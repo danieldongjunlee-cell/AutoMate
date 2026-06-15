@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Text } from 'react-native';
+
+import { TabIcon } from './TabIcons';
 
 import { AcceptBookingScreen } from '../screens/home/AcceptBookingScreen';
 import { AfterHoursScreen } from '../screens/home/AfterHoursScreen';
@@ -308,11 +309,11 @@ function MoreStack() {
 // ── Tab bar (v17: Home · Bookings · Community · More) ──────────────────
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const TABS: { name: keyof MainTabParamList; label: string; icon: string }[] = [
-  { name: 'HomeTab', label: 'Home', icon: '🏠' },
-  { name: 'BookingsTab', label: 'Bookings', icon: '📅' },
-  { name: 'CommunityTab', label: 'Community', icon: '💬' },
-  { name: 'MoreTab', label: 'More', icon: '☰' },
+const TABS: { name: keyof MainTabParamList; label: string }[] = [
+  { name: 'HomeTab', label: 'Home' },
+  { name: 'BookingsTab', label: 'Bookings' },
+  { name: 'CommunityTab', label: 'Community' },
+  { name: 'MoreTab', label: 'More' },
 ];
 
 const TAB_COMPONENTS: Record<keyof MainTabParamList, React.ComponentType> = {
@@ -338,16 +339,14 @@ export function MainTabs() {
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
-      {TABS.map(({ name, label, icon }) => (
+      {TABS.map(({ name, label }) => (
         <Tab.Screen
           key={name}
           name={name}
           component={TAB_COMPONENTS[name]}
           options={{
             tabBarLabel: label,
-            tabBarIcon: ({ focused, color }) => (
-              <Text style={{ fontSize: 20, color, opacity: focused ? 1 : 0.55 }}>{icon}</Text>
-            ),
+            tabBarIcon: ({ color }) => <TabIcon tab={name} color={color} />,
           }}
         />
       ))}
