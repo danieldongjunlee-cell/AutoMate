@@ -91,21 +91,29 @@ for its `./api` twin. Unset it to go back to mocks.
 
 **`P1012 — The datasource property 'url' is no longer supported … move to prisma.config.ts`**
 You ran Prisma **7** against this Prisma **6** schema. Prisma 7 removed
-`url`/`directUrl` from the `datasource` block. You don't need v7 — this happens
-when `npx prisma` downloads the latest standalone CLI because the local install
-wasn't used. Fix:
+`url`/`directUrl` from the `datasource` block. You don't need v7. This comes from
+one of two stale-binary situations, **even if `./node_modules/.bin/prisma` is on
+the command line**:
 
-```bash
-cd server
-npm install                 # installs Prisma 6.x locally (pinned ^6.16.2)
-./node_modules/.bin/prisma --version   # confirm it says 6.x, not 7.x
-npm run migrate:deploy      # uses the local v6 binary
-```
+1. **Stale local install** — `server/node_modules` still holds a Prisma 7 from an
+   earlier `npm install prisma@latest` / `npx prisma@7`, locked in
+   `package-lock.json`. A plain `npm install` may not downgrade it. Force a clean
+   install (deps are pinned to exactly `6.19.3`):
 
-Always invoke Prisma through `npm run …` (or `./node_modules/.bin/prisma`), never
-bare `npx prisma`. If you have a **global** Prisma 7 (`prisma --version` shows 7.x
-from any dir), either uninstall it (`npm rm -g prisma`) or just rely on the
-`npm run` scripts, which ignore the global one.
+   ```bash
+   cd server
+   rm -rf node_modules package-lock.json
+   npm install
+   ./node_modules/.bin/prisma --version    # MUST say 6.x
+   ./node_modules/.bin/prisma migrate deploy
+   ```
+
+2. **Global Prisma 7 on PATH** — bare `prisma`/`npx prisma` resolves to it. Either
+   remove it (`npm rm -g prisma @prisma/cli`) or always call the local binary
+   (`./node_modules/.bin/prisma`) / the `npm run …` scripts, which ignore globals.
+
+Rule of thumb: never run bare `npx prisma`; use `npm run migrate:deploy` or
+`./node_modules/.bin/prisma` so you always get the pinned **Prisma 6**.
 
 > Staying on Prisma 6 is intentional for now: v7 also requires a driver adapter on
 > `new PrismaClient()` (see `server/src/db.ts`) and a `prisma.config.ts`. That's a
