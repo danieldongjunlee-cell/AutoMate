@@ -273,7 +273,8 @@ export const useAppStore = create<AppState>((set) => ({
       reviews: [],
     }),
 
-  darkMode: false,
+  // Dark mode — v17 defaults to its dark-navy theme (toggle to light in Settings).
+  darkMode: true,
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
 
   language: 'English',
