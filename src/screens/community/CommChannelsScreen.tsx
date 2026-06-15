@@ -46,7 +46,7 @@ export function CommChannelsScreen() {
     : channels;
 
   return (
-    <Screen>
+    <Screen safeTop>
       <CarSwitchHeader />
 
       {/* Community title */}

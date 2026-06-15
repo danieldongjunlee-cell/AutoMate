@@ -8,6 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { radii, spacing, useTheme } from '../theme';
 
@@ -16,19 +17,27 @@ export function Screen({
   children,
   style,
   scrollRef,
+  safeTop,
 }: {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   /** Access the underlying ScrollView (e.g. scroll-into-view on AllQuotesMap). */
   scrollRef?: React.Ref<ScrollView>;
+  /** Add the top safe-area inset — for header-less tab roots. */
+  safeTop?: boolean;
 }) {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <ScrollView
       ref={scrollRef}
       style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={[
-        { padding: spacing.screenH, paddingBottom: spacing.xxxl },
+        {
+          padding: spacing.screenH,
+          paddingTop: spacing.screenH + (safeTop ? insets.top : 0),
+          paddingBottom: spacing.xxxl,
+        },
         style,
       ]}
       keyboardShouldPersistTaps="handled"

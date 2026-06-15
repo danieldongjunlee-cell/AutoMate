@@ -77,7 +77,7 @@ export function HomeLauncherScreen() {
   );
 
   return (
-    <Screen>
+    <Screen safeTop>
       {/* Greeting + active-car switcher */}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
@@ -120,14 +120,14 @@ export function HomeLauncherScreen() {
       <Tappable
         onPress={checkedIn ? undefined : claimCheckIn}
         disabled={checkedIn}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successSurface, borderColor: colors.successLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.sm, marginBottom: spacing.md }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
         <Text style={{ fontSize: 16 }}>{checkedIn ? '🎉' : '✅'}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>
             {checkedIn ? 'Checked in today · +10 pts' : 'Daily check-in · +10 pts'}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
             🔥 Day {checkedIn ? 6 : 5} streak · earning toward a free oil change
           </Text>
         </View>
@@ -187,7 +187,12 @@ export function HomeLauncherScreen() {
       </Tappable>
 
       {/* Deals & offers — paged carousel (one at a time, dots) */}
-      <SectionLabel>{t('Deals & offers · Sponsored')}</SectionLabel>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <SectionLabel>{t('Deals & offers · Sponsored')}</SectionLabel>
+        <Tappable onPress={() => navigation.navigate('BundleDeals')} hitSlop={8}>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primary }}>View all →</Text>
+        </Tappable>
+      </View>
       <PagedCarousel
         items={[
           dealItem('🛢️', 'LIMITED · BUNDLE', colors.warning, palette.dark, 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', colors.warningSurface, colors.warning, 'honda-fairfax'),
@@ -303,5 +308,35 @@ const REVIEWS = [
     icon: '🚐',
     tint: '#7F77DD',
     body: 'Insurance claim was painless — AutoMate had three quotes before my agent even called back. Fender looks factory-fresh.',
+  },
+  {
+    car: '2022 Kia Telluride',
+    repair: 'Windshield chip',
+    time: 'Same day',
+    paid: 'Insurance',
+    shop: 'Chantilly Auto Body',
+    icon: '🚙',
+    tint: '#0F6E56',
+    body: 'Booked at 9am, fixed by lunch. The shop messaged me photos before and after — super transparent.',
+  },
+  {
+    car: '2020 Mazda CX-5',
+    repair: 'Brake pads + rotors',
+    time: '3 hours',
+    paid: 'Cash',
+    shop: 'AutoFix Pro',
+    icon: '🚗',
+    tint: '#E24B4A',
+    body: 'Dealer quoted me $620, AutoMate found the same job for $410. No upsell, no waiting room runaround.',
+  },
+  {
+    car: '2017 Ford F-150',
+    repair: 'Side mirror',
+    time: '1 day',
+    paid: 'Cash',
+    shop: 'NoVa Dent Works',
+    icon: '🛻',
+    tint: '#534AB7',
+    body: 'OEM mirror, color-matched perfectly. Loved seeing real reviews from other owners before I picked the shop.',
   },
 ];

@@ -91,7 +91,7 @@ export function ProfHubScreen() {
   );
 
   return (
-    <Screen>
+    <Screen safeTop>
       <CarSwitchHeader />
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>

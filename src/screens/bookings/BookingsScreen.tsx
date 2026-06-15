@@ -81,7 +81,7 @@ export function BookingsScreen() {
   };
 
   return (
-    <Screen>
+    <Screen safeTop>
       <CarSwitchHeader />
       <View
         style={{

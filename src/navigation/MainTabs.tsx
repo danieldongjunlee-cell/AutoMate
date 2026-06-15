@@ -197,7 +197,7 @@ function HomeStack() {
   return (
     <HomeNative.Navigator initialRouteName="HomeLauncher" screenOptions={stackScreenOptions(theme)}>
       {homeScreens.map(({ name, component, title }) => (
-        <HomeNative.Screen key={name} name={name} component={component} options={{ title }} />
+        <HomeNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'HomeLauncher' }} />
       ))}
     </HomeNative.Navigator>
   );
@@ -211,7 +211,7 @@ function BookingsStack() {
   return (
     <BookingsNative.Navigator initialRouteName="Bookings" screenOptions={stackScreenOptions(theme)}>
       {bookingsScreens.map(({ name, component, title }) => (
-        <BookingsNative.Screen key={name} name={name} component={component} options={{ title }} />
+        <BookingsNative.Screen key={name} name={name} component={component} options={{ title, headerShown: false }} />
       ))}
     </BookingsNative.Navigator>
   );
@@ -233,7 +233,7 @@ function CommunityStack() {
   return (
     <CommunityNative.Navigator initialRouteName="CommChannels" screenOptions={stackScreenOptions(theme)}>
       {communityScreens.map(({ name, component, title }) => (
-        <CommunityNative.Screen key={name} name={name} component={component} options={{ title }} />
+        <CommunityNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'CommChannels' }} />
       ))}
     </CommunityNative.Navigator>
   );
@@ -304,7 +304,7 @@ function MoreStack() {
   return (
     <ProfileNative.Navigator initialRouteName="ProfHub" screenOptions={stackScreenOptions(theme)}>
       {profileScreens.map(({ name, component, title }) => (
-        <ProfileNative.Screen key={name} name={name} component={component} options={{ title }} />
+        <ProfileNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'ProfHub' }} />
       ))}
     </ProfileNative.Navigator>
   );

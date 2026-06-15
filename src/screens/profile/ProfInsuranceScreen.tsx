@@ -68,7 +68,7 @@ function PolicyFormModal({
   const canSave = carrier.trim().length > 0;
 
   return (
-    <FormSheet visible={visible} onClose={onClose} title="Edit policy details" dismissable={!saving}>
+    <FormSheet visible={visible} onClose={onClose} title="Edit policy" dismissable={!saving}>
       <TextField
         label="Carrier"
         value={carrier}
@@ -224,15 +224,15 @@ function PolicyCard({
         <Tappable
           onPress={onEdit}
           style={{
-            flex: 2,
-            backgroundColor: colors.primary,
+            flex: 1,
+            backgroundColor: colors.primarySurface,
             borderRadius: radii.sm,
-            paddingVertical: 11,
+            paddingVertical: 9,
             alignItems: 'center',
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
-            ✎ Edit policy details
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+            Edit policy
           </Text>
         </Tappable>
         <Tappable
@@ -243,11 +243,11 @@ function PolicyCard({
             borderRadius: radii.sm,
             borderWidth: StyleSheet.hairlineWidth,
             borderColor: colors.danger,
-            paddingVertical: 11,
+            paddingVertical: 9,
             alignItems: 'center',
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Remove</Text>
+          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>Remove</Text>
         </Tappable>
       </View>
     </View>
