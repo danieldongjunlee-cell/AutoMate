@@ -9,6 +9,8 @@ export type BookingConfirmParams = {
   time?: string;
   paid?: 'cash';
   priceLabel?: string;
+  /** The stored booking's id, so reschedule/cancel can target it. */
+  bookingId?: string;
 };
 
 export type AuthStackParamList = {
@@ -46,7 +48,7 @@ type HomeFlowParamList = {
     nextParams?: BookingConfirmParams;
   };
   BookingConfirm: BookingConfirmParams | undefined;
-  Reschedule: { kind?: 'repair' | 'maintenance' } | undefined;
+  Reschedule: { kind?: 'repair' | 'maintenance'; bookingId?: string } | undefined;
   Reviews: { dealerId?: string } | undefined;
   WriteReview: { dealerId?: string } | undefined;
   TosBooking: undefined;

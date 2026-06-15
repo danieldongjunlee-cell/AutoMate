@@ -4,6 +4,7 @@ import { ActivityIndicator, Modal, StyleSheet, Text, View } from 'react-native';
 import { authService } from '../services';
 import { palette, radii, spacing } from '../theme';
 import { showAlert } from '../utils/alerts';
+import { AppleLogo, GoogleLogo } from './BrandLogos';
 import { Tappable } from './Tappable';
 
 export type SocialProvider = 'google' | 'apple';
@@ -86,15 +87,10 @@ function GoogleChooser({
       }}
     >
       <View style={{ alignItems: 'center', marginBottom: spacing.lg, paddingHorizontal: spacing.xl }}>
-        {/* Text-styled multicolor G logo */}
-        <Text style={{ fontSize: 30, fontWeight: '700', marginBottom: spacing.sm }}>
-          <Text style={{ color: '#4285F4' }}>G</Text>
-          <Text style={{ color: '#EA4335' }}>o</Text>
-          <Text style={{ color: '#FBBC05' }}>o</Text>
-          <Text style={{ color: '#4285F4' }}>g</Text>
-          <Text style={{ color: '#34A853' }}>l</Text>
-          <Text style={{ color: '#EA4335' }}>e</Text>
-        </Text>
+        {/* Real four-color Google "G" mark */}
+        <View style={{ marginBottom: spacing.sm }}>
+          <GoogleLogo size={30} />
+        </View>
         <Text style={{ fontSize: 17, fontWeight: '500', color: '#202124' }}>
           Sign in with Google
         </Text>
@@ -193,17 +189,27 @@ function AppleSheet({
           marginBottom: spacing.lg,
         }}
       />
-      <Text
+      <View
         style={{
-          fontSize: 19,
-          fontWeight: '700',
-          color: '#fff',
-          textAlign: 'center',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing.sm,
           marginBottom: 4,
         }}
       >
-         Sign in with Apple
-      </Text>
+        <AppleLogo size={20} color="#fff" />
+        <Text
+          style={{
+            fontSize: 19,
+            fontWeight: '700',
+            color: '#fff',
+            textAlign: 'center',
+          }}
+        >
+          Sign in with Apple
+        </Text>
+      </View>
       <Text
         style={{
           fontSize: 13,

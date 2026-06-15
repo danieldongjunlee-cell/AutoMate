@@ -124,10 +124,10 @@ export function BookingConfirmScreen() {
       {/* Primary action: manage (reschedule / cancel) the booking. */}
       <PrimaryButton
         label="🗓 Reschedule"
-        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
+        onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
       />
       <Tappable
-        onPress={() => navigation.navigate('Reschedule', { kind: 'repair' })}
+        onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
         style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
       >
         <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel</Text>

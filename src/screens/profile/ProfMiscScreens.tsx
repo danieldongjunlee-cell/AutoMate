@@ -3,10 +3,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { AppleLogo, GoogleLogo } from '../../components/BrandLogos';
 import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
-import { showAlert } from '../../utils/alerts';
 import { ProfileStackParamList } from '../../navigation/types';
 import {
   HELP_TOPICS,
@@ -26,17 +26,20 @@ export function ProfLinkedAccountsScreen() {
   const [connected, setConnected] = useState<Record<string, boolean>>({
     Google: true,
     Apple: false,
-    Facebook: false,
   });
   const rows = [
-    { icon: 'G', name: 'Google', sub: USER.googleEmail, provider: 'google' as const },
     {
-      icon: '',
+      logo: <GoogleLogo size={24} />,
+      name: 'Google',
+      sub: USER.googleEmail,
+      provider: 'google' as const,
+    },
+    {
+      logo: <AppleLogo size={24} color={colors.textPrimary} />,
       name: 'Apple',
       sub: connected.Apple ? 'demo@automate.app' : 'Not connected',
       provider: 'apple' as const,
     },
-    { icon: 'f', name: 'Facebook', sub: 'Not connected', provider: null },
   ];
   return (
     <Screen>
@@ -52,16 +55,7 @@ export function ProfLinkedAccountsScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: '700',
-                width: 34,
-                color: colors.textPrimary,
-              }}
-            >
-              {row.icon}
-            </Text>
+            <View style={{ width: 34, alignItems: 'flex-start' }}>{row.logo}</View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
                 {row.name}
@@ -83,11 +77,7 @@ export function ProfLinkedAccountsScreen() {
               </View>
             ) : (
               <Tappable
-                onPress={() =>
-                  row.provider
-                    ? setSheetProvider(row.provider)
-                    : showAlert('Connect', `${row.name} sign-in comes with the backend.`)
-                }
+                onPress={() => setSheetProvider(row.provider)}
                 style={{
                   backgroundColor: colors.primarySurface,
                   borderRadius: radii.pill,

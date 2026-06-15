@@ -1,15 +1,16 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
+import { navigateCrossTab } from '../navigation/crossTab';
 import { Dealer } from '../services/mock/data';
 import { useTheme } from '../theme';
-import { openDealerReviews } from '../utils/links';
 import { Tappable } from './Tappable';
 
 /**
- * Tappable "★ 4.9 (312 reviews)" rating (user-feedback pass 2): confirm →
- * Google reviews for the dealer. Dotted underline signals the link without
- * shouting inside meta rows.
+ * Tappable "★ 4.9 (312 reviews)" rating → the in-app Reviews screen for the
+ * shop (internal AutoMate reviews, NOT Google). Dotted underline signals the
+ * link without shouting inside meta rows.
  */
 export function RatingLink({
   dealer,
@@ -22,8 +23,12 @@ export function RatingLink({
   style?: StyleProp<TextStyle>;
 }) {
   const { colors } = useTheme();
+  const navigation = useNavigation();
   return (
-    <Tappable onPress={() => openDealerReviews(dealer)} hitSlop={6}>
+    <Tappable
+      onPress={() => navigateCrossTab(navigation, 'HomeTab', 'Reviews', { dealerId: dealer.id })}
+      hitSlop={6}
+    >
       <Text
         style={[
           {

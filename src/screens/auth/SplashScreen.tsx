@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { AppleLogo, GoogleLogo } from '../../components/BrandLogos';
 import { LogoMark } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
@@ -93,10 +94,10 @@ export function SplashScreen() {
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         {(
           [
-            { provider: 'apple', icon: '', label: 'Apple' },
-            { provider: 'google', icon: 'G', label: 'Google' },
+            { provider: 'apple', label: 'Apple' },
+            { provider: 'google', label: 'Google' },
           ] as const
-        ).map(({ provider, icon, label }) => (
+        ).map(({ provider, label }) => (
           <Tappable
             key={provider}
             onPress={() => setSheetProvider(provider)}
@@ -111,9 +112,11 @@ export function SplashScreen() {
               paddingVertical: 13,
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: '700', color: palette.textPrimary }}>
-              {icon}
-            </Text>
+            {provider === 'apple' ? (
+              <AppleLogo size={18} color={palette.textPrimary} />
+            ) : (
+              <GoogleLogo size={18} />
+            )}
             <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
           </Tappable>
         ))}

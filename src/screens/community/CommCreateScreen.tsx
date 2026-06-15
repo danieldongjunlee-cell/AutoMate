@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -11,8 +11,9 @@ import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
 import { communityService } from '../../services';
+import { capturePhoto, pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommCreate'>;
 
@@ -25,15 +26,25 @@ export function CommCreateScreen() {
 
   const [category, setCategory] = useState<PostCategory>('Question');
   const [body, setBody] = useState('');
-  const [hasPhoto, setHasPhoto] = useState(true);
+  const [photos, setPhotos] = useState<string[]>([]);
   const [publishing, setPublishing] = useState(false);
+
+  const MAX_PHOTOS = 4;
+
+  const addPhoto = async (pick: () => Promise<{ uri: string } | null>) => {
+    if (photos.length >= MAX_PHOTOS) return;
+    const result = await pick();
+    if (result) setPhotos((prev) => [...prev, result.uri].slice(0, MAX_PHOTOS));
+  };
+
+  const removePhoto = (uri: string) => setPhotos((prev) => prev.filter((p) => p !== uri));
 
   const onPublish = async () => {
     setPublishing(true);
     const { pointsEarned } = await communityService.createPost(
       body.trim() || 'Shared from the AutoMate app 🚗',
       category,
-      hasPhoto ? 1 : 0,
+      photos.length,
     );
     addPoints(pointsEarned);
     // Fire-and-forget: the feed refetches while we navigate back to it.
@@ -142,62 +153,35 @@ export function CommCreateScreen() {
       />
 
       {/* Photos */}
-      <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary, marginBottom: 6 }}>
-        Add photos
-      </Text>
-      <View style={{ flexDirection: 'row', gap: spacing.xs, alignItems: 'center', marginBottom: spacing.md }}>
-        <Tappable
-          onPress={() => setHasPhoto(true)}
-          style={({ pressed }) => ({
-            width: 64,
-            height: 64,
-            borderRadius: radii.sm,
-            backgroundColor: colors.primarySurface,
-            borderWidth: 1.5,
-            borderStyle: 'dashed',
-            borderColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 20 }}>📷</Text>
-          <Text style={{ fontSize: 9, fontWeight: '500', color: colors.primaryDark }}>Camera</Text>
-        </Tappable>
-        <Tappable
-          onPress={() => setHasPhoto(true)}
-          style={({ pressed }) => ({
-            width: 64,
-            height: 64,
-            borderRadius: radii.sm,
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderStyle: 'dashed',
-            borderColor: colors.primaryLight,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 2,
-            opacity: pressed ? 0.7 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 20 }}>🖼️</Text>
-          <Text style={{ fontSize: 9, fontWeight: '500', color: colors.textTertiary }}>Gallery</Text>
-        </Tappable>
-        {hasPhoto ? (
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginBottom: 6 }}>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
+          Add photo(s)
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>· Up to 4</Text>
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: spacing.xs,
+          alignItems: 'center',
+          marginBottom: spacing.md,
+        }}
+      >
+        {photos.map((uri) => (
           <View
+            key={uri}
             style={{
               width: 64,
               height: 64,
               borderRadius: radii.sm,
-              backgroundColor: palette.navy,
-              alignItems: 'center',
-              justifyContent: 'center',
+              overflow: 'hidden',
+              backgroundColor: colors.surface,
             }}
           >
-            <Text style={{ fontSize: 24 }}>🚗</Text>
+            <Image source={{ uri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
             <Tappable
-              onPress={() => setHasPhoto(false)}
+              onPress={() => removePhoto(uri)}
               hitSlop={6}
               style={{
                 position: 'absolute',
@@ -214,10 +198,49 @@ export function CommCreateScreen() {
               <Text style={{ fontSize: 10, color: '#fff' }}>✕</Text>
             </Tappable>
           </View>
+        ))}
+        {photos.length < MAX_PHOTOS ? (
+          <>
+            <Tappable
+              onPress={() => addPhoto(capturePhoto)}
+              style={({ pressed }) => ({
+                width: 64,
+                height: 64,
+                borderRadius: radii.sm,
+                backgroundColor: colors.primarySurface,
+                borderWidth: 1.5,
+                borderStyle: 'dashed',
+                borderColor: colors.primary,
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 2,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{ fontSize: 20 }}>📷</Text>
+              <Text style={{ fontSize: 9, fontWeight: '500', color: colors.primaryDark }}>Camera</Text>
+            </Tappable>
+            <Tappable
+              onPress={() => addPhoto(pickFromGallery)}
+              style={({ pressed }) => ({
+                width: 64,
+                height: 64,
+                borderRadius: radii.sm,
+                backgroundColor: colors.surface,
+                borderWidth: 1,
+                borderStyle: 'dashed',
+                borderColor: colors.primaryLight,
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 2,
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{ fontSize: 20 }}>🖼️</Text>
+              <Text style={{ fontSize: 9, fontWeight: '500', color: colors.textTertiary }}>Gallery</Text>
+            </Tappable>
+          </>
         ) : null}
-        <Text style={{ flex: 1, fontSize: 12, color: colors.textPlaceholder, textAlign: 'center' }}>
-          Up to 4
-        </Text>
       </View>
 
       <PrimaryButton label="Publish post" loading={publishing} onPress={onPublish} />

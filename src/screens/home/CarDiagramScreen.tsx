@@ -19,20 +19,26 @@ const SIDE_W = 64;
 function PartTile({
   cell,
   selected,
+  done,
   vertical,
   onPress,
   minHeight,
 }: {
   cell: PartCell;
   selected: boolean;
+  done?: boolean;
   vertical?: boolean;
   onPress: () => void;
   minHeight?: number;
 }) {
   const { colors } = useTheme();
 
-  const bg = selected ? palette.primaryDark : colors.surface;
-  const fg = selected ? '#fff' : colors.textSecondary;
+  // Selected (in-progress) styling takes precedence over the captured/done state,
+  // but a selected-and-done tile still shows the ✓ to confirm photos exist.
+  const bg = selected ? palette.primaryDark : done ? colors.successSurface : colors.surface;
+  const fg = selected ? '#fff' : done ? colors.successDark : colors.textSecondary;
+  const borderColor = selected ? palette.primary : done ? colors.success : colors.border;
+  const showCheck = selected || done;
 
   return (
     <Tappable
@@ -43,8 +49,8 @@ function PartTile({
         alignSelf: vertical ? undefined : 'stretch',
         backgroundColor: bg,
         borderRadius: radii.sm,
-        borderWidth: selected ? 2 : 1.5,
-        borderColor: selected ? palette.primary : colors.border,
+        borderWidth: selected || done ? 2 : 1.5,
+        borderColor,
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: vertical ? spacing.sm : 12,
@@ -56,12 +62,12 @@ function PartTile({
       <Text
         style={{
           fontSize: vertical ? 11 : 14,
-          fontWeight: selected ? '700' : '600',
+          fontWeight: selected || done ? '700' : '600',
           color: fg,
           textAlign: 'center',
         }}
       >
-        {selected ? `✔ ${cell.name}` : cell.name}
+        {showCheck ? `✓ ${cell.name}` : cell.name}
       </Text>
     </Tappable>
   );
@@ -72,6 +78,7 @@ export function CarDiagramScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const draftPart = useAppStore((s) => s.draftPart);
+  const damageParts = useAppStore((s) => s.damageParts);
   const pickPart = useAppStore((s) => s.pickPart);
 
   return (
@@ -123,6 +130,7 @@ export function CarDiagramScreen() {
                       <PartTile
                         cell={cell}
                         selected={draftPart === cell.name}
+                        done={damageParts.some((p) => p.part === cell.name)}
                         onPress={() => pickPart(cell.name)}
                       />
                     </View>
@@ -135,6 +143,7 @@ export function CarDiagramScreen() {
                   key={i}
                   cell={cell}
                   selected={draftPart === cell.name}
+                  done={damageParts.some((p) => p.part === cell.name)}
                   onPress={() => pickPart(cell.name)}
                 />
               );
@@ -147,12 +156,14 @@ export function CarDiagramScreen() {
                   cell={left}
                   vertical
                   selected={draftPart === left.name}
+                  done={damageParts.some((p) => p.part === left.name)}
                   onPress={() => pickPart(left.name)}
                 />
                 <View style={{ flex: 1 }}>
                   <PartTile
                     cell={mid}
                     selected={draftPart === mid.name}
+                    done={damageParts.some((p) => p.part === mid.name)}
                     onPress={() => pickPart(mid.name)}
                     minHeight={tall ? 76 : 52}
                   />
@@ -161,6 +172,7 @@ export function CarDiagramScreen() {
                   cell={right}
                   vertical
                   selected={draftPart === right.name}
+                  done={damageParts.some((p) => p.part === right.name)}
                   onPress={() => pickPart(right.name)}
                 />
               </View>

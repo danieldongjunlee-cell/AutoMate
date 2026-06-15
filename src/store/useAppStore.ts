@@ -239,6 +239,8 @@ interface AppState {
   bookings: AppBooking[];
   /** Record a new booking; the latest one shows first in the Bookings tab. */
   addBooking: (booking: Omit<AppBooking, 'id' | 'createdAt'>) => void;
+  /** Remove a booking (cancel). With no id, drops the most recent. */
+  removeBooking: (id?: string) => void;
 
   // Reviews the user has written (v17 write-review → reviews).
   reviews: UserReview[];
@@ -369,6 +371,10 @@ export const useAppStore = create<AppState>((set) => ({
         { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() },
         ...s.bookings,
       ],
+    })),
+  removeBooking: (id) =>
+    set((s) => ({
+      bookings: id ? s.bookings.filter((b) => b.id !== id) : s.bookings.slice(1),
     })),
 
   reviews: [],

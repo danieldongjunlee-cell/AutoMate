@@ -7,8 +7,11 @@ import { Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Reschedule'>;
 type Rt = RouteProp<HomeStackParamList, 'Reschedule'>;
@@ -30,8 +33,21 @@ export function RescheduleScreen() {
   const [day, setDay] = useState('14');
   const [time, setTime] = useState('11:00 AM');
 
+  const removeBooking = useAppStore((s) => s.removeBooking);
   const isMaint = params?.kind === 'maintenance';
   const confirmScreen = isMaint ? 'MaintScheduleConfirm' : 'BookingConfirm';
+
+  /** Confirm → drop the booking from the store → land on the Bookings tab. */
+  const onCancel = () =>
+    confirmAction(
+      'Cancel booking?',
+      'Your booking will be cancelled. Cancel 12h+ ahead and your deposit is fully refunded.',
+      () => {
+        removeBooking(params?.bookingId);
+        navigateCrossTab(navigation, 'BookingsTab', 'Bookings');
+      },
+      'Cancel booking',
+    );
 
   const pill = (active: boolean) => ({
     borderWidth: 1,
@@ -102,7 +118,7 @@ export function RescheduleScreen() {
           your deposit is fully refunded. Within 12 hours or a no-show, the deposit is kept and a
           strike is added — 3 strikes removes your account.
         </Text>
-        <PrimaryButton variant="danger" label="Cancel booking" onPress={() => navigation.goBack()} />
+        <PrimaryButton variant="danger" label="Cancel booking" onPress={onCancel} />
       </View>
     </Screen>
   );

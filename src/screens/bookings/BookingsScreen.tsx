@@ -27,6 +27,7 @@ export function BookingsScreen() {
         dateLabel: b.dateLabel,
         time: b.time,
         priceLabel: b.priceLabel,
+        bookingId: b.id,
       });
     }
   };
