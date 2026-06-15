@@ -9,9 +9,11 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
-import { Screen, SectionLabel } from '../../components/ui';
+import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
 import { Vehicle, vehiclesService } from '../../services';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
@@ -119,6 +121,17 @@ export function ProfCarsScreen() {
     queryFn: vehiclesService.listVehicles,
   });
 
+  // The globally active car drives highlight + ordering; tapping a card switches it.
+  const { active } = useActiveVehicle();
+  const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
+
+  // Active car floats to the top of the garage list.
+  const sortedVehicles = [...(vehicles ?? [])].sort((a, b) => {
+    if (a.id === active?.id) return -1;
+    if (b.id === active?.id) return 1;
+    return 0;
+  });
+
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['vehicles'] });
 
   const saveMutation = useMutation({
@@ -174,7 +187,8 @@ export function ProfCarsScreen() {
           </Text>
         </View>
       ) : (
-        (vehicles ?? []).map((vehicle) => {
+        sortedVehicles.map((vehicle) => {
+          const isActive = vehicle.id === active?.id;
           const specs = [
             ['VIN', vehicle.vin || '—'],
             ['Odometer', `${vehicle.odometerMi.toLocaleString()} mi`],
@@ -182,13 +196,18 @@ export function ProfCarsScreen() {
             ['Last service', vehicle.lastService],
           ] as const;
           return (
-            <View
+            <Tappable
               key={vehicle.id}
+              noFeedback
+              accessibilityRole="button"
+              accessibilityState={{ selected: isActive }}
+              accessibilityLabel={`Set ${vehicle.name} as your active car`}
+              onPress={() => setActiveVehicle(vehicle.id)}
               style={{
                 backgroundColor: colors.surface,
                 borderRadius: radii.md,
                 borderWidth: 1.5,
-                borderColor: colors.primary,
+                borderColor: isActive ? colors.primary : colors.border,
                 overflow: 'hidden',
                 marginBottom: spacing.sm,
               }}
@@ -224,7 +243,18 @@ export function ProfCarsScreen() {
                     {vehicle.colorName || 'Color not set'}
                   </Text>
                 </View>
-                {vehicle.isPrimary ? (
+                {isActive ? (
+                  <View
+                    style={{
+                      backgroundColor: 'rgba(255,255,255,.25)',
+                      borderRadius: radii.pill,
+                      paddingHorizontal: 10,
+                      paddingVertical: 3,
+                    }}
+                  >
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>Active</Text>
+                  </View>
+                ) : vehicle.isPrimary ? (
                   <View
                     style={{
                       backgroundColor: 'rgba(255,255,255,.2)',
@@ -255,6 +285,18 @@ export function ProfCarsScreen() {
                     </Text>
                   </View>
                 ))}
+              </View>
+              <View
+                style={{
+                  paddingHorizontal: spacing.md,
+                  paddingBottom: spacing.sm,
+                }}
+              >
+                {isActive ? (
+                  <Badge label="Active car" variant="primary" />
+                ) : (
+                  <Badge label="Tap to set active" variant="primarySoft" />
+                )}
               </View>
               <View
                 style={{
@@ -296,7 +338,7 @@ export function ProfCarsScreen() {
                   </Text>
                 </Tappable>
               </View>
-            </View>
+            </Tappable>
           );
         })
       )}

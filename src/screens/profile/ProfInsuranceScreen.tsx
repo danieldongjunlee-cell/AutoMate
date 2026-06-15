@@ -176,6 +176,12 @@ export function ProfInsuranceScreen() {
   const linkedPolicy = active
     ? (policies ?? []).find((p) => policyCoversVehicle(p.covers, active.name))
     : undefined;
+  // The active car's policy floats to the top as the primary.
+  const sortedPolicies = [...(policies ?? [])].sort((a, b) => {
+    if (a.id === linkedPolicy?.id) return -1;
+    if (b.id === linkedPolicy?.id) return 1;
+    return 0;
+  });
 
   return (
     <Screen>
@@ -221,7 +227,7 @@ export function ProfInsuranceScreen() {
           No policies on file — add one below.
         </Text>
       ) : (
-        (policies ?? []).map((policy) => (
+        sortedPolicies.map((policy) => (
           <PolicyCard
             key={policy.id}
             policy={policy}

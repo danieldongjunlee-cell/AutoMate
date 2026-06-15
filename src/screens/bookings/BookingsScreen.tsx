@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { BookingsStackParamList } from '../../navigation/types';
 import { AppBooking, useAppStore } from '../../store/useAppStore';
@@ -17,7 +18,10 @@ type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const bookings = useAppStore((s) => s.bookings);
+  const { brand } = useActiveVehicle();
+  const allBookings = useAppStore((s) => s.bookings);
+  // Only the active car's bookings (switching cars shows a different list).
+  const bookings = allBookings.filter((b) => b.brand === brand);
 
   const openBooking = (b: AppBooking) => {
     if (b.kind === 'maintenance') {

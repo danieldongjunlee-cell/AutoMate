@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
 import { cartTotals, dateBadgeParts, depositForBooking, useAppStore } from '../../store/useAppStore';
@@ -22,6 +23,7 @@ export function BookAgreementScreen() {
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
   const addBooking = useAppStore((s) => s.addBooking);
+  const { brand } = useActiveVehicle();
   const [agreed, setAgreed] = useState(false);
 
   const kind = params?.kind ?? 'repair';
@@ -41,6 +43,7 @@ export function BookAgreementScreen() {
       const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
       addBooking({
         kind: 'repair',
+        brand,
         dealerId: params?.dealerId,
         icon: '🚗',
         title: 'Rear bumper repair',
@@ -59,6 +62,7 @@ export function BookAgreementScreen() {
       const dateLabel = formatDayLabel(cart.date, 'Mon, Apr 7');
       addBooking({
         kind: 'maintenance',
+        brand,
         dealerId: cart.dealerId ?? undefined,
         icon: '🛢️',
         title: cart.services.map((s) => s.name).join(' + ') || 'Service',

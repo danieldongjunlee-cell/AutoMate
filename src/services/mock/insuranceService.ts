@@ -61,6 +61,17 @@ let policies: Policy[] = [
     renewal: 'Aug 15, 2027',
     status: 'Active',
   },
+  {
+    id: 'pol-geico-rav4',
+    carrier: 'Geico',
+    coverage: 'Liability + Collision',
+    policyNumber: 'GC-4419208',
+    deductible: 1000,
+    premiumPerYear: 1040,
+    covers: '2021 Toyota RAV4',
+    renewal: 'Nov 2, 2027',
+    status: 'Active',
+  },
 ];
 let nextId = 1;
 

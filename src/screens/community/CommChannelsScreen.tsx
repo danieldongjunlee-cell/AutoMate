@@ -8,9 +8,10 @@ import { Tappable } from '../../components/Tappable';
 import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 
 import { CommunityStackParamList } from '../../navigation/types';
-import { CHANNELS } from '../../services/mock/data';
+import { CHANNELS, Channel } from '../../services/mock/data';
 import { communityService } from '../../services';
 import { Screen } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
@@ -19,17 +20,49 @@ type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const { brand } = useActiveVehicle();
   const [query, setQuery] = useState('');
   const { data: channels } = useQuery({
     queryKey: ['channels'],
     queryFn: communityService.getChannels,
   });
 
-  const allChannels = channels ?? CHANNELS;
+  const brandLc = brand.toLowerCase();
+
+  // The active car's brand drives which channel is "joined": override the static
+  // `joined` flag so switching cars (Honda↔Toyota) moves the highlight.
+  const baseChannels = channels ?? CHANNELS;
+  const withActiveBrand: Channel[] = baseChannels.map((channel) => ({
+    ...channel,
+    joined: channel.name.toLowerCase().includes(brandLc),
+  }));
+
+  // If no channel matches the active brand, synthesize a joined one so the active
+  // car always has a feed to land on.
+  const hasBrandChannel = withActiveBrand.some((channel) => channel.joined);
+  const allChannels: Channel[] = hasBrandChannel
+    ? withActiveBrand
+    : [
+        {
+          id: `brand-${brandLc}`,
+          name: `${brand} Owners`,
+          initial: brand.charAt(0).toUpperCase(),
+          color: colors.primary,
+          members: 0,
+          joined: true,
+        },
+        ...withActiveBrand,
+      ];
+
+  // Joined (active brand) channel sorts to the top.
+  const sortedChannels = [...allChannels].sort(
+    (a, b) => Number(b.joined) - Number(a.joined),
+  );
+
   const q = query.trim().toLowerCase();
   const filteredChannels = q
-    ? allChannels.filter((channel) => channel.name.toLowerCase().includes(q))
-    : allChannels;
+    ? sortedChannels.filter((channel) => channel.name.toLowerCase().includes(q))
+    : sortedChannels;
 
   return (
     <Screen>

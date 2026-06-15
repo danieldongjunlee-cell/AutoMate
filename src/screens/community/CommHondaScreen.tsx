@@ -12,6 +12,7 @@ import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
 import { communityService } from '../../services';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommHonda'>;
@@ -20,7 +21,10 @@ type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommHonda'>;
 export function CommHondaScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const channel = CHANNELS[0];
+  const { brand } = useActiveVehicle();
+  const brandLc = brand.toLowerCase();
+  const channel =
+    CHANNELS.find((c) => c.name.toLowerCase().includes(brandLc)) ?? CHANNELS[0];
   const { data: posts, isLoading } = useQuery({
     queryKey: ['feed', channel.id],
     queryFn: () => communityService.getFeed(channel.id),
@@ -28,6 +32,8 @@ export function CommHondaScreen() {
 
   useEffect(() => {
     navigation.setOptions({
+      // Header title follows the active car's brand (was hardcoded "Honda Owners").
+      title: `${brand} Owners`,
       headerRight: () => (
         <Tappable
           onPress={() => navigation.navigate('CommCreate')}
@@ -46,7 +52,7 @@ export function CommHondaScreen() {
         </Tappable>
       ),
     });
-  }, [navigation, colors]);
+  }, [navigation, colors, brand]);
 
   return (
     <Screen>

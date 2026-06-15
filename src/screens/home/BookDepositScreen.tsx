@@ -7,6 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Card, Screen } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
 import { dateBadgeParts, DEPOSIT_CENTS, useAppStore } from '../../store/useAppStore';
@@ -24,6 +25,7 @@ export function BookDepositScreen() {
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
   const addBooking = useAppStore((s) => s.addBooking);
+  const { brand } = useActiveVehicle();
   const [booking, setBooking] = useState(false);
 
   const next = params?.next ?? 'BookingConfirm';
@@ -37,6 +39,7 @@ export function BookDepositScreen() {
     const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
     addBooking({
       kind: 'repair',
+      brand,
       dealerId: params?.dealerId,
       icon: '🚗',
       title: 'Rear bumper repair',

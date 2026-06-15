@@ -60,6 +60,8 @@ export interface AppBooking {
   id: string;
   kind: 'repair' | 'maintenance';
   dealerId?: string;
+  /** Owning car's brand — the Bookings tab filters to the active car. */
+  brand: string;
   icon: string;
   title: string;
   dealerName: string;
@@ -77,6 +79,7 @@ const SEED_BOOKINGS: AppBooking[] = [
     id: 'bk-seed-oil',
     kind: 'maintenance',
     dealerId: 'honda-fairfax',
+    brand: 'Honda',
     icon: '🛢️',
     title: 'Oil change',
     dealerName: 'Honda Fairfax',
@@ -92,6 +95,7 @@ const SEED_BOOKINGS: AppBooking[] = [
     id: 'bk-seed-bumper',
     kind: 'repair',
     dealerId: 'honda-fairfax',
+    brand: 'Honda',
     icon: '🚗',
     title: 'Rear bumper repair',
     dealerName: 'Honda Fairfax',
@@ -102,6 +106,22 @@ const SEED_BOOKINGS: AppBooking[] = [
     priceLabel: '$320–345',
     status: 'confirmed',
     createdAt: 2,
+  },
+  {
+    id: 'bk-seed-rav4',
+    kind: 'maintenance',
+    dealerId: 'vienna-auto',
+    brand: 'Toyota',
+    icon: '🔧',
+    title: 'Tire rotation + brake check',
+    dealerName: 'Vienna Auto Care',
+    dateLabel: 'Wed, Apr 9',
+    mon: 'Apr',
+    day: '9',
+    time: '9:30 AM',
+    priceLabel: '$89',
+    status: 'confirmed',
+    createdAt: 3,
   },
 ];
 

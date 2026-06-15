@@ -34,6 +34,16 @@ let vehicles: Vehicle[] = [
     lastService: VEHICLE.lastService,
     isPrimary: true,
   },
+  {
+    id: 'veh-rav4',
+    name: '2021 Toyota RAV4 XLE',
+    colorName: 'Magnetic Gray Metallic',
+    vin: '2T3W1RFV5MC123456',
+    odometerMi: 28400,
+    oilSpec: '0W-20 Full Synthetic',
+    lastService: 'Feb 2027',
+    isPrimary: false,
+  },
 ];
 let nextId = 1;
 

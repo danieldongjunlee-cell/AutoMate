@@ -13,6 +13,7 @@ import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/point
 import { MaintStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
 import { maintService, pointsService } from '../../services';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { cartTotals, dateBadgeParts, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
@@ -28,6 +29,7 @@ export function MaintPaymentScreen() {
   const cart = useAppStore((s) => s.cart);
   const addPoints = useAppStore((s) => s.addPoints);
   const addBooking = useAppStore((s) => s.addBooking);
+  const { brand } = useActiveVehicle();
   const points = useAppStore((s) => s.points);
   const dealer = dealerById(cart.dealerId);
   const [method, setMethod] = useState<PayMethod>('visa');
@@ -55,6 +57,7 @@ export function MaintPaymentScreen() {
       const dateLabel = formatDayLabel(cart.date, 'Mon, Apr 7');
       addBooking({
         kind: 'maintenance',
+        brand,
         dealerId: cart.dealerId ?? undefined,
         icon: '🛢️',
         title: cart.services.map((s) => s.name).join(' + ') || 'Service',
