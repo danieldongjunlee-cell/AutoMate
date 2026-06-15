@@ -262,3 +262,46 @@ bcrypt + JWT; consumer accounts live in `automate.users` on the **shared project
 Postgres**, fully isolated from the portal's `auth.users`. Phase 3 = real DB-backed
 sessions (demo `demo@automate.app / Demo1234!`, OTP `123456`), not GoTrue.
 **Approved to start P1 (wireframe sync) now.**
+
+## 10. v17 source-file reconciliation (verified against the real HTML, 2026-06-15)
+
+The uploaded `AutoMate_Interactive_Wireframe_v17 (5).html` is **byte-identical**
+(md5 `5e752d20…`) to the `AutoMate Interactive Wireframe v17.html` P1 was built
+against — so P1 is on the right file. Verified directly against the markup + JS:
+
+- **Screen count: exactly 80** `<div id="s-…" class="screen">` (full ID list in
+  `/tmp` during the audit; matches §1). All **14 new screens present** with the
+  expected IDs (verify-method, home-launcher, bookings, book-agreement,
+  book-deposit, reschedule, reviews, write-review, partner-agreement, tos-booking,
+  pro-subscribe, pro-success, prof-car-add, how-it-works).
+- **Authoritative nav model (from the JS, not guessed):**
+  - `nav('<id-without-s->')` push-navigates; `back()` pops a history stack;
+    `tab(name)` switches tabs and **resets that tab's history**.
+  - **4 tabs**: `home, bookings, community, more` (`TH = {home:home-launcher,
+    bookings:bookings, community:comm-channels, more:prof-hub}`).
+  - `tabOf()`: `bookings→bookings`, `comm-*→community`, `prof-*`/`help-*→more`,
+    **everything else→home** (so repair, maintenance, compare, DIY, pro, reviews,
+    booking flows all live under Home). ✅ The app's 4-tab + HomeStack-hosts-all
+    structure matches this exactly.
+  - `AUTH = {splash, login, signup, verify-method, verify-otp}` (no tab bar).
+- **Booking flow driver** `startBooking(dest, skipDeposit)` → sets the consent
+  copy → `nav('book-agreement')`. `agreeContinue()` = `skipDep ? finishBooking()
+  : nav('book-deposit')`; `finishBooking()` = `nav(bookDest)`. On book-deposit a
+  Pro toggle (`togglePro`) waives **$25 → $0** inline; `pro-subscribe` is the upsell.
+- **`photo-example` is gone** in v17 (car-diagram → camera directly; only a stale
+  back-map entry remains). ✅ App already removed it.
+
+### Deltas found vs the current app — two are payment-flow decisions (flagged, not changed)
+
+| # | v17 says | App currently does | Action |
+|---|---|---|---|
+| A | **No `s-pro-payment`** — `pro-subscribe` "Start Pro" → `nav('pro-success')` directly | Added a `ProPayment` screen between them | ⚠️ **FLAG** (real billing usually needs a payment step — platform concern) |
+| B | **Maintenance skips `maint-payment`** — `maint-schedule-book` "Continue to booking →" = `startBooking('maint-schedule-confirm', true)` → book-agreement (no deposit) → **maint-schedule-confirm**. Scheduled services are now **pay-at-shop** ("Book without paying upfront") | Routes maint through `MaintPayment` (upfront pay + points redemption) → confirm | ⚠️ **FLAG** (removes in-app service payment + points-at-booking) |
+| C | `reschedule` cancel opens a **`cancel-sheet`** bottom sheet; confirm-new-time → booking-confirm | Uses a red "Cancel booking" button (→ Reschedule manage screen) | Minor — match later |
+| D | `home-launcher` hub also links to **car-switcher sheet, prof-miles, prof-insurance, notifications** | HomeLauncher missing those four entry points | Minor — add in sync pass |
+| E | Localization (`localize()`) + km/mi unit conversion run over live DOM text; dicts for ko/es/zh | App has functional language + distance settings already | ✅ parity |
+
+`maint-payment` still **exists** as a screen in v17 (with full points-redemption UI)
+but is **not reached** by the primary scheduled-service flow — i.e. it's retained
+but effectively legacy. Same pattern as DIY which *does* keep its own
+`diy-payment`. This is why A/B are decisions rather than obvious bugs.
