@@ -1,11 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -45,8 +45,9 @@ export function CameraScreen() {
   const photoUris = useAppStore((s) => s.draftPhotos);
   const addPhoto = useAppStore((s) => s.addDraftPhoto);
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
+  const note = useAppStore((s) => s.draftNote);
+  const setNote = useAppStore((s) => s.setDraftNote);
   const [picking, setPicking] = useState(false);
-  const [note, setNote] = useState('');
 
   const photoCount = photoUris.length;
   const firstPart = (draftPart ?? 'rear bumper').toLowerCase();
@@ -115,23 +116,13 @@ export function CameraScreen() {
         })}
       </View>
 
-      {/* Viewfinder — opens the device camera */}
-      <Tappable onPress={() => addVia('camera')} disabled={picking}>
-        {({ pressed }) => (
-          <LinearGradient
-            colors={['#1A1A1A', '#111']}
-            style={{
-              borderRadius: radii.lg,
-              height: 210,
-              marginBottom: spacing.md,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: '#333',
-              opacity: pressed ? 0.85 : 1,
-              overflow: 'hidden',
-            }}
-          >
+      {/* Live in-app camera viewfinder — real device/web camera + shutter */}
+      <LiveCamera
+        height={210}
+        shutterLabel="Capture photo"
+        onCapture={addPhoto}
+        overlay={
+          <View pointerEvents="none" style={StyleSheet.absoluteFill}>
             {/* Rule-of-thirds grid */}
             {[1, 2].map((i) => (
               <View
@@ -159,29 +150,13 @@ export function CameraScreen() {
                 }}
               />
             ))}
-            {/* Last shot fills the viewfinder once something is captured */}
-            {photoUris.length > 0 ? (
-              <Image
-                source={{ uri: photoUris[photoUris.length - 1] }}
-                style={[StyleSheet.absoluteFill, { opacity: 0.55 }]}
-                resizeMode="cover"
-              />
-            ) : null}
-            {picking ? (
-              <ActivityIndicator color={palette.primaryLight} style={{ marginBottom: 6 }} />
-            ) : (
-              <Text style={{ fontSize: 44, marginBottom: 6 }}>📷</Text>
-            )}
-            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.75)' }}>
-              {picking ? 'Opening camera…' : 'Tap to capture'}
-            </Text>
             <Bracket pos="tl" />
             <Bracket pos="tr" />
             <Bracket pos="bl" />
             <Bracket pos="br" />
-          </LinearGradient>
-        )}
-      </Tappable>
+          </View>
+        }
+      />
 
       {/* Photo slots */}
       <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginBottom: spacing.sm }}>

@@ -5,13 +5,14 @@ import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { LiveCamera } from '../../components/LiveCamera';
 import { PointsBadge } from '../../components/FilterChips';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
-import { capturePhoto, pickFromGallery } from '../../services/photos';
+import { pickFromGallery } from '../../services/photos';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScanCam'>;
@@ -41,13 +42,13 @@ export function MaintScanCamScreen() {
     null,
   );
 
-  /** Capture (camera) or import (gallery) the receipt image. */
-  const grab = async (source: 'camera' | 'gallery') => {
+  /** Import the receipt image from the gallery (live camera handles capture). */
+  const grabFromGallery = async () => {
     if (picking) return;
     setPicking(true);
     try {
-      const photo = source === 'camera' ? await capturePhoto() : await pickFromGallery();
-      if (photo) setCaptured({ source, uri: photo.uri });
+      const photo = await pickFromGallery();
+      if (photo) setCaptured({ source: 'gallery', uri: photo.uri });
     } finally {
       setPicking(false);
     }
@@ -100,7 +101,24 @@ export function MaintScanCamScreen() {
         <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
 
-      {/* Viewfinder */}
+      {/* Viewfinder — live camera until a receipt is captured/scanning */}
+      {!captured && !scanning ? (
+        <LiveCamera
+          height={VIEWFINDER_H}
+          shutterLabel="Capture receipt"
+          onCapture={(uri) => setCaptured({ source: 'camera', uri })}
+          overlay={
+            <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+              {BRACKETS.map((pos, i) => (
+                <View
+                  key={i}
+                  style={{ position: 'absolute', width: 30, height: 30, borderColor: colors.primary, borderRadius: 2, ...pos }}
+                />
+              ))}
+            </View>
+          }
+        />
+      ) : (
       <View
         style={{
           backgroundColor: '#111',
@@ -217,6 +235,7 @@ export function MaintScanCamScreen() {
           </Text>
         </View>
       </View>
+      )}
 
       {/* Tips */}
       <View
@@ -240,20 +259,8 @@ export function MaintScanCamScreen() {
         </View>
       </View>
 
-      <PrimaryButton
-        label={
-          picking
-            ? 'Opening camera…'
-            : captured?.source === 'camera'
-              ? '✓ Receipt captured — retake'
-              : '📷 Capture receipt'
-        }
-        disabled={picking}
-        onPress={() => grab('camera')}
-        style={{ marginBottom: spacing.sm }}
-      />
       <Tappable
-        onPress={() => grab('gallery')}
+        onPress={grabFromGallery}
         disabled={picking}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,

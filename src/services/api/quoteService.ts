@@ -11,7 +11,9 @@ export const quoteService = {
     return request<Quote[]>('/quotes');
   },
 
-  async submitDamageRequest(parts: { part: string; type: string; photos: number }[]) {
+  async submitDamageRequest(
+    parts: { part: string; type: string; photos: number; note?: string }[],
+  ) {
     return request<{
       shopsNotified: number;
       etaHours: string;

@@ -134,6 +134,8 @@ export interface DamagePart {
   photos: number;
   /** Real captured/picked image uris (feedback pass 2 — count mirrors `photos`). */
   photoUris?: string[];
+  /** Optional free-text description the user typed at capture time. */
+  note?: string;
 }
 
 const DEFAULT_DAMAGE_TYPE = 'Dent';
@@ -204,9 +206,12 @@ interface AppState {
   draftType: string;
   /** Captured photo uris for the in-progress part (real camera/gallery uris). */
   draftPhotos: string[];
-  /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its type/photos for editing. */
+  /** Optional free-text damage description for the in-progress part. */
+  draftNote: string;
+  /** Single-select a part (wireframe pickPart). Re-picking a committed part seeds its type/photos/note for editing. */
   pickPart: (part: string) => void;
   setDraftType: (t: string) => void;
+  setDraftNote: (note: string) => void;
   addDraftPhoto: (uri: string) => void;
   /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
   commitDraftPart: () => void;
@@ -244,6 +249,7 @@ const emptyDraft = {
   draftPart: null as string | null,
   draftType: DEFAULT_DAMAGE_TYPE,
   draftPhotos: [] as string[],
+  draftNote: '',
 };
 
 export const useAppStore = create<AppState>((set) => ({
@@ -306,10 +312,11 @@ export const useAppStore = create<AppState>((set) => ({
     set((s) => {
       const existing = s.damageParts.find((p) => p.part === part);
       return existing
-        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photoUris ?? [] }
-        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: [] };
+        ? { draftPart: part, draftType: existing.type, draftPhotos: existing.photoUris ?? [], draftNote: existing.note ?? '' }
+        : { draftPart: part, draftType: DEFAULT_DAMAGE_TYPE, draftPhotos: [], draftNote: '' };
     }),
   setDraftType: (draftType) => set({ draftType }),
+  setDraftNote: (draftNote) => set({ draftNote }),
   addDraftPhoto: (uri) => set((s) => ({ draftPhotos: [...s.draftPhotos, uri] })),
   commitDraftPart: () =>
     set((s) => {
@@ -319,6 +326,7 @@ export const useAppStore = create<AppState>((set) => ({
         type: s.draftType,
         photos: s.draftPhotos.length,
         photoUris: [...s.draftPhotos],
+        note: s.draftNote.trim() || undefined,
       };
       const i = s.damageParts.findIndex((p) => p.part === s.draftPart);
       const damageParts =
