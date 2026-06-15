@@ -255,3 +255,10 @@ project" can't both be true. Two clean ways to honor a separate pool:
 
 **This blocks Phase 3 only.** Phases **P1 (wireframe sync)** and **P2 (DB schema)** do not
 depend on it and can proceed now.
+
+### ✅ Auth resolved (2026-06-15)
+**Option B — App-managed auth in `automate.users`.** Keep the existing Express
+bcrypt + JWT; consumer accounts live in `automate.users` on the **shared project's
+Postgres**, fully isolated from the portal's `auth.users`. Phase 3 = real DB-backed
+sessions (demo `demo@automate.app / Demo1234!`, OTP `123456`), not GoTrue.
+**Approved to start P1 (wireframe sync) now.**
