@@ -195,7 +195,7 @@ export function CarDiagramScreen() {
           </View>
           <Tappable
             disabled={!draftPart}
-            onPress={() => navigation.navigate('PhotoExample')}
+            onPress={() => navigation.navigate('Camera')}
             style={({ pressed }) => ({
               backgroundColor: palette.primaryDark,
               borderRadius: radii.sm,

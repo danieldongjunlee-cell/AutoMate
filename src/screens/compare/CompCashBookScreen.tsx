@@ -114,7 +114,7 @@ export function CompCashBookScreen() {
           Visa ••••{PAYMENT_CARD.last4}
         </Text>
         <Tappable
-          onPress={() => navigateCrossTab(navigation, 'ProfileTab', 'ProfPayment')}
+          onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfPayment')}
           hitSlop={8}
         >
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change</Text>

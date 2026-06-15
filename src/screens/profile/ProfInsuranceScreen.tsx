@@ -219,7 +219,7 @@ export function ProfInsuranceScreen() {
 
       {/* Compare link (cross-tab → Compare) */}
       <Tappable
-        onPress={() => navigateCrossTab(navigation, 'CompareTab', 'CompSelect')}
+        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'CompSelect')}
         style={({ pressed }) => ({
           backgroundColor: colors.successSurface,
           borderRadius: radii.sm,

@@ -11,10 +11,10 @@ export type AuthStackParamList = {
   VerifyOtp: { method: 'email' | 'sms'; destination: string } | undefined;
 };
 
-export type HomeStackParamList = {
-  Home: undefined;
+/** Repair-estimate flow + the new v17 booking/Pro/reviews flows. */
+type HomeFlowParamList = {
+  HomeLauncher: undefined;
   CarDiagram: undefined;
-  PhotoExample: undefined;
   Camera: undefined;
   ConfirmSubmit: undefined;
   Submitted: undefined;
@@ -22,9 +22,29 @@ export type HomeStackParamList = {
   DealerQuotes: undefined;
   AllQuotesMap: undefined;
   AcceptBooking: { dealerId?: string } | undefined;
+  // v17 booking flow: agreement → (deposit unless maintenance/Pro) → confirm
+  BookAgreement: {
+    kind: 'repair' | 'maintenance';
+    dealerId?: string;
+    next: 'BookingConfirm' | 'MaintScheduleConfirm';
+  };
+  BookDeposit: {
+    kind: 'repair' | 'maintenance';
+    dealerId?: string;
+    next: 'BookingConfirm' | 'MaintScheduleConfirm';
+  };
   BookingConfirm:
     | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash'; priceLabel?: string }
     | undefined;
+  Reschedule: { kind?: 'repair' | 'maintenance' } | undefined;
+  Reviews: { dealerId?: string } | undefined;
+  WriteReview: { dealerId?: string } | undefined;
+  TosBooking: undefined;
+  PartnerAgreement: undefined;
+  ProSubscribe: undefined;
+  ProPayment: { plan: 'annual' | 'monthly' } | undefined;
+  ProSuccess: { returnTo?: 'BookDeposit' } | undefined;
+  HowItWorks: undefined;
   DealerMap: { dealerId?: string } | undefined;
   BundleDeals: undefined;
   Notifications: undefined;
@@ -58,6 +78,21 @@ export type CompareStackParamList = {
   CompInsurance: { quoteId?: string } | undefined;
 };
 
+/**
+ * v17 Home tab: a launcher hub whose stack hosts the repair flow, the new
+ * booking/Pro/reviews flows, and (now that they're no longer tabs) the full
+ * Maintenance and Compare flows. Composed by intersection so the existing
+ * Maint/Compare screens keep their param-list types.
+ */
+export type HomeStackParamList = HomeFlowParamList &
+  MaintStackParamList &
+  CompareStackParamList;
+
+/** v17 Bookings tab (calendar + scheduled services + pending quotes). */
+export type BookingsStackParamList = {
+  Bookings: undefined;
+};
+
 export type CommunityStackParamList = {
   CommChannels: undefined;
   CommHonda: undefined;
@@ -71,6 +106,7 @@ export type ProfileStackParamList = {
   ProfMileDet: undefined;
   ProfEarn: undefined;
   ProfCars: undefined;
+  ProfCarAdd: undefined;
   ProfInsurance: undefined;
   ProfInsEdit: { policyId?: string } | undefined;
   ProfInsAdd: undefined;
@@ -94,8 +130,7 @@ export type ProfileStackParamList = {
 
 export type MainTabParamList = {
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
-  MaintTab: NavigatorScreenParams<MaintStackParamList>;
-  CompareTab: NavigatorScreenParams<CompareStackParamList>;
+  BookingsTab: NavigatorScreenParams<BookingsStackParamList>;
   CommunityTab: NavigatorScreenParams<CommunityStackParamList>;
-  ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
+  MoreTab: NavigatorScreenParams<ProfileStackParamList>;
 };

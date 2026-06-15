@@ -10,9 +10,8 @@ export const SCREEN_TITLES: Record<string, string> = {
   LogIn: 'Welcome back', // s-login
   VerifyMethod: 'Verify your account', // ➕ app-only (user-feedback pass 1)
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
-  Home: 'Home', // s-home
+  HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
   CarDiagram: 'Select damaged part', // s-car-diagram
-  PhotoExample: 'Photo guide', // s-photo-example
   Camera: 'Take photos', // s-camera
   ConfirmSubmit: 'Confirm damage', // s-confirm-submit
   Submitted: 'Request submitted', // s-submitted
@@ -21,6 +20,19 @@ export const SCREEN_TITLES: Record<string, string> = {
   AllQuotesMap: 'All quotes near you', // s-all-quotes-map
   AcceptBooking: 'Book appointment', // s-accept-booking
   BookingConfirm: 'Booking confirmed', // s-booking-confirm
+  // v17 new flows
+  BookAgreement: 'Booking agreement', // s-book-agreement
+  BookDeposit: 'Reserve your spot', // s-book-deposit
+  Reschedule: 'Manage booking', // s-reschedule
+  Reviews: 'Reviews', // s-reviews
+  WriteReview: 'Write a review', // s-write-review
+  TosBooking: 'Terms of Service', // s-tos-booking
+  PartnerAgreement: 'Partner Agreement', // s-partner-agreement
+  ProSubscribe: 'AutoMate Pro', // s-pro-subscribe
+  ProPayment: 'Payment', // pro-subscribe → pro-payment
+  ProSuccess: 'Pro activated', // s-pro-success
+  HowItWorks: 'How AutoMate works', // s-how-it-works
+  Bookings: 'Bookings', // s-bookings (new tab root)
   DealerMap: 'Honda Fairfax', // s-dealer-map
   BundleDeals: 'Bundle deals', // s-home-bundle-deals
   Notifications: 'Notifications', // s-notifications
@@ -55,6 +67,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfMileDet: 'Free Oil Change', // s-prof-mile-det
   ProfEarn: 'How you earn', // s-prof-earn
   ProfCars: 'My cars', // s-prof-cars
+  ProfCarAdd: 'Add a car', // s-prof-car-add
   ProfInsurance: 'Insurance policy', // s-prof-insurance
   ProfInsEdit: 'Edit policy details', // s-prof-ins-edit
   ProfInsAdd: 'Add new policy', // s-prof-ins-add

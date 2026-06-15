@@ -104,7 +104,7 @@ export function BundleDealsScreen() {
   const claim = (dealerId: string) => {
     startBooking(dealerId);
     // Bundle booking happens on the Maintenance tab (wireframe ⤴ edge).
-    navigateCrossTab(navigation, 'MaintTab', 'MaintScheduleBook');
+    navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleBook');
   };
 
   return (

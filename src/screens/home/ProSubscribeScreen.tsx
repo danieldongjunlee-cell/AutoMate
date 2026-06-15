@@ -1,0 +1,123 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
+
+import { PrimaryButton } from '../../components/PrimaryButton';
+import { Tappable } from '../../components/Tappable';
+import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { HomeStackParamList } from '../../navigation/types';
+import { palette, radii, spacing, useTheme } from '../../theme';
+
+type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
+type Plan = 'annual' | 'monthly';
+
+const BENEFITS = [
+  'No security deposits, ever',
+  'All DIY repair guides included (worth $10)',
+  'Priority dealer quotes',
+  '2× points on every booking',
+];
+
+/** Wireframe s-pro-subscribe: plan picker for AutoMate Pro. */
+export function ProSubscribeScreen() {
+  const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
+  const [plan, setPlan] = useState<Plan>('annual');
+
+  const planRow = (id: Plan, title: string, sub: string, badge?: string) => {
+    const active = plan === id;
+    return (
+      <Tappable
+        key={id}
+        onPress={() => setPlan(id)}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          borderWidth: active ? 1.5 : 1,
+          borderColor: active ? colors.primary : colors.border,
+          backgroundColor: active ? colors.primarySurface : colors.surface,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.sm,
+        }}
+      >
+        <View
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            borderWidth: 1.5,
+            borderColor: active ? colors.primary : colors.border,
+            backgroundColor: active ? colors.primary : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {active && <Text style={{ color: '#fff', fontSize: 10 }}>✓</Text>}
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
+        </View>
+        {badge && <Badge label={badge} variant="success" />}
+      </Tappable>
+    );
+  };
+
+  return (
+    <Screen>
+      <LinearGradient
+        colors={[palette.dark, palette.navyMid]}
+        style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+      >
+        <Text style={{ fontSize: 26 }}>⭐</Text>
+        <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
+        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>
+          Skip every security deposit — and more.
+        </Text>
+      </LinearGradient>
+
+      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
+        {BENEFITS.map((b) => (
+          <View key={b} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 4 }}>
+            <Text style={{ color: colors.success, fontWeight: '800' }}>✓</Text>
+            <Text style={{ fontSize: 13, color: colors.textSecondary }}>{b}</Text>
+          </View>
+        ))}
+      </Card>
+
+      <View
+        style={{
+          backgroundColor: colors.successSurface,
+          borderColor: colors.successLight,
+          borderWidth: 1,
+          borderRadius: radii.sm,
+          padding: spacing.sm,
+          marginBottom: spacing.md,
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDark }}>
+          💚 Just $3.25 a month — cheaper than one coffee
+        </Text>
+      </View>
+
+      <SectionLabel>Choose a plan</SectionLabel>
+      {planRow('annual', 'Annual', '$39/yr — just $3.25/mo', 'SAVE 35%')}
+      {planRow('monthly', 'Monthly', '$4.99 / month')}
+
+      <View style={{ marginTop: spacing.xs }}>
+        <PrimaryButton
+          label={`Start Pro — ${plan === 'annual' ? '$39/yr' : '$4.99/mo'} →`}
+          onPress={() => navigation.navigate('ProPayment', { plan })}
+        />
+      </View>
+      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
+        Cancel anytime · used here to waive your booking deposit.
+      </Text>
+    </Screen>
+  );
+}

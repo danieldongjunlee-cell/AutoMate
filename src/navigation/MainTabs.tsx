@@ -6,25 +6,30 @@ import { Text } from 'react-native';
 import { AcceptBookingScreen } from '../screens/home/AcceptBookingScreen';
 import { AfterHoursScreen } from '../screens/home/AfterHoursScreen';
 import { AllQuotesMapScreen } from '../screens/home/AllQuotesMapScreen';
+import { BookAgreementScreen } from '../screens/home/BookAgreementScreen';
+import { BookDepositScreen } from '../screens/home/BookDepositScreen';
 import { BookingConfirmScreen } from '../screens/home/BookingConfirmScreen';
 import { BundleDealsScreen } from '../screens/home/BundleDealsScreen';
-import { NotificationsScreen } from '../screens/home/NotificationsScreen';
 import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
 import { DealerMapScreen } from '../screens/home/DealerMapScreen';
 import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
-import { HomeScreen } from '../screens/home/HomeScreen';
-import { PhotoExampleScreen } from '../screens/home/PhotoExampleScreen';
+import { HomeLauncherScreen } from '../screens/home/HomeLauncherScreen';
+import { HowItWorksScreen } from '../screens/home/HowItWorksScreen';
+import { NotificationsScreen } from '../screens/home/NotificationsScreen';
+import { PartnerAgreementScreen } from '../screens/home/PartnerAgreementScreen';
+import { ProPaymentScreen } from '../screens/home/ProPaymentScreen';
+import { ProSubscribeScreen } from '../screens/home/ProSubscribeScreen';
+import { ProSuccessScreen } from '../screens/home/ProSuccessScreen';
+import { RescheduleScreen } from '../screens/home/RescheduleScreen';
+import { ReviewsScreen } from '../screens/home/ReviewsScreen';
 import { SubmittedScreen } from '../screens/home/SubmittedScreen';
+import { TosBookingScreen } from '../screens/home/TosBookingScreen';
+import { WriteReviewScreen } from '../screens/home/WriteReviewScreen';
 import { DiyConfirmScreen } from '../screens/maint/DiyConfirmScreen';
 import { DiyPaymentScreen } from '../screens/maint/DiyPaymentScreen';
-import {
-  DiyFutureScreen,
-  DiyGuidesScreen,
-  DiyMatchScreen,
-  DiyToolsScreen,
-} from '../screens/maint/DiyProScreens';
+import { DiyFutureScreen, DiyGuidesScreen, DiyMatchScreen, DiyToolsScreen } from '../screens/maint/DiyProScreens';
 import { DiyUnlockScreen } from '../screens/maint/DiyUnlockScreen';
 import { MaintDashboardScreen } from '../screens/maint/MaintDashboardScreen';
 import { MaintDiyScreen } from '../screens/maint/MaintDiyScreen';
@@ -36,20 +41,22 @@ import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
 import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
 import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
-import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
-import { CommCreateScreen } from '../screens/community/CommCreateScreen';
-import { CommHondaScreen } from '../screens/community/CommHondaScreen';
-import { CommPostScreen } from '../screens/community/CommPostScreen';
 import { CompCashBookScreen } from '../screens/compare/CompCashBookScreen';
 import { CompCashInsScreen } from '../screens/compare/CompCashInsScreen';
 import { CompDeepDiveScreen } from '../screens/compare/CompDeepDiveScreen';
 import { CompInsuranceScreen } from '../screens/compare/CompInsuranceScreen';
 import { CompSelectScreen } from '../screens/compare/CompSelectScreen';
+import { BookingsScreen } from '../screens/bookings/BookingsScreen';
+import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
+import { CommCreateScreen } from '../screens/community/CommCreateScreen';
+import { CommHondaScreen } from '../screens/community/CommHondaScreen';
+import { CommPostScreen } from '../screens/community/CommPostScreen';
 import {
   ProfChangeEmailScreen,
   ProfChangePasswordScreen,
   ProfChangePhoneScreen,
 } from '../screens/profile/ProfAccountFormScreens';
+import { ProfCarAddScreen } from '../screens/profile/ProfCarAddScreen';
 import { ProfCarsScreen } from '../screens/profile/ProfCarsScreen';
 import { ProfEarnScreen } from '../screens/profile/ProfEarnScreen';
 import { ProfEditProfileScreen } from '../screens/profile/ProfEditProfileScreen';
@@ -77,22 +84,19 @@ import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
+  BookingsStackParamList,
   CommunityStackParamList,
-  CompareStackParamList,
   HomeStackParamList,
   MainTabParamList,
-  MaintStackParamList,
   ProfileStackParamList,
 } from './types';
 
-// ── Per-tab native stacks ──────────────────────────────────────────────
-
+// ── Home tab: launcher hub + repair flow + new flows + Maintenance + Compare ──
 const HomeNative = createNativeStackNavigator<HomeStackParamList>();
 const homeScreens = buildScreens(
   [
-    'Home',
+    'HomeLauncher',
     'CarDiagram',
-    'PhotoExample',
     'Camera',
     'ConfirmSubmit',
     'Submitted',
@@ -100,43 +104,21 @@ const homeScreens = buildScreens(
     'DealerQuotes',
     'AllQuotesMap',
     'AcceptBooking',
+    'BookAgreement',
+    'BookDeposit',
     'BookingConfirm',
+    'Reschedule',
+    'Reviews',
+    'WriteReview',
+    'TosBooking',
+    'PartnerAgreement',
+    'ProSubscribe',
+    'ProPayment',
+    'ProSuccess',
+    'HowItWorks',
     'DealerMap',
     'BundleDeals',
     'Notifications',
-  ] as const,
-  {
-    Home: HomeScreen,
-    CarDiagram: CarDiagramScreen,
-    PhotoExample: PhotoExampleScreen,
-    Camera: CameraScreen,
-    ConfirmSubmit: ConfirmSubmitScreen,
-    Submitted: SubmittedScreen,
-    AfterHours: AfterHoursScreen,
-    DealerQuotes: DealerQuotesScreen,
-    AllQuotesMap: AllQuotesMapScreen,
-    AcceptBooking: AcceptBookingScreen,
-    BookingConfirm: BookingConfirmScreen,
-    DealerMap: DealerMapScreen,
-    BundleDeals: BundleDealsScreen,
-    Notifications: NotificationsScreen,
-  },
-);
-
-function HomeStack() {
-  const theme = useTheme();
-  return (
-    <HomeNative.Navigator initialRouteName="Home" screenOptions={stackScreenOptions(theme)}>
-      {homeScreens.map(({ name, component, title }) => (
-        <HomeNative.Screen key={name} name={name} component={component} options={{ title }} />
-      ))}
-    </HomeNative.Navigator>
-  );
-}
-
-const MaintNative = createNativeStackNavigator<MaintStackParamList>();
-const maintScreens = buildScreens(
-  [
     'MaintDashboard',
     'MaintHistory',
     'MaintScanCam',
@@ -154,8 +136,37 @@ const maintScreens = buildScreens(
     'MaintScheduleBook',
     'MaintPayment',
     'MaintScheduleConfirm',
+    'CompSelect',
+    'CompCashIns',
+    'CompDeepDive',
+    'CompCashBook',
+    'CompInsurance',
   ] as const,
   {
+    HomeLauncher: HomeLauncherScreen,
+    CarDiagram: CarDiagramScreen,
+    Camera: CameraScreen,
+    ConfirmSubmit: ConfirmSubmitScreen,
+    Submitted: SubmittedScreen,
+    AfterHours: AfterHoursScreen,
+    DealerQuotes: DealerQuotesScreen,
+    AllQuotesMap: AllQuotesMapScreen,
+    AcceptBooking: AcceptBookingScreen,
+    BookAgreement: BookAgreementScreen,
+    BookDeposit: BookDepositScreen,
+    BookingConfirm: BookingConfirmScreen,
+    Reschedule: RescheduleScreen,
+    Reviews: ReviewsScreen,
+    WriteReview: WriteReviewScreen,
+    TosBooking: TosBookingScreen,
+    PartnerAgreement: PartnerAgreementScreen,
+    ProSubscribe: ProSubscribeScreen,
+    ProPayment: ProPaymentScreen,
+    ProSuccess: ProSuccessScreen,
+    HowItWorks: HowItWorksScreen,
+    DealerMap: DealerMapScreen,
+    BundleDeals: BundleDealsScreen,
+    Notifications: NotificationsScreen,
     MaintDashboard: MaintDashboardScreen,
     MaintHistory: MaintHistoryScreen,
     MaintScanCam: MaintScanCamScreen,
@@ -173,27 +184,6 @@ const maintScreens = buildScreens(
     MaintScheduleBook: MaintScheduleBookScreen,
     MaintPayment: MaintPaymentScreen,
     MaintScheduleConfirm: MaintScheduleConfirmScreen,
-  },
-);
-
-function MaintStack() {
-  const theme = useTheme();
-  return (
-    <MaintNative.Navigator
-      initialRouteName="MaintDashboard"
-      screenOptions={stackScreenOptions(theme)}
-    >
-      {maintScreens.map(({ name, component, title }) => (
-        <MaintNative.Screen key={name} name={name} component={component} options={{ title }} />
-      ))}
-    </MaintNative.Navigator>
-  );
-}
-
-const CompareNative = createNativeStackNavigator<CompareStackParamList>();
-const compareScreens = buildScreens(
-  ['CompSelect', 'CompCashIns', 'CompDeepDive', 'CompCashBook', 'CompInsurance'] as const,
-  {
     CompSelect: CompSelectScreen,
     CompCashIns: CompCashInsScreen,
     CompDeepDive: CompDeepDiveScreen,
@@ -202,20 +192,32 @@ const compareScreens = buildScreens(
   },
 );
 
-function CompareStack() {
+function HomeStack() {
   const theme = useTheme();
   return (
-    <CompareNative.Navigator
-      initialRouteName="CompSelect"
-      screenOptions={stackScreenOptions(theme)}
-    >
-      {compareScreens.map(({ name, component, title }) => (
-        <CompareNative.Screen key={name} name={name} component={component} options={{ title }} />
+    <HomeNative.Navigator initialRouteName="HomeLauncher" screenOptions={stackScreenOptions(theme)}>
+      {homeScreens.map(({ name, component, title }) => (
+        <HomeNative.Screen key={name} name={name} component={component} options={{ title }} />
       ))}
-    </CompareNative.Navigator>
+    </HomeNative.Navigator>
   );
 }
 
+// ── Bookings tab ───────────────────────────────────────────────────────
+const BookingsNative = createNativeStackNavigator<BookingsStackParamList>();
+const bookingsScreens = buildScreens(['Bookings'] as const, { Bookings: BookingsScreen });
+function BookingsStack() {
+  const theme = useTheme();
+  return (
+    <BookingsNative.Navigator initialRouteName="Bookings" screenOptions={stackScreenOptions(theme)}>
+      {bookingsScreens.map(({ name, component, title }) => (
+        <BookingsNative.Screen key={name} name={name} component={component} options={{ title }} />
+      ))}
+    </BookingsNative.Navigator>
+  );
+}
+
+// ── Community tab ──────────────────────────────────────────────────────
 const CommunityNative = createNativeStackNavigator<CommunityStackParamList>();
 const communityScreens = buildScreens(
   ['CommChannels', 'CommHonda', 'CommPost', 'CommCreate'] as const,
@@ -226,14 +228,10 @@ const communityScreens = buildScreens(
     CommCreate: CommCreateScreen,
   },
 );
-
 function CommunityStack() {
   const theme = useTheme();
   return (
-    <CommunityNative.Navigator
-      initialRouteName="CommChannels"
-      screenOptions={stackScreenOptions(theme)}
-    >
+    <CommunityNative.Navigator initialRouteName="CommChannels" screenOptions={stackScreenOptions(theme)}>
       {communityScreens.map(({ name, component, title }) => (
         <CommunityNative.Screen key={name} name={name} component={component} options={{ title }} />
       ))}
@@ -241,6 +239,7 @@ function CommunityStack() {
   );
 }
 
+// ── More tab (was Profile) ─────────────────────────────────────────────
 const ProfileNative = createNativeStackNavigator<ProfileStackParamList>();
 const profileScreens = buildScreens(
   [
@@ -249,6 +248,7 @@ const profileScreens = buildScreens(
     'ProfMileDet',
     'ProfEarn',
     'ProfCars',
+    'ProfCarAdd',
     'ProfInsurance',
     'ProfInsEdit',
     'ProfInsAdd',
@@ -275,6 +275,7 @@ const profileScreens = buildScreens(
     ProfMileDet: ProfMileDetScreen,
     ProfEarn: ProfEarnScreen,
     ProfCars: ProfCarsScreen,
+    ProfCarAdd: ProfCarAddScreen,
     ProfInsurance: ProfInsuranceScreen,
     ProfInsEdit: ProfInsEditScreen,
     ProfInsAdd: ProfInsAddScreen,
@@ -296,8 +297,7 @@ const profileScreens = buildScreens(
     ProfDistance: ProfDistanceScreen,
   },
 );
-
-function ProfileStack() {
+function MoreStack() {
   const theme = useTheme();
   return (
     <ProfileNative.Navigator initialRouteName="ProfHub" screenOptions={stackScreenOptions(theme)}>
@@ -308,24 +308,21 @@ function ProfileStack() {
   );
 }
 
-// ── Tab bar ────────────────────────────────────────────────────────────
-
+// ── Tab bar (v17: Home · Bookings · Community · More) ──────────────────
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TABS: { name: keyof MainTabParamList; label: string; icon: string }[] = [
   { name: 'HomeTab', label: 'Home', icon: '🏠' },
-  { name: 'MaintTab', label: 'Maint.', icon: '🔧' },
-  { name: 'CompareTab', label: 'Compare', icon: '⚖' },
+  { name: 'BookingsTab', label: 'Bookings', icon: '📅' },
   { name: 'CommunityTab', label: 'Community', icon: '💬' },
-  { name: 'ProfileTab', label: 'Profile', icon: '👤' },
+  { name: 'MoreTab', label: 'More', icon: '☰' },
 ];
 
 const TAB_COMPONENTS: Record<keyof MainTabParamList, React.ComponentType> = {
   HomeTab: HomeStack,
-  MaintTab: MaintStack,
-  CompareTab: CompareStack,
+  BookingsTab: BookingsStack,
   CommunityTab: CommunityStack,
-  ProfileTab: ProfileStack,
+  MoreTab: MoreStack,
 };
 
 export function MainTabs() {
@@ -334,9 +331,6 @@ export function MainTabs() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        // Wireframe rule (prototype tab(): jumps to tab root, clears history):
-        // leaving a tab pops its stack to the root, so every tab press lands
-        // on the tab's root screen.
         popToTopOnBlur: true,
         tabBarActiveTintColor: theme.colors.tabActive,
         tabBarInactiveTintColor: theme.colors.tabInactive,
@@ -354,8 +348,8 @@ export function MainTabs() {
           component={TAB_COMPONENTS[name]}
           options={{
             tabBarLabel: label,
-            tabBarIcon: ({ focused }) => (
-              <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.55 }}>{icon}</Text>
+            tabBarIcon: ({ focused, color }) => (
+              <Text style={{ fontSize: 20, color, opacity: focused ? 1 : 0.55 }}>{icon}</Text>
             ),
           }}
         />

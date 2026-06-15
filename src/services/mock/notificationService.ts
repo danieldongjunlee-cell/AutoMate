@@ -33,7 +33,7 @@ let notifications: AppNotification[] = [
     body: 'Your 2019 Accord is ~800 miles from its next oil change. Schedule now with a partner dealer.',
     unread: true,
     tint: 'success',
-    target: { screen: 'MaintSchedule', tab: 'MaintTab' },
+    target: { screen: 'MaintSchedule', tab: 'HomeTab' },
   },
   {
     id: 'n-gold-tier',
@@ -43,7 +43,7 @@ let notifications: AppNotification[] = [
     body: "Congrats — you've unlocked exclusive dealer discounts and early access to new features.",
     unread: true,
     tint: 'gold',
-    target: { screen: 'ProfEarn', tab: 'ProfileTab' },
+    target: { screen: 'ProfEarn', tab: 'MoreTab' },
   },
   {
     id: 'n-shops-responded',
@@ -73,7 +73,7 @@ let notifications: AppNotification[] = [
     body: 'Oil change at 8:00 AM. Reminder will be sent the day before.',
     unread: false,
     tint: 'neutral',
-    target: { screen: 'MaintScheduleConfirm', tab: 'MaintTab' },
+    target: { screen: 'MaintScheduleConfirm', tab: 'HomeTab' },
   },
 ];
 
