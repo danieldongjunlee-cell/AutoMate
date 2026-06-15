@@ -30,13 +30,17 @@ Dashboard → New project. Note the project ref, region, and database password.
 ## 2. Configure connections
 
 Copy `server/.env.example` → `server/.env` and fill in the two Supabase URLs
-(Dashboard → Project Settings → Database → Connection string):
+(Dashboard → **Connect** → ORMs/Prisma, or Project Settings → Database):
 
-- **`DATABASE_URL`** = the **Transaction pooler** (port `6543`), with
-  `?schema=automate&pgbouncer=true&connection_limit=1` — used by the running app.
-- **`DIRECT_URL`** = the **direct** connection (port `5432`), with
-  `?schema=automate` — used by `prisma migrate` only (PgBouncer can't run DDL).
+- **`DATABASE_URL`** = the **Transaction pooler** (`...pooler.supabase.com:6543`),
+  with `?schema=automate&pgbouncer=true&connection_limit=1` — used by the app.
+- **`DIRECT_URL`** = the **Session pooler** (`...pooler.supabase.com:5432`), with
+  `?schema=automate` — used by `prisma migrate` (transaction pooling can't run DDL).
 
+> ⚠ Use the **pooler** host for both — the direct `db.<ref>.supabase.co` host is
+> IPv6-only on the free tier and won't resolve from IPv4-only networks. The
+> Session pooler is IPv4 and supports migrations.
+>
 > The `automate` schema is created automatically by the first migration.
 
 ## 3. Run migrations + RLS + seed
