@@ -2,6 +2,15 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 
 import type { ScannedReceipt } from '../services/mock/data';
 
+/** Params for the post-booking confirmation, threaded through agreement/deposit. */
+export type BookingConfirmParams = {
+  dealerId?: string;
+  dateLabel?: string;
+  time?: string;
+  paid?: 'cash';
+  priceLabel?: string;
+};
+
 export type AuthStackParamList = {
   Splash: undefined;
   SignUp: undefined;
@@ -22,20 +31,21 @@ type HomeFlowParamList = {
   DealerQuotes: undefined;
   AllQuotesMap: undefined;
   AcceptBooking: { dealerId?: string } | undefined;
-  // v17 booking flow: agreement → (deposit unless maintenance/Pro) → confirm
+  // v17 booking flow: agreement → (deposit unless maintenance/Pro) → confirm.
+  // nextParams threads the chosen date/time/price through to the confirmation.
   BookAgreement: {
     kind: 'repair' | 'maintenance';
     dealerId?: string;
-    next: 'BookingConfirm' | 'MaintScheduleConfirm';
+    next: 'BookingConfirm' | 'MaintScheduleConfirm' | 'MaintPayment';
+    nextParams?: BookingConfirmParams;
   };
   BookDeposit: {
     kind: 'repair' | 'maintenance';
     dealerId?: string;
-    next: 'BookingConfirm' | 'MaintScheduleConfirm';
+    next: 'BookingConfirm' | 'MaintScheduleConfirm' | 'MaintPayment';
+    nextParams?: BookingConfirmParams;
   };
-  BookingConfirm:
-    | { dealerId?: string; dateLabel?: string; time?: string; paid?: 'cash'; priceLabel?: string }
-    | undefined;
+  BookingConfirm: BookingConfirmParams | undefined;
   Reschedule: { kind?: 'repair' | 'maintenance' } | undefined;
   Reviews: { dealerId?: string } | undefined;
   WriteReview: { dealerId?: string } | undefined;

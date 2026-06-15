@@ -1,3 +1,5 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -8,9 +10,12 @@ import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Screen, SectionLabel } from '../../components/ui';
+import { ProfileStackParamList } from '../../navigation/types';
 import { Vehicle, vehiclesService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
+
+type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCars'>;
 
 /** Inline edit/add form (modal) — name + odometer, the editable demo fields. */
 function VehicleFormModal({
@@ -104,6 +109,7 @@ function VehicleFormModal({
 /** Wireframe s-prof-cars, now live CRUD against vehiclesService (pass 1). */
 export function ProfCarsScreen() {
   const { colors } = useTheme();
+  const navigation = useNavigation<Nav>();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -131,10 +137,6 @@ export function ProfCarsScreen() {
     onSuccess: invalidate,
   });
 
-  const openAdd = () => {
-    setEditing(null);
-    setFormOpen(true);
-  };
   const openEdit = (vehicle: Vehicle) => {
     setEditing(vehicle);
     setFormOpen(true);
@@ -299,9 +301,9 @@ export function ProfCarsScreen() {
         })
       )}
 
-      {/* Add car */}
+      {/* Add car → dedicated v17 prof-car-add screen */}
       <Tappable
-        onPress={openAdd}
+        onPress={() => navigation.navigate('ProfCarAdd')}
         style={{
           backgroundColor: colors.surface,
           borderRadius: radii.md,

@@ -7,7 +7,7 @@ import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ServiceSelectRow } from '../../components/ServiceSelectRow';
 import { Card, Screen, SectionLabel } from '../../components/ui';
-import { MaintStackParamList } from '../../navigation/types';
+import { HomeStackParamList } from '../../navigation/types';
 import {
   BOOKABLE_SERVICES,
   dealerById,
@@ -16,7 +16,7 @@ import {
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
-type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintScheduleBook'>;
+type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
 
 /** Wireframe s-maint-schedule-book: multi-service select + date/time → payment. */
 export function MaintScheduleBookScreen() {
@@ -124,9 +124,15 @@ export function MaintScheduleBookScreen() {
       </View>
 
       <PrimaryButton
-        label="Continue to payment →"
+        label="Continue →"
         disabled={!canContinue}
-        onPress={() => navigation.navigate('MaintPayment')}
+        onPress={() =>
+          navigation.navigate('BookAgreement', {
+            kind: 'maintenance',
+            dealerId: cart.dealerId ?? undefined,
+            next: 'MaintPayment',
+          })
+        }
       />
     </Screen>
   );

@@ -45,7 +45,13 @@ export function AcceptBookingScreen() {
     ]);
     addPoints(pointsEarned);
     setBooking(false);
-    navigation.navigate('BookingConfirm', { dealerId: dealer.id, dateLabel: dateLabel!, time });
+    // v17: consent + (non-Pro) refundable deposit before the confirmation.
+    navigation.navigate('BookAgreement', {
+      kind: 'repair',
+      dealerId: dealer.id,
+      next: 'BookingConfirm',
+      nextParams: { dealerId: dealer.id, dateLabel: dateLabel!, time },
+    });
   };
 
   return (

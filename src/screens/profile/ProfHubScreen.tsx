@@ -9,6 +9,7 @@ import { Tappable } from '../../components/Tappable';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
@@ -24,6 +25,7 @@ export function ProfHubScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const points = useAppStore((s) => s.points);
+  const isPro = useAppStore((s) => s.isPro);
   // Authenticated user context (set after the demo login); falls back to the
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
@@ -202,6 +204,42 @@ export function ProfHubScreen() {
             </View>
           </LinearGradient>
         )}
+      </Tappable>
+
+      {/* Pro membership upsell / status → AutoMate Pro (Home stack) */}
+      <Tappable
+        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          backgroundColor: palette.dark,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 20 }}>⭐</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
+            {isPro ? 'AutoMate Pro — active' : 'Go Pro — skip every deposit'}
+          </Text>
+          <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.65)' }}>
+            {isPro ? 'Manage your membership' : 'No deposits + DIY guides · from $3.25/mo'}
+          </Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: palette.warning,
+            borderRadius: radii.sm,
+            paddingHorizontal: 11,
+            paddingVertical: 6,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '800', color: palette.dark }}>
+            {isPro ? 'Manage' : 'Get Pro →'}
+          </Text>
+        </View>
       </Tappable>
 
       <SectionLabel>Account details</SectionLabel>

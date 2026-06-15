@@ -25,13 +25,14 @@ export function BookDepositScreen() {
   const [booking, setBooking] = useState(false);
 
   const next = params?.next ?? 'BookingConfirm';
+  const nextParams = params?.nextParams;
   const waived = isPro;
 
   const confirm = async () => {
     setBooking(true);
     await new Promise((r) => setTimeout(r, 600));
     setBooking(false);
-    navigation.navigate(next as never);
+    (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
   };
 
   const row = (label: string, value: React.ReactNode) => (

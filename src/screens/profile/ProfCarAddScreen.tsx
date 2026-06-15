@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { TextField } from '../../components/TextField';
 import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
+import { vehiclesService } from '../../services';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCarAdd'>;
@@ -14,15 +17,34 @@ type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCarAdd'>;
 export function ProfCarAddScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const queryClient = useQueryClient();
 
-  const field = (label: string, value: string) => (
-    <View style={{ paddingVertical: 9, borderBottomWidth: 0.5, borderBottomColor: colors.divider }}>
-      <Text style={{ fontSize: 10, fontWeight: '600', color: colors.textTertiary, textTransform: 'uppercase', marginBottom: 3 }}>
-        {label}
-      </Text>
-      <Text style={{ fontSize: 13, color: colors.textPlaceholder }}>{value}</Text>
-    </View>
-  );
+  const [year, setYear] = useState('');
+  const [make, setMake] = useState('');
+  const [model, setModel] = useState('');
+  const [trim, setTrim] = useState('');
+  const [color, setColor] = useState('');
+  const [vin, setVin] = useState('');
+  const [odometer, setOdometer] = useState('');
+  const [oilSpec, setOilSpec] = useState('');
+
+  const name = [year, make, model, trim].map((s) => s.trim()).filter(Boolean).join(' ');
+  const canSave = make.trim().length > 0 && model.trim().length > 0;
+
+  const addMutation = useMutation({
+    mutationFn: () =>
+      vehiclesService.addVehicle({
+        name,
+        colorName: color.trim() || undefined,
+        vin: vin.trim() || undefined,
+        odometerMi: Number(odometer || 0),
+        oilSpec: oilSpec.trim() || undefined,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      navigation.goBack();
+    },
+  });
 
   const method = (emoji: string, title: string, sub: string, active?: boolean) => (
     <View
@@ -50,18 +72,30 @@ export function ProfCarAddScreen() {
       </View>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
-          <View style={{ flex: 1 }}>{field('Year', '2019')}</View>
-          <View style={{ flex: 1 }}>{field('Make', 'Honda')}</View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Year" value={year} onChangeText={(t) => setYear(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="2019" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Make" value={make} onChangeText={setMake} placeholder="Honda" />
+          </View>
         </View>
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
-          <View style={{ flex: 1 }}>{field('Model', 'Accord')}</View>
-          <View style={{ flex: 1 }}>{field('Trim', 'EX-L')}</View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Model" value={model} onChangeText={setModel} placeholder="Accord" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Trim" value={trim} onChangeText={setTrim} placeholder="EX-L" />
+          </View>
         </View>
-        {field('Color', 'Lunar Silver Metallic')}
-        {field('VIN', 'Enter or scan VIN')}
+        <TextField label="Color" value={color} onChangeText={setColor} placeholder="Lunar Silver Metallic" />
+        <TextField label="VIN" value={vin} onChangeText={setVin} placeholder="Enter or scan VIN" autoCapitalize="characters" />
         <View style={{ flexDirection: 'row', gap: spacing.md }}>
-          <View style={{ flex: 1 }}>{field('Odometer', '0 mi')}</View>
-          <View style={{ flex: 1 }}>{field('Oil spec', '5W-30 Full Synthetic')}</View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Odometer (mi)" value={odometer} onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="0" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <TextField label="Oil spec" value={oilSpec} onChangeText={setOilSpec} placeholder="5W-30 Full Synthetic" />
+          </View>
         </View>
       </Card>
       <View
@@ -78,7 +112,7 @@ export function ProfCarAddScreen() {
           ⓘ Same details we keep for your registered cars — used to match quotes and track service.
         </Text>
       </View>
-      <PrimaryButton variant="success" label="Add car" onPress={() => navigation.goBack()} />
+      <PrimaryButton variant="success" label="Add car" disabled={!canSave} loading={addMutation.isPending} onPress={() => addMutation.mutate()} />
     </Screen>
   );
 }

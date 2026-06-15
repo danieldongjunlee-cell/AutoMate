@@ -24,12 +24,16 @@ export function BookAgreementScreen() {
 
   const kind = params?.kind ?? 'repair';
   const next = params?.next ?? 'BookingConfirm';
+  const nextParams = params?.nextParams;
   const deposit = depositForBooking(kind, isPro);
 
   const onContinue = () => {
     if (!agreed) return;
-    if (deposit > 0) navigation.navigate('BookDeposit', { kind, dealerId: params?.dealerId, next });
-    else navigation.navigate(next as never);
+    if (deposit > 0) {
+      navigation.navigate('BookDeposit', { kind, dealerId: params?.dealerId, next, nextParams });
+    } else {
+      (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
+    }
   };
 
   return (

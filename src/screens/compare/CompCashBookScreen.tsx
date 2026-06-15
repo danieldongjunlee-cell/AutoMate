@@ -47,13 +47,18 @@ export function CompCashBookScreen() {
     const { pointsEarned } = await quoteService.bookAppointment(dealer.id, dateLabel!, time);
     addPoints(pointsEarned);
     setBooking(false);
-    // Booking confirmation lives on the Home tab (wireframe ⤴ edge).
-    navigateCrossTab(navigation, 'HomeTab', 'BookingConfirm', {
+    // v17: consent + (non-Pro) deposit on the Home tab before the confirmation.
+    navigateCrossTab(navigation, 'HomeTab', 'BookAgreement', {
+      kind: 'repair',
       dealerId: dealer.id,
-      dateLabel,
-      time,
-      paid: 'cash',
-      priceLabel: `$${aq.priceLow} – $${aq.priceHigh}`,
+      next: 'BookingConfirm',
+      nextParams: {
+        dealerId: dealer.id,
+        dateLabel: dateLabel ?? undefined,
+        time: time ?? undefined,
+        paid: 'cash',
+        priceLabel: `$${aq.priceLow} – $${aq.priceHigh}`,
+      },
     });
   };
 
