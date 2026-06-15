@@ -7,7 +7,7 @@ import { Tappable } from '../../components/Tappable';
 import { CarSwitchHeader } from '../../components/CarSwitchHeader';
 
 import { CommunityStackParamList } from '../../navigation/types';
-import { brandChannels } from '../../services/mock/communityChannels';
+import { brandChannels, channelKind } from '../../services/mock/communityChannels';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
@@ -115,7 +115,12 @@ export function CommChannelsScreen() {
         return (
           <Tappable
             key={channel.id}
-            onPress={() => navigation.navigate('CommHonda')}
+            onPress={() =>
+              navigation.navigate('CommHonda', {
+                title: channel.name,
+                kind: channelKind(channel.name),
+              })
+            }
             style={({ pressed }) => ({
               backgroundColor: joined ? colors.primarySurface : colors.surface,
               borderRadius: radii.md,

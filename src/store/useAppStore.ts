@@ -44,10 +44,10 @@ export const DEPOSIT_CENTS = 2500;
 export const depositForBooking = (kind: 'repair' | 'maintenance', isPro: boolean): number =>
   kind === 'maintenance' || isPro ? 0 : DEPOSIT_CENTS;
 
-/** v17 Pro plans (annual $48/yr ≈ $4/mo; monthly $4.99). 1 pt = $0.01 economy. */
+/** v17 Pro plans (annual $48/yr ≈ $4/mo; monthly $9.99). 1 pt = $0.01 economy. */
 export const PRO_PLANS = {
   annual: { id: 'annual' as const, priceCents: 4800, label: 'Annual', per: '$4/mo' },
-  monthly: { id: 'monthly' as const, priceCents: 499, label: 'Monthly', per: '$4.99/mo' },
+  monthly: { id: 'monthly' as const, priceCents: 999, label: 'Monthly', per: '$9.99/mo' },
 };
 export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
 

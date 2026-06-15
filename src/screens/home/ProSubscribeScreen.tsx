@@ -1,15 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { proService } from '../../services';
+import { PaymentCard, paymentMethodsService, proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
@@ -29,13 +31,18 @@ export function ProSubscribeScreen() {
   const { colors } = useTheme();
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
+  const [picked, setPicked] = useState<PaymentCard | null>(null);
+  const [cardSheet, setCardSheet] = useState(false);
+  const { data: cards } = useQuery({ queryKey: ['cards'], queryFn: paymentMethodsService.listCards });
+  const card = picked ?? cards?.[0];
+  const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
 
   // v17: the plan-pick screen is the commit point — subscribe → success (no
   // separate payment screen). Real IAP billing is wired at store launch.
   const startPro = () => {
     confirmAction(
       'Confirm subscription',
-      `Start AutoMate Pro — ${plan === 'annual' ? '$48/yr' : '$4.99/mo'} on Visa ••••4242?`,
+      `Start AutoMate Pro — ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} on ${cardLabel}?`,
       async () => {
         setBusy(true);
         await proService.subscribe(plan);
@@ -126,8 +133,8 @@ export function ProSubscribeScreen() {
       </View>
 
       <SectionLabel>Choose a plan</SectionLabel>
-      {planRow('annual', 'Annual', '$48/yr — just $4/mo', 'SAVE 20%')}
-      {planRow('monthly', 'Monthly', '$4.99 / month')}
+      {planRow('annual', 'Annual', '$48/yr — just $4/mo', 'SAVE 60%')}
+      {planRow('monthly', 'Monthly', '$9.99 / month')}
 
       <SectionLabel>Payment method</SectionLabel>
       <Card
@@ -142,19 +149,25 @@ export function ProSubscribeScreen() {
         <Text style={{ fontSize: 20 }}>💳</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-            Visa ••••4242
+            {cardLabel}
           </Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>default</Text>
         </View>
-        <Tappable onPress={() => {}} hitSlop={8}>
+        <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Change</Text>
         </Tappable>
       </Card>
+      <PaymentMethodSheet
+        visible={cardSheet}
+        selectedId={card?.id}
+        onSelect={setPicked}
+        onClose={() => setCardSheet(false)}
+      />
 
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
           variant="success"
-          label={`Start Pro — ${plan === 'annual' ? '$48/yr' : '$4.99/mo'} →`}
+          label={`Start Pro — ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} →`}
           loading={busy}
           onPress={startPro}
         />

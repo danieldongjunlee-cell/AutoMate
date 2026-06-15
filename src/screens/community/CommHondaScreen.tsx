@@ -1,39 +1,44 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { PostCard } from '../../components/PostCard';
-import { SkeletonList } from '../../components/Skeleton';
 import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
-import { communityService } from '../../services';
+import { channelKind, groupPosts } from '../../services/mock/communityChannels';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommHonda'>;
+type Rt = RouteProp<CommunityStackParamList, 'CommHonda'>;
 
-/** Wireframe s-comm-honda: Honda Owners feed with + Post header action. */
+/** Wireframe s-comm-honda: a sub-community feed, themed by the tapped group. */
 export function CommHondaScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Rt>();
   const { colors } = useTheme();
   const { brand } = useActiveVehicle();
+
+  // Topic + title come from the tapped group card; fall back to the brand's
+  // generic Owners feed when the screen is reached without params.
+  const title = route.params?.title ?? `${brand} Owners`;
+  const kind = route.params?.kind ?? channelKind(route.params?.title);
+
   const brandLc = brand.toLowerCase();
   const channel =
     CHANNELS.find((c) => c.name.toLowerCase().includes(brandLc)) ?? CHANNELS[0];
-  const { data: posts, isLoading } = useQuery({
-    queryKey: ['feed', channel.id],
-    queryFn: () => communityService.getFeed(channel.id),
-  });
+
+  // Themed mock feed for this (brand, kind). Memoized so it stays stable.
+  const posts = useMemo(() => groupPosts(brand, kind), [brand, kind]);
 
   useEffect(() => {
     navigation.setOptions({
-      // Header title follows the active car's brand (was hardcoded "Honda Owners").
-      title: `${brand} Owners`,
+      // Header title is the tapped group's title (fallback "<Brand> Owners").
+      title,
       headerRight: () => (
         <Tappable
           onPress={() => navigation.navigate('CommCreate')}
@@ -52,7 +57,7 @@ export function CommHondaScreen() {
         </Tappable>
       ),
     });
-  }, [navigation, colors, brand]);
+  }, [navigation, colors, title]);
 
   return (
     <Screen>
@@ -83,17 +88,13 @@ export function CommHondaScreen() {
         </View>
       </View>
 
-      {isLoading ? (
-        <SkeletonList variant="card" count={3} tall />
-      ) : (
-        posts?.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onPress={() => navigation.navigate('CommPost', { postId: post.id })}
-          />
-        ))
-      )}
+      {posts.map((post) => (
+        <PostCard
+          key={post.id}
+          post={post}
+          onPress={() => navigation.navigate('CommPost', { postId: post.id })}
+        />
+      ))}
     </Screen>
   );
 }

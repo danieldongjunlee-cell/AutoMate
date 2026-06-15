@@ -3,6 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { useQuery } from '@tanstack/react-query';
+
+import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
@@ -10,6 +13,7 @@ import { Card, Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById } from '../../services/mock/data';
+import { PaymentCard, paymentMethodsService } from '../../services';
 import { dateBadgeParts, DEPOSIT_CENTS, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -27,6 +31,11 @@ export function BookDepositScreen() {
   const addBooking = useAppStore((s) => s.addBooking);
   const { brand } = useActiveVehicle();
   const [booking, setBooking] = useState(false);
+  const [picked, setPicked] = useState<PaymentCard | null>(null);
+  const [cardSheet, setCardSheet] = useState(false);
+  const { data: cards } = useQuery({ queryKey: ['cards'], queryFn: paymentMethodsService.listCards });
+  const card = picked ?? cards?.[0];
+  const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
 
   const next = params?.next ?? 'BookingConfirm';
   const nextParams = params?.nextParams;
@@ -140,9 +149,11 @@ export function BookDepositScreen() {
           <Card style={{ padding: spacing.sm, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
             <Text>💳</Text>
             <Text style={{ flex: 1, fontSize: 13, color: colors.textPrimary }}>
-              Visa ••••4242 <Text style={{ color: colors.textTertiary, fontSize: 11 }}>· hold only</Text>
+              {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 11 }}>· hold only</Text>
             </Text>
-            <Text style={{ color: colors.primary, fontSize: 12 }}>Change</Text>
+            <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
+              <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>Change</Text>
+            </Tappable>
           </Card>
           <Tappable
             onPress={() => navigation.navigate('ProSubscribe')}
@@ -182,6 +193,12 @@ export function BookDepositScreen() {
       <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Cancel 12h+ ahead for a full refund · no-show forfeits the deposit.
       </Text>
+      <PaymentMethodSheet
+        visible={cardSheet}
+        selectedId={card?.id}
+        onSelect={setPicked}
+        onClose={() => setCardSheet(false)}
+      />
     </Screen>
   );
 }
