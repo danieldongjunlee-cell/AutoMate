@@ -47,10 +47,20 @@ Copy `server/.env.example` → `server/.env` and fill in the two Supabase URLs
 
 ```bash
 cd server
-npx prisma migrate deploy          # creates automate.* tables (uses DIRECT_URL)
-psql "$DIRECT_URL" -f prisma/sql/automate_rls.sql   # or paste it in the SQL editor
+npm install                        # MUST run first — installs the project's Prisma v6 locally
+npm run migrate:deploy             # creates automate.* tables (uses DIRECT_URL)
+psql "$DIRECT_URL" -f prisma/sql/automate_rls.sql   # or paste it into the Supabase SQL editor
 npm run seed                       # demo user + Accord + State Farm + quotes/bookings
 ```
+
+> Use the `npm run …` scripts, **not** bare `npx prisma …`. `npm run` puts the
+> project's local `node_modules/.bin` first on PATH, so it always uses the pinned
+> **Prisma 6**. Running `npx prisma` before `npm install` (or from the repo root)
+> makes npx download the **latest Prisma 7**, which rejects this schema — see
+> Troubleshooting below.
+
+`npm run migrate:deploy && npm run seed` is also available as one step:
+`npm run db:setup`.
 
 Demo login after seeding: `demo@automate.app` / `Demo1234!` (OTP `123456`).
 
@@ -74,6 +84,32 @@ EXPO_PUBLIC_API_URL=http://localhost:4000 npm start
 
 With `EXPO_PUBLIC_API_URL` set, `src/services/index.ts` swaps every mock service
 for its `./api` twin. Unset it to go back to mocks.
+
+---
+
+## Troubleshooting
+
+**`P1012 — The datasource property 'url' is no longer supported … move to prisma.config.ts`**
+You ran Prisma **7** against this Prisma **6** schema. Prisma 7 removed
+`url`/`directUrl` from the `datasource` block. You don't need v7 — this happens
+when `npx prisma` downloads the latest standalone CLI because the local install
+wasn't used. Fix:
+
+```bash
+cd server
+npm install                 # installs Prisma 6.x locally (pinned ^6.16.2)
+./node_modules/.bin/prisma --version   # confirm it says 6.x, not 7.x
+npm run migrate:deploy      # uses the local v6 binary
+```
+
+Always invoke Prisma through `npm run …` (or `./node_modules/.bin/prisma`), never
+bare `npx prisma`. If you have a **global** Prisma 7 (`prisma --version` shows 7.x
+from any dir), either uninstall it (`npm rm -g prisma`) or just rely on the
+`npm run` scripts, which ignore the global one.
+
+> Staying on Prisma 6 is intentional for now: v7 also requires a driver adapter on
+> `new PrismaClient()` (see `server/src/db.ts`) and a `prisma.config.ts`. That's a
+> separate migration we can do later — it isn't needed to connect to Supabase.
 
 ---
 
