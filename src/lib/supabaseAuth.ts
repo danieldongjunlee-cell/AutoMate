@@ -1,5 +1,11 @@
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
+
 import { getMyProfile } from './profiles';
 import { supabase } from './supabase';
+
+// Lets the auth browser tab close itself and hand control back (web/native).
+WebBrowser.maybeCompleteAuthSession();
 
 /** Minimal user shape the app store needs, plus the Supabase access token. */
 export interface SupabaseAuthResult {
@@ -90,4 +96,40 @@ export async function getSupabaseSessionUser(): Promise<SupabaseAuthResult | nul
 /** Clear the Supabase session (called from the app's sign-out). No-op if unset. */
 export async function signOutSupabase(): Promise<void> {
   await supabase?.auth.signOut();
+}
+
+/**
+ * Real Apple / Google sign-in via Supabase OAuth. Opens the provider's login in
+ * a secure browser tab, then exchanges the returned code for a session.
+ *
+ * Requires the provider to be enabled in the Supabase dashboard (Authentication
+ * → Providers) with its OAuth credentials, and the app's redirect URL
+ * (automate://auth-callback) added to the allowed redirect URLs.
+ */
+export async function signInWithProvider(
+  provider: 'google' | 'apple',
+): Promise<SupabaseAuthResult> {
+  if (!supabase) throw new Error('Supabase is not configured.');
+  const redirectTo = Linking.createURL('auth-callback');
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo, skipBrowserRedirect: true },
+  });
+  if (error) throw error;
+  if (!data?.url) throw new Error('Could not start sign-in.');
+
+  const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+  if (result.type !== 'success' || !result.url) {
+    throw new Error('Sign-in was cancelled.');
+  }
+
+  // PKCE flow returns ?code=… on the redirect; exchange it for a session.
+  const code = new URL(result.url).searchParams.get('code');
+  if (!code) throw new Error('Sign-in did not complete.');
+  const { data: sessionData, error: exErr } = await supabase.auth.exchangeCodeForSession(code);
+  if (exErr) throw exErr;
+
+  const session = sessionData.session;
+  const email = session?.user.email ?? '';
+  return fromProfile(email, nameFromMetadata(session?.user.user_metadata, ''), session?.access_token ?? null);
 }

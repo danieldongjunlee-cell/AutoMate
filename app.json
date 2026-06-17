@@ -3,6 +3,7 @@
     "name": "AutoMate",
     "slug": "automate",
     "version": "1.0.0",
+    "scheme": "automate",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",

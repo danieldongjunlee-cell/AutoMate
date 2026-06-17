@@ -10,9 +10,12 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { LegalKind, LegalSheet } from '../../components/LegalSheet';
 import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';
 import { Tappable } from '../../components/Tappable';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { signInWithProvider } from '../../lib/supabaseAuth';
 import { AuthStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing } from '../../theme';
+import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'Splash'>;
@@ -20,6 +23,22 @@ type Nav = NativeStackNavigationProp<AuthStackParamList, 'Splash'>;
 export function SplashScreen() {
   const navigation = useNavigation<Nav>();
   const signIn = useAppStore((s) => s.signIn);
+  const setAuth = useAppStore((s) => s.setAuth);
+
+  // Real OAuth when Supabase is configured; otherwise the demo chooser sheet.
+  const onSocial = async (provider: SocialProvider) => {
+    if (!isSupabaseConfigured) {
+      setSheetProvider(provider);
+      return;
+    }
+    try {
+      const u = await signInWithProvider(provider);
+      setAuth(u.token, { name: u.name, email: u.email, username: u.username });
+      signIn();
+    } catch (e) {
+      showAlert('Sign-in failed', e instanceof Error ? e.message : 'Please try again.');
+    }
+  };
   // Branded chooser sheet (user-feedback pass 1) instead of an inline spinner.
   const [sheetProvider, setSheetProvider] = useState<SocialProvider | null>(null);
   const [legal, setLegal] = useState<LegalKind>(null);
@@ -102,7 +121,7 @@ export function SplashScreen() {
         ).map(({ provider, label }) => (
           <Tappable
             key={provider}
-            onPress={() => setSheetProvider(provider)}
+            onPress={() => onSocial(provider)}
             style={{
               flex: 1,
               flexDirection: 'row',
