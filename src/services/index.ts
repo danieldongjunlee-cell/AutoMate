@@ -31,6 +31,8 @@ import { pointsService as mockPointsService } from './mock/pointsService';
 import { proService as mockProService } from './mock/proService';
 import { quoteService as mockQuoteService } from './mock/quoteService';
 import { vehiclesService as mockVehiclesService } from './mock/vehiclesService';
+import { insuranceService as supabaseInsuranceService } from './supabase/insuranceService';
+import { paymentMethodsService as supabasePaymentMethodsService } from './supabase/paymentMethodsService';
 import { vehiclesService as supabaseVehiclesService } from './supabase/vehiclesService';
 import { isSupabaseConfigured } from '../lib/supabase';
 
@@ -57,9 +59,11 @@ export const proService: typeof mockProService = USE_API ? apiProService : mockP
 export const compareService: typeof mockCompareService = USE_API
   ? apiCompareService
   : mockCompareService;
-export const insuranceService: typeof mockInsuranceService = USE_API
-  ? apiInsuranceService
-  : mockInsuranceService;
+export const insuranceService: typeof mockInsuranceService = USE_SUPABASE
+  ? supabaseInsuranceService
+  : USE_API
+    ? apiInsuranceService
+    : mockInsuranceService;
 export const pointsService: typeof mockPointsService = USE_API
   ? apiPointsService
   : mockPointsService;
@@ -68,9 +72,11 @@ export const vehiclesService: typeof mockVehiclesService = USE_SUPABASE
   : USE_API
     ? apiVehiclesService
     : mockVehiclesService;
-export const paymentMethodsService: typeof mockPaymentMethodsService = USE_API
-  ? apiPaymentMethodsService
-  : mockPaymentMethodsService;
+export const paymentMethodsService: typeof mockPaymentMethodsService = USE_SUPABASE
+  ? supabasePaymentMethodsService
+  : USE_API
+    ? apiPaymentMethodsService
+    : mockPaymentMethodsService;
 
 // Shared constants/types that screens use alongside the services.
 export { DEMO_EMAIL, DEMO_OTP, DEMO_PASSWORD, MOCK_PHONE } from './mock/authService';
