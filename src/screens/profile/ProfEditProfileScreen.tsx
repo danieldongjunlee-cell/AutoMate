@@ -21,7 +21,8 @@ export function ProfEditProfileScreen() {
   const authedUser = useAppStore((s) => s.user);
   const patchUser = useAppStore((s) => s.patchUser);
   const [name, setName] = useState(authedUser?.name ?? USER.name);
-  const [username, setUsername] = useState(authedUser?.username ?? USER.username);
+  // Username starts blank until the user sets their own (no mock placeholder).
+  const [username, setUsername] = useState(authedUser?.username ?? '');
   const [bio, setBio] = useState('');
   const [saving, setSaving] = useState(false);
 
