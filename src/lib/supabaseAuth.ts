@@ -1,11 +1,5 @@
-import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
-
 import { getMyProfile } from './profiles';
 import { supabase } from './supabase';
-
-// Lets the auth browser tab close itself and hand control back (web/native).
-WebBrowser.maybeCompleteAuthSession();
 
 /** Minimal user shape the app store needs, plus the Supabase access token. */
 export interface SupabaseAuthResult {
@@ -110,6 +104,17 @@ export async function signInWithProvider(
   provider: 'google' | 'apple',
 ): Promise<SupabaseAuthResult> {
   if (!supabase) throw new Error('Supabase is not configured.');
+  // Lazy-load the native modules so simply importing this file never crashes a
+  // client that hasn't been rebuilt with expo-web-browser/expo-linking yet.
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const WebBrowser = require('expo-web-browser') as typeof import('expo-web-browser');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const Linking = require('expo-linking') as typeof import('expo-linking');
+  try {
+    WebBrowser.maybeCompleteAuthSession();
+  } catch {
+    // web-only helper; ignore on native
+  }
   const redirectTo = Linking.createURL('auth-callback');
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
