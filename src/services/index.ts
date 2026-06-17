@@ -31,6 +31,7 @@ import { pointsService as mockPointsService } from './mock/pointsService';
 import { proService as mockProService } from './mock/proService';
 import { quoteService as mockQuoteService } from './mock/quoteService';
 import { vehiclesService as mockVehiclesService } from './mock/vehiclesService';
+import { communityService as supabaseCommunityService } from './supabase/communityService';
 import { insuranceService as supabaseInsuranceService } from './supabase/insuranceService';
 import { paymentMethodsService as supabasePaymentMethodsService } from './supabase/paymentMethodsService';
 import { vehiclesService as supabaseVehiclesService } from './supabase/vehiclesService';
@@ -52,9 +53,11 @@ export const maintService: typeof mockMaintService = USE_API ? apiMaintService :
 export const notificationService: typeof mockNotificationService = USE_API
   ? apiNotificationService
   : mockNotificationService;
-export const communityService: typeof mockCommunityService = USE_API
-  ? apiCommunityService
-  : mockCommunityService;
+export const communityService: typeof mockCommunityService = USE_SUPABASE
+  ? supabaseCommunityService
+  : USE_API
+    ? apiCommunityService
+    : mockCommunityService;
 export const proService: typeof mockProService = USE_API ? apiProService : mockProService;
 export const compareService: typeof mockCompareService = USE_API
   ? apiCompareService
