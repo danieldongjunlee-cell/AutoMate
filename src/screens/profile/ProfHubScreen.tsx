@@ -283,6 +283,7 @@ export function ProfHubScreen() {
         </View>,
       )}
       {accountRow('💳', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment')}
+      {accountRow('🔍', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates')}
       {accountRow('⚙️', colors.surfaceAlt, 'Settings', 'Notifications · Privacy · Account', 'ProfSettings')}
     </Screen>
   );
