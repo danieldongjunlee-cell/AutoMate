@@ -11,6 +11,7 @@ import { SubmitProgress } from '../../components/SubmitProgress';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services';
+import { saveDamageEstimate } from '../../lib/damageEstimates';
 import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -219,6 +220,8 @@ export function ConfirmSubmitScreen() {
       addPoints(pointsEarned, 'Submitted damage photos');
       // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
       setAiEstimate(aiEstimate ?? null);
+      // Persist the estimate + upload photos to Supabase (no-op if unconfigured).
+      void saveDamageEstimate(damageParts, aiEstimate ?? null);
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
     } finally {
       setSubmitting(false);
