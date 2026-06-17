@@ -739,6 +739,8 @@ export interface PostComment {
   car: string;
   likes: number;
   body: string;
+  /** Whether the current user has liked this comment (Supabase-backed). */
+  likedByMe?: boolean;
 }
 
 /** Comments on the James K. post (s-comm-post). */

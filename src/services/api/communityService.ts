@@ -38,4 +38,11 @@ export const communityService = {
       { method: 'POST' },
     );
   },
+
+  async toggleCommentLike(commentId: string) {
+    return request<{ liked: boolean; likes: number }>(
+      `/community/comments/${encodeURIComponent(commentId)}/like`,
+      { method: 'POST' },
+    );
+  },
 };

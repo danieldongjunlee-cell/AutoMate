@@ -17,7 +17,14 @@ let nextId = 1;
 /** In-memory social state so comments/likes persist within a session. */
 const extraComments: Record<string, PostComment[]> = {};
 const likedPosts = new Set<string>();
+const likedComments = new Set<string>();
 let nextCid = 1;
+
+/** Stamp a comment with the session's like state (toggled count + flag). */
+const withLike = (c: PostComment): PostComment => {
+  const liked = likedComments.has(c.id);
+  return { ...c, likedByMe: liked, likes: c.likes + (liked ? 1 : 0) };
+};
 
 export const communityService = {
   async getChannels() {
@@ -34,7 +41,7 @@ export const communityService = {
     await delay(250);
     const base = posts.find((p) => p.id === postId) ?? posts[0];
     const liked = likedPosts.has(base.id);
-    const comments = [...POST_COMMENTS, ...(extraComments[base.id] ?? [])];
+    const comments = [...POST_COMMENTS, ...(extraComments[base.id] ?? [])].map(withLike);
     return {
       post: { ...base, likedByMe: liked, likes: base.likes + (liked ? 1 : 0), replies: comments.length },
       comments,
@@ -64,6 +71,17 @@ export const communityService = {
     if (liked) likedPosts.add(postId);
     else likedPosts.delete(postId);
     const base = posts.find((p) => p.id === postId);
+    return { liked, likes: (base?.likes ?? 0) + (liked ? 1 : 0) };
+  },
+
+  /** Toggle the current user's like on a comment. */
+  async toggleCommentLike(commentId: string): Promise<{ liked: boolean; likes: number }> {
+    await delay(150);
+    const liked = !likedComments.has(commentId);
+    if (liked) likedComments.add(commentId);
+    else likedComments.delete(commentId);
+    const all = [...POST_COMMENTS, ...Object.values(extraComments).flat()];
+    const base = all.find((c) => c.id === commentId);
     return { liked, likes: (base?.likes ?? 0) + (liked ? 1 : 0) };
   },
 

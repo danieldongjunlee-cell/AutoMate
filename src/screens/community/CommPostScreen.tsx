@@ -28,8 +28,8 @@ export function CommPostScreen() {
   // Post like: persisted via the service; seeded from the loaded post.
   const [postLiked, setPostLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  // Comment likes stay a cosmetic local toggle for now.
-  const [likedComments, setLikedComments] = useState<Record<string, boolean>>({});
+  // Comment likes: per-comment overrides ({liked,count}) layered over server data.
+  const [commentLikes, setCommentLikes] = useState<Record<string, { liked: boolean; count: number }>>({});
   const [draft, setDraft] = useState('');
   const [sending, setSending] = useState(false);
   const composerRef = useRef<TextInput>(null);
@@ -55,8 +55,20 @@ export function CommPostScreen() {
   const allComments = comments;
   const replyCount = comments.length;
 
-  const toggleCommentLike = (id: string) =>
-    setLikedComments((m) => ({ ...m, [id]: !m[id] }));
+  const toggleCommentLike = async (c: { id: string; likes: number; likedByMe?: boolean }) => {
+    const cur = commentLikes[c.id] ?? { liked: !!c.likedByMe, count: c.likes };
+    // Optimistic flip, then reconcile with the persisted count.
+    setCommentLikes((m) => ({
+      ...m,
+      [c.id]: { liked: !cur.liked, count: cur.count + (cur.liked ? -1 : 1) },
+    }));
+    try {
+      const res = await communityService.toggleCommentLike(c.id);
+      setCommentLikes((m) => ({ ...m, [c.id]: { liked: res.liked, count: res.likes } }));
+    } catch {
+      setCommentLikes((m) => ({ ...m, [c.id]: cur }));
+    }
+  };
 
   const togglePostLike = async () => {
     // Optimistic flip, then reconcile with the persisted count.
@@ -171,7 +183,8 @@ export function CommPostScreen() {
 
       <SectionLabel>{replyCount} Comments</SectionLabel>
       {allComments.map((c) => {
-        const liked = !!likedComments[c.id];
+        const cl = commentLikes[c.id] ?? { liked: !!c.likedByMe, count: c.likes };
+        const liked = cl.liked;
         return (
           <View
             key={c.id}
@@ -190,7 +203,7 @@ export function CommPostScreen() {
                 <Text style={{ fontWeight: '600', color: colors.textPrimary }}>{c.author}</Text>
                 <Text style={{ color: colors.textTertiary }}> {c.car}</Text>
               </Text>
-              <Tappable onPress={() => toggleCommentLike(c.id)} hitSlop={6}>
+              <Tappable onPress={() => toggleCommentLike(c)} hitSlop={6}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -198,7 +211,7 @@ export function CommPostScreen() {
                     color: liked ? colors.danger : colors.textTertiary,
                   }}
                 >
-                  {liked ? '❤️' : '🤍'} {c.likes + (liked ? 1 : 0)}
+                  {liked ? '❤️' : '🤍'} {cl.count}
                 </Text>
               </Tappable>
             </View>

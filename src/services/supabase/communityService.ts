@@ -129,7 +129,25 @@ export const communityService: typeof mockCommunityService = {
       c.from('post_likes').select('id').eq('post_id', postId).eq('user_id', uid ?? '').maybeSingle(),
       c.from('comments').select('id, author, body, created_at').eq('post_id', postId).order('created_at', { ascending: true }),
     ]);
-    const comments = ((commentsRes.data ?? []) as CommentRow[]).map(toComment);
+    const commentRows = (commentsRes.data ?? []) as CommentRow[];
+    // Real like counts + my-like flag for each comment.
+    const cLikeCount: Record<string, number> = {};
+    const cMine = new Set<string>();
+    if (commentRows.length) {
+      const { data: cLikes } = await c
+        .from('comment_likes')
+        .select('comment_id, user_id')
+        .in('comment_id', commentRows.map((r) => r.id));
+      for (const l of (cLikes ?? []) as { comment_id: string; user_id: string }[]) {
+        cLikeCount[l.comment_id] = (cLikeCount[l.comment_id] ?? 0) + 1;
+        if (l.user_id === uid) cMine.add(l.comment_id);
+      }
+    }
+    const comments = commentRows.map((r) => ({
+      ...toComment(r),
+      likes: cLikeCount[r.id] ?? 0,
+      likedByMe: cMine.has(r.id),
+    }));
     return {
       post: {
         ...toPost(postRow as Row),
@@ -179,6 +197,30 @@ export const communityService: typeof mockCommunityService = {
       liked = true;
     }
     const { count } = await c.from('post_likes').select('*', { count: 'exact', head: true }).eq('post_id', postId);
+    return { liked, likes: count ?? 0 };
+  },
+
+  async toggleCommentLike(commentId: string): Promise<{ liked: boolean; likes: number }> {
+    const c = client();
+    const uid = await currentUserId();
+    const { data: existing } = await c
+      .from('comment_likes')
+      .select('id')
+      .eq('comment_id', commentId)
+      .eq('user_id', uid ?? '')
+      .maybeSingle();
+    let liked: boolean;
+    if (existing) {
+      await c.from('comment_likes').delete().eq('id', (existing as { id: string }).id);
+      liked = false;
+    } else {
+      await c.from('comment_likes').insert({ comment_id: commentId });
+      liked = true;
+    }
+    const { count } = await c
+      .from('comment_likes')
+      .select('*', { count: 'exact', head: true })
+      .eq('comment_id', commentId);
     return { liked, likes: count ?? 0 };
   },
 };

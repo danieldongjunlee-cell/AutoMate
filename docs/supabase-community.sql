@@ -65,3 +65,21 @@ create policy "likes insertable by owner"
   on public.post_likes for insert with check (auth.uid() = user_id);
 create policy "likes deletable by owner"
   on public.post_likes for delete using (auth.uid() = user_id);
+
+-- Comment likes: one row per (comment, user).
+create table if not exists public.comment_likes (
+  id         uuid primary key default gen_random_uuid(),
+  comment_id uuid not null references public.comments (id) on delete cascade,
+  user_id    uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  unique (comment_id, user_id)
+);
+
+alter table public.comment_likes enable row level security;
+
+create policy "comment likes readable by signed-in users"
+  on public.comment_likes for select using (auth.uid() is not null);
+create policy "comment likes insertable by owner"
+  on public.comment_likes for insert with check (auth.uid() = user_id);
+create policy "comment likes deletable by owner"
+  on public.comment_likes for delete using (auth.uid() = user_id);
