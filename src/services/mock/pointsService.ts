@@ -39,7 +39,8 @@ const todayKey = () => new Date().toDateString();
 function record(delta: number, reason: string): number {
   const store = useAppStore.getState();
   const balanceAfter = store.points + delta;
-  store.addPoints(delta);
+  // Pass the reason so the Supabase points ledger records what it was for.
+  store.addPoints(delta, reason);
   ledger = [
     {
       id: `pl-${nextId++}`,

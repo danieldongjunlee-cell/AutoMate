@@ -43,7 +43,7 @@ export function AcceptBookingScreen() {
       quote ? quoteService.acceptQuote(quote.id) : Promise.resolve(null),
       quoteService.bookAppointment(dealer.id, dateLabel!, time),
     ]);
-    addPoints(pointsEarned);
+    addPoints(pointsEarned, 'Booked a repair');
     setBooking(false);
     // v17: consent + (non-Pro) refundable deposit before the confirmation.
     navigation.navigate('BookAgreement', {

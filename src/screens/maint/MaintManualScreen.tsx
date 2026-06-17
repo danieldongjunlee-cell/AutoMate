@@ -46,7 +46,7 @@ export function MaintManualScreen() {
       },
       'manual',
     );
-    addPoints(pointsEarned);
+    addPoints(pointsEarned, 'Logged maintenance');
     // Fire-and-forget: the history screen refetches while we navigate.
     queryClient.invalidateQueries({ queryKey: ['service-history'] });
     setSaving(false);

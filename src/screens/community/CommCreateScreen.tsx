@@ -46,7 +46,7 @@ export function CommCreateScreen() {
       category,
       photos.length,
     );
-    addPoints(pointsEarned);
+    addPoints(pointsEarned, 'Community post');
     // Fire-and-forget: the feed refetches while we navigate back to it.
     queryClient.invalidateQueries({ queryKey: ['feed'] });
     setPublishing(false);

@@ -52,7 +52,7 @@ export function MaintPaymentScreen() {
         await pointsService.redeem(applied, 'Redeemed at service payment');
       }
       const { pointsEarned } = await maintService.payForBooking(payTotal);
-      addPoints(pointsEarned);
+      addPoints(pointsEarned, 'Booked a service');
       // Record the paid maintenance booking for the Bookings tab.
       const dateLabel = formatDayLabel(cart.date, 'Mon, Apr 7');
       addBooking({

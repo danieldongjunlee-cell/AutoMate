@@ -216,7 +216,7 @@ export function ConfirmSubmitScreen() {
         quoteService.submitDamageRequest(damageParts),
         new Promise((r) => setTimeout(r, 2000)),
       ]);
-      addPoints(pointsEarned);
+      addPoints(pointsEarned, 'Submitted damage photos');
       // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
       setAiEstimate(aiEstimate ?? null);
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');

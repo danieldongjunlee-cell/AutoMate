@@ -5,6 +5,7 @@ import {
   insertBooking,
   updateBookingRow,
 } from '../lib/bookings';
+import { recordPoints } from '../lib/points';
 import { signOutSupabase } from '../lib/supabaseAuth';
 import { AiEstimateSummary, BOOKABLE_SERVICES } from '../services/mock/data';
 
@@ -209,8 +210,9 @@ interface AppState {
   // Reward points (420 pts seed; earned by scans/logs/posts).
   // Single client cache — the points services (mock + api) keep it current.
   points: number;
-  addPoints: (n: number) => void;
-  /** Set the absolute balance (api mode reconciles from server responses). */
+  /** Apply a delta and (Supabase) append a ledger row tagged with `reason`. */
+  addPoints: (n: number, reason?: string) => void;
+  /** Set the absolute balance (api/Supabase reconcile from server/ledger). */
   setPoints: (n: number) => void;
 
   // AutoMate Pro (v17): subscription (annual/monthly) that includes DIY +
@@ -335,7 +337,11 @@ export const useAppStore = create<AppState>((set) => ({
   setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
 
   points: SEED_POINTS,
-  addPoints: (n) => set((s) => ({ points: s.points + n })),
+  addPoints: (n, reason) => {
+    set((s) => ({ points: s.points + n }));
+    // Write-through to the Supabase ledger with the running balance (no-op on mock).
+    void recordPoints(n, reason ?? 'Points adjustment', useAppStore.getState().points);
+  },
   setPoints: (points) => set({ points }),
 
   isPro: false,
@@ -348,8 +354,12 @@ export const useAppStore = create<AppState>((set) => ({
   unlockDiyOnly: () => set({ diyUnlocked: true }),
 
   dailyCheckedIn: false,
-  claimDailyCheckIn: () =>
-    set((s) => (s.dailyCheckedIn ? {} : { dailyCheckedIn: true, points: s.points + 10 })),
+  claimDailyCheckIn: () => {
+    if (useAppStore.getState().dailyCheckedIn) return;
+    set({ dailyCheckedIn: true });
+    // Route through addPoints so the check-in is recorded in the points ledger.
+    useAppStore.getState().addPoints(10, 'Daily check-in');
+  },
 
   noShowCount: 0,
   addNoShow: () => set((s) => ({ noShowCount: s.noShowCount + 1 })),

@@ -54,7 +54,7 @@ export function MaintScanRevScreen() {
       },
       'scan',
     );
-    addPoints(pointsEarned);
+    addPoints(pointsEarned, 'Scanned receipt');
     // Fire-and-forget: the history screen refetches while we navigate.
     queryClient.invalidateQueries({ queryKey: ['service-history'] });
     setSaving(false);

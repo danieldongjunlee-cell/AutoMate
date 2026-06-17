@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 
 import { fetchBookings } from '../lib/bookings';
+import { fetchPointsBalance } from '../lib/points';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { getSupabaseSessionUser } from '../lib/supabaseAuth';
 import { useAppStore } from '../store/useAppStore';
@@ -19,6 +20,7 @@ export function RootNavigator() {
   const setAuth = useAppStore((s) => s.setAuth);
   const signIn = useAppStore((s) => s.signIn);
   const setBookings = useAppStore((s) => s.setBookings);
+  const setPoints = useAppStore((s) => s.setPoints);
   const theme = useTheme();
 
   // Returning users: if Supabase still has a valid session, skip the auth stack.
@@ -32,11 +34,12 @@ export function RootNavigator() {
     });
   }, [setAuth, signIn]);
 
-  // Hydrate Supabase-backed store caches (bookings) once authenticated.
+  // Hydrate Supabase-backed store caches (bookings, points) once authenticated.
   useEffect(() => {
     if (!isSupabaseConfigured || !isAuthenticated) return;
     fetchBookings().then(setBookings).catch(() => {});
-  }, [isAuthenticated, setBookings]);
+    fetchPointsBalance().then(setPoints).catch(() => {});
+  }, [isAuthenticated, setBookings, setPoints]);
 
   const base = theme.dark ? NavDarkTheme : NavLightTheme;
   const navTheme = {

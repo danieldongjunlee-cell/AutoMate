@@ -45,7 +45,7 @@ export function CompCashBookScreen() {
     if (!day || !time) return;
     setBooking(true);
     const { pointsEarned } = await quoteService.bookAppointment(dealer.id, dateLabel!, time);
-    addPoints(pointsEarned);
+    addPoints(pointsEarned, 'Booked a repair');
     setBooking(false);
     // v17: consent + (non-Pro) deposit on the Home tab before the confirmation.
     navigateCrossTab(navigation, 'HomeTab', 'BookAgreement', {
