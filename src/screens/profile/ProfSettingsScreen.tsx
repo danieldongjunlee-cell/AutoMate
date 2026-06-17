@@ -115,6 +115,17 @@ export function ProfSettingsScreen() {
         />
       </Card>
 
+      <SectionLabel>Developer</SectionLabel>
+      <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
+        <SettingsRow
+          icon="🧪"
+          label="Supabase demo"
+          value="Direct supabase-js"
+          onPress={() => navigation.navigate('SupabaseDemo')}
+          last
+        />
+      </Card>
+
       <SectionLabel>Support & legal</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <SettingsRow icon="❓" label="Help center" onPress={() => navigation.navigate('ProfHelpCenter')} />

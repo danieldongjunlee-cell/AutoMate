@@ -82,6 +82,7 @@ import {
 import { ProfPaymentScreen } from '../screens/profile/ProfPaymentScreen';
 import { ProManageScreen } from '../screens/profile/ProManageScreen';
 import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
+import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
@@ -269,6 +270,7 @@ const profileScreens = buildScreens(
     'ProfPrivacy',
     'ProfLanguage',
     'ProfDistance',
+    'SupabaseDemo',
   ] as const,
   {
     ProfHub: ProfHubScreen,
@@ -297,6 +299,7 @@ const profileScreens = buildScreens(
     ProfPrivacy: ProfPrivacyScreen,
     ProfLanguage: ProfLanguageScreen,
     ProfDistance: ProfDistanceScreen,
+    SupabaseDemo: SupabaseDemoScreen,
   },
 );
 function MoreStack() {

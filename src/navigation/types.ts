@@ -138,6 +138,7 @@ export type ProfileStackParamList = {
   ProfPrivacy: undefined;
   ProfLanguage: undefined;
   ProfDistance: undefined;
+  SupabaseDemo: undefined;
 };
 
 export type MainTabParamList = {
