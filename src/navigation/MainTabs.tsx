@@ -82,6 +82,7 @@ import {
 import { ProfPaymentScreen } from '../screens/profile/ProfPaymentScreen';
 import { ProManageScreen } from '../screens/profile/ProManageScreen';
 import { ProfSettingsScreen } from '../screens/profile/ProfSettingsScreen';
+import { PointsHistoryScreen } from '../screens/profile/PointsHistoryScreen';
 import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
 import { useTheme } from '../theme';
@@ -270,6 +271,7 @@ const profileScreens = buildScreens(
     'ProfPrivacy',
     'ProfLanguage',
     'ProfDistance',
+    'ProfPointsHistory',
     'SupabaseDemo',
   ] as const,
   {
@@ -299,6 +301,7 @@ const profileScreens = buildScreens(
     ProfPrivacy: ProfPrivacyScreen,
     ProfLanguage: ProfLanguageScreen,
     ProfDistance: ProfDistanceScreen,
+    ProfPointsHistory: PointsHistoryScreen,
     SupabaseDemo: SupabaseDemoScreen,
   },
 );

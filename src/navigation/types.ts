@@ -138,6 +138,7 @@ export type ProfileStackParamList = {
   ProfPrivacy: undefined;
   ProfLanguage: undefined;
   ProfDistance: undefined;
+  ProfPointsHistory: undefined;
   SupabaseDemo: undefined;
 };
 

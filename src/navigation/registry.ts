@@ -87,5 +87,6 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfPrivacy: 'Privacy policy', // s-prof-privacy
   ProfLanguage: 'Language', // s-prof-language
   ProfDistance: 'Distance units', // s-prof-distance
+  ProfPointsHistory: 'Points history', // ➕ Supabase points ledger
   SupabaseDemo: 'Supabase demo', // ➕ direct supabase-js smoke test
 };

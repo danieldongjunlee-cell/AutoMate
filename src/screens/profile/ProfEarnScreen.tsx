@@ -1,16 +1,23 @@
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
+import { ProfileStackParamList } from '../../navigation/types';
 import { EARN_ACTIONS } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
+type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfEarn'>;
+
 /** Wireframe s-prof-earn: balance + ways to earn points. */
 export function ProfEarnScreen() {
   const { colors } = useTheme();
+  const navigation = useNavigation<Nav>();
   const points = useAppStore((s) => s.points);
 
   return (
@@ -33,6 +40,19 @@ export function ProfEarnScreen() {
         <Text style={{ fontSize: 15, fontWeight: '500', color: palette.warning }}>
           = {pointsToUsd(points)} · 100 pts = $1
         </Text>
+        <Tappable
+          onPress={() => navigation.navigate('ProfPointsHistory')}
+          style={{
+            marginTop: spacing.sm,
+            backgroundColor: 'rgba(255,255,255,.18)',
+            borderRadius: radii.pill,
+            paddingHorizontal: 14,
+            paddingVertical: 6,
+          }}
+          hitSlop={6}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>View history →</Text>
+        </Tappable>
       </LinearGradient>
 
       <SectionLabel>Earn points</SectionLabel>
