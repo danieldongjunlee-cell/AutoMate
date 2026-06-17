@@ -10,7 +10,6 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useT } from '../../i18n';
-import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -98,7 +97,7 @@ export function HomeLauncherScreen() {
             {checkedIn ? 'Checked in today · +10 pts' : 'Daily check-in · +10 pts'}
           </Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-            🔥 Day {checkedIn ? 6 : 5} streak · earning toward a free oil change
+            🔥 Day {checkedIn ? 6 : 5} streak
           </Text>
         </View>
         <View
@@ -138,23 +137,10 @@ export function HomeLauncherScreen() {
       </Tappable>
 
       {/* Maintenance / Compare */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xl }}>
         {tile('🔧', colors.successSurface, t('Maintenance'), 'Track & book service', () => navigation.navigate('MaintDashboard'))}
         {tile('⚖️', colors.warningSurface, t('Compare Costs'), 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
       </View>
-
-      {/* Earn points — right above Deals & offers */}
-      <Tappable
-        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfEarn')}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successSurface, borderColor: colors.successLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.xl }}
-      >
-        <Text style={{ fontSize: 20 }}>🎁</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>Earn points on every booking</Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>Rewards add up to a free oil change & more</Text>
-        </View>
-        <Text style={{ color: colors.successDark }}>›</Text>
-      </Tappable>
 
       {/* Deals & offers — paged carousel (one at a time, dots) */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>

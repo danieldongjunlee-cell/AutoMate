@@ -11,6 +11,7 @@ import { brandChannels, channelKind } from '../../services/mock/communityChannel
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../../theme';
+import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 
@@ -38,6 +39,20 @@ export function CommChannelsScreen() {
       else next.add(id);
       return next;
     });
+  };
+
+  /** Tapping Join asks to confirm first; Leaving (already joined) is immediate. */
+  const onJoinPress = (id: string, name: string) => {
+    if (joinedIds.has(id)) {
+      toggleJoined(id); // leave, no confirm
+      return;
+    }
+    confirmAction(
+      `Join ${name}?`,
+      `You'll join this community and see its posts in your feed.`,
+      () => toggleJoined(id),
+      'Join',
+    );
   };
 
   const q = query.trim().toLowerCase();
@@ -150,7 +165,7 @@ export function CommChannelsScreen() {
               </Text>
             </View>
             <Tappable
-              onPress={() => toggleJoined(channel.id)}
+              onPress={() => onJoinPress(channel.id, channel.name)}
               style={{
                 backgroundColor: joined ? colors.primary : colors.surface,
                 borderRadius: radii.sm,

@@ -138,85 +138,88 @@ export function ProfHubScreen() {
       </View>
 
       {/* Points card */}
-      <Tappable onPress={() => navigation.navigate('ProfMiles')}>
-        {({ pressed }) => (
-          <LinearGradient
-            colors={[palette.primary, palette.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
+      <LinearGradient
+        colors={[palette.primary, palette.primaryDark]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: spacing.xs,
+          }}
+        >
+          <View>
+            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>YOUR POINTS</Text>
+            <Text style={{ fontSize: 26, fontWeight: '700', color: '#fff' }}>
+              {points.toLocaleString()} pts{' '}
+              <Text style={{ fontSize: 14, fontWeight: '400', color: palette.warning }}>
+                = {pointsToUsd(points)}
+              </Text>
+            </Text>
+          </View>
+          <View
             style={{
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: spacing.md,
-              opacity: pressed ? 0.9 : 1,
+              backgroundColor: 'rgba(255,255,255,.18)',
+              borderRadius: radii.sm,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              alignItems: 'center',
             }}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: spacing.xs,
-              }}
-            >
-              <View>
-                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>YOUR POINTS</Text>
-                <Text style={{ fontSize: 26, fontWeight: '700', color: '#fff' }}>
-                  {points.toLocaleString()} pts{' '}
-                  <Text style={{ fontSize: 14, fontWeight: '400', color: palette.warning }}>
-                    = {pointsToUsd(points)}
-                  </Text>
-                </Text>
-              </View>
-              <View
-                style={{
-                  backgroundColor: 'rgba(255,255,255,.18)',
-                  borderRadius: radii.sm,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>Next reward</Text>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
-                  {NEXT_REWARD_PTS.toLocaleString()} pts
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                height: 6,
-                backgroundColor: 'rgba(255,255,255,.2)',
-                borderRadius: 3,
-                overflow: 'hidden',
-                marginBottom: spacing.sm,
-              }}
-            >
-              <View
-                style={{
-                  width: `${Math.min(100, (points / NEXT_REWARD_PTS) * 100)}%`,
-                  height: '100%',
-                  backgroundColor: palette.warning,
-                }}
-              />
-            </View>
-            <View
-              style={{
+            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>Next reward</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
+              {NEXT_REWARD_PTS.toLocaleString()} pts
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            height: 6,
+            backgroundColor: 'rgba(255,255,255,.2)',
+            borderRadius: 3,
+            overflow: 'hidden',
+            marginBottom: spacing.sm,
+          }}
+        >
+          <View
+            style={{
+              width: `${Math.min(100, (points / NEXT_REWARD_PTS) * 100)}%`,
+              height: '100%',
+              backgroundColor: palette.warning,
+            }}
+          />
+        </View>
+        {/* Two actions side by side: milestones + points history */}
+        <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+          {(
+            [
+              { label: '🏆 Milestones', to: 'ProfMiles' as const },
+              { label: '📊 Points history', to: 'ProfPointsHistory' as const },
+            ]
+          ).map(({ label, to }) => (
+            <Tappable
+              key={to}
+              onPress={() => navigation.navigate(to)}
+              style={({ pressed }) => ({
+                flex: 1,
                 backgroundColor: 'rgba(255,255,255,.18)',
                 borderWidth: 1,
                 borderColor: 'rgba(255,255,255,.3)',
                 borderRadius: radii.sm,
                 paddingVertical: 9,
                 alignItems: 'center',
-              }}
+                opacity: pressed ? 0.8 : 1,
+              })}
             >
-              <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>
-                🏆 Explore reward milestones →
-              </Text>
-            </View>
-          </LinearGradient>
-        )}
-      </Tappable>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>{label}</Text>
+            </Tappable>
+          ))}
+        </View>
+      </LinearGradient>
 
       {/* Pro membership upsell / status → AutoMate Pro (Home stack) */}
       <Tappable
