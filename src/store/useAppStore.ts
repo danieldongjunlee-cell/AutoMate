@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 
+import {
+  deleteBookingRow,
+  insertBooking,
+  updateBookingRow,
+} from '../lib/bookings';
 import { signOutSupabase } from '../lib/supabaseAuth';
 import { AiEstimateSummary, BOOKABLE_SERVICES } from '../services/mock/data';
 
@@ -267,6 +272,8 @@ interface AppState {
 
   // Bookings (v17 Bookings tab) — confirmed/paid bookings the user has made.
   bookings: AppBooking[];
+  /** Replace the booking list (used to hydrate from Supabase on login). */
+  setBookings: (bookings: AppBooking[]) => void;
   /** Record a new booking; the latest one shows first in the Bookings tab. */
   addBooking: (booking: Omit<AppBooking, 'id' | 'createdAt'>) => void;
   /** Remove a booking (cancel). With no id, drops the most recent. */
@@ -413,31 +420,40 @@ export const useAppStore = create<AppState>((set) => ({
   clearCart: () => set({ cart: emptyCart }),
 
   bookings: SEED_BOOKINGS,
-  addBooking: (booking) =>
-    set((s) => ({
-      bookings: [
-        { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() },
-        ...s.bookings,
-      ],
-    })),
-  removeBooking: (id) =>
+  setBookings: (bookings) => set({ bookings }),
+  addBooking: (booking) => {
+    const full: AppBooking = { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() };
+    void insertBooking(full); // write-through to Supabase (no-op if unconfigured)
+    set((s) => ({ bookings: [full, ...s.bookings] }));
+  },
+  removeBooking: (id) => {
+    const targetId = id ?? useAppStore.getState().bookings[0]?.id;
+    if (targetId) void deleteBookingRow(targetId);
     set((s) => ({
       bookings: id ? s.bookings.filter((b) => b.id !== id) : s.bookings.slice(1),
-    })),
-  acceptProposedTime: (id) =>
+    }));
+  },
+  acceptProposedTime: (id) => {
+    const b = useAppStore.getState().bookings.find((x) => x.id === id);
+    if (b?.proposedTime) {
+      const dateLabel = b.proposedTime.split(' · ')[0] ?? b.dateLabel;
+      const time = b.proposedTime.split(' · ')[1] ?? b.time;
+      void updateBookingRow(id, { status: 'confirmed', date_label: dateLabel, time, proposed_time: null });
+    }
     set((s) => ({
-      bookings: s.bookings.map((b) =>
-        b.id === id && b.proposedTime
+      bookings: s.bookings.map((bk) =>
+        bk.id === id && bk.proposedTime
           ? {
-              ...b,
+              ...bk,
               status: 'confirmed',
-              dateLabel: b.proposedTime.split(' · ')[0] ?? b.dateLabel,
-              time: b.proposedTime.split(' · ')[1] ?? b.time,
+              dateLabel: bk.proposedTime.split(' · ')[0] ?? bk.dateLabel,
+              time: bk.proposedTime.split(' · ')[1] ?? bk.time,
               proposedTime: undefined,
             }
-          : b,
+          : bk,
       ),
-    })),
+    }));
+  },
 
   reviews: [],
   addReview: (review) =>
