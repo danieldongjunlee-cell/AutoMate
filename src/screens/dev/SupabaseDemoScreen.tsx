@@ -6,6 +6,7 @@ import { TextField } from '../../components/TextField';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
+import { getMyProfile, Profile, updateMyProfile } from '../../lib/profiles';
 import { radii, spacing, useTheme } from '../../theme';
 
 interface Note {
@@ -27,6 +28,8 @@ export function SupabaseDemoScreen() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [draft, setDraft] = useState('');
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileName, setProfileName] = useState('');
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -40,10 +43,15 @@ export function SupabaseDemoScreen() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Whenever we have a logged-in user, load their notes.
+  // Whenever we have a logged-in user, load their profile + notes.
   useEffect(() => {
-    if (userEmail) void loadNotes();
-    else setNotes([]);
+    if (userEmail) {
+      void loadProfile();
+      void loadNotes();
+    } else {
+      setProfile(null);
+      setNotes([]);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEmail]);
 
@@ -91,6 +99,20 @@ export function SupabaseDemoScreen() {
         .order('created_at', { ascending: false });
       if (error) throw error;
       setNotes((data as Note[]) ?? []);
+    });
+
+  const loadProfile = () =>
+    run('Load profile', async () => {
+      const p = await getMyProfile();
+      setProfile(p);
+      setProfileName(p?.full_name ?? '');
+    });
+
+  const saveProfile = () =>
+    run('Save profile', async () => {
+      await updateMyProfile({ full_name: profileName.trim() });
+      await loadProfile();
+      setMsg('Profile saved.');
     });
 
   const addNote = () =>
@@ -191,6 +213,36 @@ export function SupabaseDemoScreen() {
       </View>
       {banner}
 
+      {/* Profile row from public.profiles (auto-created by the signup trigger). */}
+      <SectionLabel>Your profile (public.profiles)</SectionLabel>
+      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
+        {profile ? (
+          <>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.xs }}>
+              email: {profile.email ?? '—'} · phone: {profile.phone ?? '—'}
+            </Text>
+            <TextField
+              label="Full name"
+              value={profileName}
+              onChangeText={setProfileName}
+              placeholder="Your name"
+            />
+            <PrimaryButton
+              label="Save profile"
+              onPress={saveProfile}
+              loading={busy}
+              disabled={profileName.trim() === (profile.full_name ?? '')}
+            />
+          </>
+        ) : (
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            No profile row yet — run docs/supabase-profiles.sql in Supabase so the signup trigger
+            creates one.
+          </Text>
+        )}
+      </Card>
+
+      <SectionLabel>Notes</SectionLabel>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <TextField label="New note" value={draft} onChangeText={setDraft} placeholder="Type something…" />
         <PrimaryButton label="Add note" onPress={addNote} loading={busy} disabled={!draft.trim()} />
