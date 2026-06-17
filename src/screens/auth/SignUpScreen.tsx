@@ -7,9 +7,13 @@ import { LegalKind, LegalSheet } from '../../components/LegalSheet';
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { signUpWithSupabase } from '../../lib/supabaseAuth';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService } from '../../services';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, spacing } from '../../theme';
+import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'SignUp'>;
@@ -30,6 +34,8 @@ export function SignUpScreen() {
   const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [legal, setLegal] = useState<LegalKind>(null);
+  const setAuth = useAppStore((s) => s.setAuth);
+  const signIn = useAppStore((s) => s.signIn);
 
   const rules = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
   const rulesPass = rules.every((r) => r.ok);
@@ -40,10 +46,23 @@ export function SignUpScreen() {
 
   const onSubmit = async () => {
     setLoading(true);
-    await authService.signUp({ fullName, email, phone, password });
-    setLoading(false);
-    // Verification-method choice shows the actual entered email/phone.
-    navigation.navigate('VerifyMethod', { email: email.trim(), phone: phone.trim() });
+    try {
+      // Supabase configured → create the real user and go straight in (the
+      // mock OTP step is skipped). Otherwise keep the demo verify flow.
+      if (isSupabaseConfigured) {
+        const u = await signUpWithSupabase({ fullName, email, phone, password });
+        setAuth(u.token, { name: u.name, email: u.email });
+        signIn();
+        return;
+      }
+      await authService.signUp({ fullName, email, phone, password });
+      // Verification-method choice shows the actual entered email/phone.
+      navigation.navigate('VerifyMethod', { email: email.trim(), phone: phone.trim() });
+    } catch (err) {
+      showAlert('Sign up failed', err instanceof Error ? err.message : 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

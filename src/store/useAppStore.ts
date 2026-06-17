@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import { signOutSupabase } from '../lib/supabaseAuth';
 import { AiEstimateSummary, BOOKABLE_SERVICES } from '../services/mock/data';
 
 /** A service row in the multi-service booking cart (maint-schedule-book). */
@@ -290,7 +291,9 @@ export const useAppStore = create<AppState>((set) => ({
   signIn: () => set({ isAuthenticated: true }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
-  signOut: () =>
+  signOut: () => {
+    // Also end the Supabase session (no-op when Supabase isn't configured).
+    void signOutSupabase();
     set({
       isAuthenticated: false,
       authToken: null,
@@ -308,7 +311,8 @@ export const useAppStore = create<AppState>((set) => ({
       activeVehicleId: null,
       bookings: SEED_BOOKINGS,
       reviews: [],
-    }),
+    });
+  },
 
   // Dark mode — v17 defaults to its dark-navy theme (toggle to light in Settings).
   darkMode: true,

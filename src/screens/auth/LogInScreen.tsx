@@ -8,8 +8,11 @@ import { Tappable } from '../../components/Tappable';
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { signInWithSupabase } from '../../lib/supabaseAuth';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService, DEMO_EMAIL, DEMO_PASSWORD } from '../../services';
+import { useAppStore } from '../../store/useAppStore';
 import { spacing } from '../../theme';
 import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
@@ -18,10 +21,12 @@ type Nav = NativeStackNavigationProp<AuthStackParamList, 'LogIn'>;
 
 export function LogInScreen() {
   const navigation = useNavigation<Nav>();
-  // Demo flow (spec §6): "I already have an account" lands here pre-filled
-  // with the seeded demo credentials.
-  const [email, setEmail] = useState(DEMO_EMAIL);
-  const [password, setPassword] = useState(DEMO_PASSWORD);
+  const setAuth = useAppStore((s) => s.setAuth);
+  const signIn = useAppStore((s) => s.signIn);
+  // Demo flow (spec §6): pre-fill the seeded demo credentials on the mock path.
+  // On the Supabase path those don't exist, so start blank for the real account.
+  const [email, setEmail] = useState(isSupabaseConfigured ? '' : DEMO_EMAIL);
+  const [password, setPassword] = useState(isSupabaseConfigured ? '' : DEMO_PASSWORD);
   const [loading, setLoading] = useState(false);
 
   const canSubmit = email.trim() && password.length > 0;
@@ -29,6 +34,13 @@ export function LogInScreen() {
   const onSubmit = async () => {
     setLoading(true);
     try {
+      // Supabase configured → authenticate against it and go straight in.
+      if (isSupabaseConfigured) {
+        const u = await signInWithSupabase(email, password);
+        setAuth(u.token, { name: u.name, email: u.email });
+        signIn();
+        return;
+      }
       await authService.logIn(email, password);
       navigation.navigate('VerifyOtp');
     } catch (err) {
