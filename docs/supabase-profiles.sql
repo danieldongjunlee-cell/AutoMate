@@ -7,10 +7,14 @@ create table if not exists public.profiles (
   id         uuid primary key references auth.users (id) on delete cascade,
   email      text,
   full_name  text,
+  username   text,
   phone      text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- If you ran an earlier version of this file, add the new column:
+alter table public.profiles add column if not exists username text;
 
 alter table public.profiles enable row level security;
 

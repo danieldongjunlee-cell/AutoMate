@@ -175,6 +175,7 @@ export type ReminderPref = (typeof REMINDER_OPTIONS)[number];
 export interface AuthUser {
   name: string;
   email: string;
+  username?: string;
 }
 
 interface AppState {
@@ -184,6 +185,8 @@ interface AppState {
   authToken: string | null;
   user: AuthUser | null;
   setAuth: (token: string | null, user: AuthUser | null) => void;
+  /** Merge profile edits (name/username) into the current user for live display. */
+  patchUser: (patch: Partial<AuthUser>) => void;
   signIn: () => void;
   signOut: () => void;
 
@@ -288,6 +291,7 @@ export const useAppStore = create<AppState>((set) => ({
   authToken: null,
   user: null,
   setAuth: (authToken, user) => set({ authToken, user }),
+  patchUser: (patch) => set((s) => ({ user: s.user ? { ...s.user, ...patch } : s.user })),
   signIn: () => set({ isAuthenticated: true }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).

@@ -1,15 +1,36 @@
+import { getMyProfile } from './profiles';
 import { supabase } from './supabase';
 
 /** Minimal user shape the app store needs, plus the Supabase access token. */
 export interface SupabaseAuthResult {
   name: string;
   email: string;
+  username?: string;
   token: string | null;
 }
 
 function nameFromMetadata(meta: Record<string, unknown> | undefined, fallback: string): string {
   const full = meta?.full_name;
   return typeof full === 'string' && full.trim() ? full : fallback;
+}
+
+/**
+ * Build the display user from a session, preferring the editable public.profiles
+ * row (full_name + username) so profile edits and relaunches show the right name
+ * instead of the email. Falls back to auth metadata / email-local-part.
+ */
+async function fromProfile(email: string, metaName: string, token: string | null): Promise<SupabaseAuthResult> {
+  let name = metaName;
+  let username: string | undefined;
+  try {
+    const p = await getMyProfile();
+    if (p?.full_name && p.full_name.trim()) name = p.full_name.trim();
+    if (p?.username && p.username.trim()) username = p.username.trim();
+  } catch {
+    // profiles table may not exist yet — keep the metadata/email fallback
+  }
+  if (!name.trim()) name = email.split('@')[0] || email;
+  return { name, email, username, token };
 }
 
 /**
@@ -49,11 +70,11 @@ export async function signInWithSupabase(
   const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
   if (error) throw error;
   const userEmail = data.user?.email ?? email.trim();
-  return {
-    name: nameFromMetadata(data.user?.user_metadata, userEmail),
-    email: userEmail,
-    token: data.session?.access_token ?? null,
-  };
+  return fromProfile(
+    userEmail,
+    nameFromMetadata(data.user?.user_metadata, ''),
+    data.session?.access_token ?? null,
+  );
 }
 
 /** Restore a persisted Supabase session on app launch (returning users). */
@@ -63,11 +84,7 @@ export async function getSupabaseSessionUser(): Promise<SupabaseAuthResult | nul
   const session = data.session;
   if (!session) return null;
   const email = session.user.email ?? '';
-  return {
-    name: nameFromMetadata(session.user.user_metadata, email),
-    email,
-    token: session.access_token,
-  };
+  return fromProfile(email, nameFromMetadata(session.user.user_metadata, ''), session.access_token);
 }
 
 /** Clear the Supabase session (called from the app's sign-out). No-op if unset. */

@@ -24,7 +24,7 @@ export function RootNavigator() {
     if (!isSupabaseConfigured) return;
     getSupabaseSessionUser().then((u) => {
       if (u) {
-        setAuth(u.token, { name: u.name, email: u.email });
+        setAuth(u.token, { name: u.name, email: u.email, username: u.username });
         signIn();
       }
     });

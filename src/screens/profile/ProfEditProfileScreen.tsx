@@ -7,16 +7,40 @@ import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
+import { isSupabaseConfigured } from '../../lib/supabase';
+import { updateMyProfile } from '../../lib/profiles';
 import { USER } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, spacing, useTheme } from '../../theme';
+import { showAlert } from '../../utils/alerts';
 
 /** Wireframe s-prof-edit-profile: avatar + name/username/bio form. */
 export function ProfEditProfileScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const [name, setName] = useState(USER.name);
-  const [username, setUsername] = useState(USER.username);
+  const authedUser = useAppStore((s) => s.user);
+  const patchUser = useAppStore((s) => s.patchUser);
+  const [name, setName] = useState(authedUser?.name ?? USER.name);
+  const [username, setUsername] = useState(authedUser?.username ?? USER.username);
   const [bio, setBio] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const onSave = async () => {
+    setSaving(true);
+    try {
+      // Persist to Supabase when configured so it survives relaunch + lives in the DB.
+      if (isSupabaseConfigured) {
+        await updateMyProfile({ full_name: name.trim(), username: username.trim() });
+      }
+      // Reflect immediately in the More-tab header (top-left name + @username).
+      patchUser({ name: name.trim(), username: username.trim() });
+      navigation.goBack();
+    } catch (err) {
+      showAlert('Save failed', err instanceof Error ? err.message : 'Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const field = (
     label: string,
@@ -86,7 +110,7 @@ export function ProfEditProfileScreen() {
         {field('Bio', bio, setBio, 'Add a short bio...', true)}
       </Card>
 
-      <PrimaryButton label="Save changes" onPress={() => navigation.goBack()} />
+      <PrimaryButton label="Save changes" onPress={onSave} loading={saving} />
     </Screen>
   );
 }
