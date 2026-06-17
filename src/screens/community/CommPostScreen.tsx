@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Share, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -11,25 +11,36 @@ import { SkeletonCard, SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { communityService } from '../../services';
-import { PostComment, USER } from '../../services/mock/data';
+import { USER } from '../../services/mock/data';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-comm-post: post detail + comments + composer. */
 export function CommPostScreen() {
   const route = useRoute<RouteProp<CommunityStackParamList, 'CommPost'>>();
   const { colors } = useTheme();
+  const queryClient = useQueryClient();
   const postId = route.params?.postId ?? 'post-james';
   const { data, isLoading } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => communityService.getPost(postId),
   });
 
-  // Local interaction state (mock-backed): like toggles, my new comments.
+  // Post like: persisted via the service; seeded from the loaded post.
   const [postLiked, setPostLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  // Comment likes stay a cosmetic local toggle for now.
   const [likedComments, setLikedComments] = useState<Record<string, boolean>>({});
-  const [myComments, setMyComments] = useState<PostComment[]>([]);
   const [draft, setDraft] = useState('');
+  const [sending, setSending] = useState(false);
   const composerRef = useRef<TextInput>(null);
+
+  // Sync the like button with the loaded post (real likedByMe + count).
+  useEffect(() => {
+    if (data?.post) {
+      setPostLiked(!!data.post.likedByMe);
+      setLikeCount(data.post.likes);
+    }
+  }, [data?.post]);
 
   if (isLoading || !data) {
     return (
@@ -41,36 +52,45 @@ export function CommPostScreen() {
     );
   }
   const { post, comments } = data;
-  const allComments = [...comments, ...myComments];
-  const replyCount = post.replies + myComments.length;
+  const allComments = comments;
+  const replyCount = comments.length;
 
   const toggleCommentLike = (id: string) =>
     setLikedComments((m) => ({ ...m, [id]: !m[id] }));
+
+  const togglePostLike = async () => {
+    // Optimistic flip, then reconcile with the persisted count.
+    setPostLiked((l) => !l);
+    setLikeCount((n) => n + (postLiked ? -1 : 1));
+    try {
+      const res = await communityService.toggleLike(postId);
+      setPostLiked(res.liked);
+      setLikeCount(res.likes);
+    } catch {
+      // revert on failure
+      setPostLiked((l) => !l);
+    }
+  };
 
   const startReply = (author: string) => {
     setDraft((d) => (d.startsWith(`@${author}`) ? d : `@${author} ${d}`));
     composerRef.current?.focus();
   };
 
-  const sendComment = () => {
+  const sendComment = async () => {
     const body = draft.trim();
-    if (!body) {
+    if (!body || sending) {
       composerRef.current?.focus();
       return;
     }
-    setMyComments((list) => [
-      ...list,
-      {
-        id: `c-me-${Date.now()}`,
-        author: USER.name,
-        initial: USER.initial,
-        color: palette.primary,
-        car: '2019 Accord',
-        likes: 0,
-        body,
-      },
-    ]);
+    setSending(true);
     setDraft('');
+    try {
+      await communityService.addComment(postId, body);
+      await queryClient.invalidateQueries({ queryKey: ['post', postId] });
+    } finally {
+      setSending(false);
+    }
   };
 
   const sharePost = () =>
@@ -128,7 +148,7 @@ export function CommPostScreen() {
             borderTopColor: colors.divider,
           }}
         >
-          <Tappable onPress={() => setPostLiked((l) => !l)} hitSlop={6}>
+          <Tappable onPress={togglePostLike} hitSlop={6}>
             <Text
               style={{
                 fontSize: 13,
@@ -136,7 +156,7 @@ export function CommPostScreen() {
                 color: postLiked ? colors.danger : colors.textTertiary,
               }}
             >
-              {postLiked ? '❤️' : '🤍'} {post.likes + (postLiked ? 1 : 0)}
+              {postLiked ? '❤️' : '🤍'} {likeCount}
             </Text>
           </Tappable>
           <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primary }}>
@@ -224,8 +244,8 @@ export function CommPostScreen() {
           returnKeyType="send"
           style={{ flex: 1, fontSize: 14, color: colors.textPrimary, paddingVertical: 0 }}
         />
-        <Tappable onPress={sendComment} hitSlop={8}>
-          <Text style={{ fontSize: 18, color: draft.trim() ? colors.primary : colors.disabled }}>
+        <Tappable onPress={sendComment} hitSlop={8} disabled={sending}>
+          <Text style={{ fontSize: 18, color: draft.trim() && !sending ? colors.primary : colors.disabled }}>
             ➤
           </Text>
         </Tappable>

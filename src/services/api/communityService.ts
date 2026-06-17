@@ -24,4 +24,18 @@ export const communityService = {
       body: { body, category, photoCount },
     });
   },
+
+  async addComment(postId: string, body: string) {
+    return request<{ ok: boolean }>(
+      `/community/posts/${encodeURIComponent(postId)}/comments`,
+      { body: { body } },
+    );
+  },
+
+  async toggleLike(postId: string) {
+    return request<{ liked: boolean; likes: number }>(
+      `/community/posts/${encodeURIComponent(postId)}/like`,
+      { method: 'POST' },
+    );
+  },
 };

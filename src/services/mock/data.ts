@@ -671,6 +671,8 @@ export interface CommunityPost {
   replies: number;
   likes: number;
   hasPhoto?: boolean;
+  /** Whether the current user has liked this post (Supabase-backed feeds). */
+  likedByMe?: boolean;
 }
 
 export const COMMUNITY_POSTS: CommunityPost[] = [
