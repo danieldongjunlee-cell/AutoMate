@@ -31,9 +31,18 @@ import { pointsService as mockPointsService } from './mock/pointsService';
 import { proService as mockProService } from './mock/proService';
 import { quoteService as mockQuoteService } from './mock/quoteService';
 import { vehiclesService as mockVehiclesService } from './mock/vehiclesService';
+import { vehiclesService as supabaseVehiclesService } from './supabase/vehiclesService';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 /** True when the app talks to the real server (EXPO_PUBLIC_API_URL set). */
 export const USE_API = apiEnabled;
+
+/**
+ * True when Supabase env vars are set — the app stores real data directly in
+ * Supabase (no server). Domains are migrated to Supabase one at a time; until a
+ * domain has a Supabase twin it stays on the mock/api implementation.
+ */
+export const USE_SUPABASE = isSupabaseConfigured;
 
 export const authService: typeof mockAuthService = USE_API ? apiAuthService : mockAuthService;
 export const quoteService: typeof mockQuoteService = USE_API ? apiQuoteService : mockQuoteService;
@@ -54,9 +63,11 @@ export const insuranceService: typeof mockInsuranceService = USE_API
 export const pointsService: typeof mockPointsService = USE_API
   ? apiPointsService
   : mockPointsService;
-export const vehiclesService: typeof mockVehiclesService = USE_API
-  ? apiVehiclesService
-  : mockVehiclesService;
+export const vehiclesService: typeof mockVehiclesService = USE_SUPABASE
+  ? supabaseVehiclesService
+  : USE_API
+    ? apiVehiclesService
+    : mockVehiclesService;
 export const paymentMethodsService: typeof mockPaymentMethodsService = USE_API
   ? apiPaymentMethodsService
   : mockPaymentMethodsService;
