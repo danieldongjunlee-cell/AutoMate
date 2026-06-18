@@ -149,16 +149,23 @@ export function QuotesReceivedScreen() {
           <View style={{ height: 6, backgroundColor: 'rgba(29,158,117,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: spacing.sm }}>
             <View style={{ width: `${aiEstimate.confidencePct}%`, height: '100%', backgroundColor: colors.success, borderRadius: 3 }} />
           </View>
-          {/* Submitted parts: part · damage type · photo count */}
-          <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', paddingTop: spacing.sm, gap: 4 }}>
+          {/* Submitted parts: part + damage type as standout chips + photo count */}
+          <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', paddingTop: spacing.sm, gap: spacing.xs }}>
             <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
-              You submitted
+              Damaged parts assessed
             </Text>
             {damageParts.map((p) => (
-              <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>{p.part}</Text>
-                <Text style={{ fontSize: 12, color: colors.textSecondary }}>
-                  {p.type} · {p.photos} photo{p.photos !== 1 ? 's' : ''}
+              <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                {/* Part name — prominent dark chip */}
+                <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
+                </View>
+                {/* Damage type — colored badge so it's easy to spot */}
+                <View style={{ backgroundColor: colors.warningSurface, borderWidth: 1, borderColor: colors.warning, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
+                </View>
+                <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                  📷 {p.photos} photo{p.photos !== 1 ? 's' : ''}
                 </Text>
               </View>
             ))}

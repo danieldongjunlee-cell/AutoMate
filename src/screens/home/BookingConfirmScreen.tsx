@@ -174,7 +174,7 @@ export function BookingConfirmScreen() {
       </View>
 
       <Tappable
-        onPress={() => navigation.navigate('WriteReview', { dealerId: dealer.id })}
+        onPress={() => navigation.navigate('Reviews', { dealerId: dealer.id })}
         style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.xs }}
       >
         <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primary }}>

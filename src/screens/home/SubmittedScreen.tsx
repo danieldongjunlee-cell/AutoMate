@@ -192,7 +192,7 @@ export function SubmittedScreen() {
       ) : (
         <ProLockOverlay
           subtitle="Unlock AI-matched DIY guides based on your damage photos"
-          onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock')}
+          onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
         >
           <DiyGuideRow level="EASY" title="Boiling water dent method" meta="7 steps · ~15 min · Boiling water + plunger" showLink />
           <DiyGuideRow level="MED" title="Plunger pull method" meta="6 steps · ~12 min · Plunger required" showLink />

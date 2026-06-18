@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
@@ -10,13 +10,17 @@ import { PRO_PLANS, useAppStore } from '../../store/useAppStore';
 import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSuccess'>;
+type Route = RouteProp<HomeStackParamList, 'ProSuccess'>;
 
-/** Wireframe s-pro-success: Pro activated → back to booking. */
+/** Wireframe s-pro-success: Pro activated → back to booking (or available quotes). */
 export function ProSuccessScreen() {
   const navigation = useNavigation<Nav>();
+  const returnTo = useRoute<Route>().params?.returnTo;
   const { colors } = useTheme();
   const plan = useAppStore((s) => s.proPlan) ?? 'annual';
   const p = PRO_PLANS[plan];
+  // Unlocking Pro from the post-submit DIY lock returns to the quotes screen.
+  const toQuotes = returnTo === 'DealerQuotes';
 
   return (
     <Screen>
@@ -53,9 +57,11 @@ export function ProSuccessScreen() {
       </Card>
       <PrimaryButton
         variant="success"
-        label="Back to confirm booking →"
+        label={toQuotes ? 'View available quotes →' : 'Back to confirm booking →'}
         onPress={() =>
-          navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' })
+          toQuotes
+            ? navigation.navigate('DealerQuotes')
+            : navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' })
         }
       />
     </Screen>

@@ -197,7 +197,7 @@ export function AfterHoursScreen() {
           <ProLockOverlay
             onDark
             subtitle="Unlock AI-matched DIY guides based on your damage photos"
-            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock')}
+            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
           >
             <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
             <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />

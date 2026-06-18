@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +15,7 @@ import { PaymentCard, paymentMethodsService, proService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
+type Route = RouteProp<HomeStackParamList, 'ProSubscribe'>;
 type Plan = 'annual' | 'monthly';
 
 const BENEFITS = [
@@ -27,6 +28,7 @@ const BENEFITS = [
 /** Wireframe s-pro-subscribe: plan picker for AutoMate Pro. */
 export function ProSubscribeScreen() {
   const navigation = useNavigation<Nav>();
+  const returnTo = useRoute<Route>().params?.returnTo;
   const { colors } = useTheme();
   const [plan, setPlan] = useState<Plan>('annual');
   const [busy, setBusy] = useState(false);
@@ -45,7 +47,7 @@ export function ProSubscribeScreen() {
     setBusy(true);
     try {
       await proService.subscribe(plan);
-      navigation.navigate('ProSuccess');
+      navigation.navigate('ProSuccess', returnTo ? { returnTo } : undefined);
     } finally {
       setBusy(false);
     }

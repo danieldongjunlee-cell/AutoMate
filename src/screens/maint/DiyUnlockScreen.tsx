@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -12,6 +12,7 @@ import { MaintStackParamList } from '../../navigation/types';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyUnlock'>;
+type Route = RouteProp<MaintStackParamList, 'DiyUnlock'>;
 
 const BENEFITS = [
   { icon: '📚', title: 'All 12 DIY repair guides', sub: 'Step-by-step with photos · save $100s in labor' },
@@ -23,6 +24,7 @@ const BENEFITS = [
 /** Wireframe s-diy-unlock: DIY guide paywall — included with AutoMate Pro ($48/yr). */
 export function DiyUnlockScreen() {
   const navigation = useNavigation<Nav>();
+  const returnTo = useRoute<Route>().params?.returnTo;
   const { colors } = useTheme();
 
   return (
@@ -156,7 +158,7 @@ export function DiyUnlockScreen() {
           </View>
         </View>
         <Tappable
-          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')}
+          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo })}
           style={({ pressed }) => ({
             backgroundColor: colors.primary,
             borderRadius: radii.sm,

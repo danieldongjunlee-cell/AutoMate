@@ -26,9 +26,10 @@ export function QuoteRow({
   const { colors } = useTheme();
   const dealer = dealerById(quote.dealerId);
   const [open, setOpen] = useState(false);
-  // Selecting the matching map pin expands this card.
+  // Breakdown follows selection: expands the selected shop and collapses the
+  // others when a different shop is selected.
   useEffect(() => {
-    if (selected) setOpen(true);
+    setOpen(!!selected);
   }, [selected]);
   const discount = quote.tier === 'best' ? 20 : 0;
   const b = quoteBreakdown(quote.price, discount);

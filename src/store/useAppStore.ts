@@ -77,7 +77,7 @@ export interface AppBooking {
   day: string; // "12"
   time: string; // "10:30 AM"
   priceLabel: string; // "$320–345" / "$49"
-  status: 'confirmed' | 'paid' | 'reschedule_proposed' | 'cancelled';
+  status: 'confirmed' | 'paid' | 'reschedule_proposed' | 'cancelled' | 'completed';
   /** When the shop proposes a different time (status reschedule_proposed). */
   proposedTime?: string;
   /** The shop's reason for proposing a new time or cancelling (shown on tap). */
@@ -152,6 +152,22 @@ const SEED_BOOKINGS: AppBooking[] = [
     priceLabel: '$89',
     status: 'confirmed',
     createdAt: 3,
+  },
+  {
+    id: 'bk-seed-completed',
+    kind: 'maintenance',
+    dealerId: 'honda-fairfax',
+    brand: 'Honda',
+    icon: '🛢️',
+    title: 'Oil change + inspection',
+    dealerName: 'Honda Fairfax',
+    dateLabel: 'Mon, Mar 10',
+    mon: 'Mar',
+    day: '10',
+    time: '9:00 AM',
+    priceLabel: '$88',
+    status: 'completed',
+    createdAt: 0,
   },
 ];
 
@@ -326,6 +342,8 @@ interface AppState {
   removeBooking: (id?: string) => void;
   /** Accept the shop's proposed new time → confirmed at that time. */
   acceptProposedTime: (id: string) => void;
+  /** Mark a booking as completed (unlocks leaving a review for that shop). */
+  markBookingCompleted: (id: string) => void;
 
   // Reviews the user has written (v17 write-review → reviews).
   reviews: UserReview[];
@@ -533,6 +551,12 @@ export const useAppStore = create<AppState>((set) => ({
             }
           : bk,
       ),
+    }));
+  },
+  markBookingCompleted: (id) => {
+    void updateBookingRow(id, { status: 'completed' });
+    set((s) => ({
+      bookings: s.bookings.map((bk) => (bk.id === id ? { ...bk, status: 'completed' } : bk)),
     }));
   },
 

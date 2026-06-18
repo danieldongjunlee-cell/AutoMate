@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { FilterChips } from '../../components/FilterChips';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
@@ -22,6 +23,9 @@ const MONTH_NAMES = [
 ];
 const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+/** Status filters for the scheduled-services list. */
+const STATUS_FILTERS = ['All', 'Confirmed', 'New time proposed', 'Completed', 'Cancelled'];
+
 /** Wireframe s-bookings: scheduled services + pending quotes (new bottom tab). */
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
@@ -30,10 +34,29 @@ export function BookingsScreen() {
   const { brand } = useActiveVehicle();
   const allBookings = useAppStore((s) => s.bookings);
   const setBookingsViewed = useAppStore((s) => s.setBookingsViewed);
+  const markBookingCompleted = useAppStore((s) => s.markBookingCompleted);
   // Opening the Bookings tab clears its badge.
   useEffect(() => setBookingsViewed(true), [setBookingsViewed]);
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
+
+  // Status filter for the scheduled-services list.
+  const [statusFilter, setStatusFilter] = useState('All');
+  const matchesStatus = (b: AppBooking) => {
+    switch (statusFilter) {
+      case 'Confirmed':
+        return b.status === 'confirmed' || b.status === 'paid';
+      case 'New time proposed':
+        return b.status === 'reschedule_proposed';
+      case 'Completed':
+        return b.status === 'completed';
+      case 'Cancelled':
+        return b.status === 'cancelled';
+      default:
+        return true;
+    }
+  };
+  const visibleBookings = bookings.filter(matchesStatus);
 
   // Interactive calendar: starts on the real current month, navigable across
   // months and years.
@@ -53,6 +76,11 @@ export function BookingsScreen() {
         'Booking cancelled by the shop',
         b.reason ?? 'This booking was cancelled by the shop.',
       );
+      return;
+    }
+    if (b.status === 'completed') {
+      // Completed → go to the shop's reviews (where the verified review unlocks).
+      navigateCrossTab(navigation, 'HomeTab', 'Reviews', { dealerId: b.dealerId });
       return;
     }
     if (b.status === 'reschedule_proposed') {
@@ -81,7 +109,7 @@ export function BookingsScreen() {
   // Days with a scheduled booking in the displayed month → mark color by kind.
   const markedDays = new Map<number, string>();
   bookings.forEach((b) => {
-    if (b.status === 'cancelled') return; // cancelled → not on the calendar
+    if (b.status === 'cancelled' || b.status === 'completed') return; // only upcoming on the calendar
     if (b.mon !== MONTH_ABBR[view.month]) return; // only the month in view
     const d = parseInt(b.day, 10);
     if (!Number.isNaN(d)) markedDays.set(d, b.kind === 'repair' ? colors.warning : colors.primary);
@@ -231,6 +259,8 @@ export function BookingsScreen() {
       </Card>
 
       <SectionLabel>{t('Scheduled services')}</SectionLabel>
+      <FilterChips options={STATUS_FILTERS} selected={statusFilter} onSelect={setStatusFilter} />
+      <View style={{ marginTop: spacing.sm }} />
       {bookings.length === 0 ? (
         <Card style={{ padding: spacing.xl, alignItems: 'center', marginBottom: spacing.md }}>
           <Text style={{ fontSize: 28, marginBottom: 6 }}>📅</Text>
@@ -241,66 +271,110 @@ export function BookingsScreen() {
             Book a repair or schedule a service and it will show up here.
           </Text>
         </Card>
+      ) : visibleBookings.length === 0 ? (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+          No {statusFilter.toLowerCase()} bookings.
+        </Text>
       ) : (
-        bookings.map((b) => (
-          <Tappable
-            key={b.id}
-            onPress={() => openBooking(b)}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderWidth: 1,
-              borderLeftWidth: 4,
-              borderLeftColor: kindStyle(b).accent,
-              borderRadius: radii.md,
-              padding: spacing.sm,
-              marginBottom: spacing.sm,
-            }}
-          >
-            {dateBadge(b)}
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
-                {b.title}
-              </Text>
-              <Text style={{ fontSize: 10, fontWeight: '700', color: kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 1 }}>
-                {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
-              </Text>
-              <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-                {b.dealerName} · {b.dateLabel}
-              </Text>
-              {(b.status === 'reschedule_proposed' || b.status === 'cancelled') && b.reason ? (
-                <Text
+        visibleBookings.map((b) => {
+          const completed = b.status === 'completed';
+          const upcoming = b.status === 'confirmed' || b.status === 'paid';
+          return (
+            <View key={b.id} style={{ marginBottom: spacing.sm }}>
+              <Tappable
+                onPress={() => openBooking(b)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing.sm,
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  borderWidth: 1,
+                  borderLeftWidth: 4,
+                  borderLeftColor: completed ? colors.success : kindStyle(b).accent,
+                  borderRadius: radii.md,
+                  padding: spacing.sm,
+                }}
+              >
+                {dateBadge(b)}
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
+                    {b.title}
+                  </Text>
+                  <Text style={{ fontSize: 10, fontWeight: '700', color: kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 1 }}>
+                    {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
+                  </Text>
+                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                    {b.dealerName} · {b.dateLabel}
+                  </Text>
+                  {(b.status === 'reschedule_proposed' || b.status === 'cancelled') && b.reason ? (
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        fontWeight: '700',
+                        color: b.status === 'cancelled' ? colors.danger : colors.warningDeep,
+                        marginTop: 2,
+                      }}
+                    >
+                      ⓘ Tap to see why
+                    </Text>
+                  ) : null}
+                </View>
+                <View style={{ alignItems: 'flex-end', gap: 3 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
+                    {b.priceLabel}
+                  </Text>
+                  {b.status === 'reschedule_proposed' ? (
+                    <Badge label="New time proposed" variant="warning" />
+                  ) : b.status === 'cancelled' ? (
+                    <Badge label="Cancelled" variant="danger" />
+                  ) : completed ? (
+                    <Badge label="Completed" variant="success" />
+                  ) : (
+                    <Badge
+                      label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
+                      variant={b.status === 'paid' ? 'success' : 'primarySoft'}
+                    />
+                  )}
+                </View>
+              </Tappable>
+
+              {/* Completed → can leave a verified review. Upcoming → mark done (demo). */}
+              {completed ? (
+                <Tappable
+                  onPress={() => navigateCrossTab(navigation, 'HomeTab', 'WriteReview', { dealerId: b.dealerId })}
                   style={{
-                    fontSize: 10,
-                    fontWeight: '700',
-                    color: b.status === 'cancelled' ? colors.danger : colors.warningDeep,
-                    marginTop: 2,
+                    marginTop: 6,
+                    backgroundColor: colors.primarySurface,
+                    borderRadius: radii.sm,
+                    paddingVertical: 9,
+                    alignItems: 'center',
                   }}
                 >
-                  ⓘ Tap to see why
-                </Text>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>
+                    ★ Leave a review
+                  </Text>
+                </Tappable>
+              ) : upcoming ? (
+                <Tappable
+                  onPress={() => markBookingCompleted(b.id)}
+                  style={{
+                    marginTop: 6,
+                    borderWidth: StyleSheet.hairlineWidth,
+                    borderColor: colors.border,
+                    borderRadius: radii.sm,
+                    paddingVertical: 8,
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textSecondary }}>
+                    ✓ Mark service completed
+                  </Text>
+                </Tappable>
               ) : null}
             </View>
-            <View style={{ alignItems: 'flex-end', gap: 3 }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
-                {b.priceLabel}
-              </Text>
-              {b.status === 'reschedule_proposed' ? (
-                <Badge label="New time proposed" variant="warning" />
-              ) : b.status === 'cancelled' ? (
-                <Badge label="Cancelled" variant="danger" />
-              ) : (
-                <Badge
-                  label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
-                  variant={b.status === 'paid' ? 'success' : 'primarySoft'}
-                />
-              )}
-            </View>
-          </Tappable>
-        ))
+          );
+        })
       )}
     </Screen>
   );

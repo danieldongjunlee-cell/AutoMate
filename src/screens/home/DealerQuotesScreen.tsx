@@ -36,6 +36,7 @@ export function DealerQuotesScreen() {
   const { colors } = useTheme();
   const t = useT();
   const aiEstimate = useAppStore((s) => s.aiEstimate);
+  const damageParts = useAppStore((s) => s.damageParts);
   const { data: quotes, isLoading } = useQuery({
     queryKey: ['quotes'],
     queryFn: quoteService.getQuotes,
@@ -96,8 +97,8 @@ export function DealerQuotesScreen() {
             marginBottom: 4,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
-            AI estimate · rear bumper dent
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDeep }}>
+            AI estimated repair cost
           </Text>
           <View
             style={{
@@ -139,6 +140,25 @@ export function DealerQuotesScreen() {
             }}
           />
         </View>
+        {/* Damaged parts + type as standout chips */}
+        {damageParts.length > 0 ? (
+          <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', marginTop: spacing.sm, paddingTop: spacing.sm, gap: spacing.xs }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+              Damaged parts assessed
+            </Text>
+            {damageParts.map((p) => (
+              <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+                <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
+                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
+                </View>
+                <View style={{ backgroundColor: colors.warningSurface, borderWidth: 1, borderColor: colors.warning, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
+                </View>
+                <Text style={{ fontSize: 12, color: colors.textTertiary }}>📷 {p.photos} photo{p.photos !== 1 ? 's' : ''}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       {/* Shops with quotes near you — real map (Leaflet web / RN-maps native) */}

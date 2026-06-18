@@ -22,8 +22,10 @@ export function ReviewsScreen() {
   const { colors } = useTheme();
   const t = useT();
   const userReviews = useAppStore((s) => s.reviews);
-  // You can only review a shop you've completed a service/booking with.
-  const hasCompletedService = useAppStore((s) => s.bookings.length > 0);
+  // You can only review a shop you've COMPLETED a service with (this dealer).
+  const hasCompletedService = useAppStore((s) =>
+    s.bookings.some((b) => b.status === 'completed' && (!dealerId || b.dealerId === dealerId)),
+  );
 
   const shop = shopReviews(dealerId);
   const dealer = dealerById(dealerId);
