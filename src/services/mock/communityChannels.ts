@@ -213,6 +213,18 @@ export function allBrandPosts(brand: string): CommunityPost[] {
   return CHANNEL_KINDS.flatMap((kind) => groupPosts(brand, kind));
 }
 
+/**
+ * Posts only from the communities the user has actually JOINED (within the
+ * active brand). New users join nothing, so this is empty and the Community tab
+ * shows no notification badge until they join a community.
+ */
+export function joinedBrandPosts(brand: string, joinedIds: string[]): CommunityPost[] {
+  const joined = new Set(joinedIds);
+  return brandChannels(brand)
+    .filter((channel) => joined.has(channel.id))
+    .flatMap((channel) => groupPosts(brand, channelKind(channel.name)));
+}
+
 export function groupPosts(brand: string, kind: ChannelKind): CommunityPost[] {
   const safeBrand = brand.trim() || 'Your Car';
   return POST_TEMPLATES[kind].map((seed, index) => ({

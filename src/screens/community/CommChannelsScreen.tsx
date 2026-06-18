@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -10,6 +10,7 @@ import { CommunityStackParamList } from '../../navigation/types';
 import { brandChannels, channelKind } from '../../services/mock/communityChannels';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
@@ -26,23 +27,13 @@ export function CommChannelsScreen() {
   // (Honda ↔ Toyota ↔ Kia) swaps the entire list to that brand's communities.
   const channels = useMemo(() => brandChannels(brand), [brand]);
 
-  // New users start with NOTHING joined. Once a car is registered, the brand's
-  // primary community auto-appears (joined) so they have somewhere to land.
-  const [joinedIds, setJoinedIds] = useState<Set<string>>(() => new Set());
-  useEffect(() => {
-    if (active && channels.length) {
-      setJoinedIds((prev) => (prev.has(channels[0].id) ? prev : new Set([...prev, channels[0].id])));
-    }
-  }, [active, channels]);
-
-  const toggleJoined = (id: string) => {
-    setJoinedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
+  // Joined state lives in the store so the Community tab badge can scope
+  // notifications to joined communities. New users join NOTHING — registering a
+  // car only makes its brand's communities appear; the user joins manually.
+  const joinedCommunityIds = useAppStore((s) => s.joinedCommunityIds);
+  const joinCommunity = useAppStore((s) => s.joinCommunity);
+  const leaveCommunity = useAppStore((s) => s.leaveCommunity);
+  const joinedIds = useMemo(() => new Set(joinedCommunityIds), [joinedCommunityIds]);
 
   /** Both joining and leaving ask for confirmation first. */
   const onJoinPress = (id: string, name: string) => {
@@ -50,7 +41,7 @@ export function CommChannelsScreen() {
       confirmAction(
         `Leave ${name}?`,
         `You'll stop seeing this community's posts in your feed. You can rejoin anytime.`,
-        () => toggleJoined(id),
+        () => leaveCommunity(id),
         'Leave',
       );
       return;
@@ -58,7 +49,7 @@ export function CommChannelsScreen() {
     confirmAction(
       `Join ${name}?`,
       `You'll join this community and see its posts in your feed.`,
-      () => toggleJoined(id),
+      () => joinCommunity(id),
       'Join',
     );
   };

@@ -21,6 +21,9 @@ export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const t = useT();
+  // "New here?" is onboarding for brand-new users only — it disappears once
+  // they submit their first AI estimate, and never shows for returning users.
+  const isNewUser = useAppStore((s) => s.isNewUser);
 
   const tile = (emoji: string, bg: string, title: string, sub: string, onPress: () => void) => (
     <Tappable
@@ -95,17 +98,19 @@ export function HomeLauncherScreen() {
         <CarSwitchChip />
       </View>
 
-      {/* New here? — how-it-works entry */}
-      <Tappable
-        onPress={() => navigation.navigate('HowItWorks')}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
-      >
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
-        </View>
-        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
-      </Tappable>
+      {/* New here? — how-it-works entry (new users only) */}
+      {isNewUser ? (
+        <Tappable
+          onPress={() => navigation.navigate('HowItWorks')}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+        >
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
+            <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
+          </View>
+          <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
+        </Tappable>
+      ) : null}
 
       {/* Hero — Get AI estimate */}
       <Tappable onPress={() => navigation.navigate('CarDiagram')}>

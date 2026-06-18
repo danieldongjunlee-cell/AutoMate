@@ -87,7 +87,7 @@ import { EstimateHistoryScreen } from '../screens/profile/EstimateHistoryScreen'
 import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
 import { useActiveVehicle } from '../hooks/useActiveVehicle';
-import { allBrandPosts } from '../services/mock/communityChannels';
+import { joinedBrandPosts } from '../services/mock/communityChannels';
 import { QUOTES } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
@@ -366,12 +366,14 @@ export function MainTabs() {
   const quotesViewed = useAppStore((s) => s.quotesViewed);
   const bookingsViewed = useAppStore((s) => s.bookingsViewed);
   const readPostIds = useAppStore((s) => s.readPostIds);
+  const joinedCommunityIds = useAppStore((s) => s.joinedCommunityIds);
   const bookings = useAppStore((s) => s.bookings);
 
   // Per-tab notification counts.
   const upcoming = bookings.filter((b) => b.status === 'confirmed' || b.status === 'paid').length;
-  // Community = unread posts across the brand's communities (cleared as you read them).
-  const unreadPosts = allBrandPosts(brand).filter((p) => !readPostIds[p.id]).length;
+  // Community = unread posts in the communities the user has JOINED (no joins →
+  // no badge). Cleared as the posts are read.
+  const unreadPosts = joinedBrandPosts(brand, joinedCommunityIds).filter((p) => !readPostIds[p.id]).length;
   const badges: Partial<Record<keyof MainTabParamList, number>> = {
     QuotesTab: damageParts.length > 0 && !quotesViewed ? QUOTES.length : undefined,
     BookingsTab: !bookingsViewed && upcoming ? upcoming : undefined,

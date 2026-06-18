@@ -218,6 +218,11 @@ interface AppState {
   patchUser: (patch: Partial<AuthUser>) => void;
   signIn: () => void;
   signOut: () => void;
+  /** True only for a brand-new sign-up, until they submit their first AI
+   *  estimate. Drives the Home "New here?" onboarding hint — returning users
+   *  (sign-in / restored session) never see it. */
+  isNewUser: boolean;
+  setIsNewUser: (v: boolean) => void;
 
   // Dark mode (Settings → App preferences)
   darkMode: boolean;
@@ -292,6 +297,12 @@ interface AppState {
   /** Community post ids the user has opened/seen → drives the unread-posts badge. */
   readPostIds: Record<string, boolean>;
   markPostsRead: (ids: string[]) => void;
+  /** Communities the user has explicitly joined. Empty for new users — a
+   *  registered car makes its brand's communities *appear*, but none are joined
+   *  (and no notifications) until the user joins one. */
+  joinedCommunityIds: string[];
+  joinCommunity: (id: string) => void;
+  leaveCommunity: (id: string) => void;
 
   // Booking reminder timing (booking-confirm / maint-schedule-confirm rows)
   reminderPref: ReminderPref;
@@ -335,6 +346,8 @@ export const useAppStore = create<AppState>((set) => ({
   setAuth: (authToken, user) => set({ authToken, user }),
   patchUser: (patch) => set((s) => ({ user: s.user ? { ...s.user, ...patch } : s.user })),
   signIn: () => set({ isAuthenticated: true }),
+  isNewUser: false,
+  setIsNewUser: (isNewUser) => set({ isNewUser }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
   signOut: () => {
@@ -344,6 +357,7 @@ export const useAppStore = create<AppState>((set) => ({
       isAuthenticated: false,
       authToken: null,
       user: null,
+      isNewUser: false,
       damageParts: [],
       ...emptyDraft,
       aiEstimate: null,
@@ -355,6 +369,7 @@ export const useAppStore = create<AppState>((set) => ({
       dailyCheckedIn: false,
       noShowCount: 0,
       activeVehicleId: null,
+      joinedCommunityIds: [],
       bookings: SEED_BOOKINGS,
       reviews: [],
     });
@@ -455,6 +470,11 @@ export const useAppStore = create<AppState>((set) => ({
       for (const id of missing) next[id] = true;
       return { readPostIds: next };
     }),
+  joinedCommunityIds: [],
+  joinCommunity: (id) =>
+    set((s) => (s.joinedCommunityIds.includes(id) ? {} : { joinedCommunityIds: [...s.joinedCommunityIds, id] })),
+  leaveCommunity: (id) =>
+    set((s) => ({ joinedCommunityIds: s.joinedCommunityIds.filter((x) => x !== id) })),
 
   reminderPref: '1 day before',
   setReminderPref: (reminderPref) => set({ reminderPref }),

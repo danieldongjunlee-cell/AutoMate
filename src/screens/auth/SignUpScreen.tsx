@@ -36,6 +36,7 @@ export function SignUpScreen() {
   const [legal, setLegal] = useState<LegalKind>(null);
   const setAuth = useAppStore((s) => s.setAuth);
   const signIn = useAppStore((s) => s.signIn);
+  const setIsNewUser = useAppStore((s) => s.setIsNewUser);
 
   const rules = PASSWORD_RULES.map((r) => ({ label: r.label, ok: r.test(password) }));
   const rulesPass = rules.every((r) => r.ok);
@@ -46,6 +47,9 @@ export function SignUpScreen() {
 
   const onSubmit = async () => {
     setLoading(true);
+    // Brand-new account → show the Home "New here?" hint until they submit
+    // their first AI estimate.
+    setIsNewUser(true);
     try {
       // Supabase configured → create the real user and go straight in (the
       // mock OTP step is skipped). Otherwise keep the demo verify flow.
