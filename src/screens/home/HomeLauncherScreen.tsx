@@ -100,7 +100,6 @@ export function HomeLauncherScreen() {
         onPress={() => navigation.navigate('HowItWorks')}
         style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
-        <Text style={{ fontSize: 18 }}>👋</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>

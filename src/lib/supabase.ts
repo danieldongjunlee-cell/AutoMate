@@ -21,6 +21,8 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
         autoRefreshToken: true,
         // RN has no URL-based auth callback like the web does.
         detectSessionInUrl: false,
+        // Use the PKCE code flow so OAuth redirects return ?code= we exchange.
+        flowType: 'pkce',
       },
     })
   : null;

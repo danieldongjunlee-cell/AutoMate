@@ -135,10 +135,12 @@ export function CommChannelsScreen() {
           <Tappable
             key={channel.id}
             onPress={() =>
-              navigation.navigate('CommHonda', {
-                title: channel.name,
-                kind: channelKind(channel.name),
-              })
+              joined
+                ? navigation.navigate('CommHonda', {
+                    title: channel.name,
+                    kind: channelKind(channel.name),
+                  })
+                : onJoinPress(channel.id, channel.name)
             }
             style={({ pressed }) => ({
               backgroundColor: joined ? colors.primarySurface : colors.surface,

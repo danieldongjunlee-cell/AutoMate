@@ -124,16 +124,32 @@ export async function signInWithProvider(
   if (!data?.url) throw new Error('Could not start sign-in.');
 
   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
-  if (result.type !== 'success' || !result.url) {
+  if (result.type === 'cancel' || result.type === 'dismiss') {
     throw new Error('Sign-in was cancelled.');
   }
+  if (result.type !== 'success' || !result.url) {
+    throw new Error('Sign-in did not complete. Make sure the provider is enabled in Supabase.');
+  }
 
-  // PKCE flow returns ?code=… on the redirect; exchange it for a session.
-  const code = new URL(result.url).searchParams.get('code');
-  if (!code) throw new Error('Sign-in did not complete.');
-  const { data: sessionData, error: exErr } = await supabase.auth.exchangeCodeForSession(code);
-  if (exErr) throw exErr;
+  // PKCE returns ?code=… ; implicit returns tokens in the #fragment. Handle both.
+  const returned = result.url;
+  const code = new URL(returned).searchParams.get('code');
+  if (code) {
+    const { error: exErr } = await supabase.auth.exchangeCodeForSession(code);
+    if (exErr) throw exErr;
+  } else {
+    const fragment = returned.includes('#') ? returned.split('#')[1] : '';
+    const params = new URLSearchParams(fragment);
+    const access_token = params.get('access_token');
+    const refresh_token = params.get('refresh_token');
+    const errDesc = params.get('error_description') ?? new URL(returned).searchParams.get('error_description');
+    if (errDesc) throw new Error(errDesc);
+    if (!access_token || !refresh_token) throw new Error('Sign-in did not return a session.');
+    const { error: sessErr } = await supabase.auth.setSession({ access_token, refresh_token });
+    if (sessErr) throw sessErr;
+  }
 
+  const { data: sessionData } = await supabase.auth.getSession();
   const session = sessionData.session;
   const email = session?.user.email ?? '';
   return fromProfile(email, nameFromMetadata(session?.user.user_metadata, ''), session?.access_token ?? null);

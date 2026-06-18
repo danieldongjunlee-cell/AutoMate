@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
@@ -35,11 +35,31 @@ export function MaintScheduleBookScreen() {
 
   const dealer = dealerById(cart.dealerId);
   const selectedDay = cart.date ? Number(cart.date.split('-')[2]) : null;
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(['oil', 'brakes']));
+  // Every category starts collapsed.
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     navigation.setOptions({ title: dealer.name });
   }, [navigation, dealer.name]);
+
+  // Pre-select the services that apply to the registered car (once). Today that's
+  // the brake job sized to the car's type (e.g. KIA Sportage → SUV).
+  const didPreselect = useRef(false);
+  useEffect(() => {
+    if (didPreselect.current || !recoType) return;
+    didPreselect.current = true;
+    const brakes = MAINT_CATEGORIES.find((c) => c.id === 'brakes');
+    const reco = brakes?.services.find((s) => s.vehicleType === recoType);
+    if (reco && !cart.services.some((s) => s.id === reco.id)) {
+      toggleCartService({
+        id: reco.id,
+        name: `Brakes — ${reco.name}`,
+        price: reco.price,
+        durationMin: reco.durationMin,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recoType]);
 
   const { total, totalMin } = cartTotals(cart);
   const count = cart.services.length;
@@ -115,6 +135,28 @@ export function MaintScheduleBookScreen() {
       <SectionLabel>
         Maintenance services <Text style={{ textTransform: 'none' }}>(choose one or more)</Text>
       </SectionLabel>
+
+      {recoType ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: spacing.sm,
+            backgroundColor: colors.primarySurface,
+            borderRadius: radii.sm,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.primaryLight,
+            padding: spacing.sm,
+            marginBottom: spacing.sm,
+          }}
+        >
+          <Text style={{ fontSize: 14 }}>ℹ️</Text>
+          <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDeep, lineHeight: 17 }}>
+            Some services are pre-selected for your{' '}
+            <Text style={{ fontWeight: '800' }}>{active?.name ?? 'car'}</Text> — expand a category to
+            review or change them.
+          </Text>
+        </View>
+      ) : null}
 
       {MAINT_CATEGORIES.map((cat) => {
         const open = expanded.has(cat.id);
