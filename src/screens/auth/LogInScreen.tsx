@@ -37,7 +37,7 @@ export function LogInScreen() {
       // Supabase configured → authenticate against it and go straight in.
       if (isSupabaseConfigured) {
         const u = await signInWithSupabase(email, password);
-        setAuth(u.token, { name: u.name, email: u.email, username: u.username });
+        setAuth(u.token, { name: u.name, email: u.email, username: u.username, phone: u.phone });
         signIn();
         return;
       }

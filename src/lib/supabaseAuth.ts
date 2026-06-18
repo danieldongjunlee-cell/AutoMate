@@ -8,6 +8,7 @@ export interface SupabaseAuthResult {
   name: string;
   email: string;
   username?: string;
+  phone?: string;
   token: string | null;
 }
 
@@ -18,21 +19,24 @@ function nameFromMetadata(meta: Record<string, unknown> | undefined, fallback: s
 
 /**
  * Build the display user from a session, preferring the editable public.profiles
- * row (full_name + username) so profile edits and relaunches show the right name
- * instead of the email. Falls back to auth metadata / email-local-part.
+ * row (full_name + username + phone) so profile edits and relaunches show the
+ * right values. Falls back to auth metadata / email-local-part. A brand-new
+ * Google user has no profile phone yet, so phone comes back empty.
  */
 async function fromProfile(email: string, metaName: string, token: string | null): Promise<SupabaseAuthResult> {
   let name = metaName;
   let username: string | undefined;
+  let phone: string | undefined;
   try {
     const p = await getMyProfile();
     if (p?.full_name && p.full_name.trim()) name = p.full_name.trim();
     if (p?.username && p.username.trim()) username = p.username.trim();
+    if (p?.phone && p.phone.trim()) phone = p.phone.trim();
   } catch {
     // profiles table may not exist yet — keep the metadata/email fallback
   }
   if (!name.trim()) name = email.split('@')[0] || email;
-  return { name, email, username, token };
+  return { name, email, username, phone, token };
 }
 
 /**
@@ -60,7 +64,12 @@ export async function signUpWithSupabase(params: {
     );
   }
   const email = data.user?.email ?? params.email.trim();
-  return { name: params.fullName.trim() || email, email, token: data.session.access_token };
+  return {
+    name: params.fullName.trim() || email,
+    email,
+    phone: params.phone.trim() || undefined,
+    token: data.session.access_token,
+  };
 }
 
 /** Authenticate an existing Supabase user (the app's Log-in screen). */
@@ -112,7 +121,10 @@ export async function signInWithProvider(
   // (the page navigates away). No native modules involved.
   if (Platform.OS === 'web') {
     const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
-    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo, queryParams: { prompt: 'select_account' } },
+    });
     if (error) throw error;
     return { name: '', email: '', token: null };
   }
@@ -131,7 +143,7 @@ export async function signInWithProvider(
   const redirectTo = Linking.createURL('auth-callback');
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo, skipBrowserRedirect: true },
+    options: { redirectTo, skipBrowserRedirect: true, queryParams: { prompt: 'select_account' } },
   });
   if (error) throw error;
   if (!data?.url) throw new Error('Could not start sign-in.');

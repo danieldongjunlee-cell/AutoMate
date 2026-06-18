@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -19,18 +19,21 @@ type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const { brand } = useActiveVehicle();
+  const { active, brand } = useActiveVehicle();
   const [query, setQuery] = useState('');
 
   // Sub-communities are derived purely from the active brand, so switching cars
   // (Honda ↔ Toyota ↔ Kia) swaps the entire list to that brand's communities.
   const channels = useMemo(() => brandChannels(brand), [brand]);
 
-  // Joined membership is local-only (no backend). Seed the first community as
-  // joined so the active brand always has somewhere to land.
-  const [joinedIds, setJoinedIds] = useState<Set<string>>(
-    () => new Set(channels.length ? [channels[0].id] : []),
-  );
+  // New users start with NOTHING joined. Once a car is registered, the brand's
+  // primary community auto-appears (joined) so they have somewhere to land.
+  const [joinedIds, setJoinedIds] = useState<Set<string>>(() => new Set());
+  useEffect(() => {
+    if (active && channels.length) {
+      setJoinedIds((prev) => (prev.has(channels[0].id) ? prev : new Set([...prev, channels[0].id])));
+    }
+  }, [active, channels]);
 
   const toggleJoined = (id: string) => {
     setJoinedIds((prev) => {
@@ -75,6 +78,43 @@ export function CommChannelsScreen() {
         <CarSwitchChip />
       </View>
 
+      {/* No registered car → nothing to show. Communities are unlocked by the
+          car's brand, so we prompt the user to register one first. */}
+      {!active ? (
+        <Card tinted style={{ padding: spacing.lg, alignItems: 'center', marginTop: spacing.sm }}>
+          <Text style={{ fontSize: 30, marginBottom: spacing.sm }}>🚗</Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '700',
+              color: colors.textPrimary,
+              textAlign: 'center',
+              marginBottom: 4,
+            }}
+          >
+            No communities yet
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              color: colors.textTertiary,
+              textAlign: 'center',
+              lineHeight: 19,
+            }}
+          >
+            Register your car and its brand community will appear here automatically — no joining
+            required.
+          </Text>
+        </Card>
+      ) : (
+        renderCommunities()
+      )}
+    </Screen>
+  );
+
+  function renderCommunities() {
+    return (
+      <>
       {/* Search bar */}
       <View
         style={{
@@ -212,6 +252,7 @@ export function CommChannelsScreen() {
           Share tips, ask questions, help fellow {brand} owners
         </Text>
       </View>
-    </Screen>
-  );
+      </>
+    );
+  }
 }

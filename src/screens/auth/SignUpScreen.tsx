@@ -51,7 +51,7 @@ export function SignUpScreen() {
       // mock OTP step is skipped). Otherwise keep the demo verify flow.
       if (isSupabaseConfigured) {
         const u = await signUpWithSupabase({ fullName, email, phone, password });
-        setAuth(u.token, { name: u.name, email: u.email, username: u.username });
+        setAuth(u.token, { name: u.name, email: u.email, username: u.username, phone: u.phone });
         signIn();
         return;
       }

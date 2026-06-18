@@ -101,10 +101,12 @@ export function ProfChangeEmailScreen() {
 
 /** Wireframe s-prof-change-phone. */
 export function ProfChangePhoneScreen() {
+  const user = useAppStore((s) => s.user);
+  const phone = user ? user.phone ?? '' : USER.phone;
   return (
     <AccountForm
       rows={[
-        { label: 'Current number', value: USER.phone },
+        { label: 'Current number', value: phone },
         { label: 'New phone number', placeholder: '+1 (___) ___-____' },
       ]}
       note="A 6-digit code will be sent via SMS to your new number."

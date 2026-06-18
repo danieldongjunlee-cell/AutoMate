@@ -202,6 +202,7 @@ export interface AuthUser {
   name: string;
   email: string;
   username?: string;
+  phone?: string;
   /** Profile photo (local uri or remote url). */
   avatarUri?: string;
 }
