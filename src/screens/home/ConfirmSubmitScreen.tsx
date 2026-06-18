@@ -206,6 +206,7 @@ export function ConfirmSubmitScreen() {
   const resetDraft = useAppStore((s) => s.resetDraft);
   const addPoints = useAppStore((s) => s.addPoints);
   const setAiEstimate = useAppStore((s) => s.setAiEstimate);
+  const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async () => {
@@ -220,6 +221,7 @@ export function ConfirmSubmitScreen() {
       addPoints(pointsEarned, 'Submitted damage photos');
       // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
       setAiEstimate(aiEstimate ?? null);
+      setQuotesViewed(false); // new quotes → show the unread badge on the Quotes tab
       // Persist the estimate + upload photos to Supabase (no-op if unconfigured).
       void saveDamageEstimate(damageParts, aiEstimate ?? null);
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');

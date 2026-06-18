@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
@@ -95,7 +95,11 @@ export function QuotesReceivedScreen() {
   const damageParts = useAppStore((s) => s.damageParts);
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   const resetDamageFlow = useAppStore((s) => s.resetDamageFlow);
+  const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
   const { data: quotes, isLoading } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
+
+  // Opening this tab clears the unread-quotes badge.
+  useEffect(() => setQuotesViewed(true), [setQuotesViewed]);
 
   const [distance, setDistance] = useState(DISTANCE_OPTS[0]);
   const [sort, setSort] = useState(SORT_OPTS[0]);

@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -101,7 +101,11 @@ export function ProfHubScreen() {
     <Screen safeTop>
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-        <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />
+        {authedUser?.avatarUri ? (
+          <Image source={{ uri: authedUser.avatarUri }} style={{ width: 52, height: 52, borderRadius: 26 }} />
+        ) : (
+          <AvatarCircle initial={displayInitial} color={colors.primary} size={52} />
+        )}
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ fontSize: 18, fontWeight: '500', color: colors.textPrimary }}>

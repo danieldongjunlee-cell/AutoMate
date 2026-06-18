@@ -202,6 +202,8 @@ export interface AuthUser {
   name: string;
   email: string;
   username?: string;
+  /** Profile photo (local uri or remote url). */
+  avatarUri?: string;
 }
 
 interface AppState {
@@ -279,6 +281,9 @@ interface AppState {
   /** AI estimate from the latest submit (Submitted + DealerQuotes headers). */
   aiEstimate: AiEstimateSummary | null;
   setAiEstimate: (estimate: AiEstimateSummary | null) => void;
+  /** Whether the user has opened the Quotes tab since the latest submit (badge). */
+  quotesViewed: boolean;
+  setQuotesViewed: (v: boolean) => void;
 
   // Booking reminder timing (booking-confirm / maint-schedule-confirm rows)
   reminderPref: ReminderPref;
@@ -428,6 +433,8 @@ export const useAppStore = create<AppState>((set) => ({
   resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null }),
   aiEstimate: null,
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
+  quotesViewed: true,
+  setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
 
   reminderPref: '1 day before',
   setReminderPref: (reminderPref) => set({ reminderPref }),

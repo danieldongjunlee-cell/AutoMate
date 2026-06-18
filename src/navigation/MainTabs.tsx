@@ -86,6 +86,10 @@ import { PointsHistoryScreen } from '../screens/profile/PointsHistoryScreen';
 import { EstimateHistoryScreen } from '../screens/profile/EstimateHistoryScreen';
 import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
+import { useActiveVehicle } from '../hooks/useActiveVehicle';
+import { brandChannels } from '../services/mock/communityChannels';
+import { QUOTES } from '../services/mock/data';
+import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
 import {
@@ -357,6 +361,20 @@ const TAB_COMPONENTS: Record<keyof MainTabParamList, React.ComponentType> = {
 export function MainTabs() {
   const theme = useTheme();
   const t = useT();
+  const { brand } = useActiveVehicle();
+  const damageParts = useAppStore((s) => s.damageParts);
+  const quotesViewed = useAppStore((s) => s.quotesViewed);
+  const bookings = useAppStore((s) => s.bookings);
+
+  // Per-tab notification counts (undefined → no badge).
+  const upcoming = bookings.filter((b) => b.status === 'confirmed' || b.status === 'paid').length;
+  const community = brandChannels(brand).reduce((sum, c) => sum + c.newPosts, 0);
+  const badges: Partial<Record<keyof MainTabParamList, number>> = {
+    QuotesTab: damageParts.length > 0 && !quotesViewed ? QUOTES.length : undefined,
+    BookingsTab: upcoming || undefined,
+    CommunityTab: community || undefined,
+  };
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -369,6 +387,7 @@ export function MainTabs() {
           borderTopColor: theme.colors.tabBarBorder,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 10, fontWeight: '700' },
       }}
     >
       {TABS.map(({ name, label }) => (
@@ -379,6 +398,7 @@ export function MainTabs() {
           options={{
             tabBarLabel: t(label),
             tabBarIcon: ({ color }) => <TabIcon tab={name} color={color} />,
+            tabBarBadge: badges[name],
           }}
         />
       ))}

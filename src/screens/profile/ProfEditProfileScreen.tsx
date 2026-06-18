@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -10,6 +10,7 @@ import { Card, Screen } from '../../components/ui';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { updateMyProfile } from '../../lib/profiles';
 import { USER } from '../../services/mock/data';
+import { pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, spacing, useTheme } from '../../theme';
 import { showAlert } from '../../utils/alerts';
@@ -24,7 +25,16 @@ export function ProfEditProfileScreen() {
   // Username starts blank until the user sets their own (no mock placeholder).
   const [username, setUsername] = useState(authedUser?.username ?? '');
   const [bio, setBio] = useState('');
+  const [avatar, setAvatar] = useState<string | undefined>(authedUser?.avatarUri);
   const [saving, setSaving] = useState(false);
+
+  const changePhoto = async () => {
+    const photo = await pickFromGallery();
+    if (photo) {
+      setAvatar(photo.uri);
+      patchUser({ avatarUri: photo.uri }); // reflect immediately in the More tab
+    }
+  };
 
   const onSave = async () => {
     setSaving(true);
@@ -82,25 +92,29 @@ export function ProfEditProfileScreen() {
   return (
     <Screen>
       <View style={{ alignItems: 'center', marginBottom: spacing.lg }}>
-        <LinearGradient
-          colors={[palette.primary, palette.primaryDark]}
-          style={{
-            width: 84,
-            height: 84,
-            borderRadius: 42,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Text style={{ fontSize: 34, fontWeight: '700', color: '#fff' }}>{USER.initial}</Text>
-        </LinearGradient>
-        <Tappable
-          onPress={() =>
-            Alert.alert('Change photo', 'Photo upload uses the device camera or gallery.')
-          }
-          hitSlop={8}
-        >
+        {avatar ? (
+          <Image
+            source={{ uri: avatar }}
+            style={{ width: 84, height: 84, borderRadius: 42, marginBottom: spacing.sm }}
+          />
+        ) : (
+          <LinearGradient
+            colors={[palette.primary, palette.primaryDark]}
+            style={{
+              width: 84,
+              height: 84,
+              borderRadius: 42,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: spacing.sm,
+            }}
+          >
+            <Text style={{ fontSize: 34, fontWeight: '700', color: '#fff' }}>
+              {(name.trim().charAt(0) || USER.initial).toUpperCase()}
+            </Text>
+          </LinearGradient>
+        )}
+        <Tappable onPress={changePhoto} hitSlop={8}>
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change photo</Text>
         </Tappable>
       </View>

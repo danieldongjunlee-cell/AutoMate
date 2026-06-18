@@ -6,6 +6,7 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-nati
 
 import { Tappable } from '../../components/Tappable';
 
+import { Dropdown } from '../../components/Dropdown';
 import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, pointsService } from '../../services';
@@ -109,30 +110,6 @@ function FormField({
   );
 }
 
-/** Inline carrier options shown under the Provider picker when open. */
-function CarrierOptions({ onSelect }: { onSelect: (carrier: string) => void }) {
-  const { colors } = useTheme();
-  return (
-    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: spacing.sm }}>
-      {CARRIERS.map((c) => (
-        <Tappable
-          key={c}
-          onPress={() => onSelect(c)}
-          style={({ pressed }) => ({
-            backgroundColor: pressed ? colors.primarySurface : colors.surfaceAlt,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: radii.pill,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-          })}
-        >
-          <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textSecondary }}>{c}</Text>
-        </Tappable>
-      ))}
-    </View>
-  );
-}
 
 const fieldRowStyle = (dividerColor: string) =>
   ({
@@ -155,7 +132,6 @@ export function ProfInsEditScreen() {
   const policy = policies?.find((p) => p.id === route.params?.policyId) ?? policies?.[0];
 
   const [carrier, setCarrier] = useState('');
-  const [carrierOpen, setCarrierOpen] = useState(false);
   const [policyNumber, setPolicyNumber] = useState('');
   const [deductible, setDeductible] = useState('');
   const [premium, setPremium] = useState('');
@@ -237,20 +213,7 @@ export function ProfInsEditScreen() {
       {/* Form */}
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <View style={fieldRowStyle(colors.divider)}>
-          <FormField
-            label="Provider"
-            value={carrier}
-            picker
-            onPress={() => setCarrierOpen((o) => !o)}
-          />
-          {carrierOpen ? (
-            <CarrierOptions
-              onSelect={(c) => {
-                setCarrier(c);
-                setCarrierOpen(false);
-              }}
-            />
-          ) : null}
+          <Dropdown label="Provider" value={carrier} options={CARRIERS} onChange={setCarrier} placeholder="Select your insurer" />
         </View>
         <View style={fieldRowStyle(colors.divider)}>
           <FormField label="Policy number" value={policyNumber} onChangeText={setPolicyNumber} />
@@ -332,7 +295,6 @@ export function ProfInsAddScreen() {
   const { colors } = useTheme();
 
   const [carrier, setCarrier] = useState('');
-  const [carrierOpen, setCarrierOpen] = useState(false);
   const [policyNumber, setPolicyNumber] = useState('');
   const [deductible, setDeductible] = useState('');
   const [premium, setPremium] = useState('');
@@ -485,21 +447,7 @@ export function ProfInsAddScreen() {
       {/* Manual form */}
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <View style={fieldRowStyle(colors.divider)}>
-          <FormField
-            label="Provider"
-            value={carrier}
-            placeholder="Select provider..."
-            picker
-            onPress={() => setCarrierOpen((o) => !o)}
-          />
-          {carrierOpen ? (
-            <CarrierOptions
-              onSelect={(c) => {
-                setCarrier(c);
-                setCarrierOpen(false);
-              }}
-            />
-          ) : null}
+          <Dropdown label="Provider" value={carrier} options={CARRIERS} onChange={setCarrier} placeholder="Select your insurer" />
         </View>
         <View style={fieldRowStyle(colors.divider)}>
           <FormField
