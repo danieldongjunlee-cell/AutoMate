@@ -121,30 +121,7 @@ export function ProfHubScreen() {
           </View>
           <Text style={{ fontSize: 13, color: colors.textTertiary }}>{displayHandle}</Text>
         </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>Completion</Text>
-          <Text style={{ fontSize: 18, fontWeight: '500', color: colors.successDark }}>
-            {USER.completionPct}%
-          </Text>
-        </View>
         <CarSwitchChip />
-      </View>
-      <View
-        style={{
-          height: 7,
-          backgroundColor: colors.surfaceAlt,
-          borderRadius: 4,
-          overflow: 'hidden',
-          marginBottom: spacing.md,
-        }}
-      >
-        <View
-          style={{
-            width: `${USER.completionPct}%`,
-            height: '100%',
-            backgroundColor: colors.primary,
-          }}
-        />
       </View>
 
       {/* Daily check-in */}

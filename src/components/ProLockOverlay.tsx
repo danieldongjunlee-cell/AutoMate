@@ -109,61 +109,54 @@ export function DiyGuideRow({
   const { colors } = useTheme();
   const levelBg = { EASY: colors.success, MED: colors.warning, HARD: colors.danger }[level];
   const levelFg = level === 'MED' ? '#1A1A1A' : '#fff';
-  return (
-    <View
-      style={{
-        backgroundColor: onDark ? 'rgba(255,255,255,.07)' : colors.surface,
-        borderRadius: radii.sm,
-        borderWidth: 0.5,
-        borderColor: onDark ? 'rgba(255,255,255,.12)' : colors.border,
-        padding: spacing.md,
-        marginBottom: 6,
-      }}
-    >
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-        <View style={{ backgroundColor: levelBg, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 }}>
-          <Text style={{ fontSize: 10, fontWeight: '700', color: levelFg }}>{level}</Text>
-        </View>
-        <Text
-          style={{
-            flex: 1,
-            fontSize: 15,
-            fontWeight: '600',
-            color: onDark ? '#fff' : colors.textPrimary,
-          }}
-        >
+  const open =
+    onReadGuide ??
+    (() => Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`));
+  const containerStyle = {
+    backgroundColor: onDark ? 'rgba(255,255,255,.07)' : colors.surface,
+    borderRadius: radii.sm,
+    borderWidth: 0.5,
+    borderColor: onDark ? 'rgba(255,255,255,.12)' : colors.border,
+    padding: spacing.md,
+    marginBottom: 6,
+  } as const;
+
+  const inner = (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+      <View style={{ backgroundColor: levelBg, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 }}>
+        <Text style={{ fontSize: 10, fontWeight: '700', color: levelFg }}>{level}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: onDark ? '#fff' : colors.textPrimary }}>
           {title}
         </Text>
-        {free ? (
-          <View
-            style={{
-              backgroundColor: colors.successSurface,
-              borderRadius: radii.pill,
-              paddingHorizontal: 8,
-              paddingVertical: 2,
-            }}
-          >
-            <Text style={{ fontSize: 10, color: colors.successDeep }}>📄 Free</Text>
-          </View>
-        ) : null}
+        <Text style={{ fontSize: 12, color: onDark ? 'rgba(255,255,255,.4)' : colors.textTertiary, marginTop: 2 }}>
+          {meta}
+        </Text>
       </View>
-      <Text style={{ fontSize: 12, color: onDark ? 'rgba(255,255,255,.4)' : colors.textTertiary }}>
-        {meta}
-      </Text>
-      {showLink ? (
-        <Tappable
-          onPress={
-            onReadGuide ??
-            (() =>
-              Alert.alert(title, `${meta}\n\nFull step-by-step guide content ships with the backend.`))
-          }
-          hitSlop={6}
+      {free ? (
+        <View
+          style={{
+            backgroundColor: colors.successSurface,
+            borderRadius: radii.pill,
+            paddingHorizontal: 8,
+            paddingVertical: 2,
+          }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark, marginTop: 5 }}>
-            Read guide →
-          </Text>
-        </Tappable>
+          <Text style={{ fontSize: 10, color: colors.successDeep }}>📄 Free</Text>
+        </View>
+      ) : null}
+      {showLink ? (
+        <Text style={{ fontSize: 24, color: onDark ? 'rgba(255,255,255,.6)' : colors.primary }}>›</Text>
       ) : null}
     </View>
+  );
+
+  return showLink ? (
+    <Tappable onPress={open} style={containerStyle}>
+      {inner}
+    </Tappable>
+  ) : (
+    <View style={containerStyle}>{inner}</View>
   );
 }

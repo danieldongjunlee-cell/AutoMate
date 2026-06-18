@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Platform, ScrollView, Text, View } from 'react-native';
 
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
@@ -26,10 +26,22 @@ const SORT_OPTS = ['Price: low to high', 'Price: high to low', 'Rating: high to 
 const distanceCap: Record<string, number> = { 'Within 5 mi': 5, 'Within 10 mi': 10, 'Within 15 mi': 15 };
 
 /** One expandable dealer quote with its cost breakdown. */
-function QuoteRow({ quote, onAccept }: { quote: Quote; onAccept: () => void }) {
+function QuoteRow({
+  quote,
+  onAccept,
+  selected,
+}: {
+  quote: Quote;
+  onAccept: () => void;
+  selected?: boolean;
+}) {
   const { colors } = useTheme();
   const dealer = dealerById(quote.dealerId);
   const [open, setOpen] = useState(false);
+  // Selecting the matching map pin expands this card.
+  useEffect(() => {
+    if (selected) setOpen(true);
+  }, [selected]);
   const discount = quote.tier === 'best' ? 20 : 0;
   const b = quoteBreakdown(quote.price, discount);
 
@@ -104,8 +116,38 @@ export function QuotesReceivedScreen() {
 
   const [distance, setDistance] = useState(DISTANCE_OPTS[0]);
   const [sort, setSort] = useState(SORT_OPTS[0]);
+  // Pin ↔ card selection sync.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const cardRefs = useRef<Record<string, View | null>>({});
 
   const hasRequest = damageParts.length > 0;
+
+  /** Tapping a price pin selects the matching quote and scrolls it into view. */
+  const onPinSelect = (dealerId: string) => {
+    setSelectedId(dealerId);
+    requestAnimationFrame(() => {
+      const node = cardRefs.current[dealerId];
+      if (!node) return;
+      if (Platform.OS === 'web') {
+        (node as unknown as { scrollIntoView?: (o: object) => void }).scrollIntoView?.({
+          behavior: 'smooth',
+          block: 'center',
+        });
+        return;
+      }
+      const scroller = scrollRef.current;
+      const inner = (scroller as unknown as { getInnerViewNode?: () => object })?.getInnerViewNode?.();
+      if (!scroller || !inner) return;
+      (node as unknown as {
+        measureLayout: (i: object, cb: (x: number, y: number) => void, err: () => void) => void;
+      }).measureLayout(
+        inner,
+        (_x: number, y: number) => scroller.scrollTo({ y: Math.max(0, y - 90), animated: true }),
+        () => {},
+      );
+    });
+  };
 
   const filtered = useMemo(() => {
     let list = [...(quotes ?? [])];
@@ -161,11 +203,12 @@ export function QuotesReceivedScreen() {
       lng: d.lng,
       label: `$${q.price}`,
       color: q.tier === 'best' ? '#085041' : q.tier === 'recommended' ? '#2e6bff' : '#fff',
+      selected: q.dealerId === selectedId,
     };
   });
 
   return (
-    <Screen safeTop>
+    <Screen safeTop scrollRef={scrollRef}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Quotes received</Text>
@@ -206,6 +249,7 @@ export function QuotesReceivedScreen() {
             markers={markers}
             center={USER_LOCATION}
             userLocation={USER_LOCATION}
+            onSelect={onPinSelect}
             style={{ height: 180, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
           />
         </View>
@@ -230,11 +274,23 @@ export function QuotesReceivedScreen() {
         </Card>
       ) : (
         filtered.map((q) => (
-          <QuoteRow
+          <View
             key={q.id}
-            quote={q}
-            onAccept={() => navigateCrossTab(navigation, 'HomeTab', 'AcceptBooking', { dealerId: q.dealerId })}
-          />
+            ref={(node) => {
+              cardRefs.current[q.dealerId] = node;
+            }}
+            style={
+              q.dealerId === selectedId
+                ? { borderWidth: 2, borderColor: colors.primary, borderRadius: radii.md }
+                : undefined
+            }
+          >
+            <QuoteRow
+              quote={q}
+              selected={q.dealerId === selectedId}
+              onAccept={() => navigateCrossTab(navigation, 'HomeTab', 'AcceptBooking', { dealerId: q.dealerId })}
+            />
+          </View>
         ))
       )}
 
