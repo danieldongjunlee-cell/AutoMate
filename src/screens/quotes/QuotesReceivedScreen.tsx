@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
@@ -173,6 +173,22 @@ export function QuotesReceivedScreen() {
         </View>
       ) : null}
 
+      {/* Add parts / revise + cancel — kept above the map for quick access. */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <Tappable
+          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'CarDiagram')}
+          style={{ flex: 1, backgroundColor: colors.surface, borderWidth: 1.5, borderStyle: 'dashed', borderColor: colors.primaryLight, borderRadius: radii.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, alignItems: 'center' }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>➕ Add or revise parts</Text>
+        </Tappable>
+        <Tappable
+          onPress={onCancel}
+          style={{ backgroundColor: colors.dangerSurface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.dangerBorder, borderRadius: radii.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.danger }}>Cancel</Text>
+        </Tappable>
+      </View>
+
       {/* Shops near you — larger map. Tap a price to select that dealership. */}
       {markers.length > 0 ? (
         <View style={{ marginBottom: spacing.md }}>
@@ -226,18 +242,6 @@ export function QuotesReceivedScreen() {
           </View>
         ))
       )}
-
-      {/* Add parts / revise + cancel */}
-      <Tappable
-        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'CarDiagram')}
-        style={{ backgroundColor: colors.surface, borderWidth: 1.5, borderStyle: 'dashed', borderColor: colors.primaryLight, borderRadius: radii.md, padding: spacing.md, alignItems: 'center', marginTop: spacing.sm, marginBottom: spacing.sm }}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDark }}>➕ Add or revise damaged parts</Text>
-        <Text style={{ fontSize: 11, color: colors.textTertiary }}>Keeps your current parts, then resubmit for fresh quotes</Text>
-      </Tappable>
-      <Tappable onPress={onCancel} style={{ alignItems: 'center', paddingVertical: spacing.sm }}>
-        <Text style={{ fontSize: 13, color: colors.danger, fontWeight: '700' }}>Cancel this quote</Text>
-      </Tappable>
       <View style={{ marginBottom: spacing.lg }} />
     </Screen>
   );

@@ -46,7 +46,9 @@ export function MaintScheduleBookScreen() {
   // the brake job sized to the car's type (e.g. KIA Sportage → SUV).
   const didPreselect = useRef(false);
   useEffect(() => {
-    if (didPreselect.current || !recoType) return;
+    // Don't auto-add the brake reco when a bundle/deal seeded the cart — that
+    // would inflate the claimed (discounted) price.
+    if (didPreselect.current || !recoType || cart.promoLabel) return;
     didPreselect.current = true;
     const brakes = MAINT_CATEGORIES.find((c) => c.id === 'brakes');
     const reco = brakes?.services.find((s) => s.vehicleType === recoType);
@@ -135,6 +137,30 @@ export function MaintScheduleBookScreen() {
       <SectionLabel>
         Maintenance services <Text style={{ textTransform: 'none' }}>(choose one or more)</Text>
       </SectionLabel>
+
+      {/* Claimed bundle/discount → its discounted services are applied. */}
+      {cart.promoLabel ? (
+        <View
+          style={{
+            backgroundColor: colors.successSurface,
+            borderRadius: radii.sm,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.success,
+            padding: spacing.sm,
+            marginBottom: spacing.sm,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep, marginBottom: 4 }}>
+            🎉 {cart.promoLabel} applied
+          </Text>
+          {cart.services.map((s) => (
+            <View key={s.id} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 1 }}>
+              <Text style={{ fontSize: 12, color: colors.successDark }}>{s.name}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>${s.price}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       {recoType ? (
         <View

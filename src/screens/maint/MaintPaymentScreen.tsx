@@ -79,6 +79,11 @@ export function MaintPaymentScreen() {
       {/* Order summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <SectionLabel>Order summary</SectionLabel>
+        {cart.promoLabel ? (
+          <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.xs }}>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promoLabel}</Text>
+          </View>
+        ) : null}
         {cart.services.map((s) => (
           <View
             key={s.id}

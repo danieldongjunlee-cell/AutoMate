@@ -39,6 +39,7 @@ export function MaintScheduleConfirmScreen() {
 
   const dealer = dealerById(booking.dealerId);
   const { total, totalMin } = cartTotals(booking);
+  const promoLabel = (booking as { promoLabel?: string }).promoLabel;
   const serviceNames = booking.services.map((s) => s.name).join(' + ');
   const reminderPref = useAppStore((s) => s.reminderPref);
 
@@ -71,6 +72,11 @@ export function MaintScheduleConfirmScreen() {
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
         <SectionLabel>Summary</SectionLabel>
+        {promoLabel ? (
+          <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.sm }}>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {promoLabel}</Text>
+          </View>
+        ) : null}
         <View
           style={{
             flexDirection: 'row',

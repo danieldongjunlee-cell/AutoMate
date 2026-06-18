@@ -191,9 +191,6 @@ export function BookingsScreen() {
             <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>
               {MONTH_NAMES[view.month]} {view.year}
             </Text>
-            {!isThisMonth ? (
-              <Text style={{ fontSize: 10, fontWeight: '700', color: colors.primary }}>Today</Text>
-            ) : null}
           </Tappable>
           <CalNav label="›" onPress={() => stepMonth(1)} />
           <CalNav label="»" onPress={() => stepYear(1)} />
@@ -278,7 +275,8 @@ export function BookingsScreen() {
       ) : (
         visibleBookings.map((b) => {
           const completed = b.status === 'completed';
-          const upcoming = b.status === 'confirmed' || b.status === 'paid';
+          // Only confirmed bookings can be marked completed (not paid/proposed).
+          const canComplete = b.status === 'confirmed';
           return (
             <View key={b.id} style={{ marginBottom: spacing.sm }}>
               <Tappable
@@ -355,7 +353,7 @@ export function BookingsScreen() {
                     ★ Leave a review
                   </Text>
                 </Tappable>
-              ) : upcoming ? (
+              ) : canComplete ? (
                 <Tappable
                   onPress={() => markBookingCompleted(b.id)}
                   style={{

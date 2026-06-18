@@ -33,6 +33,10 @@ interface Deal {
   cta: string;
   ctaBg: string;
   ctaFg: string;
+  /** Label shown on the booking once the deal is claimed. */
+  promo: string;
+  /** Discounted services seeded into the cart when the deal is claimed. */
+  services: { id: string; name: string; price: number; durationMin: number }[];
 }
 
 /** Wireframe s-home-bundle-deals: three partner deals, each → service booking. */
@@ -56,6 +60,12 @@ const DEALS: Deal[] = [
     cta: 'Claim this bundle →',
     ctaBg: palette.warning,
     ctaFg: palette.dark,
+    promo: 'Summer Bundle · saved $89',
+    services: [
+      { id: 'deal-honda-oil', name: 'Oil change (bundle)', price: 39, durationMin: 45 },
+      { id: 'deal-honda-tire', name: 'Tire rotation (bundle)', price: 19, durationMin: 30 },
+      { id: 'deal-honda-insp', name: 'Inspection (bundle)', price: 29, durationMin: 60 },
+    ],
   },
   {
     dealerId: 'autofix-pro',
@@ -76,6 +86,10 @@ const DEALS: Deal[] = [
     cta: 'Claim this deal →',
     ctaBg: palette.success,
     ctaFg: '#fff',
+    promo: 'New customer 20% off · saved $32',
+    services: [
+      { id: 'deal-autofix-combo', name: 'Oil + Inspection (deal)', price: 47, durationMin: 75 },
+    ],
   },
   {
     dealerId: 'vienna-auto',
@@ -93,18 +107,24 @@ const DEALS: Deal[] = [
     cta: 'Book & save →',
     ctaBg: palette.info,
     ctaFg: '#fff',
+    promo: 'AUTOMATE30 · $30 off',
+    services: [
+      { id: 'deal-vienna-brakes', name: 'Brake service (AUTOMATE30)', price: 109, durationMin: 90 },
+    ],
   },
 ];
 
 export function BundleDealsScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const startBooking = useAppStore((s) => s.startBooking);
+  const claimDeal = useAppStore((s) => s.claimDeal);
   // The home ad-banner that was tapped opens that one deal's detail.
   const focus = (useRoute().params as { focus?: string } | undefined)?.focus;
 
-  const claim = (dealerId: string) => {
-    startBooking(dealerId);
+  const claim = (deal: Deal) => {
+    // Seed the cart with the deal's discounted services so the booking total
+    // actually reflects the claimed price.
+    claimDeal(deal.dealerId, deal.services, deal.promo);
     // Bundle booking happens on the Maintenance tab (wireframe ⤴ edge).
     navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleBook');
   };
@@ -233,7 +253,7 @@ export function BundleDealsScreen() {
           </View>
         )}
         <Tappable
-          onPress={() => claim(deal.dealerId)}
+          onPress={() => claim(deal)}
           style={({ pressed }) => ({
             backgroundColor: deal.ctaBg,
             borderRadius: radii.sm,

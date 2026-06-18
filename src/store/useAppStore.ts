@@ -22,6 +22,8 @@ export interface BookingCart {
   services: CartService[];
   date: string | null; // ISO date
   time: string | null; // e.g. "8:00 AM"
+  /** Active bundle/discount label when the cart was seeded from a claimed deal. */
+  promoLabel?: string;
 }
 
 const emptyCart: BookingCart = { dealerId: null, services: [], date: null, time: null };
@@ -328,6 +330,8 @@ interface AppState {
   cart: BookingCart;
   /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
   startBooking: (dealerId: string) => void;
+  /** Claim a bundle/discount: seed the cart with the deal's discounted services. */
+  claimDeal: (dealerId: string, services: CartService[], promoLabel: string) => void;
   toggleCartService: (service: CartService) => void;
   setCartSlot: (date: string, time: string) => void;
   clearCart: () => void;
@@ -503,6 +507,8 @@ export const useAppStore = create<AppState>((set) => ({
 
   cart: emptyCart,
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),
+  claimDeal: (dealerId, services, promoLabel) =>
+    set({ cart: { dealerId, services, date: '2027-04-07', time: '8:00 AM', promoLabel } }),
   toggleCartService: (service) =>
     set((s) => {
       const exists = s.cart.services.some((x) => x.id === service.id);
