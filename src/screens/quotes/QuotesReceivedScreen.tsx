@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
@@ -119,34 +119,18 @@ export function QuotesReceivedScreen() {
   // Pin ↔ card selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-  const cardRefs = useRef<Record<string, View | null>>({});
+  // Each card's y-offset within the scroll content (captured via onLayout).
+  const cardY = useRef<Record<string, number>>({});
 
   const hasRequest = damageParts.length > 0;
 
   /** Tapping a price pin selects the matching quote and scrolls it into view. */
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
-    requestAnimationFrame(() => {
-      const node = cardRefs.current[dealerId];
-      if (!node) return;
-      if (Platform.OS === 'web') {
-        (node as unknown as { scrollIntoView?: (o: object) => void }).scrollIntoView?.({
-          behavior: 'smooth',
-          block: 'center',
-        });
-        return;
-      }
-      const scroller = scrollRef.current;
-      const inner = (scroller as unknown as { getInnerViewNode?: () => object })?.getInnerViewNode?.();
-      if (!scroller || !inner) return;
-      (node as unknown as {
-        measureLayout: (i: object, cb: (x: number, y: number) => void, err: () => void) => void;
-      }).measureLayout(
-        inner,
-        (_x: number, y: number) => scroller.scrollTo({ y: Math.max(0, y - 90), animated: true }),
-        () => {},
-      );
-    });
+    const y = cardY.current[dealerId];
+    if (y != null) {
+      scrollRef.current?.scrollTo({ y: Math.max(0, y - 90), animated: true });
+    }
   };
 
   const filtered = useMemo(() => {
@@ -276,8 +260,8 @@ export function QuotesReceivedScreen() {
         filtered.map((q) => (
           <View
             key={q.id}
-            ref={(node) => {
-              cardRefs.current[q.dealerId] = node;
+            onLayout={(e) => {
+              cardY.current[q.dealerId] = e.nativeEvent.layout.y;
             }}
             style={
               q.dealerId === selectedId
