@@ -277,22 +277,26 @@ export function BookingsScreen() {
           const completed = b.status === 'completed';
           // Only confirmed bookings can be marked completed (not paid/proposed).
           const canComplete = b.status === 'confirmed';
+          const accent = completed ? colors.success : kindStyle(b).accent;
+          const hasAction = completed || canComplete;
           return (
-            <View key={b.id} style={{ marginBottom: spacing.sm }}>
+            // Card + its action read as one connected unit (rounded, clipped).
+            <View
+              key={b.id}
+              style={{
+                marginBottom: spacing.sm,
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+                borderWidth: 1,
+                borderLeftWidth: 4,
+                borderLeftColor: accent,
+                borderRadius: radii.md,
+                overflow: 'hidden',
+              }}
+            >
               <Tappable
                 onPress={() => openBooking(b)}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: spacing.sm,
-                  backgroundColor: colors.surface,
-                  borderColor: colors.border,
-                  borderWidth: 1,
-                  borderLeftWidth: 4,
-                  borderLeftColor: completed ? colors.success : kindStyle(b).accent,
-                  borderRadius: radii.md,
-                  padding: spacing.sm,
-                }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.sm }}
               >
                 {dateBadge(b)}
                 <View style={{ flex: 1 }}>
@@ -337,37 +341,35 @@ export function BookingsScreen() {
                 </View>
               </Tappable>
 
-              {/* Completed → can leave a verified review. Upcoming → mark done (demo). */}
-              {completed ? (
+              {/* Attached action bar: confirmed → mark completed; completed → review. */}
+              {hasAction ? (
                 <Tappable
-                  onPress={() => navigateCrossTab(navigation, 'HomeTab', 'WriteReview', { dealerId: b.dealerId })}
+                  onPress={() =>
+                    completed
+                      ? navigateCrossTab(navigation, 'HomeTab', 'WriteReview', { dealerId: b.dealerId })
+                      : markBookingCompleted(b.id)
+                  }
                   style={{
-                    marginTop: 6,
-                    backgroundColor: colors.primarySurface,
-                    borderRadius: radii.sm,
-                    paddingVertical: 9,
+                    flexDirection: 'row',
                     alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                    paddingVertical: 10,
+                    borderTopWidth: StyleSheet.hairlineWidth,
+                    borderTopColor: colors.border,
+                    backgroundColor: completed ? colors.primarySurface : colors.surfaceAlt,
                   }}
                 >
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>
-                    ★ Leave a review
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '700',
+                      color: completed ? colors.primary : colors.textSecondary,
+                    }}
+                  >
+                    {completed ? '★ Leave a review' : '✓ Mark service completed'}
                   </Text>
-                </Tappable>
-              ) : canComplete ? (
-                <Tappable
-                  onPress={() => markBookingCompleted(b.id)}
-                  style={{
-                    marginTop: 6,
-                    borderWidth: StyleSheet.hairlineWidth,
-                    borderColor: colors.border,
-                    borderRadius: radii.sm,
-                    paddingVertical: 8,
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textSecondary }}>
-                    ✓ Mark service completed
-                  </Text>
+                  <Text style={{ fontSize: 13, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
                 </Tappable>
               ) : null}
             </View>

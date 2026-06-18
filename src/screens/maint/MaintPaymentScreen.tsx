@@ -37,7 +37,7 @@ export function MaintPaymentScreen() {
   const [paying, setPaying] = useState(false);
   const [applePayOpen, setApplePayOpen] = useState(false);
 
-  const { total, totalMin } = cartTotals(cart);
+  const { total, totalMin, savings } = cartTotals(cart);
 
   // Redemption: up to min(balance, total × 100) points (1 pt = $0.01).
   const maxRedeemable = Math.min(points, Math.round(total * POINTS_PER_USD));
@@ -79,14 +79,36 @@ export function MaintPaymentScreen() {
       {/* Order summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <SectionLabel>Order summary</SectionLabel>
-        {cart.promoLabel ? (
+        {cart.promo ? (
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.xs }}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promoLabel}</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promo.label} applied</Text>
           </View>
         ) : null}
         {cart.services.map((s) => (
           <View
             key={s.id}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingVertical: 5,
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: colors.divider,
+            }}
+          >
+            <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary }} numberOfLines={1}>{s.name}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              {s.originalPrice && s.originalPrice !== s.price ? (
+                <Text style={{ fontSize: 12, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
+                  ${s.originalPrice}
+                </Text>
+              ) : null}
+              <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>${s.price}</Text>
+            </View>
+          </View>
+        ))}
+        {savings > 0 ? (
+          <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -95,12 +117,10 @@ export function MaintPaymentScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 14, color: colors.textSecondary }}>{s.name}</Text>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-              ${s.price}
-            </Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDeep }}>Bundle savings</Text>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>− ${savings}</Text>
           </View>
-        ))}
+        ) : null}
         <View
           style={{
             flexDirection: 'row',

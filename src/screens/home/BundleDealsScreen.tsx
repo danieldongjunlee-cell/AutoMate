@@ -10,11 +10,12 @@ import { navigateCrossTab } from '../../navigation/crossTab';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
-interface PriceCell {
+/** One service-category discount in a deal (e.g. Oil change · 15% off). */
+interface DealDiscount {
+  /** MAINT_CATEGORIES id the discount applies to. */
+  categoryId: string;
   label: string;
-  price: string;
-  was: string;
-  highlight?: boolean;
+  pct: number;
 }
 
 interface Deal {
@@ -29,17 +30,17 @@ interface Deal {
   headerGradient: [string, string];
   borderColor: string;
   body?: string;
-  cells: PriceCell[];
+  /** Per-category percentage discounts the bundle applies. */
+  discounts: DealDiscount[];
   cta: string;
   ctaBg: string;
   ctaFg: string;
-  /** Label shown on the booking once the deal is claimed. */
-  promo: string;
-  /** Discounted services seeded into the cart when the deal is claimed. */
-  services: { id: string; name: string; price: number; durationMin: number }[];
+  /** Short label shown on the booking once the deal is claimed. */
+  claimLabel: string;
 }
 
-/** Wireframe s-home-bundle-deals: three partner deals, each → service booking. */
+/** Wireframe s-home-bundle-deals: three partner deals, each → service booking.
+ *  Each deal applies per-category % discounts that flow into the booking cart. */
 const DEALS: Deal[] = [
   {
     dealerId: 'honda-fairfax',
@@ -47,25 +48,20 @@ const DEALS: Deal[] = [
     avatarColor: palette.primary,
     name: 'Honda Fairfax',
     sub: 'Summer Bundle · Ends Jul 31',
-    badge: 'SAVE $89',
+    badge: 'UP TO 20% OFF',
     badgeBg: palette.warning,
     badgeFg: palette.dark,
     headerGradient: [palette.dark, palette.darkAlt],
     borderColor: palette.warning,
-    cells: [
-      { label: 'Oil change', price: '$39', was: '$59' },
-      { label: 'Tire rotation', price: '$19', was: '$39' },
-      { label: 'Inspection', price: '$29', was: '$59' },
+    discounts: [
+      { categoryId: 'oil', label: 'Oil change', pct: 15 },
+      { categoryId: 'tires', label: 'Tire service', pct: 20 },
+      { categoryId: 'fluids', label: 'Fluids', pct: 10 },
     ],
     cta: 'Claim this bundle →',
     ctaBg: palette.warning,
     ctaFg: palette.dark,
-    promo: 'Summer Bundle · saved $89',
-    services: [
-      { id: 'deal-honda-oil', name: 'Oil change (bundle)', price: 39, durationMin: 45 },
-      { id: 'deal-honda-tire', name: 'Tire rotation (bundle)', price: 19, durationMin: 30 },
-      { id: 'deal-honda-insp', name: 'Inspection (bundle)', price: 29, durationMin: 60 },
-    ],
+    claimLabel: 'Summer Bundle',
   },
   {
     dealerId: 'autofix-pro',
@@ -73,23 +69,20 @@ const DEALS: Deal[] = [
     avatarColor: palette.success,
     name: 'AutoFix Pro',
     sub: 'New customer offer',
-    badge: '20% OFF',
+    badge: 'UP TO 20% OFF',
     badgeBg: palette.success,
     badgeFg: '#fff',
     headerGradient: ['#085041', '#0F6E56'],
     borderColor: palette.success,
-    body: 'First service free multi-point inspection with any oil change. Valid for AutoMate users only.',
-    cells: [
-      { label: 'Oil + Inspection', price: '$47', was: 'was $79', highlight: true },
-      { label: 'Brakes + pads', price: '$119', was: '$149' },
+    body: 'New AutoMate customers save on an oil change and a full brake job. Discounts applied automatically at booking.',
+    discounts: [
+      { categoryId: 'oil', label: 'Oil change', pct: 20 },
+      { categoryId: 'brakes', label: 'Brakes', pct: 15 },
     ],
     cta: 'Claim this deal →',
     ctaBg: palette.success,
     ctaFg: '#fff',
-    promo: 'New customer 20% off · saved $32',
-    services: [
-      { id: 'deal-autofix-combo', name: 'Oil + Inspection (deal)', price: 47, durationMin: 75 },
-    ],
+    claimLabel: 'New customer deal',
   },
   {
     dealerId: 'vienna-auto',
@@ -97,20 +90,20 @@ const DEALS: Deal[] = [
     avatarColor: palette.info,
     name: 'Vienna Auto Care',
     sub: 'Member exclusive',
-    badge: '$30 OFF',
+    badge: 'UP TO 20% OFF',
     badgeBg: palette.info,
     badgeFg: '#fff',
     headerGradient: [palette.navyMid, '#253A5A'],
     borderColor: '#E0DDD5',
-    body: '$30 off any service over $99 for AutoMate members. Use code AUTOMATE30 at checkout.',
-    cells: [],
+    body: 'AutoMate members save on filters and fluid services. Discounts applied automatically at booking.',
+    discounts: [
+      { categoryId: 'filters', label: 'Filters', pct: 20 },
+      { categoryId: 'fluids', label: 'Fluids', pct: 15 },
+    ],
     cta: 'Book & save →',
     ctaBg: palette.info,
     ctaFg: '#fff',
-    promo: 'AUTOMATE30 · $30 off',
-    services: [
-      { id: 'deal-vienna-brakes', name: 'Brake service (AUTOMATE30)', price: 109, durationMin: 90 },
-    ],
+    claimLabel: 'Member deal',
   },
 ];
 
@@ -122,9 +115,10 @@ export function BundleDealsScreen() {
   const focus = (useRoute().params as { focus?: string } | undefined)?.focus;
 
   const claim = (deal: Deal) => {
-    // Seed the cart with the deal's discounted services so the booking total
-    // actually reflects the claimed price.
-    claimDeal(deal.dealerId, deal.services, deal.promo);
+    // Carry the deal's per-category % discounts into the cart so the prices the
+    // user picks are discounted with a visible breakdown.
+    const discounts = Object.fromEntries(deal.discounts.map((d) => [d.categoryId, d.pct]));
+    claimDeal(deal.dealerId, { label: deal.claimLabel, discounts });
     // Bundle booking happens on the Maintenance tab (wireframe ⤴ edge).
     navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleBook');
   };
@@ -200,58 +194,36 @@ export function BundleDealsScreen() {
               fontSize: 14,
               color: colors.textSecondary,
               lineHeight: 21,
-              marginBottom: deal.cells.length ? spacing.sm : spacing.md,
+              marginBottom: spacing.sm,
             }}
           >
             {deal.body}
           </Text>
         ) : null}
-        {deal.cells.length > 0 && (
-          <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.md }}>
-            {deal.cells.map((cell) => (
-              <View
-                key={cell.label}
-                style={{
-                  flex: 1,
-                  backgroundColor: cell.highlight ? colors.successSurface : colors.surface,
-                  borderRadius: radii.sm,
-                  borderWidth: StyleSheet.hairlineWidth,
-                  borderColor: cell.highlight ? colors.success : colors.border,
-                  paddingVertical: spacing.sm,
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: cell.highlight ? colors.successDeep : colors.textTertiary,
-                    marginBottom: 2,
-                  }}
-                >
-                  {cell.label}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '700',
-                    color: cell.highlight ? colors.successDeep : colors.textPrimary,
-                  }}
-                >
-                  {cell.price}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 11,
-                    color: cell.highlight ? colors.successDark : colors.textPlaceholder,
-                    textDecorationLine: cell.highlight ? 'none' : 'line-through',
-                  }}
-                >
-                  {cell.was}
-                </Text>
+        {/* Per-service percentage discounts */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginBottom: spacing.md }}>
+          {deal.discounts.map((d) => (
+            <View
+              key={d.categoryId}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
+                backgroundColor: colors.successSurface,
+                borderRadius: radii.sm,
+                borderWidth: StyleSheet.hairlineWidth,
+                borderColor: colors.success,
+                paddingVertical: 6,
+                paddingHorizontal: spacing.sm,
+              }}
+            >
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successDeep }}>{d.label}</Text>
+              <View style={{ backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
+                <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{d.pct}% OFF</Text>
               </View>
-            ))}
-          </View>
-        )}
+            </View>
+          ))}
+        </View>
         <Tappable
           onPress={() => claim(deal)}
           style={({ pressed }) => ({

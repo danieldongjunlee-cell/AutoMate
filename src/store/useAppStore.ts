@@ -7,14 +7,24 @@ import {
 } from '../lib/bookings';
 import { recordPoints } from '../lib/points';
 import { signOutSupabase } from '../lib/supabaseAuth';
-import { AiEstimateSummary, BOOKABLE_SERVICES } from '../services/mock/data';
+import { AiEstimateSummary, BOOKABLE_SERVICES, MAINT_CATEGORIES } from '../services/mock/data';
 
 /** A service row in the multi-service booking cart (maint-schedule-book). */
 export interface CartService {
   id: string;
   name: string;
+  /** Effective (post-discount) price. */
   price: number;
+  /** Pre-discount price when a claimed deal applies — drives the breakdown. */
+  originalPrice?: number;
   durationMin: number;
+}
+
+/** A claimed bundle/discount: a label + per-category percentage discounts. */
+export interface BookingPromo {
+  label: string;
+  /** MAINT_CATEGORIES id → percent off (e.g. { oil: 15, tires: 20 }). */
+  discounts: Record<string, number>;
 }
 
 export interface BookingCart {
@@ -22,17 +32,27 @@ export interface BookingCart {
   services: CartService[];
   date: string | null; // ISO date
   time: string | null; // e.g. "8:00 AM"
-  /** Active bundle/discount label when the cart was seeded from a claimed deal. */
-  promoLabel?: string;
+  /** Active claimed bundle/discount (per-category % off). */
+  promo?: BookingPromo;
 }
 
 const emptyCart: BookingCart = { dealerId: null, services: [], date: null, time: null };
 
 /** Derived cart price/duration totals (used by book, payment, and confirm screens). */
-export const cartTotals = (cart: BookingCart) => ({
-  total: cart.services.reduce((sum, s) => sum + s.price, 0),
-  totalMin: cart.services.reduce((sum, s) => sum + s.durationMin, 0),
-});
+export const cartTotals = (cart: BookingCart) => {
+  const total = cart.services.reduce((sum, s) => sum + s.price, 0);
+  const original = cart.services.reduce((sum, s) => sum + (s.originalPrice ?? s.price), 0);
+  return {
+    total,
+    original,
+    savings: original - total,
+    totalMin: cart.services.reduce((sum, s) => sum + s.durationMin, 0),
+  };
+};
+
+/** Apply a promo's category discount to a base price (rounded to whole $). */
+export const discountedPrice = (price: number, pct?: number): number =>
+  pct ? Math.round(price * (1 - pct / 100)) : price;
 
 /** Wireframe defaults when a booking opens: oil change · Apr 7 · 8:00 AM. */
 const defaultCart = (dealerId: string): BookingCart => {
@@ -330,8 +350,9 @@ interface AppState {
   cart: BookingCart;
   /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
   startBooking: (dealerId: string) => void;
-  /** Claim a bundle/discount: seed the cart with the deal's discounted services. */
-  claimDeal: (dealerId: string, services: CartService[], promoLabel: string) => void;
+  /** Claim a bundle/discount: pre-selects the deal's services at their
+   *  discounted prices (per-category % off carried on the cart). */
+  claimDeal: (dealerId: string, promo: BookingPromo) => void;
   toggleCartService: (service: CartService) => void;
   setCartSlot: (date: string, time: string) => void;
   clearCart: () => void;
@@ -507,8 +528,24 @@ export const useAppStore = create<AppState>((set) => ({
 
   cart: emptyCart,
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),
-  claimDeal: (dealerId, services, promoLabel) =>
-    set({ cart: { dealerId, services, date: '2027-04-07', time: '8:00 AM', promoLabel } }),
+  claimDeal: (dealerId, promo) => {
+    // Pre-select a representative service from each discounted category at its
+    // discounted price; the user can change services within those categories.
+    const services: CartService[] = [];
+    for (const cat of MAINT_CATEGORIES) {
+      const pct = promo.discounts[cat.id];
+      if (!pct) continue;
+      const sub = cat.services[0];
+      services.push({
+        id: sub.id,
+        name: `${cat.name} — ${sub.name}`,
+        price: discountedPrice(sub.price, pct),
+        originalPrice: sub.price,
+        durationMin: sub.durationMin,
+      });
+    }
+    set({ cart: { dealerId, services, date: '2027-04-07', time: '8:00 AM', promo } });
+  },
   toggleCartService: (service) =>
     set((s) => {
       const exists = s.cart.services.some((x) => x.id === service.id);

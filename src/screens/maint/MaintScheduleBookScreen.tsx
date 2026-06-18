@@ -16,7 +16,7 @@ import {
   MaintCategory,
   MaintSubService,
 } from '../../services/mock/data';
-import { cartTotals, useAppStore } from '../../store/useAppStore';
+import { cartTotals, discountedPrice, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
@@ -48,7 +48,7 @@ export function MaintScheduleBookScreen() {
   useEffect(() => {
     // Don't auto-add the brake reco when a bundle/deal seeded the cart — that
     // would inflate the claimed (discounted) price.
-    if (didPreselect.current || !recoType || cart.promoLabel) return;
+    if (didPreselect.current || !recoType || cart.promo) return;
     didPreselect.current = true;
     const brakes = MAINT_CATEGORIES.find((c) => c.id === 'brakes');
     const reco = brakes?.services.find((s) => s.vehicleType === recoType);
@@ -63,18 +63,24 @@ export function MaintScheduleBookScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recoType]);
 
-  const { total, totalMin } = cartTotals(cart);
+  const { total, totalMin, savings } = cartTotals(cart);
   const count = cart.services.length;
   const canContinue = count > 0 && !!cart.date && !!cart.time;
 
+  // Claimed-deal discount for a category (0 when none).
+  const pctFor = (categoryId: string) => cart.promo?.discounts[categoryId] ?? 0;
+
   const inCart = (id: string) => cart.services.some((s) => s.id === id);
-  const toggle = (cat: MaintCategory, sub: MaintSubService) =>
+  const toggle = (cat: MaintCategory, sub: MaintSubService) => {
+    const pct = pctFor(cat.id);
     toggleCartService({
       id: sub.id,
       name: `${cat.name} — ${sub.name}`,
-      price: sub.price,
+      price: discountedPrice(sub.price, pct),
+      originalPrice: pct ? sub.price : undefined,
       durationMin: sub.durationMin,
     });
+  };
 
   const toggleExpand = (id: string) =>
     setExpanded((prev) => {
@@ -87,6 +93,8 @@ export function MaintScheduleBookScreen() {
   const renderSub = (cat: MaintCategory, sub: MaintSubService) => {
     const selected = inCart(sub.id);
     const recommended = cat.byVehicleType && sub.vehicleType === recoType;
+    const pct = pctFor(cat.id);
+    const now = discountedPrice(sub.price, pct);
     return (
       <Tappable
         key={sub.id}
@@ -124,10 +132,22 @@ export function MaintScheduleBookScreen() {
                 <Text style={{ fontSize: 9, fontWeight: '800', color: colors.successDeep }}>★ RECOMMENDED</Text>
               </View>
             ) : null}
+            {pct ? (
+              <View style={{ backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
+                <Text style={{ fontSize: 9, fontWeight: '800', color: '#fff' }}>{pct}% OFF</Text>
+              </View>
+            ) : null}
           </View>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>~{sub.durationMin} min</Text>
         </View>
-        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>${sub.price}</Text>
+        {pct ? (
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={{ fontSize: 11, color: colors.textTertiary, textDecorationLine: 'line-through' }}>${sub.price}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '800', color: colors.successDeep }}>${now}</Text>
+          </View>
+        ) : (
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>${sub.price}</Text>
+        )}
       </Tappable>
     );
   };
@@ -138,8 +158,8 @@ export function MaintScheduleBookScreen() {
         Maintenance services <Text style={{ textTransform: 'none' }}>(choose one or more)</Text>
       </SectionLabel>
 
-      {/* Claimed bundle/discount → its discounted services are applied. */}
-      {cart.promoLabel ? (
+      {/* Claimed bundle/discount → the discount applies to the matching services. */}
+      {cart.promo ? (
         <View
           style={{
             backgroundColor: colors.successSurface,
@@ -150,15 +170,14 @@ export function MaintScheduleBookScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep, marginBottom: 4 }}>
-            🎉 {cart.promoLabel} applied
+          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep, marginBottom: 2 }}>
+            🎉 {cart.promo.label} applied
           </Text>
-          {cart.services.map((s) => (
-            <View key={s.id} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 1 }}>
-              <Text style={{ fontSize: 12, color: colors.successDark }}>{s.name}</Text>
-              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>${s.price}</Text>
-            </View>
-          ))}
+          <Text style={{ fontSize: 11, color: colors.successDark }}>
+            {Object.entries(cart.promo.discounts)
+              .map(([cid, pct]) => `${MAINT_CATEGORIES.find((c) => c.id === cid)?.name ?? cid} ${pct}% off`)
+              .join(' · ')}
+          </Text>
         </View>
       ) : null}
 
@@ -217,42 +236,60 @@ export function MaintScheduleBookScreen() {
         );
       })}
 
-      {/* Running total */}
+      {/* Price breakdown of selected services */}
       <View
         style={{
           backgroundColor: colors.primarySurface,
           borderRadius: radii.sm,
           borderWidth: StyleSheet.hairlineWidth,
           borderColor: colors.primaryLight,
-          padding: spacing.sm,
-          paddingHorizontal: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: spacing.sm,
+          padding: spacing.md,
           marginTop: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Text style={{ fontSize: 16 }}>💰</Text>
-          <View>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
-              {count} service{count !== 1 ? 's' : ''} selected
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.primaryDark }}>~{totalMin} min</Text>
-          </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: count ? spacing.sm : 0 }}>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.primaryDeep }}>
+            {count} service{count !== 1 ? 's' : ''} selected
+          </Text>
+          <Text style={{ fontSize: 12, color: colors.primaryDark }}>~{totalMin} min</Text>
         </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text
-            style={{
-              fontSize: 11,
-              fontWeight: '700',
-              letterSpacing: 0.6,
-              textTransform: 'uppercase',
-              color: colors.primaryDark,
-            }}
-          >
+
+        {cart.services.map((s) => (
+          <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 3 }}>
+            <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary }} numberOfLines={1}>
+              {s.name}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              {s.originalPrice && s.originalPrice !== s.price ? (
+                <Text style={{ fontSize: 11, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
+                  ${s.originalPrice}
+                </Text>
+              ) : null}
+              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>${s.price}</Text>
+            </View>
+          </View>
+        ))}
+
+        {savings > 0 ? (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.primaryLight }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>Bundle savings</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>− ${savings}</Text>
+          </View>
+        ) : null}
+
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: spacing.sm,
+            paddingTop: spacing.sm,
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.primaryLight,
+          }}
+        >
+          <Text style={{ fontSize: 11, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.primaryDark }}>
             Total
           </Text>
           <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>

@@ -39,7 +39,7 @@ export function MaintScheduleConfirmScreen() {
 
   const dealer = dealerById(booking.dealerId);
   const { total, totalMin } = cartTotals(booking);
-  const promoLabel = (booking as { promoLabel?: string }).promoLabel;
+  const promoLabel = (booking as { promo?: { label: string } }).promo?.label;
   const serviceNames = booking.services.map((s) => s.name).join(' + ');
   const reminderPref = useAppStore((s) => s.reminderPref);
 

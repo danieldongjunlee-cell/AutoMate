@@ -701,30 +701,34 @@ window.pickPart = function(el, name){
     <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:var(--c3fcb78)">$49</div><div style="font-size:6.5px;background:var(--c11271c);color:var(--c3fcb78);padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Paid</div></div>
   </div>
 </div>
-<div style="background:var(--c121a2b);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:0.5px solid var(--c1f2940);cursor:pointer" onclick="nav('booking-confirm')">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="width:34px;height:34px;border-radius:9px;background:var(--c2a2212);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid var(--c6e5526)">
-      <div style="font-size:6px;font-weight:700;color:var(--ce6b85c);text-transform:uppercase">Apr</div>
-      <div style="font-size:11px;font-weight:800;color:var(--ce6b85c);line-height:1">12</div>
+<!-- Confirmed booking + attached "mark completed" action (one connected card) -->
+<div style="border:0.5px solid var(--c1f2940);border-left:3px solid var(--c6e5526);border-radius:10px;overflow:hidden;margin-bottom:10px">
+  <div style="padding:9px 11px;cursor:pointer" onclick="nav('booking-confirm')">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:34px;height:34px;border-radius:9px;background:var(--c2a2212);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid var(--c6e5526)">
+        <div style="font-size:6px;font-weight:700;color:var(--ce6b85c);text-transform:uppercase">Apr</div>
+        <div style="font-size:11px;font-weight:800;color:var(--ce6b85c);line-height:1">12</div>
+      </div>
+      <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🚗 Rear bumper repair</div><div style="font-size:7px;color:var(--c9aa6b8)">Honda Fairfax · Thu 10:30 AM · Self drop-off</div></div>
+      <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:var(--ce8edf5)">$320–345</div><div style="font-size:6.5px;background:var(--c2a2212);color:var(--ce6b85c);padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Confirmed</div></div>
     </div>
-    <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🚗 Rear bumper repair</div><div style="font-size:7px;color:var(--c9aa6b8)">Honda Fairfax · Thu 10:30 AM · Self drop-off</div></div>
-    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:var(--ce8edf5)">$320–345</div><div style="font-size:6.5px;background:var(--c2a2212);color:var(--ce6b85c);padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Confirmed</div></div>
   </div>
+  <div style="border-top:0.5px solid var(--c1f2940);background:var(--c1a2333);padding:7px;text-align:center;cursor:pointer"><span style="font-size:7.5px;font-weight:700;color:var(--cb8c3d3)">✓ Mark service completed ›</span></div>
 </div>
-<!-- Confirmed → can be marked completed -->
-<div style="border:0.5px solid var(--c1f2940);border-radius:7px;padding:6px;text-align:center;margin-bottom:12px;cursor:pointer"><span style="font-size:7.5px;font-weight:600;color:var(--cb8c3d3)">✓ Mark service completed</span></div>
-<!-- COMPLETED booking → can leave a verified review -->
-<div style="background:var(--c121a2b);border-radius:10px;padding:9px 11px;margin-bottom:5px;border:0.5px solid var(--c1f2940);border-left:3px solid #16a34a">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="width:34px;height:34px;border-radius:9px;background:var(--c11271c);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid var(--c1f7a45)">
-      <div style="font-size:6px;font-weight:700;color:var(--c3fcb78);text-transform:uppercase">Mar</div>
-      <div style="font-size:11px;font-weight:800;color:var(--c3fcb78);line-height:1">10</div>
+<!-- Completed booking + attached "leave a review" action (one connected card) -->
+<div style="border:0.5px solid var(--c1f2940);border-left:3px solid #16a34a;border-radius:10px;overflow:hidden;margin-bottom:12px">
+  <div style="padding:9px 11px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="width:34px;height:34px;border-radius:9px;background:var(--c11271c);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;border:0.5px solid var(--c1f7a45)">
+        <div style="font-size:6px;font-weight:700;color:var(--c3fcb78);text-transform:uppercase">Mar</div>
+        <div style="font-size:11px;font-weight:800;color:var(--c3fcb78);line-height:1">10</div>
+      </div>
+      <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🛢️ Oil change + inspection</div><div style="font-size:7px;color:var(--c9aa6b8)">Honda Fairfax · Mon 9:00 AM · Completed</div></div>
+      <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:var(--ce8edf5)">$88</div><div style="font-size:6.5px;background:var(--c11271c);color:var(--c3fcb78);padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Completed</div></div>
     </div>
-    <div style="flex:1"><div style="font-size:8.5px;font-weight:600;margin-bottom:1px">🛢️ Oil change + inspection</div><div style="font-size:7px;color:var(--c9aa6b8)">Honda Fairfax · Mon 9:00 AM · Completed</div></div>
-    <div style="text-align:right"><div style="font-size:8.5px;font-weight:700;color:var(--ce8edf5)">$88</div><div style="font-size:6.5px;background:var(--c11271c);color:var(--c3fcb78);padding:1px 6px;border-radius:10px;font-weight:600;margin-top:2px">Completed</div></div>
   </div>
+  <div style="border-top:0.5px solid var(--c1f2940);background:var(--c15233e);padding:7px;text-align:center;cursor:pointer" onclick="nav('write-review')"><span style="font-size:8px;font-weight:700;color:var(--c6fa0ff)">★ Leave a review ›</span></div>
 </div>
-<div style="background:var(--c15233e);border-radius:7px;padding:8px;text-align:center;margin-bottom:12px;cursor:pointer" onclick="nav('write-review')"><span style="font-size:8px;font-weight:700;color:var(--c6fa0ff)">★ Leave a review</span></div>
 <!-- PENDING QUOTES -->
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
   <div style="font-size:7.5px;font-weight:700;color:var(--c8a94a6);text-transform:uppercase;letter-spacing:.05em">Pending quotes</div>
@@ -1038,13 +1042,13 @@ window.pickPart = function(el, name){
   <div style="background:linear-gradient(135deg,#0e1420,#1a2230);padding:8px 11px;display:flex;align-items:center;gap:8px">
     <div style="width:30px;height:30px;border-radius:8px;background:#2e6bff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">H</div>
     <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#fff">Honda Fairfax</div><div style="font-size:7px;color:rgba(255,255,255,.5)">Summer Bundle · Ends Jul 31</div></div>
-    <span style="font-size:7px;background:#dca13c;color:var(--ce8edf5);padding:2px 7px;border-radius:20px;font-weight:700">SAVE $89</span>
+    <span style="font-size:7px;background:#dca13c;color:var(--ce8edf5);padding:2px 7px;border-radius:20px;font-weight:700">UP TO 20% OFF</span>
   </div>
   <div style="padding:9px 11px">
-    <div style="display:flex;gap:5px;margin-bottom:7px">
-      <div style="flex:1;background:var(--c121a2b);border-radius:7px;padding:6px 7px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:7px;color:var(--c8a94a6);margin-bottom:1px">Oil change</div><div style="font-size:9px;font-weight:700;color:var(--ce8edf5)">$39</div><div style="font-size:6.5px;color:var(--c6e7a8c);text-decoration:line-through">$59</div></div>
-      <div style="flex:1;background:var(--c121a2b);border-radius:7px;padding:6px 7px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:7px;color:var(--c8a94a6);margin-bottom:1px">Tire rotation</div><div style="font-size:9px;font-weight:700;color:var(--ce8edf5)">$19</div><div style="font-size:6.5px;color:var(--c6e7a8c);text-decoration:line-through">$39</div></div>
-      <div style="flex:1;background:var(--c121a2b);border-radius:7px;padding:6px 7px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:7px;color:var(--c8a94a6);margin-bottom:1px">Inspection</div><div style="font-size:9px;font-weight:700;color:var(--ce8edf5)">$29</div><div style="font-size:6.5px;color:var(--c6e7a8c);text-decoration:line-through">$59</div></div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Oil change</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">15% OFF</span></div>
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Tire service</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">20% OFF</span></div>
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Fluids</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">10% OFF</span></div>
     </div>
     <div style="background:#dca13c;border-radius:8px;padding:8px;text-align:center;cursor:pointer" onclick="nav('maint-schedule-book')"><span style="font-size:8.5px;font-weight:700;color:var(--ce8edf5)">Claim this bundle →</span></div>
   </div>
@@ -1053,13 +1057,13 @@ window.pickPart = function(el, name){
   <div style="background:linear-gradient(135deg,#0f6e2e,#138a3f);padding:8px 11px;display:flex;align-items:center;gap:8px">
     <div style="width:30px;height:30px;border-radius:8px;background:#16a34a;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">A</div>
     <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#fff">AutoFix Pro</div><div style="font-size:7px;color:rgba(255,255,255,.5)">New customer offer</div></div>
-    <span style="font-size:7px;background:#16a34a;color:#fff;padding:2px 7px;border-radius:20px;font-weight:700">20% OFF</span>
+    <span style="font-size:7px;background:#16a34a;color:#fff;padding:2px 7px;border-radius:20px;font-weight:700">UP TO 20% OFF</span>
   </div>
   <div style="padding:9px 11px">
-    <div style="font-size:8px;color:var(--cb8c3d3);line-height:1.5;margin-bottom:7px">First service free multi-point inspection with any oil change. Valid for AutoMate users only.</div>
-    <div style="display:flex;gap:5px;margin-bottom:7px">
-      <div style="flex:1;background:var(--c11271c);border-radius:7px;padding:6px 7px;text-align:center;border:0.5px solid var(--c1f7a45)"><div style="font-size:7px;color:var(--c3fcb78);margin-bottom:1px">Oil + Inspection</div><div style="font-size:9px;font-weight:700;color:var(--c3fcb78)">$47</div><div style="font-size:6.5px;color:var(--c3fcb78)">was $79</div></div>
-      <div style="flex:1;background:var(--c121a2b);border-radius:7px;padding:6px 7px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:7px;color:var(--c8a94a6);margin-bottom:1px">Brakes + pads</div><div style="font-size:9px;font-weight:700;color:var(--ce8edf5)">$119</div><div style="font-size:6.5px;color:var(--c6e7a8c);text-decoration:line-through">$149</div></div>
+    <div style="font-size:8px;color:var(--cb8c3d3);line-height:1.5;margin-bottom:7px">New AutoMate customers save on an oil change and a full brake job. Discounts applied automatically at booking.</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Oil change</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">20% OFF</span></div>
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Brakes</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">15% OFF</span></div>
     </div>
     <div style="background:#16a34a;border-radius:8px;padding:8px;text-align:center;cursor:pointer" onclick="nav('maint-schedule-book')"><span style="font-size:8.5px;font-weight:700;color:#fff">Claim this deal →</span></div>
   </div>
@@ -1068,10 +1072,14 @@ window.pickPart = function(el, name){
   <div style="background:linear-gradient(135deg,#1A2A42,#1d3252);padding:8px 11px;display:flex;align-items:center;gap:8px">
     <div style="width:30px;height:30px;border-radius:8px;background:#2e6bff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">V</div>
     <div style="flex:1"><div style="font-size:9px;font-weight:600;color:#fff">Vienna Auto Care</div><div style="font-size:7px;color:rgba(255,255,255,.5)">Member exclusive</div></div>
-    <span style="font-size:7px;background:#2e6bff;color:#fff;padding:2px 7px;border-radius:20px;font-weight:700">$30 OFF</span>
+    <span style="font-size:7px;background:#2e6bff;color:#fff;padding:2px 7px;border-radius:20px;font-weight:700">UP TO 20% OFF</span>
   </div>
   <div style="padding:9px 11px">
-    <div style="font-size:8px;color:var(--cb8c3d3);line-height:1.5;margin-bottom:7px">$30 off any service over $99 for AutoMate members. Use code AUTOMATE30 at checkout.</div>
+    <div style="font-size:8px;color:var(--cb8c3d3);line-height:1.5;margin-bottom:7px">AutoMate members save on filters and fluid services. Discounts applied automatically at booking.</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Filters</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">20% OFF</span></div>
+      <div style="display:flex;align-items:center;gap:4px;background:var(--c11271c);border-radius:7px;padding:5px 7px;border:0.5px solid var(--c1f7a45)"><span style="font-size:7.5px;font-weight:600;color:var(--c3fcb78)">Fluids</span><span style="font-size:7px;font-weight:800;background:#16a34a;color:#fff;padding:1px 5px;border-radius:20px">15% OFF</span></div>
+    </div>
     <div style="background:#16a34a;border-radius:8px;padding:8px;text-align:center;cursor:pointer" onclick="nav('maint-schedule-book')"><span style="font-size:8.5px;font-weight:700;color:#fff">Book &amp; save →</span></div>
   </div>
 </div>
