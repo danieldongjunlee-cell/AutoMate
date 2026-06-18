@@ -432,7 +432,7 @@ export function DiyFutureScreen() {
         }}
       >
         <Text style={{ fontSize: 13, color: colors.primaryDark, lineHeight: 19 }}>
-          ♾️ New guides ship monthly — all included in your $10 lifetime membership. Vote below for
+          ♾️ New guides ship monthly — all included in your AutoMate Pro membership. Vote below for
           what we build next!
         </Text>
       </View>

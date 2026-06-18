@@ -421,7 +421,7 @@ export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
 
 export const HISTORY_TIME_FILTERS = ['All time', 'Last 6 months', '2024', '2023'];
 export const HISTORY_TYPE_FILTERS = ['All types', 'Oil change', 'Tires', 'Brakes', 'Body repair'];
-export const MANUAL_SERVICE_TYPES = ['Oil change', 'Tire rotation', 'Brake service', 'Air filter'];
+export const MANUAL_SERVICE_TYPES = ['Oil change', 'Tire service', 'Filters', 'Fluids', 'Brakes'];
 
 /** Receipt fields parsed by the mock OCR (maint-scan-rev). */
 export const SCANNED_RECEIPT = {
@@ -515,14 +515,44 @@ export const PRO_GUIDES: ProGuide[] = [
   { id: 'pg-12', icon: '🔒', title: 'Interior scuff removal', sub: 'Leather & plastic restore', time: '25 min', difficulty: 'Easy' },
 ];
 
-export const SCHEDULE_SERVICE_FILTERS = ['All', 'Oil change', 'Tires', 'Brakes', 'Inspection'];
+/** The 5 maintenance service types — single source of truth (mirrors
+ *  MAINT_CATEGORIES) so filters, chips and labels stay consistent app-wide. */
+export const SERVICE_TYPES = ['Oil change', 'Tire service', 'Filters', 'Fluids', 'Brakes'] as const;
 
-/** Per-dealer price chips on maint-schedule cards. */
-export const DEALER_SERVICE_CHIPS: Record<string, string[]> = {
-  'honda-fairfax': ['Oil $49', 'Tires $89+', 'Brakes $149', 'Inspection $39'],
-  'autofix-pro': ['Oil $39', 'Inspection $69', 'Brakes $129'],
-  'vienna-auto': ['Tires $79+', 'Brakes $129'],
+export const SCHEDULE_SERVICE_FILTERS = ['All', ...SERVICE_TYPES];
+
+/** Map a schedule filter to the prefix used on the per-dealer price chips. */
+export const SERVICE_FILTER_KEY: Record<string, string> = {
+  'Oil change': 'Oil',
+  'Tire service': 'Tires',
+  Filters: 'Filters',
+  Fluids: 'Fluids',
+  Brakes: 'Brakes',
 };
+
+/** Per-dealer price chips on maint-schedule cards — every partner lists all 5
+ *  service types (prices vary by shop). */
+export const DEALER_SERVICE_CHIPS: Record<string, string[]> = {
+  'honda-fairfax': ['Oil $49', 'Tires $89', 'Filters $45', 'Fluids $99', 'Brakes $149'],
+  'autofix-pro': ['Oil $39', 'Tires $79', 'Filters $40', 'Fluids $109', 'Brakes $129'],
+  'vienna-auto': ['Oil $55', 'Tires $85', 'Filters $48', 'Fluids $119', 'Brakes $139'],
+  'fairfax-collision': ['Oil $52', 'Tires $89', 'Filters $45', 'Fluids $99', 'Brakes $159'],
+  'chantilly-body': ['Oil $45', 'Tires $79', 'Filters $42', 'Fluids $95', 'Brakes $145'],
+  'nova-dent': ['Oil $49', 'Tires $82', 'Filters $44', 'Fluids $105', 'Brakes $149'],
+  'arlington-spa': ['Oil $59', 'Tires $95', 'Filters $50', 'Fluids $125', 'Brakes $169'],
+  'premier-body': ['Oil $42', 'Tires $75', 'Filters $39', 'Fluids $89', 'Brakes $135'],
+  'city-body': ['Oil $47', 'Tires $85', 'Filters $43', 'Fluids $99', 'Brakes $149'],
+};
+
+/** NoVA service areas the user can switch between on the schedule screen. */
+export const SERVICE_AREAS = [
+  'Fairfax, VA',
+  'Vienna, VA',
+  'Arlington, VA',
+  'Chantilly, VA',
+  'Springfield, VA',
+  'Alexandria, VA',
+];
 
 export interface BookableService {
   id: string;

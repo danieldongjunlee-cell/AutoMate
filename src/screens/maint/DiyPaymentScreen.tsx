@@ -18,8 +18,8 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyPayment'>;
 
-/** AutoMate Pro lifetime price (wireframe s-diy-unlock/payment: $10). */
-const PRO_PRICE_USD = 10;
+/** AutoMate Pro annual membership price ($48/yr). */
+const PRO_PRICE_USD = 48;
 
 /** Wireframe s-diy-payment: Pro order summary + payment method. */
 export function DiyPaymentScreen() {
@@ -66,8 +66,8 @@ export function DiyPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>📚 DIY guides · lifetime</Text>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>$10.00</Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>⭐ AutoMate Pro · 1 year</Text>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>$48.00</Text>
         </View>
         <View
           style={{
@@ -79,7 +79,7 @@ export function DiyPaymentScreen() {
           }}
         >
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>
-            One-time charge · no subscription
+            Annual membership · just $4/mo
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>Tax incl.</Text>
         </View>

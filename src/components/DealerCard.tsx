@@ -57,16 +57,15 @@ export function DealerCard({
             {dealer.name}
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {dist.format(dealer.distanceMi)} ·{' '}
-            </Text>
             {/* Tappable rating → Google reviews (feedback pass 2) */}
-            <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
+            <RatingLink dealer={dealer} label={`★ ${dealer.rating.toFixed(1)}`} />
             <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {' '}· {open ? `Open until ${dealer.closesAt}` : `Closes ${dealer.closesAt}`}
+              {' '}({dealer.reviews} reviews) · {dist.format(dealer.distanceMi)}
             </Text>
           </View>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>🕐 {dealer.hours}</Text>
+          <Text style={{ fontSize: 12, color: open ? colors.successDark : colors.textTertiary }}>
+            🕐 {dealer.hours} · {open ? `Open until ${dealer.closesAt}` : 'Closed'}
+          </Text>
         </View>
         <View
           style={{

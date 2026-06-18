@@ -57,7 +57,7 @@ export function DiyConfirmScreen() {
           DIY guides unlocked!
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          $10.00 paid · 12 guides, yours forever
+          $48.00/yr · AutoMate Pro active · 12 guides unlocked
         </Text>
       </View>
 

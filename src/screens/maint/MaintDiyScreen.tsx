@@ -31,7 +31,7 @@ export function MaintDiyScreen() {
     { value: '12', label: 'Guides', tint: 'rgba(29,158,117,.25)', color: palette.successLight },
     isPro
       ? { value: 'PRO', label: 'Unlocked', tint: 'rgba(239,159,39,.2)', color: '#F5B947' }
-      : { value: '$10', label: 'Forever', tint: 'rgba(255,255,255,.07)', color: '#fff' },
+      : { value: '$48/yr', label: 'with Pro', tint: 'rgba(255,255,255,.07)', color: '#fff' },
     { value: '5 min', label: 'Avg read', tint: 'rgba(255,255,255,.07)', color: '#fff' },
   ];
 
@@ -51,7 +51,7 @@ export function MaintDiyScreen() {
             <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
               {isPro
                 ? '12 expert guides · Pro unlocked'
-                : '12 expert guides · Free samples below · unlock all for $10 or with Pro'}
+                : '12 expert guides · Free samples below · unlock all with AutoMate Pro'}
             </Text>
           </View>
         </View>
@@ -120,7 +120,7 @@ export function MaintDiyScreen() {
             <ProLockOverlay
               title="+10 more guides with Pro"
               subtitle="All difficulty levels · AI recommendations · New guides weekly"
-              cta="Unlock — $10 or with Pro →"
+              cta="Unlock with Pro · $48/yr →"
               onUnlock={() => navigation.navigate('DiyUnlock')}
             >
               {locked.map((g) => (

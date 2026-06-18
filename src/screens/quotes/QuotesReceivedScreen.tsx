@@ -29,10 +29,12 @@ const distanceCap: Record<string, number> = { 'Within 5 mi': 5, 'Within 10 mi': 
 function QuoteRow({
   quote,
   onAccept,
+  onSelect,
   selected,
 }: {
   quote: Quote;
   onAccept: () => void;
+  onSelect: () => void;
   selected?: boolean;
 }) {
   const { colors } = useTheme();
@@ -58,12 +60,13 @@ function QuoteRow({
 
   return (
     <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+      {/* Tapping the dealer row selects this shop (reveals Accept & book). */}
+      <Tappable onPress={onSelect} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
         <AvatarCircle initial={dealer.initial} color={dealer.color} size={38} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{dealer.name}</Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-            ★ {dealer.rating} · {dealer.distanceMi} mi · {quote.parts} parts
+            ★ {dealer.rating} ({dealer.reviews}) · {dealer.distanceMi} mi · 🕐 {dealer.hours}
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
@@ -72,7 +75,7 @@ function QuoteRow({
             <Badge label={quote.tier === 'best' ? 'Best price' : 'Recommended'} variant={quote.tier === 'best' ? 'success' : 'primarySoft'} />
           ) : null}
         </View>
-      </View>
+      </Tappable>
 
       <Tappable onPress={() => setOpen((o) => !o)} hitSlop={6} style={{ paddingVertical: 8 }}>
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>
@@ -96,7 +99,23 @@ function QuoteRow({
       {quote.note ? (
         <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>{quote.note}</Text>
       ) : null}
-      <PrimaryButton label="Accept & book →" onPress={onAccept} />
+      {/* Accept & book appears only once this shop is selected. */}
+      {selected ? (
+        <PrimaryButton label={`Accept & book ${dealer.name} →`} onPress={onAccept} />
+      ) : (
+        <Tappable
+          onPress={onSelect}
+          style={{
+            borderWidth: 1.5,
+            borderColor: colors.primary,
+            borderRadius: radii.sm,
+            paddingVertical: 11,
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Select this shop</Text>
+        </Tappable>
+      )}
     </Card>
   );
 }
@@ -177,8 +196,6 @@ export function QuotesReceivedScreen() {
     );
   }
 
-  const partsLabel = damageParts.map((p) => p.part).join(', ');
-
   const markers: MapMarker[] = filtered.map((q) => {
     const d = dealerById(q.dealerId);
     return {
@@ -195,15 +212,15 @@ export function QuotesReceivedScreen() {
     <Screen safeTop scrollRef={scrollRef}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Quotes received</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }} numberOfLines={1}>
-            {partsLabel}
+          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            {filtered.length} shops responded
           </Text>
         </View>
         <CarSwitchChip />
       </View>
 
-      {/* AI estimate range */}
+      {/* AI estimate: price range + confidence + what was submitted */}
       {aiEstimate ? (
         <View
           style={{
@@ -213,28 +230,48 @@ export function QuotesReceivedScreen() {
             borderColor: colors.success,
             padding: spacing.md,
             marginBottom: spacing.md,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.successDark }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>
+              AI estimated repair cost
+            </Text>
+            <Badge label={`AI confidence ${aiEstimate.confidencePct}%`} variant="success" />
+          </View>
+          <Text style={{ fontSize: 24, fontWeight: '800', color: colors.successDark, marginBottom: spacing.sm }}>
             ${aiEstimate.priceLow} – ${aiEstimate.priceHigh}
           </Text>
-          <Badge label={`AI ${aiEstimate.confidencePct}%`} variant="success" />
+          {/* Confidence bar */}
+          <View style={{ height: 6, backgroundColor: 'rgba(29,158,117,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: spacing.sm }}>
+            <View style={{ width: `${aiEstimate.confidencePct}%`, height: '100%', backgroundColor: colors.success, borderRadius: 3 }} />
+          </View>
+          {/* Submitted parts: part · damage type · photo count */}
+          <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', paddingTop: spacing.sm, gap: 4 }}>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+              You submitted
+            </Text>
+            {damageParts.map((p) => (
+              <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>{p.part}</Text>
+                <Text style={{ fontSize: 12, color: colors.textSecondary }}>
+                  {p.type} · {p.photos} photo{p.photos !== 1 ? 's' : ''}
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
       ) : null}
 
-      {/* Shops near you — map */}
+      {/* Shops near you — larger map. Tap a price to select that dealership. */}
       {markers.length > 0 ? (
         <View style={{ marginBottom: spacing.md }}>
-          <SectionLabel>Shops near you</SectionLabel>
+          <SectionLabel>Shops near you · tap a price to select</SectionLabel>
           <DealerMap
             markers={markers}
             center={USER_LOCATION}
             userLocation={USER_LOCATION}
             onSelect={onPinSelect}
-            style={{ height: 180, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
+            style={{ height: 260, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
           />
         </View>
       ) : null}
@@ -272,6 +309,7 @@ export function QuotesReceivedScreen() {
             <QuoteRow
               quote={q}
               selected={q.dealerId === selectedId}
+              onSelect={() => onPinSelect(q.dealerId)}
               onAccept={() => navigateCrossTab(navigation, 'HomeTab', 'AcceptBooking', { dealerId: q.dealerId })}
             />
           </View>

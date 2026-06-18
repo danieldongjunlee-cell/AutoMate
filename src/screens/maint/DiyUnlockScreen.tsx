@@ -20,7 +20,7 @@ const BENEFITS = [
   { icon: '♾️', title: 'All future guides included', sub: 'New guides added monthly · never pay again' },
 ];
 
-/** Wireframe s-diy-unlock: DIY guide paywall — $10 lifetime OR AutoMate Pro. */
+/** Wireframe s-diy-unlock: DIY guide paywall — included with AutoMate Pro ($48/yr). */
 export function DiyUnlockScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();

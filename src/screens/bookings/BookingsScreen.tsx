@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
@@ -16,6 +16,12 @@ import { showAlert } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 /** Wireframe s-bookings: scheduled services + pending quotes (new bottom tab). */
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
@@ -28,6 +34,17 @@ export function BookingsScreen() {
   useEffect(() => setBookingsViewed(true), [setBookingsViewed]);
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
+
+  // Interactive calendar: starts on the real current month, navigable across
+  // months and years.
+  const today = new Date();
+  const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
+  const stepMonth = (delta: number) =>
+    setView((v) => {
+      const m = v.month + delta;
+      return { year: v.year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 };
+    });
+  const stepYear = (delta: number) => setView((v) => ({ ...v, year: v.year + delta }));
 
   const openBooking = (b: AppBooking) => {
     if (b.status === 'cancelled') {
@@ -61,13 +78,20 @@ export function BookingsScreen() {
   const MAINT = { surface: colors.primarySurface, deep: colors.primaryDeep, accent: colors.primary };
   const kindStyle = (b: AppBooking) => (b.kind === 'repair' ? REPAIR : MAINT);
 
-  // Days with a scheduled booking → mark color by kind (derived from filtered list).
+  // Days with a scheduled booking in the displayed month → mark color by kind.
   const markedDays = new Map<number, string>();
   bookings.forEach((b) => {
     if (b.status === 'cancelled') return; // cancelled → not on the calendar
+    if (b.mon !== MONTH_ABBR[view.month]) return; // only the month in view
     const d = parseInt(b.day, 10);
     if (!Number.isNaN(d)) markedDays.set(d, b.kind === 'repair' ? colors.warning : colors.primary);
   });
+
+  // Grid geometry for the displayed month.
+  const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+  const leadingBlanks = new Date(view.year, view.month, 1).getDay(); // 0=Sun
+  const isThisMonth = view.year === today.getFullYear() && view.month === today.getMonth();
+  const todayDate = isThisMonth ? today.getDate() : -1;
 
   const dateBadge = (b: AppBooking) => {
     const k = kindStyle(b);
@@ -128,9 +152,24 @@ export function BookingsScreen() {
         <SectionLabel>{t('Calendar')}</SectionLabel>
       </View>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.sm }}>
-          April 2027
-        </Text>
+        {/* Month/year nav: «=year ‹=month  title  ›=month »=year */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
+          <CalNav label="«" onPress={() => stepYear(-1)} />
+          <CalNav label="‹" onPress={() => stepMonth(-1)} />
+          <Tappable
+            onPress={() => setView({ year: today.getFullYear(), month: today.getMonth() })}
+            style={{ flex: 1, alignItems: 'center' }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>
+              {MONTH_NAMES[view.month]} {view.year}
+            </Text>
+            {!isThisMonth ? (
+              <Text style={{ fontSize: 10, fontWeight: '700', color: colors.primary }}>Today</Text>
+            ) : null}
+          </Tappable>
+          <CalNav label="›" onPress={() => stepMonth(1)} />
+          <CalNav label="»" onPress={() => stepYear(1)} />
+        </View>
         <View style={{ flexDirection: 'row', marginBottom: 4 }}>
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
             <Text
@@ -142,8 +181,12 @@ export function BookingsScreen() {
           ))}
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+          {Array.from({ length: leadingBlanks }, (_, i) => (
+            <View key={`b${i}`} style={{ width: `${100 / 7}%`, paddingVertical: 3 }} />
+          ))}
+          {Array.from({ length: daysInMonth }, (_, i) => i + 1).map((day) => {
             const mark = markedDays.get(day);
+            const isToday = day === todayDate;
             return (
               <View
                 key={`d${day}`}
@@ -157,13 +200,15 @@ export function BookingsScreen() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: mark ?? 'transparent',
+                    borderWidth: isToday && !mark ? 1.5 : 0,
+                    borderColor: colors.primary,
                   }}
                 >
                   <Text
                     style={{
                       fontSize: 12,
-                      fontWeight: mark ? '800' : '500',
-                      color: mark ? colors.onPrimary : colors.textSecondary,
+                      fontWeight: mark || isToday ? '800' : '500',
+                      color: mark ? colors.onPrimary : isToday ? colors.primary : colors.textSecondary,
                     }}
                   >
                     {day}
@@ -258,5 +303,27 @@ export function BookingsScreen() {
         ))
       )}
     </Screen>
+  );
+}
+
+/** Small round month/year nav button for the bookings calendar. */
+function CalNav({ label, onPress }: { label: string; onPress: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <Tappable
+      onPress={onPress}
+      hitSlop={8}
+      style={({ pressed }) => ({
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.surfaceAlt,
+        opacity: pressed ? 0.6 : 1,
+      })}
+    >
+      <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textSecondary }}>{label}</Text>
+    </Tappable>
   );
 }

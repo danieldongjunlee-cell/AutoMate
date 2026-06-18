@@ -19,7 +19,7 @@ type Plan = 'annual' | 'monthly';
 
 const BENEFITS = [
   'No security deposits, ever',
-  'All DIY repair guides included (worth $10)',
+  'All 12 DIY repair guides included',
   'Priority dealer quotes',
   '2× points on every booking',
 ];

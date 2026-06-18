@@ -371,6 +371,7 @@ export const useAppStore = create<AppState>((set) => ({
       activeVehicleId: null,
       joinedCommunityIds: [],
       bookings: SEED_BOOKINGS,
+      bookingsViewed: true,
       reviews: [],
     });
   },
@@ -459,7 +460,10 @@ export const useAppStore = create<AppState>((set) => ({
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
   quotesViewed: true,
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
-  bookingsViewed: false,
+  // Starts "viewed" so seeded/returning bookings don't flash a tab badge on
+  // login — the badge only appears when the user makes a NEW booking
+  // (addBooking flips this to false).
+  bookingsViewed: true,
   setBookingsViewed: (bookingsViewed) => set({ bookingsViewed }),
   readPostIds: {},
   markPostsRead: (ids) =>

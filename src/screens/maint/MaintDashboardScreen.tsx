@@ -209,7 +209,7 @@ export function MaintDashboardScreen() {
                 Book a Service
               </Text>
               <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.72)' }}>
-                Oil · Tires · Brakes · Inspection
+                Oil · Tires · Filters · Fluids · Brakes
               </Text>
             </LinearGradient>
           )}
