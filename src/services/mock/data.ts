@@ -569,6 +569,98 @@ export const BOOKABLE_SERVICES: BookableService[] = [
   },
 ];
 
+/** Vehicle-size buckets used to price brake jobs (auto-picked from the car). */
+export type VehicleType = 'Small Car' | 'Sedan' | 'SUV' | 'Truck' | 'Performance';
+
+export interface MaintSubService {
+  id: string;
+  name: string;
+  price: number;
+  durationMin: number;
+  /** Brakes only: which vehicle-size bucket this row prices. */
+  vehicleType?: VehicleType;
+}
+
+export interface MaintCategory {
+  id: string;
+  name: string;
+  icon: string;
+  blurb: string;
+  /** When true the row matching the car's vehicle type is auto-selected. */
+  byVehicleType?: boolean;
+  services: MaintSubService[];
+}
+
+/** The 5 maintenance services, each with its detailed sub-options. */
+export const MAINT_CATEGORIES: MaintCategory[] = [
+  {
+    id: 'oil',
+    name: 'Oil change',
+    icon: '🛢️',
+    blurb: 'Pick your oil type',
+    services: [
+      { id: 'oil-conv', name: 'Conventional', price: 39, durationMin: 40 },
+      { id: 'oil-blend', name: 'Synthetic blend', price: 49, durationMin: 45 },
+      { id: 'oil-full', name: 'Full synthetic', price: 69, durationMin: 45 },
+      { id: 'oil-hm', name: 'High-mileage', price: 59, durationMin: 45 },
+    ],
+  },
+  {
+    id: 'tires',
+    name: 'Tire service',
+    icon: '🛞',
+    blurb: 'Rotation, alignment & repair',
+    services: [
+      { id: 'tire-rot', name: 'Tire Rotation', price: 29, durationMin: 30 },
+      { id: 'tire-rotbal', name: 'Tire Rotation + Balance', price: 59, durationMin: 45 },
+      { id: 'tire-al2', name: 'Wheel Alignment (2-wheel)', price: 89, durationMin: 45 },
+      { id: 'tire-al4', name: 'Wheel Alignment (4-wheel)', price: 129, durationMin: 60 },
+      { id: 'tire-mount', name: 'Tire Mounting (per tire)', price: 25, durationMin: 20 },
+      { id: 'tire-tpms', name: 'TPMS Sensor Service', price: 65, durationMin: 30 },
+      { id: 'tire-flat', name: 'Flat Repair', price: 35, durationMin: 30 },
+    ],
+  },
+  {
+    id: 'filters',
+    name: 'Filters',
+    icon: '🌬️',
+    blurb: 'Air, cabin, fuel & PCV',
+    services: [
+      { id: 'flt-cabin', name: 'Cabin Air Filter', price: 45, durationMin: 20 },
+      { id: 'flt-engine', name: 'Engine Air Filter', price: 40, durationMin: 20 },
+      { id: 'flt-fuel', name: 'Fuel Filter', price: 80, durationMin: 40 },
+      { id: 'flt-pcv', name: 'PCV Valve', price: 55, durationMin: 30 },
+    ],
+  },
+  {
+    id: 'fluids',
+    name: 'Fluids',
+    icon: '💧',
+    blurb: 'Flushes & top-ups',
+    services: [
+      { id: 'fl-trans', name: 'Transmission Fluid Flush (Auto)', price: 159, durationMin: 60 },
+      { id: 'fl-coolant', name: 'Coolant Flush', price: 119, durationMin: 60 },
+      { id: 'fl-brake', name: 'Brake Fluid Flush', price: 99, durationMin: 45 },
+      { id: 'fl-ps', name: 'Power Steering Flush', price: 109, durationMin: 45 },
+      { id: 'fl-diff', name: 'Differential Fluid (AWD/4WD)', price: 129, durationMin: 50 },
+    ],
+  },
+  {
+    id: 'brakes',
+    name: 'Brakes',
+    icon: '🛑',
+    blurb: 'Pads & rotors — priced by vehicle',
+    byVehicleType: true,
+    services: [
+      { id: 'brk-small', name: 'Small Car', price: 199, durationMin: 90, vehicleType: 'Small Car' },
+      { id: 'brk-sedan', name: 'Sedan', price: 229, durationMin: 90, vehicleType: 'Sedan' },
+      { id: 'brk-suv', name: 'SUV', price: 279, durationMin: 105, vehicleType: 'SUV' },
+      { id: 'brk-truck', name: 'Truck', price: 319, durationMin: 120, vehicleType: 'Truck' },
+      { id: 'brk-perf', name: 'Performance', price: 389, durationMin: 120, vehicleType: 'Performance' },
+    ],
+  },
+];
+
 export const MAINT_TIME_SLOTS = ['8:00 AM', '10:00 AM', '1:00 PM', '3:30 PM'];
 
 // ── Compare domain ─────────────────────────────────────────────────────

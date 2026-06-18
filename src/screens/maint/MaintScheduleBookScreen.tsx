@@ -1,35 +1,41 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { ServiceSelectRow } from '../../components/ServiceSelectRow';
+import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle, vehicleTypeOf } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import {
-  BOOKABLE_SERVICES,
   dealerById,
+  MAINT_CATEGORIES,
   MAINT_TIME_SLOTS,
+  MaintCategory,
+  MaintSubService,
 } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
 
-/** Wireframe s-maint-schedule-book: multi-service select + date/time → payment. */
+/** Wireframe s-maint-schedule-book: 5 service categories + date/time → payment. */
 export function MaintScheduleBookScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const cart = useAppStore((s) => s.cart);
   const toggleCartService = useAppStore((s) => s.toggleCartService);
   const setCartSlot = useAppStore((s) => s.setCartSlot);
+  const { active } = useActiveVehicle();
 
-  // Cart defaults (oil change · Apr 7 · 8:00 AM) are seeded by startBooking()
-  // at every entry point (MaintSchedule dealer cards, BundleDeals claims).
+  // Auto-pick the brake row that matches the active car's size (KIA Sportage → SUV).
+  const recoType = active ? vehicleTypeOf(active.name) : null;
+
   const dealer = dealerById(cart.dealerId);
   const selectedDay = cart.date ? Number(cart.date.split('-')[2]) : null;
+  const [expanded, setExpanded] = useState<Set<string>>(new Set(['oil', 'brakes']));
 
   useEffect(() => {
     navigation.setOptions({ title: dealer.name });
@@ -39,31 +45,111 @@ export function MaintScheduleBookScreen() {
   const count = cart.services.length;
   const canContinue = count > 0 && !!cart.date && !!cart.time;
 
+  const inCart = (id: string) => cart.services.some((s) => s.id === id);
+  const toggle = (cat: MaintCategory, sub: MaintSubService) =>
+    toggleCartService({
+      id: sub.id,
+      name: `${cat.name} — ${sub.name}`,
+      price: sub.price,
+      durationMin: sub.durationMin,
+    });
+
+  const toggleExpand = (id: string) =>
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const renderSub = (cat: MaintCategory, sub: MaintSubService) => {
+    const selected = inCart(sub.id);
+    const recommended = cat.byVehicleType && sub.vehicleType === recoType;
+    return (
+      <Tappable
+        key={sub.id}
+        onPress={() => toggle(cat, sub)}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          paddingVertical: 10,
+          paddingHorizontal: spacing.md,
+          borderTopWidth: StyleSheet.hairlineWidth,
+          borderTopColor: colors.divider,
+          backgroundColor: selected ? colors.primarySurface : 'transparent',
+        }}
+      >
+        <View
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: 6,
+            borderWidth: 1.5,
+            borderColor: selected ? colors.primary : colors.border,
+            backgroundColor: selected ? colors.primary : 'transparent',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {selected ? <Text style={{ color: '#fff', fontSize: 12 }}>✓</Text> : null}
+        </View>
+        <View style={{ flex: 1 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{sub.name}</Text>
+            {recommended ? (
+              <View style={{ backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
+                <Text style={{ fontSize: 9, fontWeight: '800', color: colors.successDeep }}>★ RECOMMENDED</Text>
+              </View>
+            ) : null}
+          </View>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>~{sub.durationMin} min</Text>
+        </View>
+        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>${sub.price}</Text>
+      </Tappable>
+    );
+  };
+
   return (
     <Screen>
       <SectionLabel>
-        Select services <Text style={{ textTransform: 'none' }}>(choose one or more)</Text>
+        Maintenance services <Text style={{ textTransform: 'none' }}>(choose one or more)</Text>
       </SectionLabel>
-      <Card style={{ overflow: 'hidden', marginBottom: spacing.sm }}>
-        {BOOKABLE_SERVICES.map((service, i) => (
-          <ServiceSelectRow
-            key={service.id}
-            service={service}
-            selected={cart.services.some((s) => s.id === service.id)}
-            last={i === BOOKABLE_SERVICES.length - 1}
-            onToggle={() =>
-              toggleCartService({
-                id: service.id,
-                name: service.name,
-                price: service.price,
-                durationMin: service.durationMin,
-              })
-            }
-          />
-        ))}
-      </Card>
 
-      {/* Running total — explicit, right-aligned emphasized amount (feedback pass 1) */}
+      {MAINT_CATEGORIES.map((cat) => {
+        const open = expanded.has(cat.id);
+        const selectedCount = cat.services.filter((s) => inCart(s.id)).length;
+        // Show the recommended option first for the by-vehicle category.
+        const subs = cat.byVehicleType && recoType
+          ? [...cat.services].sort((a, b) => (b.vehicleType === recoType ? 1 : 0) - (a.vehicleType === recoType ? 1 : 0))
+          : cat.services;
+        return (
+          <Card key={cat.id} style={{ overflow: 'hidden', marginBottom: spacing.sm, padding: 0 }}>
+            <Tappable
+              onPress={() => toggleExpand(cat.id)}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
+            >
+              <Text style={{ fontSize: 20 }}>{cat.icon}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{cat.name}</Text>
+                <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                  {cat.blurb}
+                  {cat.byVehicleType && recoType ? ` · for your ${recoType}` : ''}
+                </Text>
+              </View>
+              {selectedCount > 0 ? (
+                <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
+                  <Text style={{ fontSize: 11, fontWeight: '800', color: colors.onPrimary }}>{selectedCount}</Text>
+                </View>
+              ) : null}
+              <Text style={{ fontSize: 16, color: colors.textTertiary }}>{open ? '⌃' : '⌄'}</Text>
+            </Tappable>
+            {open ? subs.map((sub) => renderSub(cat, sub)) : null}
+          </Card>
+        );
+      })}
+
+      {/* Running total */}
       <View
         style={{
           backgroundColor: colors.primarySurface,
@@ -76,6 +162,7 @@ export function MaintScheduleBookScreen() {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: spacing.sm,
+          marginTop: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
@@ -100,9 +187,7 @@ export function MaintScheduleBookScreen() {
           >
             Total
           </Text>
-          <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>
-            ${total}
-          </Text>
+          <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>
         </View>
       </View>
 

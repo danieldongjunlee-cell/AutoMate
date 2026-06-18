@@ -1,7 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { Vehicle, vehiclesService } from '../services';
+import { VehicleType } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
+
+// Model keywords → vehicle-size bucket (used to auto-pick brake pricing, etc.).
+const TYPE_KEYWORDS: [VehicleType, string[]][] = [
+  ['Truck', ['f-150', 'f150', 'f-250', 'silverado', 'sierra', 'ram', 'tacoma', 'tundra', 'ranger', 'colorado', 'frontier', 'ridgeline', 'gladiator', 'titan', 'canyon', 'maverick']],
+  ['SUV', ['rav4', 'cr-v', 'crv', 'sportage', 'telluride', 'cx-5', 'cx5', 'cx-50', 'cx-90', 'outback', 'pilot', 'highlander', 'explorer', 'tahoe', 'suburban', 'equinox', 'rogue', 'pathfinder', 'sorento', 'santa fe', 'tucson', '4runner', 'wrangler', 'cherokee', 'forester', 'ascent', 'palisade', 'seltos', 'kona', 'bronco', 'escape', 'edge', 'traverse', 'atlas', 'tiguan', 'murano', 'blazer', 'trailblazer', 'venza', 'crosstrek']],
+  ['Performance', ['mustang', 'corvette', 'gt-r', 'gtr', ' m3', ' m4', ' m5', 'amg', '911', 'camaro', 'srt', 'type r', 'gti', 'wrx', 'sti', 'supra', '370z', '350z', ' z ', 'civic si']],
+  ['Small Car', ['civic', 'corolla', 'sentra', 'elantra', 'forte', 'rio', 'versa', 'fit', 'yaris', 'mirage', 'accent', 'sonic', 'spark', 'golf', 'mazda3', 'mazda 3', 'impreza']],
+  ['Sedan', ['accord', 'camry', 'altima', 'sonata', 'optima', 'k5', 'maxima', 'legacy', 'mazda6', 'mazda 6', 'passat', 'jetta', 'malibu', 'fusion', 'avalon', 'es ', 'tlx', 'stinger', 'arteon', 'charger', '300']],
+];
+
+/** Best-guess vehicle-size bucket from the car name (null if unknown). */
+export function vehicleTypeOf(name: string): VehicleType | null {
+  const n = ` ${name.toLowerCase()} `;
+  for (const [type, keys] of TYPE_KEYWORDS) {
+    if (keys.some((k) => n.includes(k))) return type;
+  }
+  return null;
+}
 
 const KNOWN_BRANDS = [
   'Honda', 'Toyota', 'Subaru', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'Hyundai',
