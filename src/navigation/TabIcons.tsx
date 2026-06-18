@@ -27,6 +27,13 @@ export function TabIcon({ tab, color }: { tab: keyof MainTabParamList; color: st
           <Path d="M10 20v-5h4v5" />
         </Svg>
       );
+    case 'QuotesTab':
+      return (
+        <Svg {...stroke}>
+          <Path d="M6 3.5h9l4 4V20.5H6Z" />
+          <Path d="M14.5 3.5v4h4M9 12h6M9 15.5h6" />
+        </Svg>
+      );
     case 'BookingsTab':
       return (
         <Svg {...stroke}>

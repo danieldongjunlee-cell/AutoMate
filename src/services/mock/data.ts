@@ -569,6 +569,39 @@ export const BOOKABLE_SERVICES: BookableService[] = [
   },
 ];
 
+/** Itemized cost breakdown for a dealer quote (expandable detail). */
+export interface QuoteBreakdown {
+  labor: number;
+  parts: number;
+  paints: number;
+  shopSupplies: number; // 5% of subtotal
+  tax: number; // 6%
+  discount: number;
+  subtotal: number;
+  total: number;
+}
+
+/** Derive a plausible itemized breakdown that sums to the quoted price. */
+export function quoteBreakdown(price: number, discount = 0): QuoteBreakdown {
+  const gross = price + discount; // pre-discount target
+  const subtotal = Math.round(gross / 1.113); // back out 5% supplies + 6% tax
+  const labor = Math.round(subtotal * 0.55);
+  const parts = Math.round(subtotal * 0.3);
+  const paints = subtotal - labor - parts; // remainder (~15%)
+  const shopSupplies = Math.round(subtotal * 0.05);
+  const tax = Math.round((subtotal + shopSupplies) * 0.06);
+  return {
+    labor,
+    parts,
+    paints,
+    shopSupplies,
+    tax,
+    discount,
+    subtotal,
+    total: subtotal + shopSupplies + tax - discount,
+  };
+}
+
 /** Vehicle-size buckets used to price brake jobs (auto-picked from the car). */
 export type VehicleType = 'Small Car' | 'Sedan' | 'SUV' | 'Truck' | 'Performance';
 

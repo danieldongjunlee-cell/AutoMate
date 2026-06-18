@@ -100,6 +100,10 @@ export type HomeStackParamList = HomeFlowParamList &
   CompareStackParamList;
 
 /** v17 Bookings tab (calendar + scheduled services + pending quotes). */
+export type QuotesStackParamList = {
+  Quotes: undefined;
+};
+
 export type BookingsStackParamList = {
   Bookings: undefined;
 };
@@ -145,6 +149,7 @@ export type ProfileStackParamList = {
 
 export type MainTabParamList = {
   HomeTab: NavigatorScreenParams<HomeStackParamList>;
+  QuotesTab: NavigatorScreenParams<QuotesStackParamList>;
   BookingsTab: NavigatorScreenParams<BookingsStackParamList>;
   CommunityTab: NavigatorScreenParams<CommunityStackParamList>;
   MoreTab: NavigatorScreenParams<ProfileStackParamList>;

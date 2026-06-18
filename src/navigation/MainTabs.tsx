@@ -94,7 +94,9 @@ import {
   HomeStackParamList,
   MainTabParamList,
   ProfileStackParamList,
+  QuotesStackParamList,
 } from './types';
+import { QuotesReceivedScreen } from '../screens/quotes/QuotesReceivedScreen';
 
 // ── Home tab: launcher hub + repair flow + new flows + Maintenance + Compare ──
 const HomeNative = createNativeStackNavigator<HomeStackParamList>();
@@ -203,6 +205,20 @@ function HomeStack() {
         <HomeNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'HomeLauncher' }} />
       ))}
     </HomeNative.Navigator>
+  );
+}
+
+// ── Quotes tab ─────────────────────────────────────────────────────────
+const QuotesNative = createNativeStackNavigator<QuotesStackParamList>();
+const quotesScreens = buildScreens(['Quotes'] as const, { Quotes: QuotesReceivedScreen });
+function QuotesStack() {
+  const theme = useTheme();
+  return (
+    <QuotesNative.Navigator initialRouteName="Quotes" screenOptions={stackScreenOptions(theme)}>
+      {quotesScreens.map(({ name, component, title }) => (
+        <QuotesNative.Screen key={name} name={name} component={component} options={{ title, headerShown: false }} />
+      ))}
+    </QuotesNative.Navigator>
   );
 }
 
@@ -324,6 +340,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TABS: { name: keyof MainTabParamList; label: string }[] = [
   { name: 'HomeTab', label: 'Home' },
+  { name: 'QuotesTab', label: 'Quotes' },
   { name: 'BookingsTab', label: 'Bookings' },
   { name: 'CommunityTab', label: 'Community' },
   { name: 'MoreTab', label: 'More' },
@@ -331,6 +348,7 @@ const TABS: { name: keyof MainTabParamList; label: string }[] = [
 
 const TAB_COMPONENTS: Record<keyof MainTabParamList, React.ComponentType> = {
   HomeTab: HomeStack,
+  QuotesTab: QuotesStack,
   BookingsTab: BookingsStack,
   CommunityTab: CommunityStack,
   MoreTab: MoreStack,

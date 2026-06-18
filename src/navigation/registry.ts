@@ -11,6 +11,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   VerifyMethod: 'Verify your account', // ➕ app-only (user-feedback pass 1)
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
+  Quotes: 'Quotes', // ➕ Quotes tab main (quotes received)
   CarDiagram: 'Select damaged part', // s-car-diagram
   Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
   ConfirmSubmit: 'Confirm damage', // s-confirm-submit
