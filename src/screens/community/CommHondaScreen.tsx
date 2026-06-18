@@ -92,7 +92,7 @@ export function CommHondaScreen() {
         <PostCard
           key={post.id}
           post={post}
-          onPress={() => navigation.navigate('CommPost', { postId: post.id })}
+          onPress={() => navigation.navigate('CommPost', { postId: post.id, post })}
         />
       ))}
     </Screen>

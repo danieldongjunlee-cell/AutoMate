@@ -21,8 +21,6 @@ export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const t = useT();
-  const checkedIn = useAppStore((s) => s.dailyCheckedIn);
-  const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
 
   const tile = (emoji: string, bg: string, title: string, sub: string, onPress: () => void) => (
     <Tappable
@@ -85,61 +83,18 @@ export function HomeLauncherScreen() {
         <CarSwitchChip />
       </View>
 
-      {/* Daily check-in + "New here?" grouped into one tidy card */}
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radii.md,
-          marginBottom: spacing.md,
-          overflow: 'hidden',
-        }}
+      {/* New here? — how-it-works entry */}
+      <Tappable
+        onPress={() => navigation.navigate('HowItWorks')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
-        <Tappable
-          onPress={checkedIn ? undefined : claimCheckIn}
-          disabled={checkedIn}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
-        >
-          <Text style={{ fontSize: 18 }}>{checkedIn ? '🎉' : '✅'}</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-              {checkedIn ? 'Checked in today' : 'Daily check-in'}
-            </Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-              🔥 Day {checkedIn ? 6 : 5} streak · +10 pts
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: checkedIn ? 'transparent' : colors.success,
-              borderWidth: checkedIn ? 1.5 : 0,
-              borderColor: colors.success,
-              borderRadius: radii.pill,
-              paddingHorizontal: 14,
-              paddingVertical: 6,
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
-              {checkedIn ? '✓ Claimed' : 'Claim'}
-            </Text>
-          </View>
-        </Tappable>
-
-        <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
-
-        <Tappable
-          onPress={() => navigation.navigate('HowItWorks')}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
-        >
-          <Text style={{ fontSize: 18 }}>👋</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
-          </View>
-          <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
-        </Tappable>
-      </View>
+        <Text style={{ fontSize: 18 }}>👋</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
+        </View>
+        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
+      </Tappable>
 
       {/* Hero — Get AI estimate */}
       <Tappable onPress={() => navigation.navigate('CarDiagram')}>

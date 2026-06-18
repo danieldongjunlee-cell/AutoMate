@@ -284,6 +284,11 @@ interface AppState {
   /** Whether the user has opened the Quotes tab since the latest submit (badge). */
   quotesViewed: boolean;
   setQuotesViewed: (v: boolean) => void;
+  /** Tab-badge "seen" flags — cleared when the tab is opened. */
+  bookingsViewed: boolean;
+  setBookingsViewed: (v: boolean) => void;
+  communityViewed: boolean;
+  setCommunityViewed: (v: boolean) => void;
 
   // Booking reminder timing (booking-confirm / maint-schedule-confirm rows)
   reminderPref: ReminderPref;
@@ -435,6 +440,10 @@ export const useAppStore = create<AppState>((set) => ({
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
   quotesViewed: true,
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
+  bookingsViewed: false,
+  setBookingsViewed: (bookingsViewed) => set({ bookingsViewed }),
+  communityViewed: false,
+  setCommunityViewed: (communityViewed) => set({ communityViewed }),
 
   reminderPref: '1 day before',
   setReminderPref: (reminderPref) => set({ reminderPref }),
@@ -461,7 +470,7 @@ export const useAppStore = create<AppState>((set) => ({
   addBooking: (booking) => {
     const full: AppBooking = { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() };
     void insertBooking(full); // write-through to Supabase (no-op if unconfigured)
-    set((s) => ({ bookings: [full, ...s.bookings] }));
+    set((s) => ({ bookings: [full, ...s.bookings], bookingsViewed: false }));
   },
   removeBooking: (id) => {
     const targetId = id ?? useAppStore.getState().bookings[0]?.id;

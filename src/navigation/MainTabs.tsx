@@ -364,15 +364,17 @@ export function MainTabs() {
   const { brand } = useActiveVehicle();
   const damageParts = useAppStore((s) => s.damageParts);
   const quotesViewed = useAppStore((s) => s.quotesViewed);
+  const bookingsViewed = useAppStore((s) => s.bookingsViewed);
+  const communityViewed = useAppStore((s) => s.communityViewed);
   const bookings = useAppStore((s) => s.bookings);
 
-  // Per-tab notification counts (undefined → no badge).
+  // Per-tab notification counts — cleared once the user opens that tab.
   const upcoming = bookings.filter((b) => b.status === 'confirmed' || b.status === 'paid').length;
   const community = brandChannels(brand).reduce((sum, c) => sum + c.newPosts, 0);
   const badges: Partial<Record<keyof MainTabParamList, number>> = {
     QuotesTab: damageParts.length > 0 && !quotesViewed ? QUOTES.length : undefined,
-    BookingsTab: upcoming || undefined,
-    CommunityTab: community || undefined,
+    BookingsTab: !bookingsViewed && upcoming ? upcoming : undefined,
+    CommunityTab: !communityViewed && community ? community : undefined,
   };
 
   return (

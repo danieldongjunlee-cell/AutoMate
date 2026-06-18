@@ -27,6 +27,8 @@ export function ProfHubScreen() {
   const { colors } = useTheme();
   const points = useAppStore((s) => s.points);
   const isPro = useAppStore((s) => s.isPro);
+  const checkedIn = useAppStore((s) => s.dailyCheckedIn);
+  const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
   // Authenticated user context (set after the demo login); falls back to the
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
@@ -144,6 +146,47 @@ export function ProfHubScreen() {
           }}
         />
       </View>
+
+      {/* Daily check-in */}
+      <Tappable
+        onPress={checkedIn ? undefined : claimCheckIn}
+        disabled={checkedIn}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 18 }}>{checkedIn ? '🎉' : '✅'}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+            {checkedIn ? 'Checked in today' : 'Daily check-in'}
+          </Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+            🔥 Day {checkedIn ? 6 : 5} streak · +10 pts
+          </Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: checkedIn ? 'transparent' : colors.success,
+            borderWidth: checkedIn ? 1.5 : 0,
+            borderColor: colors.success,
+            borderRadius: radii.pill,
+            paddingHorizontal: 14,
+            paddingVertical: 6,
+          }}
+        >
+          <Text style={{ fontSize: 12, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
+            {checkedIn ? '✓ Claimed' : 'Claim'}
+          </Text>
+        </View>
+      </Tappable>
 
       {/* Points card */}
       <LinearGradient

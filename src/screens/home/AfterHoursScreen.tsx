@@ -257,7 +257,7 @@ export function AfterHoursScreen() {
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <Text style={{ fontSize: 14, color: colors.textSecondary }}>🏠 Back to home</Text>
+        <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to home</Text>
       </Tappable>
     </Screen>
   );

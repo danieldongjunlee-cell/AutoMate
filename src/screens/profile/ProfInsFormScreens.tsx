@@ -11,7 +11,6 @@ import { Card, Screen } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, pointsService } from '../../services';
 import { VEHICLE } from '../../services/mock/data';
-import { capturePhoto } from '../../services/photos';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList>;
@@ -303,8 +302,6 @@ export function ProfInsAddScreen() {
   const [coverage, setCoverage] = useState('Comprehensive + Collision');
   const [renewal, setRenewal] = useState('');
 
-  const [scanning, setScanning] = useState(false);
-  const [scanned, setScanned] = useState(false);
   const [connectingId, setConnectingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -319,30 +316,6 @@ export function ProfInsAddScreen() {
     await queryClient.invalidateQueries({ queryKey: ['comparison'] });
   };
 
-  /** "Scan insurance card" → REAL camera capture → OCR autofill (pass 2). */
-  const scanCard = async () => {
-    if (scanning) return;
-    // Take the card photo first (web: file picker); cancel aborts the scan.
-    const photo = await capturePhoto();
-    if (!photo) return;
-    setScanning(true);
-    setError('');
-    try {
-      const card = await insuranceService.scanCard();
-      setCarrier(card.provider);
-      setPolicyNumber(card.policyNumber);
-      setDeductible(money(card.deductible));
-      setPremium(money(card.premiumPerYear));
-      setCoverage(card.coverageType);
-      setRenewal(card.renewalDate);
-      setCovers(VEHICLE.name);
-      setScanned(true);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Card scan failed');
-    } finally {
-      setScanning(false);
-    }
-  };
 
   /** "Connect my insurer" → aggregator link → policies imported. */
   const connect = async (providerId: string) => {
@@ -397,52 +370,6 @@ export function ProfInsAddScreen() {
 
   return (
     <Screen>
-      {/* Method picker */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Tappable
-          onPress={scanCard}
-          disabled={scanning}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.primarySurface,
-            borderWidth: 1.5,
-            borderColor: colors.primary,
-            borderRadius: radii.sm,
-            padding: spacing.md,
-            alignItems: 'center',
-            opacity: pressed || scanning ? 0.7 : 1,
-          })}
-        >
-          {scanning ? (
-            <ActivityIndicator color={colors.primary} style={{ marginBottom: 3, height: 29 }} />
-          ) : (
-            <Text style={{ fontSize: 22, marginBottom: 3 }}>{scanned ? '✅' : '📷'}</Text>
-          )}
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep }}>
-            {scanning ? 'Scanning card…' : scanned ? 'Card scanned' : 'Scan insurance card'}
-          </Text>
-          <Text style={{ fontSize: 11, color: colors.primaryDark }}>
-            {scanned ? 'Fields filled below' : 'Auto-fill in seconds'}
-          </Text>
-        </Tappable>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: radii.sm,
-            padding: spacing.md,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 22, marginBottom: 3 }}>✍️</Text>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textSecondary }}>
-            Enter manually
-          </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>Type details below</Text>
-        </View>
-      </View>
 
       {/* Manual form */}
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>

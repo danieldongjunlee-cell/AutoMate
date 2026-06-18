@@ -20,7 +20,7 @@ export function CommPostScreen() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
   const postId = route.params?.postId ?? 'post-james';
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ['post', postId],
     queryFn: () => communityService.getPost(postId),
   });
@@ -34,15 +34,20 @@ export function CommPostScreen() {
   const [sending, setSending] = useState(false);
   const composerRef = useRef<TextInput>(null);
 
-  // Sync the like button with the loaded post (real likedByMe + count).
-  useEffect(() => {
-    if (data?.post) {
-      setPostLiked(!!data.post.likedByMe);
-      setLikeCount(data.post.likes);
-    }
-  }, [data?.post]);
+  // Prefer the post handed over by the feed so the screen renders instantly
+  // (the feed is mock-generated; its ids aren't real Supabase rows).
+  const post = route.params?.post ?? data?.post;
+  const comments = data?.comments ?? [];
 
-  if (isLoading || !data) {
+  // Sync the like button with the post (real likedByMe + count).
+  useEffect(() => {
+    if (post) {
+      setPostLiked(!!post.likedByMe);
+      setLikeCount(post.likes);
+    }
+  }, [post]);
+
+  if (!post) {
     return (
       <Screen>
         <SkeletonCard tall />
@@ -51,7 +56,6 @@ export function CommPostScreen() {
       </Screen>
     );
   }
-  const { post, comments } = data;
   const allComments = comments;
   const replyCount = comments.length;
 

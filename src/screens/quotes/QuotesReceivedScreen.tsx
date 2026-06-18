@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
@@ -13,7 +14,7 @@ import { Tappable } from '../../components/Tappable';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { QuotesStackParamList } from '../../navigation/types';
 import { quoteService } from '../../services';
-import { dealerById, Quote, QUOTE_REQUEST, quoteBreakdown } from '../../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST, quoteBreakdown, USER_LOCATION } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
@@ -152,6 +153,17 @@ export function QuotesReceivedScreen() {
 
   const partsLabel = damageParts.map((p) => p.part).join(', ');
 
+  const markers: MapMarker[] = filtered.map((q) => {
+    const d = dealerById(q.dealerId);
+    return {
+      id: q.dealerId,
+      lat: d.lat,
+      lng: d.lng,
+      label: `$${q.price}`,
+      color: q.tier === 'best' ? '#085041' : q.tier === 'recommended' ? '#2e6bff' : '#fff',
+    };
+  });
+
   return (
     <Screen safeTop>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
@@ -183,6 +195,19 @@ export function QuotesReceivedScreen() {
             ${aiEstimate.priceLow} – ${aiEstimate.priceHigh}
           </Text>
           <Badge label={`AI ${aiEstimate.confidencePct}%`} variant="success" />
+        </View>
+      ) : null}
+
+      {/* Shops near you — map */}
+      {markers.length > 0 ? (
+        <View style={{ marginBottom: spacing.md }}>
+          <SectionLabel>Shops near you</SectionLabel>
+          <DealerMap
+            markers={markers}
+            center={USER_LOCATION}
+            userLocation={USER_LOCATION}
+            style={{ height: 180, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
+          />
         </View>
       ) : null}
 

@@ -13,7 +13,7 @@ export function ProLockOverlay({
   children,
   title = 'Pro feature',
   subtitle,
-  cta = 'Unlock Pro · $10',
+  cta = 'Unlock Pro · $48/yr',
   onDark,
   onUnlock,
 }: {

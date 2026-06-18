@@ -111,7 +111,7 @@ export type BookingsStackParamList = {
 export type CommunityStackParamList = {
   CommChannels: undefined;
   CommHonda: { title?: string; kind?: 'service' | 'maintenance' | 'lounge' | 'deals' } | undefined;
-  CommPost: { postId?: string } | undefined;
+  CommPost: { postId?: string; post?: import('../services/mock/data').CommunityPost } | undefined;
   CommCreate: undefined;
 };
 

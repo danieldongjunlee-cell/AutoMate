@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -10,6 +10,7 @@ import { CommunityStackParamList } from '../../navigation/types';
 import { brandChannels, channelKind } from '../../services/mock/communityChannels';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
@@ -20,6 +21,9 @@ export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const { brand } = useActiveVehicle();
+  const setCommunityViewed = useAppStore((s) => s.setCommunityViewed);
+  // Opening Community clears its tab badge.
+  useEffect(() => setCommunityViewed(true), [setCommunityViewed]);
   const [query, setQuery] = useState('');
 
   // Sub-communities are derived purely from the active brand, so switching cars
@@ -41,10 +45,15 @@ export function CommChannelsScreen() {
     });
   };
 
-  /** Tapping Join asks to confirm first; Leaving (already joined) is immediate. */
+  /** Both joining and leaving ask for confirmation first. */
   const onJoinPress = (id: string, name: string) => {
     if (joinedIds.has(id)) {
-      toggleJoined(id); // leave, no confirm
+      confirmAction(
+        `Leave ${name}?`,
+        `You'll stop seeing this community's posts in your feed. You can rejoin anytime.`,
+        () => toggleJoined(id),
+        'Leave',
+      );
       return;
     }
     confirmAction(

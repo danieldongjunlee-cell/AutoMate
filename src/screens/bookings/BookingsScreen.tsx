@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
@@ -23,6 +23,9 @@ export function BookingsScreen() {
   const t = useT();
   const { brand } = useActiveVehicle();
   const allBookings = useAppStore((s) => s.bookings);
+  const setBookingsViewed = useAppStore((s) => s.setBookingsViewed);
+  // Opening the Bookings tab clears its badge.
+  useEffect(() => setBookingsViewed(true), [setBookingsViewed]);
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
 
