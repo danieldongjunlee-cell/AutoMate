@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { getMyProfile } from './profiles';
 import { supabase } from './supabase';
 
@@ -104,6 +106,17 @@ export async function signInWithProvider(
   provider: 'google' | 'apple',
 ): Promise<SupabaseAuthResult> {
   if (!supabase) throw new Error('Supabase is not configured.');
+
+  // Web: a full-page redirect. supabase-js (detectSessionInUrl) finishes the
+  // sign-in when the browser returns, so this call doesn't resolve to a session
+  // (the page navigates away). No native modules involved.
+  if (Platform.OS === 'web') {
+    const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+    const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+    if (error) throw error;
+    return { name: '', email: '', token: null };
+  }
+
   // Lazy-load the native modules so simply importing this file never crashes a
   // client that hasn't been rebuilt with expo-web-browser/expo-linking yet.
   // eslint-disable-next-line @typescript-eslint/no-var-requires

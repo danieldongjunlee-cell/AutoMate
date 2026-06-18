@@ -1,5 +1,6 @@
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /**
@@ -19,8 +20,9 @@ export const supabase: SupabaseClient | null = isSupabaseConfigured
         storage: AsyncStorage,
         persistSession: true,
         autoRefreshToken: true,
-        // RN has no URL-based auth callback like the web does.
-        detectSessionInUrl: false,
+        // On web, let supabase-js finish OAuth from the redirect URL itself
+        // (native handles the redirect manually via expo-web-browser).
+        detectSessionInUrl: Platform.OS === 'web',
         // Use the PKCE code flow so OAuth redirects return ?code= we exchange.
         flowType: 'pkce',
       },
