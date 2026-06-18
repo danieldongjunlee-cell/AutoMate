@@ -77,9 +77,11 @@ export interface AppBooking {
   day: string; // "12"
   time: string; // "10:30 AM"
   priceLabel: string; // "$320–345" / "$49"
-  status: 'confirmed' | 'paid' | 'reschedule_proposed';
+  status: 'confirmed' | 'paid' | 'reschedule_proposed' | 'cancelled';
   /** When the shop proposes a different time (status reschedule_proposed). */
   proposedTime?: string;
+  /** The shop's reason for proposing a new time or cancelling (shown on tap). */
+  reason?: string;
   createdAt: number;
 }
 
@@ -115,7 +117,25 @@ const SEED_BOOKINGS: AppBooking[] = [
     priceLabel: '$320–345',
     status: 'reschedule_proposed',
     proposedTime: 'Fri, Apr 13 · 2:00 PM',
+    reason: 'The replacement bumper cover is on backorder until Apr 13 — the shop proposed the next available slot.',
     createdAt: 2,
+  },
+  {
+    id: 'bk-seed-cancelled',
+    kind: 'repair',
+    dealerId: 'autofix-pro',
+    brand: 'Honda',
+    icon: '🚗',
+    title: 'Front fender dent',
+    dealerName: 'AutoFix Pro',
+    dateLabel: 'Tue, Apr 18',
+    mon: 'Apr',
+    day: '18',
+    time: '1:00 PM',
+    priceLabel: '$240–290',
+    status: 'cancelled',
+    reason: 'The shop had to cancel — their paint booth is down for repairs this week. They suggested rebooking next week.',
+    createdAt: 4,
   },
   {
     id: 'bk-seed-rav4',

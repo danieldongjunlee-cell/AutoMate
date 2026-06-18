@@ -98,6 +98,21 @@ export function RescheduleScreen() {
             <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{proposedTime}</Text>. Accept
             it, or pick another time below.
           </Text>
+          {booking?.reason ? (
+            <View
+              style={{
+                backgroundColor: colors.warningSurface,
+                borderRadius: radii.sm,
+                padding: spacing.sm,
+                marginBottom: spacing.sm,
+              }}
+            >
+              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.warningDeep, marginBottom: 2 }}>
+                Why the change?
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{booking.reason}</Text>
+            </View>
+          ) : null}
           <PrimaryButton variant="success" label={`Accept ${proposedTime} →`} onPress={onAcceptProposed} />
         </Card>
       ) : null}

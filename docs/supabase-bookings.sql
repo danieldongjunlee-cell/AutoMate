@@ -19,11 +19,14 @@ create table if not exists public.bookings (
   price_label   text,
   status        text not null default 'confirmed',
   proposed_time text,
+  reason        text,
   created_at_ms bigint,
   inserted_at   timestamptz not null default now()
 );
 
 alter table public.bookings enable row level security;
+-- If you ran an earlier version, add the new column:
+alter table public.bookings add column if not exists reason text;
 
 create policy "bookings are managed by owner"
   on public.bookings for all

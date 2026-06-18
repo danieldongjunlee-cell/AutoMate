@@ -13,6 +13,7 @@ import { QUOTE_REQUEST, QUOTES } from '../../services/mock/data';
 import { AppBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { useT } from '../../i18n';
+import { showAlert } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<BookingsStackParamList, 'Bookings'>;
 
@@ -30,8 +31,16 @@ export function BookingsScreen() {
   const dealersInvited = QUOTE_REQUEST.shopsNotified;
 
   const openBooking = (b: AppBooking) => {
+    if (b.status === 'cancelled') {
+      // Shop cancelled → show the reason why.
+      showAlert(
+        'Booking cancelled by the shop',
+        b.reason ?? 'This booking was cancelled by the shop.',
+      );
+      return;
+    }
     if (b.status === 'reschedule_proposed') {
-      // Shop proposed a new time → open reschedule to accept or pick another.
+      // Shop proposed a new time → open reschedule (shows the reason) to accept or pick another.
       navigateCrossTab(navigation, 'HomeTab', 'Reschedule', { kind: b.kind, bookingId: b.id });
       return;
     }
@@ -56,6 +65,7 @@ export function BookingsScreen() {
   // Days with a scheduled booking → mark color by kind (derived from filtered list).
   const markedDays = new Map<number, string>();
   bookings.forEach((b) => {
+    if (b.status === 'cancelled') return; // cancelled → not on the calendar
     const d = parseInt(b.day, 10);
     if (!Number.isNaN(d)) markedDays.set(d, b.kind === 'repair' ? colors.warning : colors.primary);
   });
@@ -261,6 +271,18 @@ export function BookingsScreen() {
               <Text style={{ fontSize: 11, color: colors.textTertiary }}>
                 {b.dealerName} · {b.dateLabel} · {b.time}
               </Text>
+              {(b.status === 'reschedule_proposed' || b.status === 'cancelled') && b.reason ? (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: '700',
+                    color: b.status === 'cancelled' ? colors.danger : colors.warningDeep,
+                    marginTop: 2,
+                  }}
+                >
+                  ⓘ Tap to see why
+                </Text>
+              ) : null}
             </View>
             <View style={{ alignItems: 'flex-end', gap: 3 }}>
               <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
@@ -268,6 +290,8 @@ export function BookingsScreen() {
               </Text>
               {b.status === 'reschedule_proposed' ? (
                 <Badge label="New time proposed" variant="warning" />
+              ) : b.status === 'cancelled' ? (
+                <Badge label="Cancelled" variant="danger" />
               ) : (
                 <Badge
                   label={b.status === 'paid' ? 'Paid' : 'Confirmed'}

@@ -119,6 +119,19 @@ export function HomeLauncherScreen() {
         </View>
       </Tappable>
 
+      {/* New here? — quick "how it works" entry, right under the check-in */}
+      <Tappable
+        onPress={() => navigation.navigate('HowItWorks')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.primarySurface, borderColor: colors.primaryLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+      >
+        <Text style={{ fontSize: 20 }}>👋</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.primaryDeep }}>New here? See how AutoMate works</Text>
+          <Text style={{ fontSize: 11, color: colors.primaryDark }}>Photos → quotes → compare → book · 4 steps</Text>
+        </View>
+        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
+      </Tappable>
+
       {/* Hero — Get AI estimate */}
       <Tappable onPress={() => navigation.navigate('CarDiagram')}>
         <LinearGradient
@@ -157,21 +170,6 @@ export function HomeLauncherScreen() {
         ]}
       />
       <View style={{ marginBottom: spacing.xl }} />
-
-      {/* How it works */}
-      <SectionLabel>{t('New here?')}</SectionLabel>
-      <Tappable
-        onPress={() => navigation.navigate('HowItWorks')}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
-      >
-        <Text style={{ fontSize: 18 }}>💡</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>How AutoMate works</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>3 simple steps · tap to see details</Text>
-        </View>
-        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
-      </Tappable>
-      <View style={{ marginBottom: spacing.lg }} />
 
       {/* Why choose */}
       <SectionLabel>{t('Why choose AutoMate?')}</SectionLabel>
