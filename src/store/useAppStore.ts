@@ -448,8 +448,10 @@ export const useAppStore = create<AppState>((set) => ({
   readPostIds: {},
   markPostsRead: (ids) =>
     set((s) => {
+      const missing = ids.filter((id) => !s.readPostIds[id]);
+      if (missing.length === 0) return {}; // nothing new → no state change / re-render
       const next = { ...s.readPostIds };
-      for (const id of ids) next[id] = true;
+      for (const id of missing) next[id] = true;
       return { readPostIds: next };
     }),
 

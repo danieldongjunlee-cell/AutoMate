@@ -25,6 +25,8 @@ export function ProfSettingsScreen() {
   const language = useAppStore((s) => s.language);
   const distanceUnit = useAppStore((s) => s.distanceUnit);
   const signOut = useAppStore((s) => s.signOut);
+  const authedUser = useAppStore((s) => s.user);
+  const email = authedUser?.email ?? USER.email;
 
   // Wireframe defaults: community replies off, the rest on.
   const [notif, setNotif] = useState<Record<NotifKey, boolean>>({
@@ -45,7 +47,7 @@ export function ProfSettingsScreen() {
         <SettingsRow
           icon="✉️"
           label="Change email"
-          value={USER.email}
+          value={email}
           onPress={() => navigation.navigate('ProfChangeEmail')}
         />
         <SettingsRow

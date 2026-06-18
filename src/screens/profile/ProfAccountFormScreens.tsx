@@ -5,6 +5,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { USER } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 /** Shared layout for the change-email / change-phone / change-password forms. */
@@ -85,10 +86,11 @@ function AccountForm({
 
 /** Wireframe s-prof-change-email. */
 export function ProfChangeEmailScreen() {
+  const email = useAppStore((s) => s.user?.email) ?? USER.email;
   return (
     <AccountForm
       rows={[
-        { label: 'Current email', value: USER.email },
+        { label: 'Current email', value: email },
         { label: 'New email', placeholder: 'Enter new email address' },
       ]}
       note="A verification link will be sent to your new email."
