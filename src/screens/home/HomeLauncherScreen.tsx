@@ -95,40 +95,17 @@ export function HomeLauncherScreen() {
         <CarSwitchChip />
       </View>
 
-      {/* New here? — visual how-it-works entry with the 4-step flow */}
-      <Tappable onPress={() => navigation.navigate('HowItWorks')} style={{ marginBottom: spacing.md }}>
-        <LinearGradient
-          colors={[palette.primary, palette.primaryDark]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{ borderRadius: radii.md, padding: spacing.md }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: '#fff' }}>New here? See how it works</Text>
-            <Text style={{ fontSize: 18, color: 'rgba(255,255,255,.8)' }}>›</Text>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm }}>
-            {['📷', '💬', '⚖️', '📅'].map((emoji, i) => (
-              <React.Fragment key={emoji}>
-                <View
-                  style={{
-                    width: 34,
-                    height: 34,
-                    borderRadius: 17,
-                    backgroundColor: 'rgba(255,255,255,.18)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 16 }}>{emoji}</Text>
-                </View>
-                {i < 3 ? (
-                  <Text style={{ flex: 1, textAlign: 'center', color: 'rgba(255,255,255,.6)', fontSize: 14 }}>→</Text>
-                ) : null}
-              </React.Fragment>
-            ))}
-          </View>
-        </LinearGradient>
+      {/* New here? — how-it-works entry */}
+      <Tappable
+        onPress={() => navigation.navigate('HowItWorks')}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+      >
+        <Text style={{ fontSize: 18 }}>👋</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
+        </View>
+        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
       </Tappable>
 
       {/* Hero — Get AI estimate */}

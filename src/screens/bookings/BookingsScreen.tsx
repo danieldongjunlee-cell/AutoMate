@@ -74,18 +74,20 @@ export function BookingsScreen() {
     return (
       <View
         style={{
-          width: 34,
-          height: 34,
+          width: 58,
           borderRadius: 9,
           backgroundColor: k.surface,
           alignItems: 'center',
           justifyContent: 'center',
+          paddingVertical: 6,
         }}
       >
-        <Text style={{ fontSize: 7, fontWeight: '700', color: k.deep, textTransform: 'uppercase' }}>
+        <Text style={{ fontSize: 8, fontWeight: '700', color: k.deep, textTransform: 'uppercase' }}>
           {b.mon}
         </Text>
-        <Text style={{ fontSize: 12, fontWeight: '800', color: k.deep, lineHeight: 13 }}>{b.day}</Text>
+        <Text style={{ fontSize: 17, fontWeight: '800', color: k.deep, lineHeight: 19 }}>{b.day}</Text>
+        <View style={{ height: 1, alignSelf: 'stretch', backgroundColor: k.deep, opacity: 0.18, marginVertical: 3 }} />
+        <Text style={{ fontSize: 9, fontWeight: '800', color: k.deep }}>{b.time}</Text>
       </View>
     );
   };
@@ -222,7 +224,7 @@ export function BookingsScreen() {
                 {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
               </Text>
               <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-                {b.dealerName} · {b.dateLabel} · {b.time}
+                {b.dealerName} · {b.dateLabel}
               </Text>
               {(b.status === 'reschedule_proposed' || b.status === 'cancelled') && b.reason ? (
                 <Text

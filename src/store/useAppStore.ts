@@ -272,6 +272,7 @@ interface AppState {
   toggleDraftType: (t: string) => void;
   setDraftNote: (note: string) => void;
   addDraftPhoto: (uri: string) => void;
+  removeDraftPhoto: (index: number) => void;
   /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
   commitDraftPart: () => void;
   /** Clear only the draft ("+ Add another damaged part" starts a fresh pass). */
@@ -416,6 +417,7 @@ export const useAppStore = create<AppState>((set) => ({
     })),
   setDraftNote: (draftNote) => set({ draftNote }),
   addDraftPhoto: (uri) => set((s) => (s.draftPhotos.length >= 10 ? {} : { draftPhotos: [...s.draftPhotos, uri] })),
+  removeDraftPhoto: (index) => set((s) => ({ draftPhotos: s.draftPhotos.filter((_, i) => i !== index) })),
   commitDraftPart: () =>
     set((s) => {
       if (!s.draftPart || s.draftPhotos.length < 1) return {};

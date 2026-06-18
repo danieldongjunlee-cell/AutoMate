@@ -120,6 +120,7 @@ export function CarDiagramScreen() {
   const toggleDraftType = useAppStore((s) => s.toggleDraftType);
   const photoUris = useAppStore((s) => s.draftPhotos);
   const addPhoto = useAppStore((s) => s.addDraftPhoto);
+  const removePhoto = useAppStore((s) => s.removeDraftPhoto);
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
   const note = useAppStore((s) => s.draftNote);
   const setNote = useAppStore((s) => s.setDraftNote);
@@ -326,8 +327,27 @@ export function CarDiagramScreen() {
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
             {photoUris.map((uri, i) => (
-              <View key={`${uri}-${i}`} style={{ width: 72, height: 64, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt }}>
-                <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+              <View key={`${uri}-${i}`} style={{ width: 72, height: 64 }}>
+                <View style={{ width: 72, height: 64, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt }}>
+                  <Image source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" />
+                </View>
+                <Tappable
+                  onPress={() => removePhoto(i)}
+                  hitSlop={8}
+                  style={{
+                    position: 'absolute',
+                    top: -6,
+                    right: -6,
+                    width: 22,
+                    height: 22,
+                    borderRadius: 11,
+                    backgroundColor: 'rgba(0,0,0,.7)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700', lineHeight: 15 }}>✕</Text>
+                </Tappable>
               </View>
             ))}
             {photoUris.length < MAX_PHOTOS ? (
