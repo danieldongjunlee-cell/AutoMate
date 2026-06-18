@@ -85,52 +85,61 @@ export function HomeLauncherScreen() {
         <CarSwitchChip />
       </View>
 
-      {/* Daily check-in — interactive claim (stays on screen) */}
-      <Tappable
-        onPress={checkedIn ? undefined : claimCheckIn}
-        disabled={checkedIn}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
+      {/* Daily check-in + "New here?" grouped into one tidy card */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          borderWidth: 1,
+          borderRadius: radii.md,
+          marginBottom: spacing.md,
+          overflow: 'hidden',
+        }}
       >
-        <Text style={{ fontSize: 16 }}>{checkedIn ? '🎉' : '✅'}</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>
-            {checkedIn ? 'Checked in today · +10 pts' : 'Daily check-in · +10 pts'}
-          </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-            🔥 Day {checkedIn ? 6 : 5} streak
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
-            backgroundColor: checkedIn ? 'transparent' : colors.success,
-            borderWidth: checkedIn ? 1.5 : 0,
-            borderColor: colors.success,
-            borderRadius: radii.pill,
-            paddingHorizontal: 12,
-            paddingVertical: 5,
-          }}
+        <Tappable
+          onPress={checkedIn ? undefined : claimCheckIn}
+          disabled={checkedIn}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
-            {checkedIn ? '✓ Claimed' : 'Claim'}
-          </Text>
-        </View>
-      </Tappable>
+          <Text style={{ fontSize: 18 }}>{checkedIn ? '🎉' : '✅'}</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
+              {checkedIn ? 'Checked in today' : 'Daily check-in'}
+            </Text>
+            <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+              🔥 Day {checkedIn ? 6 : 5} streak · +10 pts
+            </Text>
+          </View>
+          <View
+            style={{
+              backgroundColor: checkedIn ? 'transparent' : colors.success,
+              borderWidth: checkedIn ? 1.5 : 0,
+              borderColor: colors.success,
+              borderRadius: radii.pill,
+              paddingHorizontal: 14,
+              paddingVertical: 6,
+            }}
+          >
+            <Text style={{ fontSize: 12, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
+              {checkedIn ? '✓ Claimed' : 'Claim'}
+            </Text>
+          </View>
+        </Tappable>
 
-      {/* New here? — quick "how it works" entry, right under the check-in */}
-      <Tappable
-        onPress={() => navigation.navigate('HowItWorks')}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.primarySurface, borderColor: colors.primaryLight, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
-      >
-        <Text style={{ fontSize: 20 }}>👋</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.primaryDeep }}>New here? See how AutoMate works</Text>
-          <Text style={{ fontSize: 11, color: colors.primaryDark }}>Photos → quotes → compare → book · 4 steps</Text>
-        </View>
-        <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
-      </Tappable>
+        <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.border }} />
+
+        <Tappable
+          onPress={() => navigation.navigate('HowItWorks')}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
+        >
+          <Text style={{ fontSize: 18 }}>👋</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>New here?</Text>
+            <Text style={{ fontSize: 11, color: colors.textTertiary }}>See how AutoMate works · 4 quick steps</Text>
+          </View>
+          <Text style={{ color: colors.primary, fontSize: 16 }}>›</Text>
+        </Tappable>
+      </View>
 
       {/* Hero — Get AI estimate */}
       <Tappable onPress={() => navigation.navigate('CarDiagram')}>

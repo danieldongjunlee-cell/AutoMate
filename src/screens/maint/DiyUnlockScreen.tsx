@@ -93,56 +93,7 @@ export function DiyUnlockScreen() {
         ))}
       </Card>
 
-      <SectionLabel>Choose how to unlock</SectionLabel>
-
-      {/* Option 1: DIY guides only — $10 one-time */}
-      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            marginBottom: spacing.md,
-          }}
-        >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: radii.sm,
-              backgroundColor: colors.successSurface,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 20 }}>📚</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
-              DIY guides only
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              All 12 guides, forever · no subscription
-            </Text>
-          </View>
-          <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>$10</Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>one-time</Text>
-          </View>
-        </View>
-        <Tappable
-          onPress={() => navigation.navigate('DiyPayment')}
-          style={({ pressed }) => ({
-            backgroundColor: colors.success,
-            borderRadius: radii.sm,
-            paddingVertical: 13,
-            alignItems: 'center',
-            opacity: pressed ? 0.85 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '800', color: '#fff' }}>Unlock DIY — $10 →</Text>
-        </Tappable>
-      </Card>
+      <SectionLabel>Unlock with AutoMate Pro</SectionLabel>
 
       {/* Option 2: AutoMate Pro — best value */}
       <View

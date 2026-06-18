@@ -51,6 +51,8 @@ const MODELS_BY_BRAND: Record<string, string[]> = {
 
 const GENERIC_MODELS = ['Base', 'Sport', 'Touring', 'Limited', 'Premium'];
 
+const TRIMS = ['Base', 'S', 'SE', 'SEL', 'LE', 'XLE', 'LX', 'EX', 'EX-L', 'Sport', 'Touring', 'Limited', 'Premium', 'Platinum', 'Titanium'];
+
 const COLORS = [
   'White', 'Black', 'Silver', 'Gray', 'Lunar Silver Metallic', 'Blue', 'Red', 'Green', 'Beige',
 ];
@@ -183,7 +185,7 @@ export function ProfCarAddScreen() {
               />
             </View>
             <View style={{ flex: 1 }}>
-              <TextField label="Trim" value={trim} onChangeText={setTrim} placeholder="EX-L" />
+              <Dropdown label="Trim" value={trim} options={TRIMS} onChange={setTrim} placeholder="EX-L" />
             </View>
           </View>
           <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Lunar Silver Metallic" />

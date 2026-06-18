@@ -31,10 +31,14 @@ export function ProfHubScreen() {
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
   const displayName = authedUser?.name ?? USER.name;
-  const displayEmail = authedUser?.email ?? USER.email;
-  // Secondary line: the @username when set, otherwise the email (never the name
-  // twice). Username + full name both come from the editable profile.
-  const displayHandle = authedUser?.username ? `@${authedUser.username}` : displayEmail;
+  // Secondary line: the @username (never the email). Falls back to a handle
+  // derived from the name until the user sets a username in Edit profile.
+  const handleFromName = displayName.trim().toLowerCase().replace(/\s+/g, '');
+  const displayHandle = authedUser?.username
+    ? `@${authedUser.username}`
+    : handleFromName
+      ? `@${handleFromName}`
+      : '@user';
   const displayInitial = displayName.trim().charAt(0).toUpperCase() || USER.initial;
 
   // Live primary policy for the insurance row (falls back to the wireframe

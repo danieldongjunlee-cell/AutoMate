@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ApplePaySheet } from '../../components/ApplePaySheet';
+import { AppleLogo } from '../../components/BrandLogos';
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
@@ -390,7 +391,7 @@ export function ProfPaymentScreen() {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 20 }}>🍎</Text>
+          <AppleLogo size={22} color="#fff" />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
