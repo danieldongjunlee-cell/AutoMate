@@ -206,6 +206,13 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
  * Build a small themed feed for a given brand + topic kind. Returns ready-to-use
  * `CommunityPost` objects with the active brand woven into each body.
  */
+export const CHANNEL_KINDS: ChannelKind[] = ['service', 'maintenance', 'lounge', 'deals'];
+
+/** Every post across all of a brand's communities (used for the unread badge). */
+export function allBrandPosts(brand: string): CommunityPost[] {
+  return CHANNEL_KINDS.flatMap((kind) => groupPosts(brand, kind));
+}
+
 export function groupPosts(brand: string, kind: ChannelKind): CommunityPost[] {
   const safeBrand = brand.trim() || 'Your Car';
   return POST_TEMPLATES[kind].map((seed, index) => ({

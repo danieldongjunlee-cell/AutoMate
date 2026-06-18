@@ -287,8 +287,9 @@ interface AppState {
   /** Tab-badge "seen" flags — cleared when the tab is opened. */
   bookingsViewed: boolean;
   setBookingsViewed: (v: boolean) => void;
-  communityViewed: boolean;
-  setCommunityViewed: (v: boolean) => void;
+  /** Community post ids the user has opened/seen → drives the unread-posts badge. */
+  readPostIds: Record<string, boolean>;
+  markPostsRead: (ids: string[]) => void;
 
   // Booking reminder timing (booking-confirm / maint-schedule-confirm rows)
   reminderPref: ReminderPref;
@@ -442,8 +443,13 @@ export const useAppStore = create<AppState>((set) => ({
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
   bookingsViewed: false,
   setBookingsViewed: (bookingsViewed) => set({ bookingsViewed }),
-  communityViewed: false,
-  setCommunityViewed: (communityViewed) => set({ communityViewed }),
+  readPostIds: {},
+  markPostsRead: (ids) =>
+    set((s) => {
+      const next = { ...s.readPostIds };
+      for (const id of ids) next[id] = true;
+      return { readPostIds: next };
+    }),
 
   reminderPref: '1 day before',
   setReminderPref: (reminderPref) => set({ reminderPref }),

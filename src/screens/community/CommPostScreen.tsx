@@ -12,6 +12,7 @@ import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { communityService } from '../../services';
 import { USER } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-comm-post: post detail + comments + composer. */
@@ -38,6 +39,8 @@ export function CommPostScreen() {
   // (the feed is mock-generated; its ids aren't real Supabase rows).
   const post = route.params?.post ?? data?.post;
   const comments = data?.comments ?? [];
+  const markPostsRead = useAppStore((s) => s.markPostsRead);
+  useEffect(() => markPostsRead([postId]), [postId, markPostsRead]);
 
   // Sync the like button with the post (real likedByMe + count).
   useEffect(() => {

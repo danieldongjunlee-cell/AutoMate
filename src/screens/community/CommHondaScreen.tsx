@@ -11,6 +11,7 @@ import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
 import { channelKind, groupPosts } from '../../services/mock/communityChannels';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommHonda'>;
@@ -34,6 +35,9 @@ export function CommHondaScreen() {
 
   // Themed mock feed for this (brand, kind). Memoized so it stays stable.
   const posts = useMemo(() => groupPosts(brand, kind), [brand, kind]);
+  const markPostsRead = useAppStore((s) => s.markPostsRead);
+  // Browsing a community marks its posts read (drives the unread-posts badge).
+  useEffect(() => markPostsRead(posts.map((p) => p.id)), [posts, markPostsRead]);
 
   useEffect(() => {
     navigation.setOptions({
