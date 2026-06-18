@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -12,7 +12,7 @@ import { Select } from '../../components/Select';
 import { SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -33,14 +33,6 @@ const TIER_PIN_COLOR: Record<Quote['tier'], string> = {
 };
 
 // ── Filters (feedback pass 2: distance + price dropdowns hide pins & cards) ──
-
-const DISTANCE_OPTIONS = ['Any distance', '< 1 mi', '< 2.5 mi', '< 5 mi'] as const;
-const DISTANCE_MAX: Record<string, number> = {
-  'Any distance': Infinity,
-  '< 1 mi': 1,
-  '< 2.5 mi': 2.5,
-  '< 5 mi': 5,
-};
 
 const PRICE_OPTIONS = ['Any price', 'Under $300', '$300–$400', '$400+'] as const;
 const priceMatches = (option: string, price: number) => {
@@ -63,17 +55,18 @@ export function AllQuotesMapScreen() {
     queryFn: quoteService.getQuotes,
   });
 
-  const [distFilter, setDistFilter] = useState<string>(DISTANCE_OPTIONS[0]);
+  const [distFilter, setDistFilter] = useState<string>(DISTANCE_FILTERS[0]);
   const [priceFilter, setPriceFilter] = useState<string>(PRICE_OPTIONS[0]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const scrollRef = useRef<ScrollView>(null);
-  const cardRefs = useRef<Record<string, View | null>>({});
+  // Each card's y-offset within the scroll content (captured via onLayout).
+  const cardY = useRef<Record<string, number>>({});
 
   // Filters hide pins + cards together.
   const filtered = (quotes ?? []).filter((q) => {
     const dealer = dealerById(q.dealerId);
-    return dealer.distanceMi <= DISTANCE_MAX[distFilter] && priceMatches(priceFilter, q.price);
+    return dealer.distanceMi <= (DISTANCE_CAP[distFilter] ?? Infinity) && priceMatches(priceFilter, q.price);
   });
   const selected = filtered.find((q) => q.dealerId === selectedId) ?? null;
 
@@ -94,22 +87,10 @@ export function AllQuotesMapScreen() {
   /** Pin tap: select + scroll the matching dealer card into view. */
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
-    requestAnimationFrame(() => {
-      const node = cardRefs.current[dealerId];
-      if (!node) return;
-      if (Platform.OS === 'web') {
-        (node as any).scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      const scroller = scrollRef.current;
-      const inner = (scroller as any)?.getInnerViewNode?.();
-      if (!scroller || !inner) return;
-      (node as any).measureLayout(
-        inner,
-        (_x: number, y: number) => scroller.scrollTo({ y: Math.max(0, y - 90), animated: true }),
-        () => {},
-      );
-    });
+    const y = cardY.current[dealerId];
+    if (y != null) {
+      scrollRef.current?.scrollTo({ y: Math.max(0, y - 90), animated: true });
+    }
   };
 
   const goAccept = (dealerId: string) => navigation.navigate('AcceptBooking', { dealerId });
@@ -197,7 +178,7 @@ export function AllQuotesMapScreen() {
         <Select
           label="Distance"
           value={distFilter}
-          options={[...DISTANCE_OPTIONS]}
+          options={[...DISTANCE_FILTERS]}
           onChange={setDistFilter}
           style={{ flex: 1 }}
         />
@@ -233,11 +214,13 @@ export function AllQuotesMapScreen() {
         const isSelected = q.dealerId === selectedId;
         const tinted = q.tier !== 'other';
         return (
-          <Tappable
+          <View
             key={q.id}
-            ref={(node: any) => {
-              cardRefs.current[q.dealerId] = node;
+            onLayout={(e) => {
+              cardY.current[q.dealerId] = e.nativeEvent.layout.y;
             }}
+          >
+          <Tappable
             // First tap selects (syncs the pin); tapping the selected card books.
             onPress={() => (isSelected ? goAccept(q.dealerId) : onPinSelect(q.dealerId))}
             style={({ pressed }) => ({
@@ -331,6 +314,7 @@ export function AllQuotesMapScreen() {
               </Tappable>
             ) : null}
           </Tappable>
+          </View>
         );
       })}
     </Screen>

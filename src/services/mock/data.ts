@@ -21,6 +21,15 @@ export interface Dealer {
 /** The demo user's location — Fairfax, VA (s-all-quotes-map "📍 Fairfax, VA"). */
 export const USER_LOCATION = { lat: 38.846, lng: -77.306 };
 
+/** Distance filter options used app-wide (quotes, map, schedule). Caps at 30 mi. */
+export const DISTANCE_FILTERS = ['Any distance', 'Within 5 mi', 'Within 10 mi', 'Within 30 mi'];
+export const DISTANCE_CAP: Record<string, number> = {
+  'Any distance': Infinity,
+  'Within 5 mi': 5,
+  'Within 10 mi': 10,
+  'Within 30 mi': 30,
+};
+
 export const DEALERS: Dealer[] = [
   {
     id: 'honda-fairfax',
@@ -544,15 +553,6 @@ export const DEALER_SERVICE_CHIPS: Record<string, string[]> = {
   'city-body': ['Oil $47', 'Tires $85', 'Filters $43', 'Fluids $99', 'Brakes $149'],
 };
 
-/** NoVA service areas the user can switch between on the schedule screen. */
-export const SERVICE_AREAS = [
-  'Fairfax, VA',
-  'Vienna, VA',
-  'Arlington, VA',
-  'Chantilly, VA',
-  'Springfield, VA',
-  'Alexandria, VA',
-];
 
 export interface BookableService {
   id: string;

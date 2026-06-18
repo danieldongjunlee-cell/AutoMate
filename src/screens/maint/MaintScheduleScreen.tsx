@@ -11,8 +11,8 @@ import { MaintStackParamList } from '../../navigation/types';
 import {
   DEALER_SERVICE_CHIPS,
   DEALERS,
+  DISTANCE_CAP,
   SCHEDULE_SERVICE_FILTERS,
-  SERVICE_AREAS,
   SERVICE_FILTER_KEY,
 } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
@@ -20,30 +20,30 @@ import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintSchedule'>;
 
+/** Distance options for the partner-dealership radius (caps at 30 mi). */
+const RADIUS_OPTIONS = ['Within 5 mi', 'Within 10 mi', 'Within 30 mi'];
+
 /** Wireframe s-maint-schedule: service-type filter + partner dealer cards. */
 export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
   const [filter, setFilter] = useState(SCHEDULE_SERVICE_FILTERS[0]);
-  const [location, setLocation] = useState(SERVICE_AREAS[0]);
+  const [radius, setRadius] = useState('Within 30 mi');
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const town = location.split(',')[0].trim();
+  const cap = DISTANCE_CAP[radius] ?? 30;
 
-  // Every partner offers all 5 service types; the filter narrows by type and
-  // switching location surfaces the shops in that town first.
+  // Every partner offers all 5 service types; narrow by service type and by the
+  // chosen distance radius (up to 30 mi), nearest first.
   const dealers = DEALERS.filter((d) => {
     const chips = DEALER_SERVICE_CHIPS[d.id];
     if (!chips) return false;
+    if (d.distanceMi > cap) return false;
     if (filter === 'All') return true;
     const key = SERVICE_FILTER_KEY[filter] ?? filter;
     return chips.some((c) => c.startsWith(key));
-  }).sort((a, b) => {
-    const am = a.address.includes(town) ? 0 : 1;
-    const bm = b.address.includes(town) ? 0 : 1;
-    return am - bm || a.distanceMi - b.distanceMi;
-  });
+  }).sort((a, b) => a.distanceMi - b.distanceMi);
 
   return (
     <Screen>
@@ -56,7 +56,7 @@ export function MaintScheduleScreen() {
           flexWrap: 'wrap',
         }}
       >
-        <SectionLabel style={{ marginBottom: 0 }}>Partner dealerships near </SectionLabel>
+        <SectionLabel style={{ marginBottom: 0 }}>Partner dealerships </SectionLabel>
         <Tappable
           onPress={() => setPickerOpen(true)}
           style={{
@@ -69,14 +69,17 @@ export function MaintScheduleScreen() {
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>
-            📍 {location}
-          </Text>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>📍 {radius}</Text>
           <Text style={{ fontSize: 11, color: colors.primaryDark }}>▾</Text>
         </Tappable>
       </View>
 
-      <View style={{ marginTop: spacing.sm }} />
+      <View style={{ marginTop: spacing.md }} />
+      {dealers.length === 0 ? (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+          No partner shops within this radius — widen the distance.
+        </Text>
+      ) : null}
       {dealers.map((dealer) => (
         <DealerCard
           key={dealer.id}
@@ -89,7 +92,7 @@ export function MaintScheduleScreen() {
         />
       ))}
 
-      {/* Location picker */}
+      {/* Distance radius picker */}
       <Modal
         visible={pickerOpen}
         transparent
@@ -122,15 +125,15 @@ export function MaintScheduleScreen() {
                 paddingBottom: spacing.xs,
               }}
             >
-              Choose a service area
+              Search radius
             </Text>
-            {SERVICE_AREAS.map((area, i) => {
-              const on = area === location;
+            {RADIUS_OPTIONS.map((opt, i) => {
+              const on = opt === radius;
               return (
                 <Tappable
-                  key={area}
+                  key={opt}
                   onPress={() => {
-                    setLocation(area);
+                    setRadius(opt);
                     setPickerOpen(false);
                   }}
                   style={{
@@ -139,7 +142,7 @@ export function MaintScheduleScreen() {
                     paddingHorizontal: spacing.md,
                     paddingVertical: 13,
                     backgroundColor: on ? colors.primarySurface : 'transparent',
-                    borderBottomWidth: i < SERVICE_AREAS.length - 1 ? StyleSheet.hairlineWidth : 0,
+                    borderBottomWidth: i < RADIUS_OPTIONS.length - 1 ? StyleSheet.hairlineWidth : 0,
                     borderBottomColor: colors.divider,
                   }}
                 >
@@ -151,7 +154,7 @@ export function MaintScheduleScreen() {
                       color: on ? colors.primaryDeep : colors.textPrimary,
                     }}
                   >
-                    📍 {area}
+                    📍 {opt}
                   </Text>
                   {on ? <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text> : null}
                 </Tappable>

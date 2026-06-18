@@ -4,121 +4,25 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
-import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { QuoteRow } from '../../components/QuoteRow';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { QuotesStackParamList } from '../../navigation/types';
 import { quoteService } from '../../services';
-import { dealerById, Quote, QUOTE_REQUEST, quoteBreakdown, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, USER_LOCATION } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<QuotesStackParamList, 'Quotes'>;
 
-const DISTANCE_OPTS = ['Any distance', 'Within 5 mi', 'Within 10 mi', 'Within 15 mi'];
 const SORT_OPTS = ['Price: low to high', 'Price: high to low', 'Rating: high to low', 'Nearest first'];
-const distanceCap: Record<string, number> = { 'Within 5 mi': 5, 'Within 10 mi': 10, 'Within 15 mi': 15 };
-
-/** One expandable dealer quote with its cost breakdown. */
-function QuoteRow({
-  quote,
-  onAccept,
-  onSelect,
-  selected,
-}: {
-  quote: Quote;
-  onAccept: () => void;
-  onSelect: () => void;
-  selected?: boolean;
-}) {
-  const { colors } = useTheme();
-  const dealer = dealerById(quote.dealerId);
-  const [open, setOpen] = useState(false);
-  // Selecting the matching map pin expands this card.
-  useEffect(() => {
-    if (selected) setOpen(true);
-  }, [selected]);
-  const discount = quote.tier === 'best' ? 20 : 0;
-  const b = quoteBreakdown(quote.price, discount);
-
-  const line = (label: string, value: string, strong = false) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
-      <Text style={{ fontSize: 13, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '400' }}>
-        {label}
-      </Text>
-      <Text style={{ fontSize: 13, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '500' }}>
-        {value}
-      </Text>
-    </View>
-  );
-
-  return (
-    <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-      {/* Tapping the dealer row selects this shop (reveals Accept & book). */}
-      <Tappable onPress={onSelect} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-        <AvatarCircle initial={dealer.initial} color={dealer.color} size={38} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{dealer.name}</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-            ★ {dealer.rating} ({dealer.reviews}) · {dealer.distanceMi} mi · 🕐 {dealer.hours}
-          </Text>
-        </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>${quote.price}</Text>
-          {quote.tier !== 'other' ? (
-            <Badge label={quote.tier === 'best' ? 'Best price' : 'Recommended'} variant={quote.tier === 'best' ? 'success' : 'primarySoft'} />
-          ) : null}
-        </View>
-      </Tappable>
-
-      <Tappable onPress={() => setOpen((o) => !o)} hitSlop={6} style={{ paddingVertical: 8 }}>
-        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>
-          {open ? 'Hide price breakdown ⌃' : 'See price breakdown ⌄'}
-        </Text>
-      </Tappable>
-
-      {open ? (
-        <View style={{ backgroundColor: colors.surfaceAlt, borderRadius: radii.sm, padding: spacing.md, marginBottom: spacing.sm }}>
-          {line('Labor total', `$${b.labor}`)}
-          {line('Parts total', `$${b.parts}`)}
-          {line('Paints & materials', `$${b.paints}`)}
-          {line('Shop supplies (5%)', `$${b.shopSupplies}`)}
-          {line('Tax (6%)', `$${b.tax}`)}
-          {b.discount > 0 ? line('Discount', `−$${b.discount}`) : null}
-          <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 4 }} />
-          {line('Total', `$${b.total}`, true)}
-        </View>
-      ) : null}
-
-      {quote.note ? (
-        <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>{quote.note}</Text>
-      ) : null}
-      {/* Accept & book appears only once this shop is selected. */}
-      {selected ? (
-        <PrimaryButton label={`Accept & book ${dealer.name} →`} onPress={onAccept} />
-      ) : (
-        <Tappable
-          onPress={onSelect}
-          style={{
-            borderWidth: 1.5,
-            borderColor: colors.primary,
-            borderRadius: radii.sm,
-            paddingVertical: 11,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Select this shop</Text>
-        </Tappable>
-      )}
-    </Card>
-  );
-}
 
 /** Quotes tab main screen — one pending quote per car, with filters. */
 export function QuotesReceivedScreen() {
@@ -133,7 +37,7 @@ export function QuotesReceivedScreen() {
   // Opening this tab clears the unread-quotes badge.
   useEffect(() => setQuotesViewed(true), [setQuotesViewed]);
 
-  const [distance, setDistance] = useState(DISTANCE_OPTS[0]);
+  const [distance, setDistance] = useState(DISTANCE_FILTERS[0]);
   const [sort, setSort] = useState(SORT_OPTS[0]);
   // Pin ↔ card selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -154,8 +58,8 @@ export function QuotesReceivedScreen() {
 
   const filtered = useMemo(() => {
     let list = [...(quotes ?? [])];
-    const cap = distanceCap[distance];
-    if (cap) list = list.filter((q) => dealerById(q.dealerId).distanceMi <= cap);
+    const cap = DISTANCE_CAP[distance] ?? Infinity;
+    if (Number.isFinite(cap)) list = list.filter((q) => dealerById(q.dealerId).distanceMi <= cap);
     list.sort((a, b) => {
       if (sort === 'Price: low to high') return a.price - b.price;
       if (sort === 'Price: high to low') return b.price - a.price;
@@ -279,7 +183,7 @@ export function QuotesReceivedScreen() {
       {/* Filters */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
-          <Dropdown label="Distance" value={distance} options={DISTANCE_OPTS} onChange={setDistance} />
+          <Dropdown label="Distance" value={distance} options={DISTANCE_FILTERS} onChange={setDistance} />
         </View>
         <View style={{ flex: 1 }}>
           <Dropdown label="Sort by" value={sort} options={SORT_OPTS} onChange={setSort} />

@@ -2,10 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
-import { Platform, ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { DealerMap, MapMarker } from '../../components/DealerMap';
-import { QuoteCard } from '../../components/QuoteCard';
+import { QuoteRow } from '../../components/QuoteRow';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -46,10 +46,11 @@ export function DealerQuotesScreen() {
   const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
   const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
-  // Pin ↔ card selection sync (see AllQuotesMap for the same pattern).
+  // Pin ↔ card selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-  const cardRefs = useRef<Record<string, View | null>>({});
+  // Each card's y-offset within the scroll content (captured via onLayout).
+  const cardY = useRef<Record<string, number>>({});
 
   const markers: MapMarker[] = (quotes ?? []).map((q) => {
     const dealer = dealerById(q.dealerId);
@@ -68,22 +69,10 @@ export function DealerQuotesScreen() {
   /** Pin tap: select + scroll the matching dealer card into view. */
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
-    requestAnimationFrame(() => {
-      const node = cardRefs.current[dealerId];
-      if (!node) return;
-      if (Platform.OS === 'web') {
-        (node as any).scrollIntoView?.({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      const scroller = scrollRef.current;
-      const inner = (scroller as any)?.getInnerViewNode?.();
-      if (!scroller || !inner) return;
-      (node as any).measureLayout(
-        inner,
-        (_x: number, y: number) => scroller.scrollTo({ y: Math.max(0, y - 90), animated: true }),
-        () => {},
-      );
-    });
+    const y = cardY.current[dealerId];
+    if (y != null) {
+      scrollRef.current?.scrollTo({ y: Math.max(0, y - 90), animated: true });
+    }
   };
 
   return (
@@ -192,29 +181,25 @@ export function DealerQuotesScreen() {
       {isLoading ? (
         <SkeletonList variant="card" count={4} />
       ) : (
-        quotes?.map((quote, i) => {
+        quotes?.map((quote) => {
           const isSelected = quote.dealerId === selectedId;
           return (
             <View
               key={quote.id}
-              ref={(node) => {
-                cardRefs.current[quote.dealerId] = node;
+              onLayout={(e) => {
+                cardY.current[quote.dealerId] = e.nativeEvent.layout.y;
               }}
-              // Selecting a pin outlines the matching card below.
+              // Only the selected card is outlined (no permanent first-card border).
               style={
                 isSelected
-                  ? {
-                      borderWidth: 2,
-                      borderColor: colors.primary,
-                      borderRadius: radii.md,
-                    }
+                  ? { borderWidth: 2, borderColor: colors.primary, borderRadius: radii.md }
                   : undefined
               }
             >
-              <QuoteCard
+              <QuoteRow
                 quote={quote}
-                dealer={dealerById(quote.dealerId)}
-                highlighted={i === 0}
+                selected={isSelected}
+                onSelect={() => onPinSelect(quote.dealerId)}
                 onAccept={() => navigation.navigate('AcceptBooking', { dealerId: quote.dealerId })}
               />
             </View>

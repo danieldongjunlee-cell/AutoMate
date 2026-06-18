@@ -35,36 +35,38 @@ export function DealerCard({
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: colors.border,
         padding: spacing.md,
-        marginBottom: spacing.sm,
+        marginBottom: spacing.lg,
         opacity: pressed ? 0.8 : 1,
       })}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <View
           style={{
-            width: 44,
-            height: 44,
+            width: 48,
+            height: 48,
             borderRadius: radii.sm,
             backgroundColor: dealer.color,
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>{dealer.initial}</Text>
+          <Text style={{ fontSize: 18, fontWeight: '700', color: '#fff' }}>{dealer.initial}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-            {dealer.name}
-          </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-            {/* Tappable rating → Google reviews (feedback pass 2) */}
-            <RatingLink dealer={dealer} label={`★ ${dealer.rating.toFixed(1)}`} />
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {' '}({dealer.reviews} reviews) · {dist.format(dealer.distanceMi)}
+          {/* Bigger shop name with the rating right beside the title. */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }} numberOfLines={1}>
+              {dealer.name}
             </Text>
+            <RatingLink
+              dealer={dealer}
+              label={`★ ${dealer.rating.toFixed(1)} (${dealer.reviews})`}
+              style={{ fontSize: 13, fontWeight: '700' }}
+            />
           </View>
-          <Text style={{ fontSize: 12, color: open ? colors.successDark : colors.textTertiary }}>
-            🕐 {dealer.hours} · {open ? `Open until ${dealer.closesAt}` : 'Closed'}
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>
+            {dist.format(dealer.distanceMi)} · 🕐 {dealer.hours}
+            {open ? ` · Open until ${dealer.closesAt}` : ' · Closed'}
           </Text>
         </View>
         <View
