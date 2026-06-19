@@ -40,6 +40,8 @@ services:
       WEIGHTS_PATH: /weights/damage-seg.pt
       MODEL_VERSION: ${MODEL_VERSION:-yolo11n-seg-cardd-v1}
       CONF_THRESHOLD: ${CONF_THRESHOLD:-0.25}
+      IMG_SIZE: ${IMG_SIZE:-640}
+      HALF: ${HALF:-true}
     volumes:
       - ./models:/weights:ro
     deploy:

@@ -114,8 +114,49 @@ class MockEstimator(DamageEstimator):
         return assemble_estimate(raw, self.mode)
 
 
+def merge_detections(detections: List[dict], part: Optional[str]) -> List[dict]:
+    """No declared parts: group raw detections by (part, type), keeping the
+    strongest (largest area) so one damage shot from N angles isn't priced N
+    times. Part comes from the request hint, else the per-class default."""
+    merged: dict = {}
+    for d in detections:
+        dtype = d["type"]
+        dpart = part or default_part_for(dtype)
+        key = (dpart, dtype)
+        if key not in merged or d["area_ratio"] > merged[key]["area_ratio"]:
+            merged[key] = {"type": dtype, "part": dpart, "area_ratio": d["area_ratio"], "confidence": d["confidence"]}
+    return list(merged.values())
+
+
+def anchor_to_declared(detections: List[dict], parts_hint: List[dict]) -> List[dict]:
+    """Trust the human's part + type (from the app's car-diagram selection) and
+    use the model only to MEASURE severity (mask area) + confidence. More
+    accurate than model classification and needs no part-segmentation model.
+
+    Per declared damage: severity = largest matching-class mask area (fall back
+    to the largest mask of any class), confidence = mean of the pooled
+    detections. If the model saw nothing, keep the human's damage at minor
+    severity with a flagged lower confidence rather than dropping it.
+    """
+    raw = []
+    for p in parts_hint:
+        dtype = normalize_damage_type(p.get("type") or "dent")
+        dpart = p.get("part") or default_part_for(dtype)
+        matching = [d for d in detections if d["type"] == dtype]
+        pool = matching or detections
+        area = max((d["area_ratio"] for d in pool), default=0.0)
+        conf = (sum(d["confidence"] for d in pool) / len(pool)) if pool else config.DECLARED_NO_DETECTION_CONFIDENCE
+        raw.append({"type": dtype, "part": dpart, "area_ratio": area, "confidence": round(conf, 2)})
+    return raw
+
+
 class YoloSegEstimator(DamageEstimator):
-    """Live YOLO-seg inference. Masks → damaged-area ratio → severity → price."""
+    """Live YOLO-seg inference. Masks → damaged-area ratio → severity → price.
+
+    `WEIGHTS_PATH` may be a .pt, .onnx, or .engine (TensorRT) file — ultralytics
+    loads all three through the same class, so export for speed without code
+    changes (see train/export_model.py).
+    """
 
     mode = "live"
 
@@ -128,36 +169,39 @@ class YoloSegEstimator(DamageEstimator):
         self.loaded = True
         logger.info("Loaded YOLO-seg weights from %s", config.WEIGHTS_PATH)
 
-    def estimate(self, images, image_blobs, part, vehicle, parts_hint):
-        # Collect detections across all photos, then merge by (part, type) keeping
-        # the strongest instance so the same damage shot from N angles isn't
-        # priced N times.
-        merged: dict = {}
+    def _detect(self, images) -> List[dict]:
+        """Run the model over every photo → flat list of {type, area_ratio, confidence}."""
+        detections: List[dict] = []
         for img in images:
-            results = self._model.predict(img, conf=config.CONF_THRESHOLD, verbose=False)
+            results = self._model.predict(
+                img, conf=config.CONF_THRESHOLD, imgsz=config.IMG_SIZE, half=config.HALF, verbose=False
+            )
             for r in results:
                 if r.masks is None or r.boxes is None or len(r.boxes) == 0:
                     continue
-                img_area = float(r.orig_shape[0] * r.orig_shape[1]) or 1.0
                 confs = r.boxes.conf.tolist()
                 clss = [int(c) for c in r.boxes.cls.tolist()]
-                # mask.data: (N, H, W) — pixel count per instance / image area.
                 mask_areas = r.masks.data.sum(dim=(1, 2)).tolist()
                 mh, mw = r.masks.data.shape[1], r.masks.data.shape[2]
-                mask_px = float(mh * mw) or img_area
+                mask_px = float(mh * mw) or 1.0
                 for i, cls_idx in enumerate(clss):
-                    dtype = CARDD_CLASSES.get(cls_idx, "dent")
-                    area_ratio = max(0.0, min(1.0, float(mask_areas[i]) / mask_px))
-                    dpart = part or default_part_for(dtype)
-                    key = (dpart, dtype)
-                    cand = {"type": dtype, "part": dpart, "area_ratio": area_ratio, "confidence": confs[i]}
-                    if key not in merged or area_ratio > merged[key]["area_ratio"]:
-                        merged[key] = cand
-        raw = list(merged.values())
-        if not raw:
-            # Nothing detected — return an honest empty/low-confidence estimate
-            # rather than inventing damage.
-            return assemble_estimate([], self.mode)
+                    detections.append(
+                        {
+                            "type": CARDD_CLASSES.get(cls_idx, "dent"),
+                            "area_ratio": max(0.0, min(1.0, float(mask_areas[i]) / mask_px)),
+                            "confidence": confs[i],
+                        }
+                    )
+        return detections
+
+    def estimate(self, images, image_blobs, part, vehicle, parts_hint):
+        detections = self._detect(images)
+        if parts_hint:
+            # Most accurate path: anchor part/type to the user's selection.
+            raw = anchor_to_declared(detections, parts_hint)
+        else:
+            # No human labels (e.g. server per-part call): pure detection.
+            raw = merge_detections(detections, part)
         return assemble_estimate(raw, self.mode)
 
 

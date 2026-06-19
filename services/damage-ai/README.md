@@ -173,13 +173,31 @@ without touching the rest.
 - The Express server (`server/src/damageAi.ts`) also calls `/estimate` and maps
   the response to its per-part shape, with the same deterministic fallback.
 
+## Accuracy & speed
+
+The app's flow already captures the **human-selected part + damage type** (the
+car-diagram step), which is more reliable than asking a model to classify them.
+So in live mode, when the app passes its `parts` hint, the service **trusts the
+user's part/type and uses YOLO-seg only to measure severity** (mask area) +
+confidence (`anchor_to_declared`). That's both more accurate (human labels) and
+fast (one pass — no separate part-segmentation model). With no hint (e.g. the
+server's per-part call) it falls back to pure detection (`merge_detections`).
+
+For speed: `IMG_SIZE` (smaller = faster), `HALF` (FP16 on GPU), and
+`CONF_THRESHOLD`. `WEIGHTS_PATH` can point at an exported `.onnx` or `.engine`
+(TensorRT) file — ultralytics loads them through the same class, so
+`train/export_model.py` buys throughput with no code change. For higher
+accuracy, train a larger base (`yolo11s/m-seg`) and bump `IMG_SIZE`.
+
 ## Env vars
 
 | Var | Default | Meaning |
 |-----|---------|---------|
 | `MODEL_MODE` | `mock` | `mock` \| `live` (YOLO-seg) |
-| `WEIGHTS_PATH` | `models/damage-seg.pt` | live weights |
+| `WEIGHTS_PATH` | `models/damage-seg.pt` | live weights (`.pt` / `.onnx` / `.engine`) |
 | `YOLO_BASE` | `yolo11n-seg.pt` | base arch (docs/health + training default) |
 | `MODEL_VERSION` | derived | stored with each estimate |
 | `CONF_THRESHOLD` | `0.25` | live: drop detections below this |
+| `IMG_SIZE` | `640` | live: inference size (smaller = faster) |
+| `HALF` | `false` | live: FP16 on GPU |
 | `RECEIPT_MODE` | `mock` | `mock` \| `ocr` (PaddleOCR) |

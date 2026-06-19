@@ -75,6 +75,45 @@ def test_estimate_mock_aggregates_multiple_parts():
     assert body["price_high"] == 480 + 350
 
 
+def test_anchor_to_declared_uses_human_part_and_model_severity():
+    """Live accuracy path (no model needed): part/type from the user, severity
+    from the model's measured mask area."""
+    from app.inference import anchor_to_declared
+
+    detections = [
+        {"type": "dent", "area_ratio": 0.20, "confidence": 0.9},
+        {"type": "scratch", "area_ratio": 0.05, "confidence": 0.7},
+    ]
+    hint = [{"part": "rear bumper", "type": "dent"}, {"part": "door", "type": "scratch"}]
+    raw = anchor_to_declared(detections, hint)
+    assert [(d["part"], d["type"]) for d in raw] == [("rear bumper", "dent"), ("door", "scratch")]
+    assert raw[0]["area_ratio"] == 0.20 and raw[0]["confidence"] == 0.9  # matched dent
+    assert raw[1]["area_ratio"] == 0.05 and raw[1]["confidence"] == 0.7  # matched scratch
+
+
+def test_anchor_to_declared_keeps_damage_when_model_sees_nothing():
+    from app.inference import anchor_to_declared
+
+    raw = anchor_to_declared([], [{"part": "hood", "type": "dent"}])
+    assert len(raw) == 1
+    assert raw[0]["part"] == "hood" and raw[0]["area_ratio"] == 0.0
+    assert 0.0 < raw[0]["confidence"] <= 1.0  # flagged lower confidence, not dropped
+
+
+def test_merge_detections_dedupes_by_strongest():
+    from app.inference import merge_detections
+
+    raw = merge_detections(
+        [
+            {"type": "dent", "area_ratio": 0.1, "confidence": 0.8},
+            {"type": "dent", "area_ratio": 0.3, "confidence": 0.85},
+        ],
+        part="hood",
+    )
+    assert len(raw) == 1
+    assert raw[0]["part"] == "hood" and raw[0]["area_ratio"] == 0.3
+
+
 @pytest.mark.skipif(
     os.environ.get("RUN_LIVE_TESTS") != "1",
     reason="live test — set RUN_LIVE_TESTS=1 with MODEL_MODE=live + weights",

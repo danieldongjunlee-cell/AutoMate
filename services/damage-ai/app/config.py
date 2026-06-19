@@ -34,3 +34,17 @@ MODEL_VERSION = os.environ.get(
 
 # Detections below this confidence are ignored in live mode.
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.25"))
+
+# Inference speed knobs (live mode):
+#   IMG_SIZE — square inference size; smaller = faster (640 is the train default).
+#   HALF     — FP16 on GPU (faster, lower memory). Ignored on CPU.
+IMG_SIZE = int(os.environ.get("IMG_SIZE", "640"))
+HALF = os.environ.get("HALF", "false").strip().lower() in ("1", "true", "yes")
+
+# Confidence reported for a damage the user declared but the model couldn't
+# measure (no detection) — we trust the human that damage exists, but flag the
+# lower certainty.
+DECLARED_NO_DETECTION_CONFIDENCE = float(
+    os.environ.get("DECLARED_NO_DETECTION_CONFIDENCE", "0.6")
+)
+
