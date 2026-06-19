@@ -123,6 +123,12 @@ If weights or deps are missing, the service logs a warning and **degrades to
 mock** — it never crashes. **Confirm it's truly live:** `GET /health` must show
 `"model_mode": "live"` and `"model_loaded": true` (else it fell back to mock).
 
+### GPU serverless deploy
+
+Step-by-step for Modal (scale-to-zero, recommended), Google Cloud Run + GPU
+(runs `Dockerfile.gpu` unchanged), and RunPod is in [`deploy/README.md`](deploy/README.md).
+A ready Modal app is at [`deploy/modal_app.py`](deploy/modal_app.py).
+
 ### Tests
 
 ```bash
