@@ -95,6 +95,22 @@ and (with `--apply`) writes the fitted `severity_weights` back into
 `config/pricing.yaml` (comments preserved). **Bump `pricing_version` afterward.**
 This is the highest-ROI tuning and needs no model retrain.
 
+### Pull the CSV straight from Supabase (one command)
+
+`docs/supabase-calibration-export.sql` builds the `part,type,area_ratio,
+actual_price` rows from stored estimates (`damage_requests.model_json`) joined to
+each user's accepted repair booking (`bookings.price_label`). Run it in the
+Supabase SQL editor and "Download CSV", or:
+
+```bash
+psql "$SUPABASE_DB_URL" -c "\copy (<SELECT from the .sql>) to 'calibration.csv' csv header"
+python train/calibrate_severity.py --csv calibration.csv --apply
+```
+
+It uses single-part requests and a nearest-prior-booking heuristic (no FK exists
+booking→request yet); for exact joins, add a `damage_request_id` to bookings and
+set it when a quote is accepted.
+
 ## Receipt model (separate)
 
 `RECEIPT_MODE=ocr` uses PaddleOCR + field heuristics for `/receipt` and
