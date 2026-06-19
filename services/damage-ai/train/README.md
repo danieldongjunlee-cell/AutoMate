@@ -75,6 +75,26 @@ YOLOv8-seg / YOLO11-seg / YOLO26-seg identically. To upgrade, train with a newer
 copy to `models/damage-seg.pt`, and bump `MODEL_VERSION`.
 ```
 
+## Calibrating severity to real prices
+
+The price table in `config/pricing.yaml` is your rate card; what's worth fitting
+to data is **how damaged-area maps to severity per type** (`severity_weights`).
+Once you have a CSV of past damage photos (or precomputed `area_ratio`) + the
+**actual quoted price**, fit the weights:
+
+```bash
+# dry-run report (uses precomputed area_ratio):
+python train/calibrate_severity.py --csv train/calibration_sample.csv
+# compute area from photos with your weights, then write the fit:
+python train/calibrate_severity.py --csv data/quotes.csv --weights models/damage-seg.pt --apply
+```
+
+It grid-searches each type's weight to minimize the error between the predicted
+bucket's price and the actual price, prints a per-type before/after MAE table,
+and (with `--apply`) writes the fitted `severity_weights` back into
+`config/pricing.yaml` (comments preserved). **Bump `pricing_version` afterward.**
+This is the highest-ROI tuning and needs no model retrain.
+
 ## Receipt model (separate)
 
 `RECEIPT_MODE=ocr` uses PaddleOCR + field heuristics for `/receipt` and

@@ -201,6 +201,11 @@ For speed: `IMG_SIZE` (smaller = faster), `HALF` (FP16 on GPU), and
 `train/export_model.py` buys throughput with no code change. For higher
 accuracy, train a larger base (`yolo11s/m-seg`) and bump `IMG_SIZE`.
 
+**Calibrate severity to real prices** (highest-ROI, no retrain): once you have a
+CSV of damage photos/areas + actual quoted prices, fit the per-type
+`severity_weights` with `train/calibrate_severity.py --apply` (see
+[`train/README.md`](train/README.md)).
+
 ## Env vars
 
 | Var | Default | Meaning |

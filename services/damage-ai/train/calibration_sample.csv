@@ -1,0 +1,15 @@
+part,type,area_ratio,actual_price
+rear bumper,dent,0.10,380
+rear bumper,dent,0.14,420
+rear bumper,dent,0.32,720
+rear bumper,scratch,0.06,250
+front bumper,dent,0.12,410
+door,dent,0.09,360
+door,scratch,0.05,150
+door,scratch,0.22,520
+fender,dent,0.11,330
+hood,crack,0.07,640
+windshield,glass shatter,0.20,720
+windshield,glass shatter,0.45,1200
+tire,tire flat,0.15,180
+headlight,lamp broken,0.10,420
