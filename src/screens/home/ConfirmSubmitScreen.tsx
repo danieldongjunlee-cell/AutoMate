@@ -12,6 +12,8 @@ import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { saveDamageEstimate } from '../../lib/damageEstimates';
+import { damageEstimator } from '../../lib/damageEstimator';
+import { modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -208,24 +210,31 @@ export function ConfirmSubmitScreen() {
   const setAiEstimate = useAppStore((s) => s.setAiEstimate);
   const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
   const setIsNewUser = useAppStore((s) => s.setIsNewUser);
+  const { active, brand } = useActiveVehicle();
   const [submitting, setSubmitting] = useState(false);
 
   const onSubmit = async () => {
     setSubmitting(true);
     try {
-      // The service decides after-hours routing (backend-owned rule). Pad to a
-      // ~2s minimum so the analyzing stages read (mock resolves instantly).
-      const [{ afterHours, pointsEarned, aiEstimate }] = await Promise.all([
+      // The AI estimate comes from the swappable DamageEstimator adapter
+      // (services/damage-ai when EXPO_PUBLIC_DAMAGE_AI_URL is set, deterministic
+      // mock otherwise). submitDamageRequest still owns after-hours routing +
+      // points. Pad to ~2s so the analyzing stages read.
+      const vehicle = active
+        ? { make: brand, model: modelOf(active.name, brand), year: (active.name.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
+        : undefined;
+      const [{ afterHours, pointsEarned }, estimate] = await Promise.all([
         quoteService.submitDamageRequest(damageParts),
+        damageEstimator.estimate({ parts: damageParts, vehicle }),
         new Promise((r) => setTimeout(r, 2000)),
       ]);
       addPoints(pointsEarned, 'Submitted damage photos');
       // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
-      setAiEstimate(aiEstimate ?? null);
+      setAiEstimate(estimate.aiEstimate);
       setQuotesViewed(false); // new quotes → show the unread badge on the Quotes tab
       setIsNewUser(false); // first estimate submitted → drop the "New here?" hint
-      // Persist the estimate + upload photos to Supabase (no-op if unconfigured).
-      void saveDamageEstimate(damageParts, aiEstimate ?? null);
+      // Persist the estimate (full model JSON + versions) + photos (no-op if unconfigured).
+      void saveDamageEstimate(damageParts, estimate);
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
     } finally {
       setSubmitting(false);

@@ -2,20 +2,27 @@
 fastapi>=0.110
 uvicorn[standard]>=0.29
 pillow>=10.0
+numpy>=1.26
 pyyaml>=6.0
+pydantic>=2.6
 python-multipart>=0.0.9
 
-# Optional model extras — heavy downloads; install only when switching modes.
-# All imports are guarded, the service runs (and falls back to mock) without them.
+# ── Optional model extras (heavy; install only for the matching mode) ───────
+# Every import below is guarded — the service runs and falls back to mock
+# without them.
 #
-# MODEL_MODE=yolo — YOLOv8 damage detector (weights at models/damage.pt):
-#   ultralytics>=8.2
+# MODEL_MODE=live — YOLO-seg instance segmentation (weights at
+#   models/damage-seg.pt). Same package loads YOLOv8-seg / YOLO11-seg /
+#   YOLO26-seg, so the architecture is a weights swap:
+#     ultralytics>=8.3        # YOLO11/YOLO26-seg support
+#     torch>=2.2              # pulled by ultralytics; install the CUDA build on GPU
+#   Faster serving via exported weights (see train/export_model.py):
+#     onnxruntime-gpu>=1.17   # or onnxruntime for CPU
 #
-# RECEIPT_MODE=ocr — PaddleOCR receipt pipeline:
-#   paddleocr>=2.7
-#   paddlepaddle>=2.6
+# RECEIPT_MODE=ocr — PaddleOCR receipt / insurance-card pipeline:
+#     paddleocr>=2.7
+#     paddlepaddle>=2.6
 #
-# Donut upgrade path for end-to-end receipt understanding (see README):
-#   transformers>=4.40
-#   torch>=2.2
-#   sentencepiece>=0.2
+# Training only (services/damage-ai/train/*):
+#     ultralytics>=8.3
+#     pycocotools>=2.0        # CarDD ships COCO-style masks → YOLO-seg conversion

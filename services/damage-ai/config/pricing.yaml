@@ -1,21 +1,52 @@
-# Damage repair pricing table — Fairfax, VA market (body-shop quotes, 2025/26).
+# Damage repair pricing table — Northern Virginia (Fairfax, VA) market.
 #
-# Keyed part x damage_type x severity bucket -> [price_low, price_high] in USD.
-# Part lookup is fuzzy: the request part name is lowercased and matched against
-# the longest table key it contains ("L. Rear Fender" -> "fender",
-# "Rear bumper" -> "rear bumper"). Unknown parts use `default`.
+# Keyed  part × damage_type × severity bucket → [price_low, price_high] in USD.
+# Editable WITHOUT code changes — bump `pricing_version` whenever you change
+# numbers so stored estimates record which table produced them.
 #
-# The rear-bumper x dent x moderate range (285-480) matches the wireframe's
-# AI-estimate demo numbers.
+# Part lookup is fuzzy: the request/inference part name is lowercased and matched
+# against the longest table key it contains ("L. Rear Fender" → "fender",
+# "Rear bumper" → "rear bumper"). Unknown parts use `default`.
+#
+# The rear-bumper × dent × moderate range (285–480) matches the wireframe's
+# AI-estimate demo numbers ("AI confidence 87% · $285–$480").
 
 currency: USD
-market: Fairfax, VA
+market: Northern Virginia (Fairfax, VA)
+pricing_version: nova-2026.06
 
-# severity score (0..1) -> bucket. Upper bound exclusive except the last.
+# CarDD has 6 damage classes. We price all of them. `paint` is an extra in-house
+# class (CarDD has no paint-fade), kept for the app's existing damage-type chips.
+damage_types: [dent, scratch, crack, glass shatter, lamp broken, tire flat, paint]
+
+# Severity = clamp(damaged_area_ratio × weight, 0..1). Different damage types
+# scale differently with area (a small crack/shatter is worse than a small
+# scratch), so each gets a multiplier. Tune after fine-tuning on CarDD.
+severity_weights:
+  dent: 4.0
+  scratch: 3.0
+  crack: 6.0
+  glass shatter: 5.0
+  lamp broken: 6.0
+  tire flat: 8.0
+  paint: 3.0
+
+# severity score (0..1) → bucket. Upper bound exclusive except the last.
 severity_buckets:
   minor: [0.0, 0.33]
   moderate: [0.33, 0.66]
   severe: [0.66, 1.0]
+
+# When the model detects a class but no part was supplied/inferable, fall back to
+# the part typically associated with that damage class.
+class_part:
+  dent: door
+  scratch: door
+  crack: windshield
+  glass shatter: windshield
+  lamp broken: headlight
+  tire flat: tire
+  paint: door
 
 parts:
   rear bumper:
@@ -54,18 +85,30 @@ parts:
     crack:   { minor: [350, 580], moderate: [580, 950], severe: [1000, 1800] }
     paint:   { minor: [160, 300], moderate: [310, 560], severe: [600, 1100] }
   windshield:
-    dent:    { minor: [180, 320], moderate: [320, 550], severe: [600, 1100] }
-    scratch: { minor: [60, 140],  moderate: [140, 300], severe: [320, 600] }
-    crack:   { minor: [80, 160],  moderate: [250, 450], severe: [480, 900] }
-    paint:   { minor: [60, 140],  moderate: [140, 300], severe: [320, 600] }
+    crack:         { minor: [80, 160],  moderate: [250, 450], severe: [480, 900] }
+    glass shatter: { minor: [350, 550], moderate: [550, 900], severe: [900, 1500] }
+    scratch:       { minor: [60, 140],  moderate: [140, 300], severe: [320, 600] }
   rear window:
-    dent:    { minor: [160, 300], moderate: [300, 520], severe: [560, 1050] }
-    scratch: { minor: [60, 140],  moderate: [140, 290], severe: [310, 580] }
-    crack:   { minor: [80, 160],  moderate: [230, 420], severe: [450, 850] }
-    paint:   { minor: [60, 140],  moderate: [140, 290], severe: [310, 580] }
+    crack:         { minor: [80, 160],  moderate: [230, 420], severe: [450, 850] }
+    glass shatter: { minor: [320, 520], moderate: [520, 850], severe: [850, 1400] }
+    scratch:       { minor: [60, 140],  moderate: [140, 290], severe: [310, 580] }
+  headlight:
+    lamp broken: { minor: [120, 260], moderate: [280, 560], severe: [600, 1200] }
+    crack:       { minor: [90, 200],  moderate: [220, 420], severe: [450, 850] }
+    scratch:     { minor: [50, 120],  moderate: [120, 240], severe: [260, 480] }
+  taillight:
+    lamp broken: { minor: [100, 220], moderate: [240, 480], severe: [500, 950] }
+    crack:       { minor: [80, 170],  moderate: [190, 360], severe: [380, 700] }
+  tire:
+    tire flat: { minor: [25, 60], moderate: [120, 260], severe: [280, 520] }
 
+# Fallback for any part the lookup can't match. Covers all 7 damage types so
+# every (type × bucket) resolves even for an unknown panel.
 default:
-  dent:    { minor: [130, 250], moderate: [270, 460], severe: [500, 950] }
-  scratch: { minor: [85, 180],  moderate: [180, 350], severe: [370, 680] }
-  crack:   { minor: [260, 430], moderate: [430, 700], severe: [750, 1300] }
-  paint:   { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }
+  dent:          { minor: [130, 250], moderate: [270, 460], severe: [500, 950] }
+  scratch:       { minor: [85, 180],  moderate: [180, 350], severe: [370, 680] }
+  crack:         { minor: [260, 430], moderate: [430, 700], severe: [750, 1300] }
+  glass shatter: { minor: [320, 520], moderate: [520, 850], severe: [850, 1400] }
+  lamp broken:   { minor: [110, 240], moderate: [260, 500], severe: [520, 1000] }
+  tire flat:     { minor: [25, 60],   moderate: [120, 260], severe: [280, 520] }
+  paint:         { minor: [120, 240], moderate: [250, 450], severe: [480, 850] }

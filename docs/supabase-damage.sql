@@ -2,17 +2,28 @@
 -- Run in SQL Editor. Images go in a Storage bucket (not the table); the table
 -- keeps the storage PATHS. Owner-scoped RLS throughout.
 
--- 1) The submitted request + its AI estimate.
+-- 1) The submitted request + its AI estimate (incl. the full model JSON +
+--    versions from services/damage-ai, so a stored quote is reproducible).
 create table if not exists public.damage_requests (
-  id             uuid primary key default gen_random_uuid(),
-  user_id        uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  price_low      integer,
-  price_high     integer,
-  confidence_pct integer,
-  shops_notified integer,
-  status         text not null default 'submitted',
-  created_at     timestamptz not null default now()
+  id              uuid primary key default gen_random_uuid(),
+  user_id         uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  price_low       integer,
+  price_high      integer,
+  confidence_pct  integer,
+  shops_notified  integer,
+  estimate_id     text,        -- damage-ai estimate_id
+  model_version   text,        -- e.g. yolo11n-seg-cardd-v1 / mock-1
+  pricing_version text,        -- e.g. nova-2026.06
+  model_json      jsonb,       -- full /estimate response (damages[], etc.)
+  status          text not null default 'submitted',
+  created_at      timestamptz not null default now()
 );
+
+-- Idempotent add for existing installs.
+alter table public.damage_requests add column if not exists estimate_id text;
+alter table public.damage_requests add column if not exists model_version text;
+alter table public.damage_requests add column if not exists pricing_version text;
+alter table public.damage_requests add column if not exists model_json jsonb;
 
 alter table public.damage_requests enable row level security;
 create policy "damage requests managed by owner"

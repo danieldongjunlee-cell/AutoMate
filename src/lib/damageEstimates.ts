@@ -1,5 +1,6 @@
 import type { AiEstimateSummary } from '../services/mock/data';
 import { QUOTE_REQUEST } from '../services/mock/data';
+import type { DamageEstimateResult } from './damageEstimator';
 import type { DamagePart } from '../store/useAppStore';
 import { supabase } from './supabase';
 
@@ -27,17 +28,25 @@ async function uploadPhoto(uri: string, path: string): Promise<string | null> {
 }
 
 /**
- * Persist a submitted damage estimate: the request + AI price range, one row per
- * part, and each part's photos uploaded to Storage (paths saved on the row).
- * No-op when Supabase isn't configured. Safe to fire-and-forget.
+ * Persist a submitted damage estimate: the request + AI price range + the full
+ * model JSON / versions, one row per part, and each part's photos uploaded to
+ * Storage (paths saved on the row). No-op when Supabase isn't configured. Safe
+ * to fire-and-forget. Accepts either the full DamageEstimator result (preferred,
+ * stores model_json/model_version/pricing_version) or a bare AiEstimateSummary.
  */
 export async function saveDamageEstimate(
   parts: DamagePart[],
-  estimate: AiEstimateSummary | null,
+  result: DamageEstimateResult | AiEstimateSummary | null,
 ): Promise<void> {
   if (!supabase) return;
   const uid = (await supabase.auth.getUser()).data.user?.id;
   if (!uid) return;
+
+  // Normalize: a full result carries aiEstimate + versions + raw model JSON.
+  const full = result && 'aiEstimate' in result ? (result as DamageEstimateResult) : null;
+  const estimate: AiEstimateSummary | null = full
+    ? full.aiEstimate
+    : (result as AiEstimateSummary | null);
 
   const { data: req, error } = await supabase
     .from('damage_requests')
@@ -46,6 +55,10 @@ export async function saveDamageEstimate(
       price_high: estimate?.priceHigh ?? null,
       confidence_pct: estimate?.confidencePct ?? null,
       shops_notified: QUOTE_REQUEST.shopsNotified,
+      estimate_id: full?.estimateId ?? null,
+      model_version: full?.modelVersion ?? null,
+      pricing_version: full?.pricingVersion ?? null,
+      model_json: full ?? null,
     })
     .select('id')
     .single();

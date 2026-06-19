@@ -1,106 +1,104 @@
 """AutoMate damage-AI service (FastAPI).
 
 Endpoints
-  GET  /health          — liveness + active model modes
-  POST /estimate        — multipart images[] + part + damage_type -> repair estimate
+  GET  /health          — liveness + model/pricing versions + loaded flag
+  POST /estimate        — images[] (+ optional part, vehicle) -> repair estimate
   POST /receipt         — receipt image/PDF -> extracted fields
-  POST /insurance-card  — insurance card image -> policy fields (prof-ins-add scan)
+  POST /insurance-card  — insurance card image -> policy fields
 
-Modes (env)
-  MODEL_MODE   mock (default) | yolo  — damage estimator
-  RECEIPT_MODE mock (default) | ocr   — receipt extractor
+Modes (env, see app/config.py)
+  MODEL_MODE   mock (default) | live   — damage estimator (YOLO-seg in live)
+  RECEIPT_MODE mock (default) | ocr    — receipt / card extractor (PaddleOCR)
 
-"yolo" loads ultralytics YOLOv8 weights from models/damage.pt; "ocr" uses
-PaddleOCR. Both imports are guarded: missing deps or weights log a warning
-and fall back to the deterministic mock so the service never crashes.
+In `mock` mode the whole app runs end-to-end with no model or GPU. Flipping to
+`live` is a drop-in once fine-tuned weights exist at WEIGHTS_PATH — no app
+changes. Every heavy import is guarded; a missing dep/weights logs a warning
+and degrades to the deterministic mock so the service never crashes.
 
 Run:  uvicorn app.main:app --port 8100
 """
 from __future__ import annotations
 
 import io
+import json
 import logging
-import os
-from pathlib import Path
 from typing import List, Optional
 
 from fastapi import FastAPI, File, Form, UploadFile
 from PIL import Image
 
-from .mock_engine import mock_estimate, mock_insurance_card, mock_receipt
-from .pricing import load_pricing, normalize_damage_type, price_range, severity_bucket
+from . import config
+from .inference import get_estimator
+from .mock_engine import mock_insurance_card, mock_receipt
+from .pricing import load_pricing, pricing_version
+from .schemas import EstimateResponse, HealthResponse
 
 logger = logging.getLogger("damage-ai")
 logging.basicConfig(level=logging.INFO)
 
-MODEL_MODE = os.environ.get("MODEL_MODE", "mock").strip().lower()
-RECEIPT_MODE = os.environ.get("RECEIPT_MODE", "mock").strip().lower()
-WEIGHTS_PATH = Path(__file__).resolve().parent.parent / "models" / "damage.pt"
-
-app = FastAPI(title="AutoMate damage-AI", version="0.1.0")
+app = FastAPI(title="AutoMate damage-AI", version="0.2.0")
 
 
-# ── YOLO damage estimator (optional) ────────────────────────────────────
-
-_yolo_model = None
-_yolo_failed = False
+# ── /estimate ─────────────────────────────────────────────────────────────
 
 
-def _get_yolo():
-    """Lazy-load YOLOv8 weights; returns None (mock fallback) on any failure."""
-    global _yolo_model, _yolo_failed
-    if _yolo_model is not None or _yolo_failed:
-        return _yolo_model
-    try:
-        from ultralytics import YOLO  # guarded heavy import
-    except ImportError:
-        logger.warning("MODEL_MODE=yolo but ultralytics is not installed — falling back to mock")
-        _yolo_failed = True
-        return None
-    if not WEIGHTS_PATH.exists():
-        logger.warning("MODEL_MODE=yolo but %s is missing — falling back to mock", WEIGHTS_PATH)
-        _yolo_failed = True
-        return None
-    _yolo_model = YOLO(str(WEIGHTS_PATH))
-    logger.info("Loaded YOLOv8 weights from %s", WEIGHTS_PATH)
-    return _yolo_model
+@app.post("/estimate", response_model=EstimateResponse)
+async def estimate(
+    images: List[UploadFile] = File(default=[]),
+    part: Optional[str] = Form(default=None),
+    make: Optional[str] = Form(default=None),
+    model: Optional[str] = Form(default=None),
+    year: Optional[str] = Form(default=None),
+    # Optional hint the app passes so MOCK mode echoes the user's selected
+    # damages: a JSON array like [{"part":"rear bumper","type":"dent"}].
+    # Ignored by the live model (it detects damages from the images).
+    parts: Optional[str] = Form(default=None),
+):
+    blobs: List[bytes] = []
+    pil_images: List[Image.Image] = []
+    for up in images:
+        blob = await up.read()
+        if not blob:
+            continue
+        blobs.append(blob)
+        try:
+            pil_images.append(Image.open(io.BytesIO(blob)).convert("RGB"))
+        except Exception:
+            logger.warning("Skipping undecodable image %r", up.filename)
+
+    parts_hint = None
+    if parts:
+        try:
+            parsed = json.loads(parts)
+            if isinstance(parsed, list):
+                parts_hint = [p for p in parsed if isinstance(p, dict)]
+        except json.JSONDecodeError:
+            logger.warning("Ignoring unparseable parts hint")
+
+    vehicle = {"make": make, "model": model, "year": year} if (make or model or year) else None
+    estimator = get_estimator()
+    return estimator.estimate(pil_images, blobs, part, vehicle, parts_hint)
 
 
-def _yolo_estimate(part: str, damage_type: str, images: list[Image.Image]) -> Optional[dict]:
-    model = _get_yolo()
-    if model is None or not images:
-        return None
-    # Severity: strongest detection's (box area ratio x confidence), averaged
-    # over the photo set. Crude but monotonic; refine after fine-tuning.
-    best_conf, severity_acc = 0.0, 0.0
-    for img in images:
-        results = model.predict(img, verbose=False)
-        for r in results:
-            if r.boxes is None or len(r.boxes) == 0:
-                continue
-            areas = (r.boxes.xywhn[:, 2] * r.boxes.xywhn[:, 3]).tolist()
-            confs = r.boxes.conf.tolist()
-            idx = max(range(len(confs)), key=lambda i: confs[i])
-            best_conf = max(best_conf, confs[idx])
-            severity_acc += min(1.0, areas[idx] * 4) * confs[idx]
-    if best_conf == 0.0:
-        return None  # nothing detected — let the mock answer
-    severity = round(min(1.0, severity_acc / len(images)), 2)
-    bucket = severity_bucket(severity)
-    low, high = price_range(part, damage_type, bucket)
+# ── /health ───────────────────────────────────────────────────────────────
+
+
+@app.get("/health", response_model=HealthResponse)
+def health():
+    estimator = get_estimator()
     return {
-        "part": part,
-        "damage_type": normalize_damage_type(damage_type),
-        "severity": severity,
-        "severity_label": bucket,
-        "price_low": low,
-        "price_high": high,
-        "confidence_pct": int(round(best_conf * 100)),
-        "model_mode": "yolo",
+        "ok": True,
+        "service": "damage-ai",
+        "model_mode": estimator.mode,
+        "model_loaded": estimator.loaded,
+        "model_version": config.MODEL_VERSION,
+        "pricing_version": pricing_version(),
+        "pricing_market": load_pricing().get("market"),
+        "receipt_mode": config.RECEIPT_MODE,
     }
 
 
-# ── PaddleOCR receipt extractor (optional) ──────────────────────────────
+# ── /receipt + /insurance-card (OCR; mock by default) ──────────────────────
 
 _ocr_engine = None
 _ocr_failed = False
@@ -121,8 +119,6 @@ def _get_ocr():
 
 
 def _ocr_receipt(blob: bytes) -> Optional[dict]:
-    """Heuristic field extraction over OCR lines. Donut is the upgrade path
-    for end-to-end extraction (see train/README.md)."""
     import re
 
     engine = _get_ocr()
@@ -139,9 +135,7 @@ def _ocr_receipt(blob: bytes) -> Optional[dict]:
         r"\b(?:\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|[A-Z][a-z]{2,8}\.? \d{1,2},? \d{4})\b", text
     )
     service_keywords = ("oil", "tire", "brake", "filter", "rotation", "inspection", "alignment")
-    service_line = next(
-        (ln for ln in lines if any(k in ln.lower() for k in service_keywords)), ""
-    )
+    service_line = next((ln for ln in lines if any(k in ln.lower() for k in service_keywords)), "")
     mileage_m = re.search(r"\b\d{1,3},?\d{3}\s*mi\b", text)
     return {
         "vendor": lines[0].strip(),
@@ -159,22 +153,12 @@ def _ocr_receipt(blob: bytes) -> Optional[dict]:
 
 
 _KNOWN_CARRIERS = (
-    "State Farm",
-    "Geico",
-    "Progressive",
-    "Allstate",
-    "USAA",
-    "Liberty Mutual",
-    "Nationwide",
-    "Farmers",
-    "Travelers",
-    "Erie",
+    "State Farm", "Geico", "Progressive", "Allstate", "USAA",
+    "Liberty Mutual", "Nationwide", "Farmers", "Travelers", "Erie",
 )
 
 
 def _ocr_insurance_card(blob: bytes) -> Optional[dict]:
-    """Card scan reuses the receipt OCR pipeline (RECEIPT_MODE=ocr) with
-    insurance-specific field heuristics. Mock mode never reaches this."""
     import re
 
     engine = _get_ocr()
@@ -204,49 +188,10 @@ def _ocr_insurance_card(blob: bytes) -> Optional[dict]:
     }
 
 
-# ── Routes ───────────────────────────────────────────────────────────────
-
-
-@app.get("/health")
-def health():
-    return {
-        "ok": True,
-        "service": "damage-ai",
-        "model_mode": MODEL_MODE,
-        "receipt_mode": RECEIPT_MODE,
-        "pricing_market": load_pricing().get("market"),
-    }
-
-
-@app.post("/estimate")
-async def estimate(
-    part: str = Form(...),
-    damage_type: str = Form(...),
-    images: List[UploadFile] = File(default=[]),
-):
-    blobs: list[bytes] = []
-    pil_images: list[Image.Image] = []
-    for up in images:
-        blob = await up.read()
-        if not blob:
-            continue
-        blobs.append(blob)
-        try:
-            pil_images.append(Image.open(io.BytesIO(blob)).convert("RGB"))
-        except Exception:
-            logger.warning("Skipping undecodable image %r", up.filename)
-
-    if MODEL_MODE == "yolo":
-        result = _yolo_estimate(part, damage_type, pil_images)
-        if result is not None:
-            return result
-    return mock_estimate(part, damage_type, blobs)
-
-
 @app.post("/receipt")
 async def receipt(file: UploadFile = File(...)):
     blob = await file.read()
-    if RECEIPT_MODE == "ocr" and not (file.content_type or "").endswith("pdf"):
+    if config.RECEIPT_MODE == "ocr" and not (file.content_type or "").endswith("pdf"):
         try:
             result = _ocr_receipt(blob)
             if result is not None:
@@ -259,7 +204,7 @@ async def receipt(file: UploadFile = File(...)):
 @app.post("/insurance-card")
 async def insurance_card(file: UploadFile = File(...)):
     blob = await file.read()
-    if RECEIPT_MODE == "ocr" and not (file.content_type or "").endswith("pdf"):
+    if config.RECEIPT_MODE == "ocr" and not (file.content_type or "").endswith("pdf"):
         try:
             result = _ocr_insurance_card(blob)
             if result is not None:

@@ -240,7 +240,9 @@ export async function estimateDamage(
   try {
     const form = new FormData();
     form.append('part', part.part);
-    form.append('damage_type', part.type);
+    // New /estimate detects damages from images; `parts` is a mock-mode hint so
+    // the deterministic mock echoes this part/type.
+    form.append('parts', JSON.stringify([{ part: part.part, type: part.type }]));
     images.forEach((buf, i) =>
       form.append('images', new Blob([new Uint8Array(buf)], { type: 'image/png' }), `photo-${i}.png`),
     );
@@ -251,20 +253,22 @@ export async function estimateDamage(
     });
     if (!res.ok) throw new Error(`damage-ai /estimate responded ${res.status}`);
     const data = (await res.json()) as {
-      part: string;
-      damage_type: string;
-      severity: number;
-      severity_label: SeverityBucket;
+      damages?: { type: string; part: string; severity: SeverityBucket; confidence: number; area_ratio: number }[];
       price_low: number;
       price_high: number;
       confidence_pct: number;
       model_mode: string;
     };
+    // The service returns an aggregate + per-damage list. Map back to this
+    // server's per-part AiEstimate using the first (this part's) damage.
+    const d0 = data.damages?.[0];
+    const labelScore: Record<SeverityBucket, number> = { minor: 0.2, moderate: 0.5, severe: 0.85 };
+    const severityLabel = (d0?.severity ?? 'moderate') as SeverityBucket;
     return {
-      part: data.part,
-      damageType: data.damage_type,
-      severity: data.severity,
-      severityLabel: data.severity_label,
+      part: d0?.part ?? part.part,
+      damageType: d0?.type ?? part.type,
+      severity: labelScore[severityLabel] ?? 0.5,
+      severityLabel,
       priceLow: data.price_low,
       priceHigh: data.price_high,
       confidencePct: data.confidence_pct,

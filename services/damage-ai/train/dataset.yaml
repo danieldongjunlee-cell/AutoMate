@@ -1,12 +1,14 @@
-# YOLOv8 dataset config TEMPLATE for the damage detector.
+# YOLO-seg dataset config for the CarDD-fine-tuned damage model.
 #
-# Point `path` at a YOLO-format labelled dataset (images/ + labels/ with
-# normalized xywh boxes). The raw class-sorted photos under
-# data/damage/{dent,scratch,crack,paint}/ are the labelling inbox — run them
-# through your annotation tool (e.g. Label Studio, CVAT) and export YOLO
-# format here. See train/README.md for the CarDD conversion notes.
+# `path` points at the YOLO-seg dataset produced by prepare_cardd.py:
+#   data/cardd/
+#     images/{train,val}/   *.jpg
+#     labels/{train,val}/   *.txt  (one row/instance: `cls x1 y1 x2 y2 ... xn yn`
+#                                    normalized polygon — segmentation, not boxes)
+#
+# Class order MUST match app/inference.py CARDD_CLASSES.
 
-path: ../data/damage-yolo   # dataset root (relative to this file)
+path: ../data/cardd       # dataset root (relative to this file)
 train: images/train
 val: images/val
 
@@ -14,4 +16,6 @@ names:
   0: dent
   1: scratch
   2: crack
-  3: paint
+  3: glass shatter
+  4: lamp broken
+  5: tire flat
