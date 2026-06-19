@@ -1,0 +1,45 @@
+# AutoMate damage-AI — GPU image for live YOLO-seg inference (MODEL_MODE=live).
+#
+# CUDA 12.1 runtime base + Python + ultralytics/torch (CUDA build). Use this
+# instead of the lean Dockerfile when serving the real model on an NVIDIA GPU.
+#
+# Build:  docker build -f services/damage-ai/Dockerfile.gpu -t automate-damage-ai:gpu services/damage-ai
+# Run  :  docker run --gpus all -p 8100:8100 \
+#           -e MODEL_MODE=live -e WEIGHTS_PATH=/weights/damage-seg.pt \
+#           -v $PWD/services/damage-ai/models:/weights automate-damage-ai:gpu
+#
+# Requires the NVIDIA Container Toolkit on the host (`--gpus all`).
+
+FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive \
+    MODEL_MODE=live \
+    WEIGHTS_PATH=/weights/damage-seg.pt \
+    PORT=8100
+
+WORKDIR /app
+
+# Python + libs ultralytics/opencv/Pillow need at runtime.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        python3.11 python3-pip python3.11-venv \
+        libjpeg-turbo8 zlib1g libgl1 libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/python3.11 /usr/bin/python
+
+COPY requirements.txt requirements-live.txt ./
+# CUDA 12.1 build of torch from the PyTorch index, then the rest.
+RUN python -m pip install --upgrade pip \
+    && python -m pip install --extra-index-url https://download.pytorch.org/whl/cu121 \
+        -r requirements.txt -r requirements-live.txt
+
+COPY app ./app
+COPY config ./config
+
+EXPOSE 8100
+
+# Weights are mounted at /weights (keep them out of the image). If they're
+# missing the service logs a warning and degrades to mock — check /health.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]

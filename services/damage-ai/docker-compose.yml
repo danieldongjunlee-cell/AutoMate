@@ -1,0 +1,52 @@
+# AutoMate damage-AI — one-command run for both modes.
+#
+#   Mock (CPU, no model):   docker compose up damage-ai
+#   Live (GPU + weights):   docker compose --profile live up damage-ai-gpu
+#
+# Live needs: NVIDIA GPU + NVIDIA Container Toolkit, and weights at
+# ./models/damage-seg.pt (see train/). The service degrades to mock if weights
+# or GPU are unavailable — confirm with `curl localhost:8100/health`.
+
+services:
+  # ── Mock / CPU (default) ────────────────────────────────────────────────
+  damage-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: automate-damage-ai:mock
+    ports:
+      - "8100:8100"
+    environment:
+      MODEL_MODE: mock
+      RECEIPT_MODE: mock
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8100/health').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ── Live / GPU (opt-in: `--profile live`) ───────────────────────────────
+  damage-ai-gpu:
+    profiles: ["live"]
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    image: automate-damage-ai:gpu
+    ports:
+      - "8100:8100"
+    environment:
+      MODEL_MODE: live
+      WEIGHTS_PATH: /weights/damage-seg.pt
+      MODEL_VERSION: ${MODEL_VERSION:-yolo11n-seg-cardd-v1}
+      CONF_THRESHOLD: ${CONF_THRESHOLD:-0.25}
+    volumes:
+      - ./models:/weights:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: ["gpu"]
+    restart: unless-stopped

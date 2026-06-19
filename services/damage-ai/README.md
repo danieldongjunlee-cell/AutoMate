@@ -98,25 +98,42 @@ curl localhost:8100/health
 curl -F 'parts=[{"part":"rear bumper","type":"dent"}]' localhost:8100/estimate
 ```
 
-### Docker
+### Docker / compose
 
 ```bash
-docker build -t automate-damage-ai services/damage-ai
-docker run -p 8100:8100 automate-damage-ai          # mock
+# Mock (CPU, no model):
+docker compose up damage-ai                      # or: docker build -t automate-damage-ai . && docker run -p 8100:8100 automate-damage-ai
+# Live (GPU + weights at ./models/damage-seg.pt):
+docker compose --profile live up damage-ai-gpu   # uses Dockerfile.gpu (CUDA + ultralytics/torch)
 ```
 
 ### Live mode (real inference)
 
-You need: a **GPU host** (CPU works but is slow), the optional extras
-(`ultralytics`, `torch` — see `requirements.txt`), and **fine-tuned weights** at
-`models/damage-seg.pt` (produce via `train/`). Then:
+You need: a **GPU host** + NVIDIA Container Toolkit (CPU works but is slow), the
+live extras (`requirements-live.txt`: `ultralytics`, `torch`), and **fine-tuned
+weights** at `models/damage-seg.pt` (produce via `train/`). Then either compose
+(above) or directly:
 
 ```bash
+pip install -r requirements.txt -r requirements-live.txt
 MODEL_MODE=live WEIGHTS_PATH=models/damage-seg.pt uvicorn app.main:app --port 8100
 ```
 
 If weights or deps are missing, the service logs a warning and **degrades to
-mock** — it never crashes.
+mock** — it never crashes. **Confirm it's truly live:** `GET /health` must show
+`"model_mode": "live"` and `"model_loaded": true` (else it fell back to mock).
+
+### Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest                                   # mock tests (CPU, gate every push)
+RUN_LIVE_TESTS=1 MODEL_MODE=live pytest  # + live test: asserts the model loaded
+```
+
+CI: `.github/workflows/damage-ai.yml` runs the mock tests on every push; the
+live test is a manual `workflow_dispatch` job for a self-hosted GPU runner and
+**fails if a deploy silently degrades to mock**.
 
 ## Architecture / swappability
 

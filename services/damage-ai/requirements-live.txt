@@ -1,0 +1,7 @@
+# Live-mode (GPU) extras — installed on top of core requirements.txt for the
+# YOLO-seg inference path (MODEL_MODE=live). Heavy; only needed when serving the
+# real model. The CUDA build of torch is pulled by the Dockerfile.gpu index URL.
+ultralytics>=8.3
+torch>=2.2
+# Optional: faster serving from exported weights (train/export_model.py)
+# onnxruntime-gpu>=1.17
