@@ -17,11 +17,12 @@ interface Row {
   status: string | null;
   proposed_time: string | null;
   reason: string | null;
+  damage_request_id: string | null;
   created_at_ms: number | null;
 }
 
 const COLS =
-  'id, kind, dealer_id, brand, icon, title, dealer_name, date_label, mon, day, time, price_label, status, proposed_time, reason, created_at_ms';
+  'id, kind, dealer_id, brand, icon, title, dealer_name, date_label, mon, day, time, price_label, status, proposed_time, reason, damage_request_id, created_at_ms';
 
 const toBooking = (r: Row): AppBooking => ({
   id: r.id,
@@ -39,6 +40,7 @@ const toBooking = (r: Row): AppBooking => ({
   status: (r.status as AppBooking['status']) ?? 'confirmed',
   proposedTime: r.proposed_time ?? undefined,
   reason: r.reason ?? undefined,
+  damageRequestId: r.damage_request_id ?? undefined,
   createdAt: r.created_at_ms ?? Date.now(),
 });
 
@@ -58,6 +60,7 @@ const toRow = (b: AppBooking): Record<string, unknown> => ({
   status: b.status,
   proposed_time: b.proposedTime ?? null,
   reason: b.reason ?? null,
+  damage_request_id: b.damageRequestId ?? null,
   created_at_ms: b.createdAt,
 });
 

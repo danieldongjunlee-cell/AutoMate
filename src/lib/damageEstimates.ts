@@ -37,10 +37,10 @@ async function uploadPhoto(uri: string, path: string): Promise<string | null> {
 export async function saveDamageEstimate(
   parts: DamagePart[],
   result: DamageEstimateResult | AiEstimateSummary | null,
-): Promise<void> {
-  if (!supabase) return;
+): Promise<string | null> {
+  if (!supabase) return null;
   const uid = (await supabase.auth.getUser()).data.user?.id;
-  if (!uid) return;
+  if (!uid) return null;
 
   // Normalize: a full result carries aiEstimate + versions + raw model JSON.
   const full = result && 'aiEstimate' in result ? (result as DamageEstimateResult) : null;
@@ -62,7 +62,7 @@ export async function saveDamageEstimate(
     })
     .select('id')
     .single();
-  if (error || !req) return;
+  if (error || !req) return null;
   const requestId = (req as { id: string }).id;
 
   for (let i = 0; i < parts.length; i += 1) {
@@ -82,6 +82,7 @@ export async function saveDamageEstimate(
       photo_paths: paths,
     });
   }
+  return requestId;
 }
 
 export interface SavedDamagePart {

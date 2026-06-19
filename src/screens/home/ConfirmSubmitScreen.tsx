@@ -210,6 +210,7 @@ export function ConfirmSubmitScreen() {
   const setAiEstimate = useAppStore((s) => s.setAiEstimate);
   const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
   const setIsNewUser = useAppStore((s) => s.setIsNewUser);
+  const setDamageRequestId = useAppStore((s) => s.setDamageRequestId);
   const { active, brand } = useActiveVehicle();
   const [submitting, setSubmitting] = useState(false);
 
@@ -233,8 +234,12 @@ export function ConfirmSubmitScreen() {
       setAiEstimate(estimate.aiEstimate);
       setQuotesViewed(false); // new quotes → show the unread badge on the Quotes tab
       setIsNewUser(false); // first estimate submitted → drop the "New here?" hint
-      // Persist the estimate (full model JSON + versions) + photos (no-op if unconfigured).
-      void saveDamageEstimate(damageParts, estimate);
+      // Persist the estimate (full model JSON + versions) + photos (no-op if
+      // unconfigured), then remember the request id so the accepted repair
+      // booking links back to it for calibration.
+      saveDamageEstimate(damageParts, estimate)
+        .then((id) => id && setDamageRequestId(id))
+        .catch(() => {});
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
     } finally {
       setSubmitting(false);

@@ -107,9 +107,9 @@ psql "$SUPABASE_DB_URL" -c "\copy (<SELECT from the .sql>) to 'calibration.csv' 
 python train/calibrate_severity.py --csv calibration.csv --apply
 ```
 
-It uses single-part requests and a nearest-prior-booking heuristic (no FK exists
-booking→request yet); for exact joins, add a `damage_request_id` to bookings and
-set it when a quote is accepted.
+It uses single-part requests. Bookings carry `damage_request_id` (set when a
+quote is accepted), so the join is **exact** for new bookings; older rows fall
+back to a nearest-prior-booking heuristic.
 
 ## Receipt model (separate)
 

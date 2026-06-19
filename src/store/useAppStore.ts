@@ -104,6 +104,9 @@ export interface AppBooking {
   proposedTime?: string;
   /** The shop's reason for proposing a new time or cancelling (shown on tap). */
   reason?: string;
+  /** Links a repair booking to the damage_requests row it was quoted from
+   *  (enables exact AI-estimate→actual-price calibration + conversion analytics). */
+  damageRequestId?: string;
   createdAt: number;
 }
 
@@ -326,6 +329,10 @@ interface AppState {
   /** AI estimate from the latest submit (Submitted + DealerQuotes headers). */
   aiEstimate: AiEstimateSummary | null;
   setAiEstimate: (estimate: AiEstimateSummary | null) => void;
+  /** Supabase id of the latest saved damage_requests row — attached to the
+   *  repair booking the user accepts, so estimate↔actual-price links exactly. */
+  currentDamageRequestId: string | null;
+  setDamageRequestId: (id: string | null) => void;
   /** Whether the user has opened the Quotes tab since the latest submit (badge). */
   quotesViewed: boolean;
   setQuotesViewed: (v: boolean) => void;
@@ -404,6 +411,7 @@ export const useAppStore = create<AppState>((set) => ({
       damageParts: [],
       ...emptyDraft,
       aiEstimate: null,
+      currentDamageRequestId: null,
       cart: emptyCart,
       points: SEED_POINTS,
       isPro: false,
@@ -498,9 +506,11 @@ export const useAppStore = create<AppState>((set) => ({
   resetDraft: () => set({ ...emptyDraft }),
   removePart: (index) =>
     set((s) => ({ damageParts: s.damageParts.filter((_, i) => i !== index) })),
-  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null }),
+  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null, currentDamageRequestId: null }),
   aiEstimate: null,
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
+  currentDamageRequestId: null,
+  setDamageRequestId: (currentDamageRequestId) => set({ currentDamageRequestId }),
   quotesViewed: true,
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
   // Starts "viewed" so seeded/returning bookings don't flash a tab badge on
@@ -564,9 +574,19 @@ export const useAppStore = create<AppState>((set) => ({
   bookings: SEED_BOOKINGS,
   setBookings: (bookings) => set({ bookings }),
   addBooking: (booking) => {
-    const full: AppBooking = { ...booking, id: `bk-${Date.now()}`, createdAt: Date.now() };
+    // Link a repair booking back to the damage request it was quoted from, so
+    // the AI estimate can be calibrated against the real accepted price.
+    const reqId = useAppStore.getState().currentDamageRequestId;
+    const damageRequestId =
+      booking.damageRequestId ?? (booking.kind === 'repair' && reqId ? reqId : undefined);
+    const full: AppBooking = { ...booking, damageRequestId, id: `bk-${Date.now()}`, createdAt: Date.now() };
     void insertBooking(full); // write-through to Supabase (no-op if unconfigured)
-    set((s) => ({ bookings: [full, ...s.bookings], bookingsViewed: false }));
+    set((s) => ({
+      bookings: [full, ...s.bookings],
+      bookingsViewed: false,
+      // Consume the id so it can't attach to an unrelated later booking.
+      currentDamageRequestId: damageRequestId ? null : s.currentDamageRequestId,
+    }));
   },
   removeBooking: (id) => {
     const targetId = id ?? useAppStore.getState().bookings[0]?.id;

@@ -20,13 +20,18 @@ create table if not exists public.bookings (
   status        text not null default 'confirmed',
   proposed_time text,
   reason        text,
+  -- Links a repair booking to the damage_requests row it was quoted from
+  -- (exact AI-estimate→accepted-price calibration + conversion analytics).
+  damage_request_id uuid references public.damage_requests (id) on delete set null,
   created_at_ms bigint,
   inserted_at   timestamptz not null default now()
 );
 
 alter table public.bookings enable row level security;
--- If you ran an earlier version, add the new column:
+-- If you ran an earlier version, add the new columns:
 alter table public.bookings add column if not exists reason text;
+alter table public.bookings add column if not exists damage_request_id uuid
+  references public.damage_requests (id) on delete set null;
 
 create policy "bookings are managed by owner"
   on public.bookings for all
