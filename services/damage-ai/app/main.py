@@ -49,10 +49,14 @@ async def estimate(
     make: Optional[str] = Form(default=None),
     model: Optional[str] = Form(default=None),
     year: Optional[str] = Form(default=None),
-    # Optional hint the app passes so MOCK mode echoes the user's selected
-    # damages: a JSON array like [{"part":"rear bumper","type":"dent"}].
-    # Ignored by the live model (it detects damages from the images).
+    # The user's selected damages: a JSON array like
+    # [{"part":"rear bumper","type":"dent"}]. Live mode anchors part/type to
+    # this; mock mode echoes it.
     parts: Optional[str] = Form(default=None),
+    # Optional per-photo part labels, aligned with `images` order, so live mode
+    # measures each part's severity from its own photos. Repeat the field once
+    # per image (e.g. image_parts=rear bumper&image_parts=door).
+    image_parts: List[str] = Form(default=[]),
 ):
     blobs: List[bytes] = []
     pil_images: List[Image.Image] = []
@@ -77,7 +81,9 @@ async def estimate(
 
     vehicle = {"make": make, "model": model, "year": year} if (make or model or year) else None
     estimator = get_estimator()
-    return estimator.estimate(pil_images, blobs, part, vehicle, parts_hint)
+    return estimator.estimate(
+        pil_images, blobs, part, vehicle, parts_hint, image_parts or None
+    )
 
 
 # ── /health ───────────────────────────────────────────────────────────────

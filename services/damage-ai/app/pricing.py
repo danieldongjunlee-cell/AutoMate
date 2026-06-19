@@ -10,6 +10,7 @@ keep the two in sync when editing.
 from __future__ import annotations
 
 import functools
+import re
 from pathlib import Path
 from typing import Iterable, List, Tuple
 
@@ -108,6 +109,45 @@ def price_range(part: str, damage_type: str, bucket: str) -> Tuple[int, int]:
     by_type = rows.get(dt) or table["default"].get(dt) or table["default"][DEFAULT_DAMAGE_TYPE]
     low, high = by_type[bucket]
     return int(low), int(high)
+
+
+def split_damage_types(raw: str) -> List[str]:
+    """A part's damage-type string → ordered, de-duped canonical types.
+
+    The app lets a user tag one part with several types ("Dent, Scratch",
+    "dent and crack"). Returns e.g. ["dent", "scratch"]; falls back to [dent].
+    """
+    if not raw:
+        return [DEFAULT_DAMAGE_TYPE]
+    pieces = re.split(r"[,/&+]| and ", raw.lower())
+    seen: set = set()
+    out: List[str] = []
+    for piece in pieces:
+        if not piece.strip():
+            continue
+        t = normalize_damage_type(piece)
+        if t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out or [DEFAULT_DAMAGE_TYPE]
+
+
+def max_severity_weight_type(types: List[str]) -> str:
+    """Of several types, the one whose area→severity weight is highest (the most
+    severe interpretation drives the part's severity)."""
+    return max(types, key=severity_weight) if types else DEFAULT_DAMAGE_TYPE
+
+
+def price_range_multi(part: str, types: List[str], bucket: str) -> Tuple[int, int, str]:
+    """For a part with one or more damage types, price the DOMINANT (most
+    expensive) single operation — panel-level repair typically covers the lesser
+    damage, so we don't double-count. Returns (low, high, dominant_type)."""
+    best: Tuple[int, int, str] | None = None
+    for t in types or [DEFAULT_DAMAGE_TYPE]:
+        low, high = price_range(part, t, bucket)
+        if best is None or (low + high) > (best[0] + best[1]):
+            best = (low, high, t)
+    return best  # type: ignore[return-value]
 
 
 def aggregate(ranges: Iterable[Tuple[int, int]]) -> Tuple[int, int]:

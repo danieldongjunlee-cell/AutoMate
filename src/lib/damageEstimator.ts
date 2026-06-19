@@ -64,9 +64,13 @@ const DEFAULT_MODERATE: Record<string, [number, number]> = {
 };
 const MOCK_CONFIDENCE = 0.87;
 
-const normalizeType = (t: string): string => {
-  const dt = (t || '').trim().toLowerCase();
-  return dt || 'dent';
+const splitTypes = (t: string): string[] => {
+  const out = (t || '')
+    .toLowerCase()
+    .split(/[,/&+]| and /)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return out.length ? out : ['dent'];
 };
 
 const moderateRange = (part: string, type: string): [number, number] => {
@@ -74,8 +78,18 @@ const moderateRange = (part: string, type: string): [number, number] => {
   const key = Object.keys(MODERATE)
     .sort((a, b) => b.length - a.length)
     .find((k) => name.includes(k));
-  const dt = normalizeType(type);
-  return (key && MODERATE[key][dt]) || DEFAULT_MODERATE[dt] || DEFAULT_MODERATE.dent;
+  return (key && MODERATE[key][type]) || DEFAULT_MODERATE[type] || DEFAULT_MODERATE.dent;
+};
+
+/** Multi-type part → the dominant (most expensive) single repair, not the sum
+ *  — mirrors the service's price_range_multi. */
+const dominantRange = (part: string, rawType: string): [number, number] => {
+  let best: [number, number] = DEFAULT_MODERATE.dent;
+  for (const t of splitTypes(rawType)) {
+    const r = moderateRange(part, t);
+    if (r[0] + r[1] > best[0] + best[1]) best = r;
+  }
+  return best;
 };
 
 function mockResult(input: EstimateInput): DamageEstimateResult {
@@ -83,11 +97,11 @@ function mockResult(input: EstimateInput): DamageEstimateResult {
   let low = 0;
   let high = 0;
   const damages: DamageDetection[] = parts.map((p) => {
-    const [l, h] = moderateRange(p.part, p.type);
+    const [l, h] = dominantRange(p.part, p.type);
     low += l;
     high += h;
     return {
-      type: normalizeType(p.type),
+      type: splitTypes(p.type).join(', '),
       part: p.part,
       severity: 'moderate',
       confidence: MOCK_CONFIDENCE,
@@ -138,11 +152,16 @@ async function uriToBlob(uri: string): Promise<Blob | null> {
 export const httpDamageEstimator: DamageEstimator = {
   async estimate(input) {
     const form = new FormData();
-    // All photos across all parts.
+    // All photos across all parts, each tagged with the part it was taken for
+    // (image_parts is aligned with images order) so live mode measures each
+    // part's severity from its own photos.
     for (const p of input.parts) {
       for (const uri of p.photoUris ?? []) {
         const blob = await uriToBlob(uri);
-        if (blob) form.append('images', blob as Blob, 'photo.jpg');
+        if (blob) {
+          form.append('images', blob as Blob, 'photo.jpg');
+          form.append('image_parts', p.part);
+        }
       }
     }
     if (input.parts[0]?.part) form.append('part', input.parts[0].part);

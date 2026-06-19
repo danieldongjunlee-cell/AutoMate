@@ -100,6 +100,35 @@ def test_anchor_to_declared_keeps_damage_when_model_sees_nothing():
     assert 0.0 < raw[0]["confidence"] <= 1.0  # flagged lower confidence, not dropped
 
 
+def test_anchor_per_part_grouping_keeps_severity_local():
+    """A huge dent on the door must not raise the rear bumper's severity."""
+    from app.inference import anchor_to_declared
+
+    detections = [
+        {"type": "dent", "area_ratio": 0.20, "confidence": 0.9, "img_part": "rear bumper"},
+        {"type": "dent", "area_ratio": 0.80, "confidence": 0.7, "img_part": "door"},
+    ]
+    hint = [{"part": "rear bumper", "type": "dent"}, {"part": "door", "type": "dent"}]
+    raw = {d["part"]: d for d in anchor_to_declared(detections, hint)}
+    assert raw["rear bumper"]["area_ratio"] == 0.20   # only its own photo
+    assert raw["door"]["area_ratio"] == 0.80
+
+
+def test_multi_type_part_prices_dominant_not_sum():
+    """A part tagged 'Dent, Scratch' is priced as the dominant repair, not the
+    sum of dent + scratch."""
+    if os.environ.get("MODEL_MODE", "mock").lower() == "live":
+        pytest.skip("mock-specific assertions; service is in live mode")
+    r = client.post(
+        "/estimate",
+        data={"parts": json.dumps([{"part": "rear bumper", "type": "Dent, Scratch"}])},
+    )
+    body = r.json()
+    # rear bumper moderate: dent [285,480] dominates scratch [180,360] → not summed.
+    assert body["price_low"] == 285 and body["price_high"] == 480
+    assert body["damages"][0]["type"] == "dent, scratch"  # faithful to selection
+
+
 def test_merge_detections_dedupes_by_strongest():
     from app.inference import merge_detections
 

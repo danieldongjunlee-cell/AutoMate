@@ -23,11 +23,13 @@ from .mock_engine import mock_damages
 from .pricing import (
     aggregate,
     default_part_for,
+    max_severity_weight_type,
     normalize_damage_type,
-    price_range,
+    price_range_multi,
     pricing_version,
     severity_bucket,
     severity_from_area,
+    split_damage_types,
 )
 
 logger = logging.getLogger("damage-ai")
@@ -51,22 +53,28 @@ def _estimate_id(damages: List[dict]) -> str:
 
 
 def assemble_estimate(raw_damages: List[dict], model_mode: str) -> dict:
-    """Raw damages → the public EstimateResponse dict (the /estimate contract)."""
+    """Raw damages → the public EstimateResponse dict (the /estimate contract).
+
+    Each raw damage's `type` may name several types ("Dent, Scratch"); severity
+    is driven by the most-severe type and price by the dominant (most expensive)
+    operation so multi-type parts don't double-count.
+    """
     damages = []
     ranges = []
     confidences = []
     for d in raw_damages:
-        dtype = normalize_damage_type(d["type"])
-        part = d.get("part") or default_part_for(dtype)
+        types = split_damage_types(d.get("type", ""))
+        part = d.get("part") or default_part_for(types[0])
         area = max(0.0, min(1.0, float(d.get("area_ratio", 0.0))))
         conf = max(0.0, min(1.0, float(d.get("confidence", 0.0))))
-        score = severity_from_area(area, dtype)
+        score = severity_from_area(area, max_severity_weight_type(types))
         bucket = severity_bucket(score)
-        ranges.append(price_range(part, dtype, bucket))
+        low, high, _dominant = price_range_multi(part, types, bucket)
+        ranges.append((low, high))
         confidences.append(conf)
         damages.append(
             {
-                "type": dtype,
+                "type": ", ".join(types),  # faithful to the user's selection
                 "part": part,
                 "severity": bucket,
                 "confidence": round(conf, 2),
@@ -101,6 +109,7 @@ class DamageEstimator:
         part: Optional[str],
         vehicle: Optional[dict],
         parts_hint: Optional[List[dict]],
+        image_parts: Optional[List[str]] = None,
     ) -> dict:  # pragma: no cover - interface
         raise NotImplementedError
 
@@ -109,7 +118,7 @@ class MockEstimator(DamageEstimator):
     mode = "mock"
     loaded = True
 
-    def estimate(self, images, image_blobs, part, vehicle, parts_hint):
+    def estimate(self, images, image_blobs, part, vehicle, parts_hint, image_parts=None):
         raw = mock_damages(image_blobs, part, parts_hint)
         return assemble_estimate(raw, self.mode)
 
@@ -133,20 +142,32 @@ def anchor_to_declared(detections: List[dict], parts_hint: List[dict]) -> List[d
     use the model only to MEASURE severity (mask area) + confidence. More
     accurate than model classification and needs no part-segmentation model.
 
-    Per declared damage: severity = largest matching-class mask area (fall back
-    to the largest mask of any class), confidence = mean of the pooled
-    detections. If the model saw nothing, keep the human's damage at minor
-    severity with a flagged lower confidence rather than dropping it.
+    Per declared damage: pool the relevant detections — when detections carry an
+    `img_part` tag (per-part photo grouping), restrict to that part's photos so
+    one part's severity isn't read off another part's pictures; otherwise use
+    all. Within the pool prefer the declared type(s). severity = largest pooled
+    mask area; confidence = mean. If the model saw nothing for the part, keep the
+    human's damage at minor severity with a flagged lower confidence (the user
+    asserted it exists) rather than dropping it.
     """
+    grouped = any("img_part" in d for d in detections)
     raw = []
     for p in parts_hint:
-        dtype = normalize_damage_type(p.get("type") or "dent")
-        dpart = p.get("part") or default_part_for(dtype)
-        matching = [d for d in detections if d["type"] == dtype]
-        pool = matching or detections
-        area = max((d["area_ratio"] for d in pool), default=0.0)
-        conf = (sum(d["confidence"] for d in pool) / len(pool)) if pool else config.DECLARED_NO_DETECTION_CONFIDENCE
-        raw.append({"type": dtype, "part": dpart, "area_ratio": area, "confidence": round(conf, 2)})
+        raw_type = p.get("type") or "dent"
+        dtypes = split_damage_types(raw_type)
+        dpart = p.get("part") or default_part_for(dtypes[0])
+        # 1) restrict to this part's photos when grouping is available.
+        pool = [d for d in detections if d.get("img_part") == dpart] if grouped else list(detections)
+        # 2) prefer detections whose class matches a declared type.
+        typed = [d for d in pool if d["type"] in dtypes]
+        sub = typed or pool
+        area = max((d["area_ratio"] for d in sub), default=0.0)
+        conf = (
+            sum(d["confidence"] for d in sub) / len(sub)
+            if sub
+            else config.DECLARED_NO_DETECTION_CONFIDENCE
+        )
+        raw.append({"type": raw_type, "part": dpart, "area_ratio": area, "confidence": round(conf, 2)})
     return raw
 
 
@@ -169,10 +190,13 @@ class YoloSegEstimator(DamageEstimator):
         self.loaded = True
         logger.info("Loaded YOLO-seg weights from %s", config.WEIGHTS_PATH)
 
-    def _detect(self, images) -> List[dict]:
-        """Run the model over every photo → flat list of {type, area_ratio, confidence}."""
+    def _detect(self, images, image_parts=None) -> List[dict]:
+        """Run the model over every photo → flat list of detections. Each is
+        tagged with the part the photo was taken for (`img_part`) when the app
+        provided per-photo part labels, enabling per-part severity."""
         detections: List[dict] = []
-        for img in images:
+        for idx, img in enumerate(images):
+            img_part = image_parts[idx] if image_parts and idx < len(image_parts) else None
             results = self._model.predict(
                 img, conf=config.CONF_THRESHOLD, imgsz=config.IMG_SIZE, half=config.HALF, verbose=False
             )
@@ -185,19 +209,21 @@ class YoloSegEstimator(DamageEstimator):
                 mh, mw = r.masks.data.shape[1], r.masks.data.shape[2]
                 mask_px = float(mh * mw) or 1.0
                 for i, cls_idx in enumerate(clss):
-                    detections.append(
-                        {
-                            "type": CARDD_CLASSES.get(cls_idx, "dent"),
-                            "area_ratio": max(0.0, min(1.0, float(mask_areas[i]) / mask_px)),
-                            "confidence": confs[i],
-                        }
-                    )
+                    det = {
+                        "type": CARDD_CLASSES.get(cls_idx, "dent"),
+                        "area_ratio": max(0.0, min(1.0, float(mask_areas[i]) / mask_px)),
+                        "confidence": confs[i],
+                    }
+                    if img_part is not None:
+                        det["img_part"] = img_part
+                    detections.append(det)
         return detections
 
-    def estimate(self, images, image_blobs, part, vehicle, parts_hint):
-        detections = self._detect(images)
+    def estimate(self, images, image_blobs, part, vehicle, parts_hint, image_parts=None):
+        detections = self._detect(images, image_parts)
         if parts_hint:
-            # Most accurate path: anchor part/type to the user's selection.
+            # Most accurate path: anchor part/type to the user's selection and
+            # (when grouped) measure each part's severity from its own photos.
             raw = anchor_to_declared(detections, parts_hint)
         else:
             # No human labels (e.g. server per-part call): pure detection.

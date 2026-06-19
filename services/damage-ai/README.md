@@ -44,11 +44,14 @@ on commercially-licensed or self-collected, self-annotated images. See
 
 `multipart/form-data`:
 - `images` — one or more photos (required for live mode).
-- `part` — optional selected panel hint (e.g. `rear bumper`).
+- `part` — optional single panel hint (e.g. `rear bumper`).
 - `make`, `model`, `year` — optional vehicle context.
-- `parts` — optional JSON array `[{"part","type"}]`; **mock mode** echoes these as
-  the detected damages (so the app shows the user's selected parts). The **live**
-  model ignores it and detects damages from the images.
+- `parts` — JSON array `[{"part","type"}]`: the user's **required** part/type
+  selection. Live mode anchors part/type to this; mock echoes it. `type` may name
+  several types (`"Dent, Scratch"`).
+- `image_parts` — optional per-photo part labels aligned with `images` order
+  (repeat the field once per image), so live mode measures **each part's severity
+  from its own photos**.
 
 Response:
 ```json
@@ -175,13 +178,22 @@ without touching the rest.
 
 ## Accuracy & speed
 
-The app's flow already captures the **human-selected part + damage type** (the
-car-diagram step), which is more reliable than asking a model to classify them.
-So in live mode, when the app passes its `parts` hint, the service **trusts the
-user's part/type and uses YOLO-seg only to measure severity** (mask area) +
-confidence (`anchor_to_declared`). That's both more accurate (human labels) and
-fast (one pass — no separate part-segmentation model). With no hint (e.g. the
-server's per-part call) it falls back to pure detection (`merge_detections`).
+Users **must** select the damaged parts (and type) to get quotes, so that human
+input is guaranteed — and it's more reliable than asking a model to classify
+part/type. The model's job is therefore narrowed to what it does best:
+
+- **Anchor part/type to the user's selection** (`anchor_to_declared`); the model
+  only **measures severity** (mask area) + confidence. Accurate (human labels)
+  and fast (one pass, no separate part-segmentation model).
+- **Per-part severity:** with `image_parts`, each part's severity is read from
+  *its own* photos — a big dent on the door can't inflate the bumper.
+- **Multi-type parts:** a part tagged `"Dent, Scratch"` is priced as the
+  **dominant** repair (`price_range_multi`), not dent + scratch summed; the
+  most-severe type drives the severity bucket.
+- If the model sees nothing for a declared part, the damage is kept at minor
+  severity with a flagged lower confidence (the user asserted it exists), not
+  dropped. With no hint at all (server per-part call) it falls back to pure
+  detection (`merge_detections`).
 
 For speed: `IMG_SIZE` (smaller = faster), `HALF` (FP16 on GPU), and
 `CONF_THRESHOLD`. `WEIGHTS_PATH` can point at an exported `.onnx` or `.engine`

@@ -84,7 +84,9 @@ def mock_damages(
     for raw_part, raw_type in pairs:
         damages.append(
             {
-                "type": normalize_damage_type(raw_type),
+                # Keep the raw type string (may name several types) — assemble_estimate
+                # splits/normalizes it so multi-type parts price correctly.
+                "type": raw_type,
                 "part": raw_part,
                 "area_ratio": WIREFRAME_AREA_RATIO,
                 "confidence": WIREFRAME_CONFIDENCE,
