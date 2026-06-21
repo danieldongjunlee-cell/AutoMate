@@ -15,7 +15,7 @@ import { Tappable } from '../../components/Tappable';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { QuotesStackParamList } from '../../navigation/types';
 import { quoteService } from '../../services';
-import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
@@ -32,7 +32,9 @@ export function QuotesReceivedScreen() {
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   const resetDamageFlow = useAppStore((s) => s.resetDamageFlow);
   const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
-  const { data: quotes, isLoading } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
+  const { data: rawQuotes, isLoading } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
+  // Shop quotes reflect the AI estimate range (no-op until an estimate exists).
+  const quotes = useMemo(() => quotesInEstimateRange(rawQuotes ?? [], aiEstimate), [rawQuotes, aiEstimate]);
 
   // Opening this tab clears the unread-quotes badge.
   useEffect(() => setQuotesViewed(true), [setQuotesViewed]);

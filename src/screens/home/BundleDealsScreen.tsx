@@ -1,11 +1,11 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import { Screen } from '../../components/ui';
+import { Badge, Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -134,34 +134,26 @@ export function BundleDealsScreen() {
   const visibleDeals = focusedDeal ? [focusedDeal] : DEALS;
   const isDetail = !!focusedDeal;
 
+  // Clean, low-color card: neutral surface, one small brand dot, plain
+  // discount rows, a single primary CTA.
   const renderDeal = (deal: Deal) => (
     <View
       key={deal.dealerId}
       style={{
         backgroundColor: colors.surface,
         borderRadius: radii.md,
-        borderWidth: isDetail ? 2 : StyleSheet.hairlineWidth,
-        borderColor: isDetail ? colors.primary : deal.borderColor,
-        overflow: 'hidden',
+        borderWidth: isDetail ? 1.5 : StyleSheet.hairlineWidth,
+        borderColor: isDetail ? colors.primary : colors.border,
+        padding: spacing.lg,
         marginBottom: spacing.md,
       }}
     >
-      {/* Header */}
-      <LinearGradient
-        colors={deal.headerGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-        }}
-      >
+      {/* Header: brand initial + name + a single neutral discount badge */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md }}>
         <View
           style={{
-            width: 44,
-            height: 44,
+            width: 40,
+            height: 40,
             borderRadius: radii.sm,
             backgroundColor: deal.avatarColor,
             alignItems: 'center',
@@ -171,72 +163,33 @@ export function BundleDealsScreen() {
           <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff' }}>{deal.initial}</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>{deal.name}</Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>{deal.sub}</Text>
+          <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{deal.name}</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>{deal.sub}</Text>
         </View>
-        <View
-          style={{
-            backgroundColor: deal.badgeBg,
-            borderRadius: radii.pill,
-            paddingHorizontal: 10,
-            paddingVertical: 3,
-          }}
-        >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: deal.badgeFg }}>{deal.badge}</Text>
-        </View>
-      </LinearGradient>
+        <Badge label={deal.badge} variant="primarySoft" />
+      </View>
 
-      {/* Body */}
-      <View style={{ padding: spacing.md }}>
-        {deal.body ? (
-          <Text
+      {/* Per-service discounts — plain rows, no color blocks */}
+      <View style={{ marginBottom: spacing.md }}>
+        {deal.discounts.map((d, i) => (
+          <View
+            key={d.categoryId}
             style={{
-              fontSize: 14,
-              color: colors.textSecondary,
-              lineHeight: 21,
-              marginBottom: spacing.sm,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingVertical: 9,
+              borderTopWidth: i === 0 ? 0 : StyleSheet.hairlineWidth,
+              borderTopColor: colors.divider,
             }}
           >
-            {deal.body}
-          </Text>
-        ) : null}
-        {/* Per-service percentage discounts */}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, marginBottom: spacing.md }}>
-          {deal.discounts.map((d) => (
-            <View
-              key={d.categoryId}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                backgroundColor: colors.successSurface,
-                borderRadius: radii.sm,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: colors.success,
-                paddingVertical: 6,
-                paddingHorizontal: spacing.sm,
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successDeep }}>{d.label}</Text>
-              <View style={{ backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
-                <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{d.pct}% OFF</Text>
-              </View>
-            </View>
-          ))}
-        </View>
-        <Tappable
-          onPress={() => claim(deal)}
-          style={({ pressed }) => ({
-            backgroundColor: deal.ctaBg,
-            borderRadius: radii.sm,
-            paddingVertical: 12,
-            alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Text style={{ fontSize: 15, fontWeight: '700', color: deal.ctaFg }}>{deal.cta}</Text>
-        </Tappable>
+            <Text style={{ fontSize: 16, color: colors.textPrimary }}>{d.label}</Text>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primary }}>{d.pct}% off</Text>
+          </View>
+        ))}
       </View>
+
+      <PrimaryButton label={deal.cta} onPress={() => claim(deal)} />
     </View>
   );
 

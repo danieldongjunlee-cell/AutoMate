@@ -66,7 +66,7 @@ export function PrimaryButton({
       {loading ? (
         <ActivityIndicator color={fg[variant]} />
       ) : (
-        <Text style={[{ color: fg[variant], fontSize: 16, fontWeight: '700' }, textStyle]}>
+        <Text style={[{ color: fg[variant], fontSize: 18, fontWeight: '700' }, textStyle]}>
           {label}
         </Text>
       )}

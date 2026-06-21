@@ -9,7 +9,7 @@ import { QuoteRow } from '../../components/QuoteRow';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -37,7 +37,7 @@ export function DealerQuotesScreen() {
   const t = useT();
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   const damageParts = useAppStore((s) => s.damageParts);
-  const { data: quotes, isLoading } = useQuery({
+  const { data: rawQuotes, isLoading } = useQuery({
     queryKey: ['quotes'],
     queryFn: quoteService.getQuotes,
   });
@@ -46,6 +46,8 @@ export function DealerQuotesScreen() {
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
   const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
   const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
+  // Shop quotes always reflect the AI estimate range shown above.
+  const quotes = quotesInEstimateRange(rawQuotes ?? [], { priceLow, priceHigh });
 
   // Pin ↔ card selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -53,7 +55,7 @@ export function DealerQuotesScreen() {
   // Each card's y-offset within the scroll content (captured via onLayout).
   const cardY = useRef<Record<string, number>>({});
 
-  const markers: MapMarker[] = (quotes ?? []).map((q) => {
+  const markers: MapMarker[] = quotes.map((q) => {
     const dealer = dealerById(q.dealerId);
     return {
       id: q.dealerId,

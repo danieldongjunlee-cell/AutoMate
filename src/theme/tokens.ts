@@ -26,20 +26,20 @@ type Type = Pick<TextStyle, 'fontSize' | 'fontWeight' | 'lineHeight' | 'letterSp
 
 /** Type scale: wireframe px ≈ ×2 → dp. */
 export const typography = {
-  display: { fontSize: 40, fontWeight: '800', lineHeight: 44 } as Type,
-  title: { fontSize: 24, fontWeight: '700', lineHeight: 30 } as Type,
-  headline: { fontSize: 20, fontWeight: '600', lineHeight: 26 } as Type,
-  subheadline: { fontSize: 17, fontWeight: '600', lineHeight: 22 } as Type,
-  body: { fontSize: 16, fontWeight: '400', lineHeight: 23 } as Type,
-  bodyMedium: { fontSize: 16, fontWeight: '500', lineHeight: 23 } as Type,
-  bodySmall: { fontSize: 14, fontWeight: '400', lineHeight: 20 } as Type,
-  caption: { fontSize: 13, fontWeight: '400', lineHeight: 18 } as Type,
+  display: { fontSize: 44, fontWeight: '800', lineHeight: 48 } as Type,
+  title: { fontSize: 27, fontWeight: '700', lineHeight: 33 } as Type,
+  headline: { fontSize: 22, fontWeight: '600', lineHeight: 28 } as Type,
+  subheadline: { fontSize: 19, fontWeight: '600', lineHeight: 24 } as Type,
+  body: { fontSize: 18, fontWeight: '400', lineHeight: 25 } as Type,
+  bodyMedium: { fontSize: 18, fontWeight: '500', lineHeight: 25 } as Type,
+  bodySmall: { fontSize: 16, fontWeight: '400', lineHeight: 22 } as Type,
+  caption: { fontSize: 14, fontWeight: '400', lineHeight: 19 } as Type,
   label: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
-    lineHeight: 16,
+    lineHeight: 17,
   } as Type,
-  badge: { fontSize: 12, fontWeight: '600', lineHeight: 16 } as Type,
+  badge: { fontSize: 13, fontWeight: '600', lineHeight: 17 } as Type,
 } as const;

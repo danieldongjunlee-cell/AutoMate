@@ -599,6 +599,30 @@ export const BOOKABLE_SERVICES: BookableService[] = [
   },
 ];
 
+/**
+ * Remap a quote list's prices to span the current AI estimate range, so the
+ * dealer quotes always reflect the estimate shown to the user. Preserves order
+ * and relative spread (cheapest → low, priciest → high). No-op without an
+ * estimate or with a single quote.
+ */
+export function quotesInEstimateRange(
+  quotes: Quote[],
+  estimate: { priceLow: number; priceHigh: number } | null | undefined,
+): Quote[] {
+  if (!estimate || quotes.length === 0) return quotes;
+  const { priceLow: low, priceHigh: high } = estimate;
+  const prices = quotes.map((q) => q.price);
+  const omin = Math.min(...prices);
+  const span = Math.max(...prices) - omin;
+  const map = (p: number) =>
+    span === 0 ? Math.round((low + high) / 2) : Math.round(low + ((p - omin) / span) * (high - low));
+  return quotes.map((q) => ({
+    ...q,
+    price: map(q.price),
+    priceHigh: q.priceHigh != null ? map(q.priceHigh) : undefined,
+  }));
+}
+
 /** Itemized cost breakdown for a dealer quote (expandable detail). */
 export interface QuoteBreakdown {
   labor: number;

@@ -12,7 +12,8 @@ import { Select } from '../../components/Select';
 import { SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, SectionLabel, Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, Quote, QUOTE_REQUEST, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, Quote, QUOTE_REQUEST, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { quoteService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -50,10 +51,13 @@ const priceMatches = (option: string, price: number) => {
 export function AllQuotesMapScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const { data: quotes, isLoading } = useQuery({
+  const { data: rawQuotes, isLoading } = useQuery({
     queryKey: ['quotes'],
     queryFn: quoteService.getQuotes,
   });
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
+  // Shop quotes reflect the AI estimate range (no-op until an estimate exists).
+  const quotes = quotesInEstimateRange(rawQuotes ?? [], aiEstimate);
 
   const [distFilter, setDistFilter] = useState<string>(DISTANCE_FILTERS[0]);
   const [priceFilter, setPriceFilter] = useState<string>(PRICE_OPTIONS[0]);
@@ -64,7 +68,7 @@ export function AllQuotesMapScreen() {
   const cardY = useRef<Record<string, number>>({});
 
   // Filters hide pins + cards together.
-  const filtered = (quotes ?? []).filter((q) => {
+  const filtered = quotes.filter((q) => {
     const dealer = dealerById(q.dealerId);
     return dealer.distanceMi <= (DISTANCE_CAP[distFilter] ?? Infinity) && priceMatches(priceFilter, q.price);
   });
