@@ -390,9 +390,12 @@ export function MainTabs() {
         tabBarStyle: {
           backgroundColor: theme.colors.tabBarBackground,
           borderTopColor: theme.colors.tabBarBorder,
+          height: 64,
+          paddingTop: 6,
+          paddingBottom: 8,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 10, fontWeight: '700' },
+        tabBarLabelStyle: { fontSize: 13, fontWeight: '700' },
+        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 11, fontWeight: '700' },
       }}
     >
       {TABS.map(({ name, label }) => (

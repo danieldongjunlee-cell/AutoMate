@@ -12,11 +12,11 @@ import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { CompareStackParamList } from '../../navigation/types';
 import {
-  acceptedQuoteById,
   COMP_TIME_SLOTS,
   dealerById,
   PAYMENT_CARD,
 } from '../../services/mock/data';
+import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -31,7 +31,7 @@ export function CompCashBookScreen() {
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const addPoints = useAppStore((s) => s.addPoints);
-  const aq = acceptedQuoteById(route.params?.quoteId);
+  const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
   // Wireframe defaults: Apr 8 (selected day) · 10:30 AM

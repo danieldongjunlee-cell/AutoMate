@@ -9,7 +9,8 @@ import { Tappable } from '../../components/Tappable';
 
 import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
-import { acceptedQuoteById, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
+import { dealerById, INSURANCE_POLICY } from '../../services/mock/data';
+import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
 import { Screen } from '../../components/ui';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -26,12 +27,12 @@ export function CompCashInsScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
-  const aq = acceptedQuoteById(route.params?.quoteId);
+  const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
   const { data: comparison } = useQuery({
-    queryKey: ['comparison', aq.id],
-    queryFn: () => compareService.getComparison({ quoteId: aq.id }),
+    queryKey: ['comparison', aq.id, aq.priceLow],
+    queryFn: () => compareService.getComparison({ quoteId: aq.id, claimAmount: aq.priceLow }),
   });
   // Wireframe defaults while the model loads (same numbers for seeded data).
   const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;

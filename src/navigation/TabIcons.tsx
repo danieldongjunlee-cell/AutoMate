@@ -9,8 +9,8 @@ import { MainTabParamList } from './types';
  */
 export function TabIcon({ tab, color }: { tab: keyof MainTabParamList; color: string }) {
   const stroke = {
-    width: 22,
-    height: 22,
+    width: 26,
+    height: 26,
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: color,
@@ -50,7 +50,7 @@ export function TabIcon({ tab, color }: { tab: keyof MainTabParamList; color: st
     case 'MoreTab':
     default:
       return (
-        <Svg width={22} height={22} viewBox="0 0 24 24" fill={color}>
+        <Svg width={26} height={26} viewBox="0 0 24 24" fill={color}>
           <Circle cx="5.5" cy="12" r="1.7" />
           <Circle cx="12" cy="12" r="1.7" />
           <Circle cx="18.5" cy="12" r="1.7" />

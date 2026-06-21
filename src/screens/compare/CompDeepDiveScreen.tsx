@@ -10,7 +10,8 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
-import { acceptedQuoteById, dealerById, INSURANCE_POLICY } from '../../services/mock/data';
+import { dealerById, INSURANCE_POLICY } from '../../services/mock/data';
+import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompDeepDive'>;
@@ -24,13 +25,13 @@ export function CompDeepDiveScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
-  const aq = acceptedQuoteById(route.params?.quoteId);
+  const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
   const [assumptionsOpen, setAssumptionsOpen] = useState(false);
 
   const { data: comparison, isLoading } = useQuery({
-    queryKey: ['comparison', aq.id],
-    queryFn: () => compareService.getComparison({ quoteId: aq.id }),
+    queryKey: ['comparison', aq.id, aq.priceLow],
+    queryFn: () => compareService.getComparison({ quoteId: aq.id, claimAmount: aq.priceLow }),
   });
 
   const headCell = (label: string, color: string, align: 'left' | 'center' = 'center') => (

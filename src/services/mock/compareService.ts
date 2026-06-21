@@ -11,6 +11,8 @@ import { primaryPolicy } from './insuranceService';
 export interface ComparisonRequest {
   /** Accepted quote whose low estimate is the repair (claim) amount. */
   quoteId?: string | null;
+  /** Overrides the quote's price (e.g. the AI-estimate-adjusted amount). */
+  claimAmount?: number;
   claimType?: ClaimType;
 }
 
@@ -38,7 +40,7 @@ export const compareService = {
     const policy = primaryPolicy();
     const input: PremiumImpactInput = {
       claimType: req.claimType ?? 'collision',
-      claimAmount: quote.priceLow,
+      claimAmount: req.claimAmount ?? quote.priceLow,
       premiumPerYear: policy.premiumPerYear,
       deductible: policy.deductible,
       state: 'VA',

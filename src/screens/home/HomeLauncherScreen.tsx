@@ -7,7 +7,7 @@ import { Text, View } from 'react-native';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
-import { Screen, SectionLabel } from '../../components/ui';
+import { Screen } from '../../components/ui';
 import { useT } from '../../i18n';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
@@ -24,19 +24,50 @@ export function HomeLauncherScreen() {
   // they submit their first AI estimate, and never shows for returning users.
   const isNewUser = useAppStore((s) => s.isNewUser);
 
-  // Big tappable action tile (Maintenance / Compare).
-  const tile = (emoji: string, bg: string, title: string, sub: string, onPress: () => void) => (
-    <Tappable
-      onPress={onPress}
-      style={{ flex: 1, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.lg, minHeight: 120 }}
-    >
-      <View style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 26 }}>{emoji}</Text>
-      </View>
-      <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>{title}</Text>
-      <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2 }}>{sub}</Text>
-    </Tappable>
-  );
+  /** Large full-width action: title + hook phrase, with a big icon in the
+   *  bottom-right corner. Gradient for the primary, tinted surface otherwise. */
+  const actionCard = (opts: {
+    title: string;
+    phrase: string;
+    icon: string;
+    onPress: () => void;
+    gradient?: [string, string];
+    tint?: string;
+    border?: string;
+    fg: string;
+    sub: string;
+    iconColor?: string;
+  }) => {
+    const inner = (
+      <>
+        <Text style={{ fontSize: 24, fontWeight: '800', color: opts.fg }}>{opts.title}</Text>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: opts.sub, marginTop: 4 }}>{opts.phrase}</Text>
+        {/* Big decorative icon, clipped into the bottom-right corner. */}
+        <Text style={{ position: 'absolute', right: -8, bottom: -20, fontSize: 92, opacity: 0.16, color: opts.iconColor ?? '#000' }}>
+          {opts.icon}
+        </Text>
+      </>
+    );
+    const base = {
+      borderRadius: radii.lg,
+      padding: spacing.lg,
+      minHeight: 116,
+      justifyContent: 'center' as const,
+      overflow: 'hidden' as const,
+      marginBottom: spacing.md,
+    };
+    return (
+      <Tappable onPress={opts.onPress}>
+        {opts.gradient ? (
+          <LinearGradient colors={opts.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={base}>
+            {inner}
+          </LinearGradient>
+        ) : (
+          <View style={[base, { backgroundColor: opts.tint, borderWidth: 1, borderColor: opts.border }]}>{inner}</View>
+        )}
+      </Tappable>
+    );
+  };
 
   const dealItem = (
     emoji: string,
@@ -51,30 +82,25 @@ export function HomeLauncherScreen() {
   ) => (
     <Tappable
       onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.md, minHeight: 92 }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.md, minHeight: 96 }}
     >
-      <Text style={{ fontSize: 28 }}>{emoji}</Text>
+      <Text style={{ fontSize: 30 }}>{emoji}</Text>
       <View style={{ flex: 1 }}>
-        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 3 }}>
-          <Text style={{ fontSize: 11, fontWeight: '800', color: badgeFg }}>{badge}</Text>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 4 }}>
+          <Text style={{ fontSize: 12, fontWeight: '800', color: badgeFg }}>{badge}</Text>
         </View>
-        <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{sub}</Text>
+        <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>{sub}</Text>
       </View>
-      <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 18 }}>→</Text>
+      <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 20 }}>→</Text>
     </Tappable>
   );
 
   return (
     <Screen safeTop>
       {/* Greeting + active-car switcher */}
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 26, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
-          <Text style={{ fontSize: 15, color: colors.textTertiary, marginBottom: spacing.md }}>
-            What would you like to do today?
-          </Text>
-        </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+        <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
         <CarSwitchChip />
       </View>
 
@@ -92,34 +118,45 @@ export function HomeLauncherScreen() {
         </Tappable>
       ) : null}
 
-      {/* Hero — Get AI estimate (largest action) */}
-      <Tappable onPress={() => navigation.navigate('CarDiagram')}>
-        <LinearGradient
-          colors={[palette.primary, palette.primaryDark]}
-          style={{ borderRadius: radii.lg, padding: spacing.lg, marginBottom: spacing.md }}
-        >
-          <Text style={{ fontSize: 42, marginBottom: 8 }}>📷</Text>
-          <Text style={{ fontSize: 26, fontWeight: '800', color: '#fff' }}>{t('Get an AI Repair Estimate')}</Text>
-          <Text style={{ fontSize: 15, color: 'rgba(255,255,255,.85)', marginTop: 4, marginBottom: spacing.md }}>
-            Snap a few photos → local dealers send real quotes → book in minutes
-          </Text>
-          <View style={{ alignSelf: 'flex-start', backgroundColor: colors.success, borderRadius: radii.pill, paddingHorizontal: 18, paddingVertical: 11 }}>
-            <Text style={{ fontSize: 16, fontWeight: '800', color: '#fff' }}>{t('Start now →')}</Text>
-          </View>
-        </LinearGradient>
-      </Tappable>
+      {/* Three big actions */}
+      {actionCard({
+        title: t('Get an AI Repair Estimate'),
+        phrase: 'Free quote in under 5 minutes',
+        icon: '🚗',
+        onPress: () => navigation.navigate('CarDiagram'),
+        gradient: [palette.primary, palette.primaryDark],
+        fg: '#fff',
+        sub: 'rgba(255,255,255,.88)',
+        iconColor: '#fff',
+      })}
+      {actionCard({
+        title: t('Maintenance'),
+        phrase: 'Track & book service in seconds',
+        icon: '🔧',
+        onPress: () => navigation.navigate('MaintDashboard'),
+        tint: colors.successSurface,
+        border: colors.successLight,
+        fg: colors.successDeep,
+        sub: colors.successDark,
+        iconColor: colors.successDark,
+      })}
+      {actionCard({
+        title: t('Compare Costs'),
+        phrase: 'Cash vs insurance — pick the cheaper',
+        icon: '⚖️',
+        onPress: () => navigation.navigate('CompSelect'),
+        tint: colors.warningSurface,
+        border: colors.warning,
+        fg: colors.warningDeep,
+        sub: colors.warningDeep,
+        iconColor: colors.warningDeep,
+      })}
 
-      {/* Maintenance / Compare (the other two big actions) */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xl }}>
-        {tile('🔧', colors.successSurface, t('Maintenance'), 'Track & book service', () => navigation.navigate('MaintDashboard'))}
-        {tile('⚖️', colors.warningSurface, t('Compare Costs'), 'Cash vs insurance', () => navigation.navigate('CompSelect'))}
-      </View>
-
-      {/* Deals & offers — paged carousel (one at a time, dots) */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <SectionLabel>{t('Deals & offers · Sponsored')}</SectionLabel>
+      {/* Deals & offers — larger header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Deals & offers')}</Text>
         <Tappable onPress={() => navigation.navigate('BundleDeals')} hitSlop={8}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>View all →</Text>
+          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all →</Text>
         </Tappable>
       </View>
       <PagedCarousel

@@ -1062,6 +1062,25 @@ export const MILESTONE_PARTNERS = [
 export const acceptedQuoteById = (id: string | null | undefined): AcceptedQuote =>
   ACCEPTED_QUOTES.find((q) => q.id === id) ?? ACCEPTED_QUOTES[0];
 
+/**
+ * Remap the accepted quotes' price ranges into the current AI estimate range, so
+ * the Compare (cash vs insurance) flow reflects the estimated repair cost.
+ * Preserves each quote's relative position. No-op without an estimate.
+ */
+export function acceptedQuotesInEstimateRange(
+  estimate: { priceLow: number; priceHigh: number } | null | undefined,
+): AcceptedQuote[] {
+  if (!estimate) return ACCEPTED_QUOTES;
+  const omin = Math.min(...ACCEPTED_QUOTES.map((q) => q.priceLow));
+  const span = Math.max(...ACCEPTED_QUOTES.map((q) => q.priceHigh)) - omin || 1;
+  const { priceLow: low, priceHigh: high } = estimate;
+  const map = (p: number) => Math.round(low + ((p - omin) / span) * (high - low));
+  return ACCEPTED_QUOTES.map((q) => {
+    const pl = map(q.priceLow);
+    return { ...q, priceLow: pl, priceHigh: Math.max(map(q.priceHigh), pl + 1) };
+  });
+}
+
 /** Time slots offered on the compare-tab cash booking (s-comp-cash-book). */
 export const COMP_TIME_SLOTS = ['9:00 AM', '10:30 AM', '2:00 PM'];
 

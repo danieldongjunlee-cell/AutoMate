@@ -13,7 +13,7 @@ export const compareService = {
     return request<Comparison>('/compare/estimate', {
       body: {
         claimType: req.claimType ?? 'collision',
-        claimAmount: quote.priceLow,
+        claimAmount: req.claimAmount ?? quote.priceLow,
         state: 'VA',
       },
     });

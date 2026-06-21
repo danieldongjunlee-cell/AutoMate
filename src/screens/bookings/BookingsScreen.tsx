@@ -275,9 +275,14 @@ export function BookingsScreen() {
       ) : (
         visibleBookings.map((b) => {
           const completed = b.status === 'completed';
+          const cancelled = b.status === 'cancelled';
           // Only confirmed bookings can be marked completed (not paid/proposed).
           const canComplete = b.status === 'confirmed';
-          const accent = completed ? colors.success : kindStyle(b).accent;
+          // Completed → greyed out; cancelled → light-red box.
+          const accent = completed ? colors.disabled : cancelled ? colors.danger : kindStyle(b).accent;
+          const boxBg = completed ? colors.surfaceAlt : cancelled ? colors.dangerSurface : colors.surface;
+          const boxBorder = cancelled ? colors.dangerBorder : colors.border;
+          const titleColor = completed ? colors.textTertiary : colors.textPrimary;
           const hasAction = completed || canComplete;
           return (
             // Card + its action read as one connected unit (rounded, clipped).
@@ -285,8 +290,8 @@ export function BookingsScreen() {
               key={b.id}
               style={{
                 marginBottom: spacing.sm,
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
+                backgroundColor: boxBg,
+                borderColor: boxBorder,
                 borderWidth: 1,
                 borderLeftWidth: 4,
                 borderLeftColor: accent,
@@ -300,21 +305,18 @@ export function BookingsScreen() {
               >
                 {dateBadge(b)}
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: titleColor }}>
                     {b.title}
                   </Text>
-                  <Text style={{ fontSize: 10, fontWeight: '700', color: kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 1 }}>
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: completed ? colors.textTertiary : kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 2 }}>
                     {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
                   </Text>
-                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-                    {b.dealerName} · {b.dateLabel}
-                  </Text>
-                  {(b.status === 'reschedule_proposed' || b.status === 'cancelled') && b.reason ? (
+                  {(b.status === 'reschedule_proposed' || cancelled) && b.reason ? (
                     <Text
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: '700',
-                        color: b.status === 'cancelled' ? colors.danger : colors.warningDeep,
+                        color: cancelled ? colors.danger : colors.warningDeep,
                         marginTop: 2,
                       }}
                     >
@@ -323,15 +325,15 @@ export function BookingsScreen() {
                   ) : null}
                 </View>
                 <View style={{ alignItems: 'flex-end', gap: 3 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>
+                  <Text style={{ fontSize: 14, fontWeight: '800', color: titleColor }}>
                     {b.priceLabel}
                   </Text>
                   {b.status === 'reschedule_proposed' ? (
                     <Badge label="New time proposed" variant="warning" />
-                  ) : b.status === 'cancelled' ? (
+                  ) : cancelled ? (
                     <Badge label="Cancelled" variant="danger" />
                   ) : completed ? (
-                    <Badge label="Completed" variant="success" />
+                    <Badge label="Completed" variant="neutral" />
                   ) : (
                     <Badge
                       label={b.status === 'paid' ? 'Paid' : 'Confirmed'}

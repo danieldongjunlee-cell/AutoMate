@@ -7,7 +7,8 @@ import { Tappable } from '../../components/Tappable';
 
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CompareStackParamList } from '../../navigation/types';
-import { ACCEPTED_QUOTES, dealerById } from '../../services/mock/data';
+import { dealerById } from '../../services/mock/data';
+import { useAcceptedQuotes } from '../../hooks/useAcceptedQuote';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompSelect'>;
@@ -16,6 +17,8 @@ type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompSelect'>;
 export function CompSelectScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  // Quotes reflect the current AI estimate range.
+  const acceptedQuotes = useAcceptedQuotes();
 
   return (
     <Screen>
@@ -35,7 +38,7 @@ export function CompSelectScreen() {
       </View>
 
       <SectionLabel>Accepted quotes</SectionLabel>
-      {ACCEPTED_QUOTES.map((aq, i) => {
+      {acceptedQuotes.map((aq, i) => {
         const dealer = dealerById(aq.dealerId);
         return (
           <Tappable
