@@ -86,7 +86,7 @@ export function QuotesReceivedScreen() {
   if (!hasRequest) {
     return (
       <Screen safeTop>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.md }}>Quotes</Text>
+        <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.md }}>Quotes</Text>
         <Card style={{ padding: spacing.xl, alignItems: 'center' }}>
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🧾</Text>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary }}>No active quote</Text>
@@ -118,7 +118,7 @@ export function QuotesReceivedScreen() {
     <Screen safeTop scrollRef={scrollRef}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
+          <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             {filtered.length} shops responded
           </Text>

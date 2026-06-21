@@ -23,51 +23,57 @@ export function HomeLauncherScreen() {
   // "New here?" is onboarding for brand-new users only — it disappears once
   // they submit their first AI estimate, and never shows for returning users.
   const isNewUser = useAppStore((s) => s.isNewUser);
+  // Compare only works once there's an estimate to compare; the AI estimate
+  // populates it.
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
 
-  /** Large full-width action: title + hook phrase, with a big icon in the
-   *  bottom-right corner. Gradient for the primary, tinted surface otherwise. */
-  const actionCard = (opts: {
+  /** The hero action (largest): full-width gradient, big corner icon. */
+  const heroCard = (opts: { title: string; phrase: string; icon: string; onPress: () => void }) => (
+    <Tappable onPress={opts.onPress}>
+      <LinearGradient
+        colors={[palette.primary, palette.primaryDark]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ borderRadius: radii.lg, padding: spacing.lg, minHeight: 156, justifyContent: 'center', overflow: 'hidden', marginBottom: spacing.md }}
+      >
+        <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff' }}>{opts.title}</Text>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: 'rgba(255,255,255,.9)', marginTop: 5 }}>{opts.phrase}</Text>
+        <Text style={{ position: 'absolute', right: -10, bottom: -26, fontSize: 110, opacity: 0.16, color: '#fff' }}>{opts.icon}</Text>
+      </LinearGradient>
+    </Tappable>
+  );
+
+  /** Smaller side-by-side action tile (Maintenance / Compare). */
+  const miniCard = (opts: {
     title: string;
     phrase: string;
     icon: string;
     onPress: () => void;
-    gradient?: [string, string];
-    tint?: string;
-    border?: string;
+    tint: string;
+    border: string;
     fg: string;
     sub: string;
-    iconColor?: string;
-  }) => {
-    const inner = (
-      <>
-        <Text style={{ fontSize: 24, fontWeight: '800', color: opts.fg }}>{opts.title}</Text>
-        <Text style={{ fontSize: 15, fontWeight: '600', color: opts.sub, marginTop: 4 }}>{opts.phrase}</Text>
-        {/* Big decorative icon, clipped into the bottom-right corner. */}
-        <Text style={{ position: 'absolute', right: -8, bottom: -20, fontSize: 92, opacity: 0.16, color: opts.iconColor ?? '#000' }}>
-          {opts.icon}
-        </Text>
-      </>
-    );
-    const base = {
-      borderRadius: radii.lg,
-      padding: spacing.lg,
-      minHeight: 116,
-      justifyContent: 'center' as const,
-      overflow: 'hidden' as const,
-      marginBottom: spacing.md,
-    };
-    return (
-      <Tappable onPress={opts.onPress}>
-        {opts.gradient ? (
-          <LinearGradient colors={opts.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={base}>
-            {inner}
-          </LinearGradient>
-        ) : (
-          <View style={[base, { backgroundColor: opts.tint, borderWidth: 1, borderColor: opts.border }]}>{inner}</View>
-        )}
-      </Tappable>
-    );
-  };
+    iconColor: string;
+  }) => (
+    <Tappable onPress={opts.onPress} style={{ flex: 1 }}>
+      <View
+        style={{
+          backgroundColor: opts.tint,
+          borderWidth: 1,
+          borderColor: opts.border,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          minHeight: 104,
+          justifyContent: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: '800', color: opts.fg }}>{opts.title}</Text>
+        <Text style={{ fontSize: 12, fontWeight: '600', color: opts.sub, marginTop: 3 }}>{opts.phrase}</Text>
+        <Text style={{ position: 'absolute', right: -6, bottom: -14, fontSize: 60, opacity: 0.15, color: opts.iconColor }}>{opts.icon}</Text>
+      </View>
+    </Tappable>
+  );
 
   const dealItem = (
     emoji: string,
@@ -118,39 +124,51 @@ export function HomeLauncherScreen() {
         </Tappable>
       ) : null}
 
-      {/* Three big actions */}
-      {actionCard({
+      {/* Primary action — largest */}
+      {heroCard({
         title: t('Get an AI Repair Estimate'),
         phrase: 'Free quote in under 5 minutes',
         icon: '🚗',
         onPress: () => navigation.navigate('CarDiagram'),
-        gradient: [palette.primary, palette.primaryDark],
-        fg: '#fff',
-        sub: 'rgba(255,255,255,.88)',
-        iconColor: '#fff',
       })}
-      {actionCard({
-        title: t('Maintenance'),
-        phrase: 'Track & book service in seconds',
-        icon: '🔧',
-        onPress: () => navigation.navigate('MaintDashboard'),
-        tint: colors.successSurface,
-        border: colors.successLight,
-        fg: colors.successDeep,
-        sub: colors.successDark,
-        iconColor: colors.successDark,
-      })}
-      {actionCard({
-        title: t('Compare Costs'),
-        phrase: 'Cash vs insurance — pick the cheaper',
-        icon: '⚖️',
-        onPress: () => navigation.navigate('CompSelect'),
-        tint: colors.warningSurface,
-        border: colors.warning,
-        fg: colors.warningDeep,
-        sub: colors.warningDeep,
-        iconColor: colors.warningDeep,
-      })}
+
+      {/* Two smaller actions. Compare unlocks once an AI estimate exists. */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        {miniCard({
+          title: t('Maintenance'),
+          phrase: 'Book service fast',
+          icon: '🔧',
+          onPress: () => navigation.navigate('MaintDashboard'),
+          tint: colors.successSurface,
+          border: colors.successLight,
+          fg: colors.successDeep,
+          sub: colors.successDark,
+          iconColor: colors.successDark,
+        })}
+        {aiEstimate
+          ? miniCard({
+              title: t('Compare Costs'),
+              phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
+              icon: '⚖️',
+              onPress: () => navigation.navigate('CompSelect'),
+              tint: colors.warningSurface,
+              border: colors.warning,
+              fg: colors.warningDeep,
+              sub: colors.warningDeep,
+              iconColor: colors.warningDeep,
+            })
+          : miniCard({
+              title: t('Compare Costs'),
+              phrase: 'Run an AI estimate first',
+              icon: '🔒',
+              onPress: () => navigation.navigate('CarDiagram'),
+              tint: colors.surfaceAlt,
+              border: colors.border,
+              fg: colors.textTertiary,
+              sub: colors.textTertiary,
+              iconColor: colors.textTertiary,
+            })}
+      </View>
 
       {/* Deals & offers — larger header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md, marginBottom: spacing.sm }}>

@@ -110,7 +110,7 @@ export function ProfHubScreen() {
         )}
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ fontSize: 18, fontWeight: '500', color: colors.textPrimary }}>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>
               {displayName}
             </Text>
             {isPro ? (

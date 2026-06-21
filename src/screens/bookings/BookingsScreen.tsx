@@ -24,7 +24,8 @@ const MONTH_NAMES = [
 const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /** Status filters for the scheduled-services list. */
-const STATUS_FILTERS = ['All', 'Confirmed', 'New time proposed', 'Completed', 'Cancelled'];
+// Completed bookings get their own section, so they're not a filter chip here.
+const STATUS_FILTERS = ['All', 'Confirmed', 'New time proposed', 'Cancelled'];
 
 /** Wireframe s-bookings: scheduled services + pending quotes (new bottom tab). */
 export function BookingsScreen() {
@@ -40,7 +41,7 @@ export function BookingsScreen() {
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
 
-  // Status filter for the scheduled-services list.
+  // Status filter for the scheduled-services list (completed shown separately).
   const [statusFilter, setStatusFilter] = useState('All');
   const matchesStatus = (b: AppBooking) => {
     switch (statusFilter) {
@@ -48,15 +49,14 @@ export function BookingsScreen() {
         return b.status === 'confirmed' || b.status === 'paid';
       case 'New time proposed':
         return b.status === 'reschedule_proposed';
-      case 'Completed':
-        return b.status === 'completed';
       case 'Cancelled':
         return b.status === 'cancelled';
       default:
         return true;
     }
   };
-  const visibleBookings = bookings.filter(matchesStatus);
+  const scheduledBookings = bookings.filter((b) => b.status !== 'completed' && matchesStatus(b));
+  const completedBookings = bookings.filter((b) => b.status === 'completed');
 
   // Interactive calendar: starts on the real current month, navigable across
   // months and years.
@@ -144,6 +144,92 @@ export function BookingsScreen() {
     );
   };
 
+  /** One booking card + its attached action (mark-completed / leave-review). */
+  const renderBooking = (b: AppBooking) => {
+    const completed = b.status === 'completed';
+    const cancelled = b.status === 'cancelled';
+    // Only confirmed bookings can be marked completed (not paid/proposed).
+    const canComplete = b.status === 'confirmed';
+    // Completed → greyed out; cancelled → light-red box.
+    const accent = completed ? colors.disabled : cancelled ? colors.danger : kindStyle(b).accent;
+    const boxBg = completed ? colors.surfaceAlt : cancelled ? colors.dangerSurface : colors.surface;
+    const boxBorder = cancelled ? colors.dangerBorder : colors.border;
+    const titleColor = completed ? colors.textTertiary : colors.textPrimary;
+    const hasAction = completed || canComplete;
+    return (
+      // Card + its action read as one connected unit (rounded, clipped).
+      <View
+        key={b.id}
+        style={{
+          marginBottom: spacing.sm,
+          backgroundColor: boxBg,
+          borderColor: boxBorder,
+          borderWidth: 1,
+          borderLeftWidth: 4,
+          borderLeftColor: accent,
+          borderRadius: radii.md,
+          overflow: 'hidden',
+        }}
+      >
+        <Tappable
+          onPress={() => openBooking(b)}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.sm }}
+        >
+          {dateBadge(b)}
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: titleColor }}>{b.title}</Text>
+            <Text style={{ fontSize: 11, fontWeight: '700', color: completed ? colors.textTertiary : kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 2 }}>
+              {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
+            </Text>
+            {(b.status === 'reschedule_proposed' || cancelled) && b.reason ? (
+              <Text style={{ fontSize: 11, fontWeight: '700', color: cancelled ? colors.danger : colors.warningDeep, marginTop: 2 }}>
+                ⓘ Tap to see why
+              </Text>
+            ) : null}
+          </View>
+          <View style={{ alignItems: 'flex-end', gap: 3 }}>
+            <Text style={{ fontSize: 14, fontWeight: '800', color: titleColor }}>{b.priceLabel}</Text>
+            {b.status === 'reschedule_proposed' ? (
+              <Badge label="New time proposed" variant="warning" />
+            ) : cancelled ? (
+              <Badge label="Cancelled" variant="danger" />
+            ) : completed ? (
+              <Badge label="Completed" variant="neutral" />
+            ) : (
+              <Badge label={b.status === 'paid' ? 'Paid' : 'Confirmed'} variant={b.status === 'paid' ? 'success' : 'primarySoft'} />
+            )}
+          </View>
+        </Tappable>
+
+        {/* Attached action bar: confirmed → mark completed; completed → review. */}
+        {hasAction ? (
+          <Tappable
+            onPress={() =>
+              completed
+                ? navigateCrossTab(navigation, 'HomeTab', 'WriteReview', { dealerId: b.dealerId })
+                : markBookingCompleted(b.id)
+            }
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              paddingVertical: 10,
+              borderTopWidth: StyleSheet.hairlineWidth,
+              borderTopColor: colors.border,
+              backgroundColor: completed ? colors.primarySurface : colors.surfaceAlt,
+            }}
+          >
+            <Text style={{ fontSize: 13, fontWeight: '700', color: completed ? colors.primary : colors.textSecondary }}>
+              {completed ? '★ Leave a review' : '✓ Mark service completed'}
+            </Text>
+            <Text style={{ fontSize: 13, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
+          </Tappable>
+        ) : null}
+      </View>
+    );
+  };
+
   return (
     <Screen safeTop>
       <View
@@ -156,7 +242,7 @@ export function BookingsScreen() {
         }}
       >
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
+          <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
         </View>
         <Tappable
           onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintSchedule')}
@@ -268,116 +354,21 @@ export function BookingsScreen() {
             Book a repair or schedule a service and it will show up here.
           </Text>
         </Card>
-      ) : visibleBookings.length === 0 ? (
+      ) : scheduledBookings.length === 0 ? (
         <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
-          No {statusFilter.toLowerCase()} bookings.
+          No {statusFilter === 'All' ? 'scheduled' : statusFilter.toLowerCase()} bookings.
         </Text>
       ) : (
-        visibleBookings.map((b) => {
-          const completed = b.status === 'completed';
-          const cancelled = b.status === 'cancelled';
-          // Only confirmed bookings can be marked completed (not paid/proposed).
-          const canComplete = b.status === 'confirmed';
-          // Completed → greyed out; cancelled → light-red box.
-          const accent = completed ? colors.disabled : cancelled ? colors.danger : kindStyle(b).accent;
-          const boxBg = completed ? colors.surfaceAlt : cancelled ? colors.dangerSurface : colors.surface;
-          const boxBorder = cancelled ? colors.dangerBorder : colors.border;
-          const titleColor = completed ? colors.textTertiary : colors.textPrimary;
-          const hasAction = completed || canComplete;
-          return (
-            // Card + its action read as one connected unit (rounded, clipped).
-            <View
-              key={b.id}
-              style={{
-                marginBottom: spacing.sm,
-                backgroundColor: boxBg,
-                borderColor: boxBorder,
-                borderWidth: 1,
-                borderLeftWidth: 4,
-                borderLeftColor: accent,
-                borderRadius: radii.md,
-                overflow: 'hidden',
-              }}
-            >
-              <Tappable
-                onPress={() => openBooking(b)}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.sm }}
-              >
-                {dateBadge(b)}
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: titleColor }}>
-                    {b.title}
-                  </Text>
-                  <Text style={{ fontSize: 11, fontWeight: '700', color: completed ? colors.textTertiary : kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 2 }}>
-                    {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
-                  </Text>
-                  {(b.status === 'reschedule_proposed' || cancelled) && b.reason ? (
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        fontWeight: '700',
-                        color: cancelled ? colors.danger : colors.warningDeep,
-                        marginTop: 2,
-                      }}
-                    >
-                      ⓘ Tap to see why
-                    </Text>
-                  ) : null}
-                </View>
-                <View style={{ alignItems: 'flex-end', gap: 3 }}>
-                  <Text style={{ fontSize: 14, fontWeight: '800', color: titleColor }}>
-                    {b.priceLabel}
-                  </Text>
-                  {b.status === 'reschedule_proposed' ? (
-                    <Badge label="New time proposed" variant="warning" />
-                  ) : cancelled ? (
-                    <Badge label="Cancelled" variant="danger" />
-                  ) : completed ? (
-                    <Badge label="Completed" variant="neutral" />
-                  ) : (
-                    <Badge
-                      label={b.status === 'paid' ? 'Paid' : 'Confirmed'}
-                      variant={b.status === 'paid' ? 'success' : 'primarySoft'}
-                    />
-                  )}
-                </View>
-              </Tappable>
-
-              {/* Attached action bar: confirmed → mark completed; completed → review. */}
-              {hasAction ? (
-                <Tappable
-                  onPress={() =>
-                    completed
-                      ? navigateCrossTab(navigation, 'HomeTab', 'WriteReview', { dealerId: b.dealerId })
-                      : markBookingCompleted(b.id)
-                  }
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 6,
-                    paddingVertical: 10,
-                    borderTopWidth: StyleSheet.hairlineWidth,
-                    borderTopColor: colors.border,
-                    backgroundColor: completed ? colors.primarySurface : colors.surfaceAlt,
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      fontWeight: '700',
-                      color: completed ? colors.primary : colors.textSecondary,
-                    }}
-                  >
-                    {completed ? '★ Leave a review' : '✓ Mark service completed'}
-                  </Text>
-                  <Text style={{ fontSize: 13, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
-                </Tappable>
-              ) : null}
-            </View>
-          );
-        })
+        scheduledBookings.map(renderBooking)
       )}
+
+      {/* Completed services — its own section */}
+      {completedBookings.length > 0 ? (
+        <>
+          <SectionLabel>{t('Completed')}</SectionLabel>
+          {completedBookings.map(renderBooking)}
+        </>
+      ) : null}
     </Screen>
   );
 }
