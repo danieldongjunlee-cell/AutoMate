@@ -31,7 +31,7 @@ export function HomeLauncherScreen() {
   const heroCard = (opts: { title: string; phrase: string; icon: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress}>
       <LinearGradient
-        colors={[palette.primary, palette.primaryDark]}
+        colors={[palette.accent, '#5b51c4']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{ borderRadius: radii.lg, padding: spacing.lg, minHeight: 156, justifyContent: 'center', overflow: 'hidden', marginBottom: spacing.md }}
@@ -170,8 +170,8 @@ export function HomeLauncherScreen() {
             })}
       </View>
 
-      {/* Deals & offers — larger header */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.md, marginBottom: spacing.sm }}>
+      {/* Deals & offers — larger header (extra top gap separates it from the actions) */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xxxl, marginBottom: spacing.sm }}>
         <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Deals & offers')}</Text>
         <Tappable onPress={() => navigation.navigate('BundleDeals')} hitSlop={8}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all →</Text>

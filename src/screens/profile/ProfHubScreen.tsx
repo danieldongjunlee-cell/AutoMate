@@ -12,7 +12,7 @@ import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
-import { insuranceService } from '../../services';
+import { insuranceService, vehiclesService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -53,6 +53,28 @@ export function ProfHubScreen() {
   const insuranceSub = policy
     ? `${policy.carrier} · $${policy.deductible} deductible`
     : `${INSURANCE_POLICY.carrier} · $${INSURANCE_POLICY.deductible} deductible`;
+
+  // Live cars for the "My cars" row — drives the same "Check" prompt logic.
+  const { data: vehicles } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });
+  const hasCar = (vehicles?.length ?? 0) > 0;
+  const carSub = hasCar ? (vehicles?.find((v) => v.isPrimary)?.name ?? vehicles?.[0]?.name ?? VEHICLE.name) : 'Add your car to get started';
+
+  // "Check" prompt — shown only until the item is set up, then removed.
+  const checkBadge = (
+    <View
+      style={{
+        backgroundColor: colors.warningSurface,
+        borderRadius: radii.pill,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.warning,
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        marginRight: 4,
+      }}
+    >
+      <Text style={{ fontSize: 11, color: colors.warningDeep }}>Check</Text>
+    </View>
+  );
 
   const accountRow = (
     icon: string,
@@ -292,26 +314,14 @@ export function ProfHubScreen() {
       </Tappable>
 
       <SectionLabel>Account details</SectionLabel>
-      {accountRow('🚗', colors.primarySurface, 'My cars', VEHICLE.name, 'ProfCars')}
+      {accountRow('🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge)}
       {accountRow(
         '🛡️',
         '#FAECE7',
         'Insurance policy',
         insuranceSub,
         'ProfInsurance',
-        <View
-          style={{
-            backgroundColor: colors.warningSurface,
-            borderRadius: radii.pill,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.warning,
-            paddingHorizontal: 8,
-            paddingVertical: 2,
-            marginRight: 4,
-          }}
-        >
-          <Text style={{ fontSize: 11, color: colors.warningDeep }}>Check</Text>
-        </View>,
+        policy ? undefined : checkBadge,
       )}
       {accountRow('💳', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment')}
       {accountRow('🔍', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates')}

@@ -12,6 +12,7 @@ import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { CompareStackParamList } from '../../navigation/types';
 import {
+  BOOKING_MONTH,
   COMP_TIME_SLOTS,
   dealerById,
   PAYMENT_CARD,
@@ -34,12 +35,12 @@ export function CompCashBookScreen() {
   const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
 
-  // Wireframe defaults: Apr 8 (selected day) · 10:30 AM
-  const [day, setDay] = useState<number | null>(8);
+  // Default the picker to tomorrow (the current booking month).
+  const [day, setDay] = useState<number | null>(BOOKING_MONTH.defaultDay);
   const [time, setTime] = useState<string | null>('10:30 AM');
   const [booking, setBooking] = useState(false);
 
-  const dateLabel = day ? `${weekdayOf(day)}, Apr ${day}` : null;
+  const dateLabel = day ? `${weekdayOf(day)}, ${BOOKING_MONTH.monthAbbr} ${day}` : null;
 
   const onConfirm = async () => {
     if (!day || !time) return;
@@ -127,7 +128,7 @@ export function CompCashBookScreen() {
       </View>
 
       <PrimaryButton
-        label={day && time ? `Continue — Apr ${day} · ${time} →` : 'Select a date and time'}
+        label={day && time ? `Continue — ${BOOKING_MONTH.monthAbbr} ${day} · ${time} →` : 'Select a date and time'}
         disabled={!day || !time}
         loading={booking}
         onPress={onConfirm}

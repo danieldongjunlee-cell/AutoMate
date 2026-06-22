@@ -10,7 +10,9 @@ import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle, vehicleTypeOf } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import {
+  bookingISO,
   dealerById,
+  defaultBookingISO,
   MAINT_CATEGORIES,
   MAINT_TIME_SLOTS,
   MaintCategory,
@@ -300,16 +302,14 @@ export function MaintScheduleBookScreen() {
       <View style={{ marginBottom: spacing.sm }}>
         <CalendarMonth
           selectedDay={selectedDay}
-          onSelectDay={(day) =>
-            setCartSlot(`2027-04-${String(day).padStart(2, '0')}`, cart.time ?? '8:00 AM')
-          }
+          onSelectDay={(day) => setCartSlot(bookingISO(day), cart.time ?? '8:00 AM')}
         />
       </View>
       <View style={{ marginBottom: spacing.lg }}>
         <TimeSlots
           slots={MAINT_TIME_SLOTS}
           selected={cart.time}
-          onSelect={(time) => setCartSlot(cart.date ?? '2027-04-07', time)}
+          onSelect={(time) => setCartSlot(cart.date ?? defaultBookingISO(), time)}
         />
       </View>
 

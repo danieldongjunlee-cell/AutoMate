@@ -16,13 +16,16 @@ import { confirmAction } from '../../utils/alerts';
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'Reschedule'>;
 type Rt = RouteProp<HomeStackParamList, 'Reschedule'>;
 
-const DAYS = [
-  ['Thu', '12'],
-  ['Fri', '14'],
-  ['Sat', '15'],
-  ['Mon', '17'],
-  ['Tue', '18'],
-];
+/** Next 5 days starting tomorrow, so reschedule options are always upcoming. */
+const DAYS = Array.from({ length: 5 }, (_, i) => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1 + i);
+  return {
+    day: String(d.getDate()),
+    weekday: d.toLocaleDateString('en-US', { weekday: 'short' }),
+    monthAbbr: d.toLocaleDateString('en-US', { month: 'short' }),
+  };
+});
 const TIMES = ['9:00 AM', '11:00 AM', '3:30 PM'];
 
 /** Wireframe s-reschedule: reschedule or cancel a booking. */
@@ -30,8 +33,9 @@ export function RescheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { params } = useRoute<Rt>();
   const { colors } = useTheme();
-  const [day, setDay] = useState('14');
+  const [day, setDay] = useState(DAYS[0].day);
   const [time, setTime] = useState('11:00 AM');
+  const dayMonthAbbr = DAYS.find((d) => d.day === day)?.monthAbbr ?? DAYS[0].monthAbbr;
 
   const removeBooking = useAppStore((s) => s.removeBooking);
   const acceptProposedTime = useAppStore((s) => s.acceptProposedTime);
@@ -123,7 +127,7 @@ export function RescheduleScreen() {
         </Text>
         <SectionLabel>Pick a new day</SectionLabel>
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md }}>
-          {DAYS.map(([d, n]) => (
+          {DAYS.map(({ day: n, weekday: d }) => (
             <Tappable key={n} onPress={() => setDay(n)} style={{ ...pill(day === n), paddingVertical: 8, paddingHorizontal: 11, alignItems: 'center' }}>
               <Text style={{ fontSize: 10, color: day === n ? colors.primaryDark : colors.textTertiary }}>{d}</Text>
               <Text style={{ fontSize: 14, fontWeight: '800', color: day === n ? colors.primaryDark : colors.textPrimary }}>{n}</Text>
@@ -139,7 +143,7 @@ export function RescheduleScreen() {
           ))}
         </View>
         <PrimaryButton
-          label={`Confirm new time — Apr ${day} · ${time} →`}
+          label={`Confirm new time — ${dayMonthAbbr} ${day} · ${time} →`}
           onPress={() => navigation.navigate(confirmScreen as never)}
         />
       </Card>

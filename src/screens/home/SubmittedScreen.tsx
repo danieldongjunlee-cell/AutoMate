@@ -38,173 +38,131 @@ export function SubmittedScreen() {
   return (
     <Screen>
       <SubmitProgress step={3} left="Submitted" right="Done 🎉" />
-      {/* Success header */}
+      {/* Success header — the key facts (free · response time) live here as a
+          single subtitle, so the old three-box stat row is no longer needed. */}
       <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-        <Text style={{ fontSize: 19, fontWeight: '600', color: colors.successDeep, marginBottom: 3 }}>
+        <Text style={{ fontSize: 40, marginBottom: 4 }}>🎉</Text>
+        <Text style={{ fontSize: 19, fontWeight: '700', color: colors.successDeep, marginBottom: 3 }}>
           Photos sent to {QUOTE_REQUEST.shopsNotified} shops
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          Dealers reviewing now · 1–3 hr est. response
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
+          Free · no obligation · 1–3 hr est. response
         </Text>
       </View>
 
-      {/* Stats */}
-      <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md }}>
-        {[
-          { big: '1–3 hrs', small: 'Est. response', color: colors.primary },
-          { big: `${QUOTE_REQUEST.shopsNotified} shops`, small: 'Notified', color: colors.primary },
-          { big: 'Free', small: 'No obligation', color: colors.success },
-        ].map(({ big, small, color }) => (
-          <View
-            key={small}
-            style={{
-              flex: 1,
-              backgroundColor: colors.surface,
-              borderRadius: radii.sm,
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.border,
-              paddingVertical: spacing.sm,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 15, fontWeight: '700', color }}>{big}</Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary, marginTop: 2 }}>{small}</Text>
-          </View>
-        ))}
-      </View>
-
-      {/* Notify banner */}
-      <View
-        style={{
+      {/* Notify banner — slimmed to a single tappable row. */}
+      <Tappable
+        onPress={() => setNotifyEnabled(true)}
+        disabled={notifyEnabled}
+        style={({ pressed }) => ({
           backgroundColor: colors.warningSurface,
           borderRadius: radii.sm,
           borderWidth: 1,
           borderColor: palette.warningBorder,
-          padding: spacing.md,
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
           flexDirection: 'row',
           alignItems: 'center',
           gap: spacing.sm,
+          marginBottom: spacing.md,
+          opacity: pressed ? 0.85 : 1,
+        })}
+      >
+        <Text style={{ fontSize: 18 }}>🔔</Text>
+        <Text style={{ flex: 1, fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
+          {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
+        </Text>
+        <Text style={{ fontSize: 13, fontWeight: '700', color: notifyEnabled ? colors.success : colors.warningDeep }}>
+          {notifyEnabled ? 'Enabled ✓' : 'Enable'}
+        </Text>
+      </Tappable>
+
+      {/* AI Repair Recommendation — header, analysis and DIY guides consolidated
+          into a single card so the screen reads as one block instead of many. */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.md,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          padding: spacing.md,
           marginBottom: spacing.lg,
         }}
       >
-        <Text style={{ fontSize: 22 }}>🔔</Text>
-        <Tappable style={{ flex: 1 }} onPress={() => navigation.navigate('DealerQuotes')}>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-            {notifyEnabled
-              ? "Alerts on — we'll ping you per quote"
-              : 'Notify me when quotes arrive'}
-          </Text>
-        </Tappable>
-        <Tappable
-          onPress={() => setNotifyEnabled(true)}
-          disabled={notifyEnabled}
-          style={({ pressed }) => ({
-            backgroundColor: notifyEnabled ? colors.success : colors.warning,
-            borderRadius: radii.sm,
-            paddingHorizontal: spacing.md,
-            paddingVertical: 6,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Text
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
+          <View
             style={{
-              fontSize: 13,
-              fontWeight: '500',
-              color: notifyEnabled ? '#fff' : palette.dark,
+              width: 30,
+              height: 30,
+              borderRadius: radii.sm,
+              backgroundColor: colors.primary,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            {notifyEnabled ? 'Enabled ✓' : 'Enable'}
+            <Text style={{ fontSize: 15 }}>🤖</Text>
+          </View>
+          <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
+            AI Repair Recommendation
           </Text>
-        </Tappable>
-      </View>
+          <Badge label="Pro" variant="primarySoft" />
+        </View>
 
-      {/* AI Repair Recommendation (Pro) */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <View
           style={{
-            width: 30,
-            height: 30,
+            backgroundColor: colors.primarySurface,
             borderRadius: radii.sm,
-            backgroundColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
+            padding: spacing.md,
+            marginBottom: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 15 }}>🤖</Text>
-        </View>
-        <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
-          AI Repair Recommendation
-        </Text>
-        <Badge label="Pro" variant="primarySoft" />
-      </View>
-
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.primaryLight,
-          padding: spacing.md,
-          marginBottom: spacing.sm,
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 11,
-            color: colors.primaryDark,
-            fontWeight: '700',
-            textTransform: 'uppercase',
-            letterSpacing: 0.7,
-            marginBottom: 4,
-          }}
-        >
-          AI analysis result
-        </Text>
-        <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep, marginBottom: 4 }}>
-          {primaryPart} dent — DIY feasible ✔
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            Paint intact · Est. ${priceLow}–${priceHigh} ·{' '}
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep, marginBottom: 6 }}>
+            {primaryPart} dent — DIY feasible ✔
           </Text>
-          <Badge label={`${confidencePct}% confidence`} variant="success" />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              Paint intact · Est. ${priceLow}–${priceHigh} ·{' '}
+            </Text>
+            <Badge label={`${confidencePct}% confidence`} variant="success" />
+          </View>
         </View>
-      </View>
 
-      {isPro ? (
-        // Pro members see the matched DIY methods unlocked.
-        <View>
-          <DiyGuideRow
-            level="EASY"
-            title="Boiling water dent method"
-            meta="7 steps · ~15 min · Boiling water + plunger"
-            showLink
-            onReadGuide={() => setGuide(matchGuide('Boiling water dent method'))}
-          />
-          <DiyGuideRow
-            level="MED"
-            title="Plunger pull method"
-            meta="6 steps · ~12 min · Plunger required"
-            showLink
-            onReadGuide={() => setGuide(matchGuide('Plunger pull method'))}
-          />
-        </View>
-      ) : (
-        <ProLockOverlay
-          subtitle="Unlock AI-matched DIY guides based on your damage photos"
-          onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
-        >
-          <DiyGuideRow level="EASY" title="Boiling water dent method" meta="7 steps · ~15 min · Boiling water + plunger" showLink />
-          <DiyGuideRow level="MED" title="Plunger pull method" meta="6 steps · ~12 min · Plunger required" showLink />
-        </ProLockOverlay>
-      )}
+        {isPro ? (
+          // Pro members see the matched DIY methods unlocked.
+          <View>
+            <DiyGuideRow
+              level="EASY"
+              title="Boiling water dent method"
+              meta="7 steps · ~15 min · Boiling water + plunger"
+              showLink
+              onReadGuide={() => setGuide(matchGuide('Boiling water dent method'))}
+            />
+            <DiyGuideRow
+              level="MED"
+              title="Plunger pull method"
+              meta="6 steps · ~12 min · Plunger required"
+              showLink
+              onReadGuide={() => setGuide(matchGuide('Plunger pull method'))}
+            />
+          </View>
+        ) : (
+          <ProLockOverlay
+            subtitle="Unlock AI-matched DIY guides based on your damage photos"
+            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
+          >
+            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="7 steps · ~15 min · Boiling water + plunger" showLink />
+            <DiyGuideRow level="MED" title="Plunger pull method" meta="6 steps · ~12 min · Plunger required" showLink />
+          </ProLockOverlay>
+        )}
+      </View>
 
       {guide ? <DiyGuideSheet guide={guide} onClose={() => setGuide(null)} /> : null}
 
+      {/* Bottom actions grouped together. */}
       <PrimaryButton
         label="View available quotes →"
         onPress={() => navigation.navigate('DealerQuotes')}
-        style={{ marginTop: spacing.lg, marginBottom: spacing.sm }}
+        style={{ marginBottom: spacing.sm }}
       />
       <Tappable
         onPress={() => navigation.navigate('HomeLauncher')}

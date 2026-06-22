@@ -11,8 +11,9 @@ import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
-import { BOOKING_MONTH, dealerById, QUOTES } from '../../services/mock/data';
+import { BOOKING_MONTH, dealerById, defaultBookingISO, QUOTES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
+import { formatDayLabel } from '../../utils/dates';
 import { useDistance } from '../../i18n';
 import { radii, spacing, useTheme } from '../../theme';
 
@@ -35,7 +36,7 @@ export function BookingConfirmScreen() {
 
   const dealer = dealerById(route.params?.dealerId);
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
-  const dateLabel = route.params?.dateLabel ?? 'Thu, Apr 12';
+  const dateLabel = route.params?.dateLabel ?? formatDayLabel(defaultBookingISO());
   const time = route.params?.time ?? '10:30 AM';
   const isCash = route.params?.paid === 'cash';
   // Cross-tab cash bookings price from ACCEPTED_QUOTES and pass their label.
@@ -45,7 +46,7 @@ export function BookingConfirmScreen() {
 
   /** Real calendar export (pass 2): expo-calendar native / Google Calendar web. */
   const onAddToCalendar = () => {
-    const day = parseInt(dateLabel.replace(/[^0-9]/g, ''), 10) || 12;
+    const day = parseInt(dateLabel.replace(/[^0-9]/g, ''), 10) || BOOKING_MONTH.defaultDay;
     const startDate = dateAtTime(BOOKING_MONTH.year, BOOKING_MONTH.month, day, time);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
     void addToCalendar({

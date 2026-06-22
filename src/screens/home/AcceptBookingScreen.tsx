@@ -8,7 +8,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, QUOTES, TIME_SLOTS } from '../../services/mock/data';
+import { BOOKING_MONTH, dealerById, QUOTES, TIME_SLOTS } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -28,12 +28,12 @@ export function AcceptBookingScreen() {
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
   const priceLabel = quote?.priceHigh ? `$${quote.price}–$${quote.priceHigh}` : `$${quote?.price ?? 330}`;
 
-  // Wireframe defaults: Apr 12 · 10:30 AM
-  const [day, setDay] = useState<number | null>(12);
+  // Default the picker to tomorrow (the current booking month).
+  const [day, setDay] = useState<number | null>(BOOKING_MONTH.defaultDay);
   const [time, setTime] = useState<string | null>('10:30 AM');
   const [booking, setBooking] = useState(false);
 
-  const dateLabel = day ? `${weekdayOf(day)}, Apr ${day}` : null;
+  const dateLabel = day ? `${weekdayOf(day)}, ${BOOKING_MONTH.monthAbbr} ${day}` : null;
 
   const onConfirm = async () => {
     if (!day || !time) return;
@@ -94,7 +94,7 @@ export function AcceptBookingScreen() {
       </View>
 
       <PrimaryButton
-        label={day && time ? `Continue — Apr ${day} · ${time} →` : 'Select a date and time'}
+        label={day && time ? `Continue — ${BOOKING_MONTH.monthAbbr} ${day} · ${time} →` : 'Select a date and time'}
         disabled={!day || !time}
         loading={booking}
         onPress={onConfirm}

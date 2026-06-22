@@ -12,8 +12,9 @@ import { ProcessingOverlay } from '../../components/Skeleton';
 import { Card, Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById } from '../../services/mock/data';
+import { dealerById, defaultBookingISO } from '../../services/mock/data';
 import { PaymentCard, paymentMethodsService } from '../../services';
+import { formatDayLabel } from '../../utils/dates';
 import { dateBadgeParts, DEPOSIT_CENTS, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -45,7 +46,7 @@ export function BookDepositScreen() {
     setBooking(true);
     await new Promise((r) => setTimeout(r, 600));
     // Record the booking so it appears in the Bookings tab (deposit path = repair).
-    const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
+    const dateLabel = nextParams?.dateLabel ?? formatDayLabel(defaultBookingISO());
     addBooking({
       kind: 'repair',
       brand,

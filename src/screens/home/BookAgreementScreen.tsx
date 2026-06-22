@@ -8,7 +8,7 @@ import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById } from '../../services/mock/data';
+import { dealerById, defaultBookingISO } from '../../services/mock/data';
 import { cartTotals, dateBadgeParts, depositForBooking, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
@@ -44,7 +44,7 @@ export function BookAgreementScreen() {
     // No deposit → goes straight to the confirmation, so record the booking here.
     if (kind === 'repair') {
       // Repair, Pro-waived deposit.
-      const dateLabel = nextParams?.dateLabel ?? 'Thu, Apr 12';
+      const dateLabel = nextParams?.dateLabel ?? formatDayLabel(defaultBookingISO());
       addBooking({
         kind: 'repair',
         brand,
@@ -63,7 +63,7 @@ export function BookAgreementScreen() {
       // scheduled service from the cart now that there's no payment screen.
       const cart = useAppStore.getState().cart;
       const { total } = cartTotals(cart);
-      const dateLabel = formatDayLabel(cart.date, 'Mon, Apr 7');
+      const dateLabel = formatDayLabel(cart.date, formatDayLabel(defaultBookingISO()));
       addBooking({
         kind: 'maintenance',
         brand,

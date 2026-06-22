@@ -117,9 +117,12 @@ export function CalendarMonth({
   );
 }
 
-/** Month nav: only the demo month has live availability until the backend serves more. */
+/** Month nav: only the current month has live availability until the backend serves more. */
 const otherMonths = () =>
-  Alert.alert('April 2027', 'Only April 2027 has open slots in the demo — more months arrive with live dealer availability.');
+  Alert.alert(
+    BOOKING_MONTH.label,
+    `Only ${BOOKING_MONTH.label} has open slots in the demo — more months arrive with live dealer availability.`,
+  );
 
 const navBtn = (bg: string, pressed?: boolean) =>
   ({

@@ -336,16 +336,40 @@ export const PHOTO_TIPS = [
 /** Booking time slots (accept-booking screen). */
 export const TIME_SLOTS = ['9:00 AM', '10:30 AM', '1:00 PM', '2:30 PM', '4:00 PM'];
 
-/** April 2027 calendar config from the wireframe (12 pre-selected, some days unavailable). */
+/**
+ * Booking calendar config — the CURRENT month, so the date picker always opens
+ * on a live month. Past days are marked unavailable and the picker defaults to
+ * tomorrow (today when tomorrow rolls into next month).
+ */
+const _bookingNow = new Date();
+const _bookingYear = _bookingNow.getFullYear();
+const _bookingMonth = _bookingNow.getMonth() + 1; // 1-based
+const _bookingToday = _bookingNow.getDate();
+const _bookingDaysInMonth = new Date(_bookingYear, _bookingMonth, 0).getDate();
+// Default the picker to tomorrow; fall back to today on the last day of a month.
+const _bookingDefaultDay = _bookingToday + 1 <= _bookingDaysInMonth ? _bookingToday + 1 : _bookingToday;
+
 export const BOOKING_MONTH = {
-  label: 'April 2027',
-  year: 2027,
-  month: 4,
-  daysInMonth: 30,
-  /** Weekday of the 1st (0=Sun). Apr 1 2027 is a Thursday. */
-  firstWeekday: 4,
-  unavailable: [1, 2, 4, 5, 6, 11, 13, 18, 20, 24, 25, 26, 27, 28, 29, 30],
+  label: _bookingNow.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+  monthAbbr: _bookingNow.toLocaleDateString('en-US', { month: 'short' }),
+  year: _bookingYear,
+  month: _bookingMonth,
+  today: _bookingToday,
+  /** Default selected day in the picker (tomorrow). */
+  defaultDay: _bookingDefaultDay,
+  daysInMonth: _bookingDaysInMonth,
+  /** Weekday of the 1st (0=Sun). */
+  firstWeekday: new Date(_bookingYear, _bookingMonth - 1, 1).getDay(),
+  /** Days before today can't be booked. */
+  unavailable: Array.from({ length: Math.max(0, _bookingToday - 1) }, (_, i) => i + 1),
 };
+
+/** ISO date string ("YYYY-MM-DD") for a day in the booking month. */
+export const bookingISO = (day: number): string =>
+  `${BOOKING_MONTH.year}-${String(BOOKING_MONTH.month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+/** Default booking date (tomorrow) as an ISO string. */
+export const defaultBookingISO = (): string => bookingISO(BOOKING_MONTH.defaultDay);
 
 export const dealerById = (id: string | null | undefined): Dealer =>
   DEALERS.find((d) => d.id === id) ?? DEALERS[0];

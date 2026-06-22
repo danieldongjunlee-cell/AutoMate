@@ -398,45 +398,42 @@ window.pickPart = function(el, name){
 <div id="s-submitted" class="screen" data-tab="home" style="display:none">
 <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px"><span style="font-size:16px;color:var(--ce8edf5);cursor:pointer" data-back="1">←</span><span style="font-size:10.5px;font-weight:600;flex:1">Request submitted</span></div>
 <div class="ttabs"><div class="tti on">🏠<br>Home</div><div class="tti">🔧<br>Maint.</div><div class="tti">⚖<br>Comp.</div><div class="tti">💬<br>Comm.</div><div class="tti">👤<br>Profile</div></div>
-<div style="text-align:center;padding:6px 0 8px">
-  <div style="width:46px;height:46px;border-radius:50%;background:var(--c11271c);border:2px solid var(--c1f7a45);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:22px">✅</div>
-  <div style="font-size:11px;font-weight:600;color:var(--c3fcb78);margin-bottom:2px">Photos sent to 12 shops</div>
-  <div style="font-size:7.5px;color:var(--c8a94a6)">Dealers reviewing now · 1–3 hr est. response</div>
+<div style="text-align:center;padding:8px 0 10px">
+  <div style="font-size:26px;margin-bottom:3px">🎉</div>
+  <div style="font-size:12px;font-weight:700;color:var(--c3fcb78);margin-bottom:2px">Photos sent to 12 shops</div>
+  <div style="font-size:7.5px;color:var(--c8a94a6)">Free · no obligation · 1–3 hr est. response</div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px">
-  <div style="background:var(--c121a2b);border-radius:7px;padding:6px 4px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:9px;font-weight:700;color:var(--c6fa0ff)">1–3 hrs</div><div style="font-size:6px;color:var(--c8a94a6);margin-top:1px">Est. response</div></div>
-  <div style="background:var(--c121a2b);border-radius:7px;padding:6px 4px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:9px;font-weight:700;color:var(--c6fa0ff)">12 shops</div><div style="font-size:6px;color:var(--c8a94a6);margin-top:1px">Notified</div></div>
-  <div style="background:var(--c121a2b);border-radius:7px;padding:6px 4px;text-align:center;border:0.5px solid var(--c1f2940)"><div style="font-size:9px;font-weight:700;color:var(--c3fcb78)">Free</div><div style="font-size:6px;color:var(--c8a94a6);margin-top:1px">No obligation</div></div>
-</div><div style="background:var(--c2a2212);border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:7px;border:1px solid var(--c6e5526)">
-  <span style="font-size:16px;flex-shrink:0">🔔</span>
-  <div style="flex:1"><div style="font-size:8px;font-weight:500;color:var(--ce6b85c)" onclick="nav('dealer-quotes')">Notify me when quotes arrive</div></div>
-  <div style="background:#dca13c;border-radius:6px;padding:3px 8px;cursor:pointer;flex-shrink:0"><span style="font-size:7.5px;font-weight:500;color:var(--ce8edf5)">Enable</span></div>
+<!-- Notify banner — slimmed to a single tappable row -->
+<div style="background:var(--c2a2212);border-radius:8px;padding:6px 10px;display:flex;align-items:center;gap:7px;border:1px solid var(--c6e5526);margin-bottom:9px;cursor:pointer" onclick="nav('dealer-quotes')">
+  <span style="font-size:14px;flex-shrink:0">🔔</span>
+  <div style="flex:1;font-size:8px;font-weight:500;color:var(--ce6b85c)">Notify me when quotes arrive</div>
+  <span style="font-size:7.5px;font-weight:700;color:var(--ce6b85c)">Enable</span>
 </div>
-<div style="margin-top:8px">
-  <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px">
-    <div style="width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#2e6bff,#1e4fcc);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🤖</div>
+<!-- AI Repair Recommendation — header, analysis and DIY guides in one card -->
+<div style="background:var(--c121a2b);border:0.5px solid var(--c1f2940);border-radius:11px;padding:10px">
+  <div style="display:flex;align-items:center;gap:5px;margin-bottom:7px">
+    <div style="width:20px;height:20px;border-radius:6px;background:#2e6bff;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0">🤖</div>
     <span style="font-size:8px;font-weight:700;flex:1">AI Repair Recommendation</span>
     <span style="font-size:6.5px;background:var(--c15233e);color:var(--c6fa0ff);padding:2px 7px;border-radius:20px;font-weight:600;border:0.5px solid var(--c2b4a86)">Pro</span>
   </div>
-  <div style="background:var(--c15233e);border-radius:8px;padding:7px 9px;margin-bottom:5px;border:0.5px solid var(--c2b4a86)">
-    <div style="font-size:6.5px;color:var(--c6fa0ff);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">AI analysis result</div>
-    <div style="font-size:9px;font-weight:700;color:var(--c6fa0ff);margin-bottom:2px">Rear bumper dent — DIY feasible ✔</div>
-    <div style="display:flex;align-items:center;gap:5px"><span style="font-size:7px;color:var(--c8a94a6)">Shallow dent · Paint intact · </span><span style="font-size:7px;background:var(--c11271c);color:var(--c3fcb78);padding:1px 5px;border-radius:20px;font-weight:500">87% confidence</span></div>
+  <div style="background:var(--c15233e);border-radius:8px;padding:7px 9px;margin-bottom:8px">
+    <div style="font-size:9px;font-weight:700;color:var(--c6fa0ff);margin-bottom:3px">Rear bumper dent — DIY feasible ✔</div>
+    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap"><span style="font-size:7px;color:var(--c8a94a6)">Paint intact · Est. $320–$345 · </span><span style="font-size:7px;background:var(--c11271c);color:var(--c3fcb78);padding:1px 5px;border-radius:20px;font-weight:500">87% confidence</span></div>
   </div>
   <div style="position:relative">
     <div style="filter:blur(2px);opacity:.45;pointer-events:none">
-      <div style="background:var(--c121a2b);border-radius:8px;border:0.5px solid var(--c1f2940);padding:7px 9px;margin-bottom:4px">
+      <div style="background:var(--c0a0f19);border-radius:8px;border:0.5px solid var(--c1f2940);padding:7px 9px;margin-bottom:4px">
         <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><span style="background:#16a34a;color:#fff;font-size:6px;font-weight:700;padding:1px 6px;border-radius:4px">EASY</span><span style="font-size:8.5px;font-weight:600;flex:1">Boiling water dent method</span></div>
         <div style="font-size:7px;color:var(--c8a94a6);margin-bottom:3px">3 steps · ~8 min · No tools needed</div>
         <div style="font-size:7.5px;color:var(--c6fa0ff);font-weight:500">Read guide →</div>
       </div>
-      <div style="background:var(--c121a2b);border-radius:8px;border:0.5px solid var(--c1f2940);padding:7px 9px">
+      <div style="background:var(--c0a0f19);border-radius:8px;border:0.5px solid var(--c1f2940);padding:7px 9px">
         <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px"><span style="background:#dca13c;color:var(--ce8edf5);font-size:6px;font-weight:700;padding:1px 6px;border-radius:4px">MED</span><span style="font-size:8.5px;font-weight:600;flex:1">Plunger pull method</span></div>
         <div style="font-size:7px;color:var(--c8a94a6);margin-bottom:3px">4 steps · ~12 min · Plunger required</div>
         <div style="font-size:7.5px;color:var(--c6fa0ff);font-weight:500">Read guide →</div>
       </div>
     </div>
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(248,247,244,.75);border-radius:9px;border:1.5px dashed var(--c2b4a86)">
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,15,25,.78);border-radius:9px;border:1.5px dashed var(--c2b4a86)">
       <span style="font-size:18px;margin-bottom:3px">🔒</span>
       <div style="font-size:8px;font-weight:700;color:var(--ce8edf5);margin-bottom:2px">Pro feature</div>
       <div style="font-size:7px;color:var(--c8a94a6);text-align:center;margin-bottom:7px;padding:0 12px;line-height:1.5">Unlock AI-matched DIY guides based on your damage photos</div>
@@ -638,13 +635,13 @@ window.pickPart = function(el, name){
   <span style="font-size:7.5px;font-weight:700;background:#16a34a;color:#fff;padding:3px 9px;border-radius:20px">Claim</span>
 </div>
 <!-- Primary action (largest) -->
-<div style="background:linear-gradient(135deg,#2e6bff,#1e4fcc);border-radius:16px;padding:24px 18px;margin-bottom:11px;cursor:pointer;position:relative;overflow:hidden;min-height:120px" onclick="nav('car-diagram')">
+<div style="background:linear-gradient(135deg,#7F77DD,#5b51c4);border-radius:16px;padding:24px 18px;margin-bottom:11px;cursor:pointer;position:relative;overflow:hidden;min-height:120px" onclick="nav('car-diagram')">
   <div style="font-size:23px;font-weight:800;color:#fff;margin-bottom:6px">Get an AI Repair Estimate</div>
   <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">Free quote in under 5 minutes</div>
   <div style="position:absolute;right:-6px;bottom:-30px;font-size:118px;opacity:.16">🚗</div>
 </div>
 <!-- Two smaller actions; Compare populates once an AI estimate exists -->
-<div style="display:flex;gap:9px;margin-bottom:13px">
+<div style="display:flex;gap:9px;margin-bottom:26px">
   <div style="flex:1;background:var(--c11271c);border:1px solid var(--c1f7a45);border-radius:16px;padding:16px 14px;cursor:pointer;position:relative;overflow:hidden;min-height:96px" onclick="nav('maint-dashboard')">
     <div style="font-size:16px;font-weight:800;color:var(--c3fcb78);margin-bottom:4px">Maintenance</div>
     <div style="font-size:11px;font-weight:600;color:var(--c3fcb78)">Book service fast</div>
@@ -1640,7 +1637,7 @@ window.pickPart = function(el, name){
 <div style="background:linear-gradient(135deg,#0e1420,#1a2230);border:1px solid var(--c244067);border-radius:11px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="nav('pro-subscribe')"><div style="font-size:22px">⭐</div><div style="flex:1"><div style="font-size:9.5px;font-weight:800;color:#fff">Go Pro — skip deposits + DIY guides</div><div style="font-size:7px;color:rgba(255,255,255,.62)">No security deposits · all DIY guides · priority quotes · from $4/mo</div></div><div style="background:#dca13c;border-radius:7px;padding:6px 11px;flex-shrink:0"><span style="font-size:8px;font-weight:800;color:#0e1420">Get Pro</span></div></div>
 <div style="font-size:7.5px;font-weight:600;color:var(--c8a94a6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Account details</div>
 <div style="display:flex;align-items:center;gap:6px;background:var(--c121a2b);border-radius:8px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:0.5px solid var(--c1f2940)" onclick="nav('prof-cars')"><div style="width:20px;height:20px;border-radius:5px;flex-shrink:0;background:var(--c15233e);display:flex;align-items:center;justify-content:center;font-size:11px">🚗</div><div style="flex:1"><div style="font-size:9px;font-weight:500">My cars</div><div style="color:var(--c9aa6b8);font-size:7.5px">2019 Honda Accord EX-L</div></div><span style="font-size:12px;color:var(--c8a94a6)">›</span></div>
-<div style="display:flex;align-items:center;gap:6px;background:var(--c121a2b);border-radius:8px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:0.5px solid var(--c1f2940)" onclick="nav('prof-insurance')"><div style="width:20px;height:20px;border-radius:5px;flex-shrink:0;background:var(--c2a1517);display:flex;align-items:center;justify-content:center;font-size:11px">🛡️</div><div style="flex:1"><div style="font-size:9px;font-weight:500">Insurance policy</div><div style="color:var(--c9aa6b8);font-size:7.5px">State Farm · $500 deductible</div></div><span style="font-size:7px;background:var(--c2a2212);color:var(--ce6b85c);padding:1px 5px;border-radius:20px;border:0.5px solid var(--c6e5526);margin-right:4px">Check</span><span style="font-size:12px;color:var(--c8a94a6)">›</span></div>
+<div style="display:flex;align-items:center;gap:6px;background:var(--c121a2b);border-radius:8px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:0.5px solid var(--c1f2940)" onclick="nav('prof-insurance')"><div style="width:20px;height:20px;border-radius:5px;flex-shrink:0;background:var(--c2a1517);display:flex;align-items:center;justify-content:center;font-size:11px">🛡️</div><div style="flex:1"><div style="font-size:9px;font-weight:500">Insurance policy</div><div style="color:var(--c9aa6b8);font-size:7.5px">State Farm · $500 deductible</div></div><span style="font-size:12px;color:var(--c8a94a6)">›</span></div>
 <div style="display:flex;align-items:center;gap:6px;background:var(--c121a2b);border-radius:8px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:0.5px solid var(--c1f2940)" onclick="nav('prof-payment')"><div style="width:20px;height:20px;border-radius:5px;flex-shrink:0;background:var(--c15233e);display:flex;align-items:center;justify-content:center;font-size:11px">💳</div><div style="flex:1"><div style="font-size:9px;font-weight:500">Payment method</div><div style="color:var(--c9aa6b8);font-size:7.5px">Visa ••••4242</div></div><span style="font-size:12px;color:var(--c8a94a6)">›</span></div><div style="display:flex;align-items:center;gap:6px;background:var(--c121a2b);border-radius:8px;padding:7px 9px;margin-bottom:5px;cursor:pointer;border:0.5px solid var(--c1f2940)" onclick="nav('prof-settings')"><div style="width:20px;height:20px;border-radius:5px;flex-shrink:0;background:var(--c1a2333);display:flex;align-items:center;justify-content:center;font-size:11px">⚙️</div><div style="flex:1"><div style="font-size:9px;font-weight:500">Settings</div><div style="color:var(--c9aa6b8);font-size:7.5px">Notifications · Privacy · Account</div></div><span style="font-size:12px;color:var(--c8a94a6)">›</span></div>
 </div><div id="s-prof-miles" class="screen" data-tab="profile" style="display:none">
 <div style="display:flex;align-items:center;gap:5px;margin-bottom:6px"><span style="font-size:16px;color:var(--ce8edf5);cursor:pointer" data-back="1">←</span><span style="font-size:10.5px;font-weight:600;flex:1">Reward milestones</span></div>

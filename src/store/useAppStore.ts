@@ -7,7 +7,7 @@ import {
 } from '../lib/bookings';
 import { recordPoints } from '../lib/points';
 import { signOutSupabase } from '../lib/supabaseAuth';
-import { AiEstimateSummary, BOOKABLE_SERVICES, MAINT_CATEGORIES } from '../services/mock/data';
+import { AiEstimateSummary, BOOKABLE_SERVICES, defaultBookingISO, MAINT_CATEGORIES } from '../services/mock/data';
 
 /** A service row in the multi-service booking cart (maint-schedule-book). */
 export interface CartService {
@@ -54,13 +54,13 @@ export const cartTotals = (cart: BookingCart) => {
 export const discountedPrice = (price: number, pct?: number): number =>
   pct ? Math.round(price * (1 - pct / 100)) : price;
 
-/** Wireframe defaults when a booking opens: oil change · Apr 7 · 8:00 AM. */
+/** Defaults when a booking opens: oil change · tomorrow · 8:00 AM. */
 const defaultCart = (dealerId: string): BookingCart => {
   const oil = BOOKABLE_SERVICES[0];
   return {
     dealerId,
     services: [{ id: oil.id, name: oil.name, price: oil.price, durationMin: oil.durationMin }],
-    date: '2027-04-07',
+    date: defaultBookingISO(),
     time: '8:00 AM',
   };
 };
@@ -554,7 +554,7 @@ export const useAppStore = create<AppState>((set) => ({
         durationMin: sub.durationMin,
       });
     }
-    set({ cart: { dealerId, services, date: '2027-04-07', time: '8:00 AM', promo } });
+    set({ cart: { dealerId, services, date: defaultBookingISO(), time: '8:00 AM', promo } });
   },
   toggleCartService: (service) =>
     set((s) => {
