@@ -78,11 +78,20 @@ export function ProfCarAddScreen() {
   const [vin, setVin] = useState('');
   const [odometer, setOdometer] = useState('');
   const [oilSpec, setOilSpec] = useState('');
+  const [lastService, setLastService] = useState('');
 
   const modelOptions = brand ? MODELS_BY_BRAND[brand] ?? GENERIC_MODELS : [];
 
   const name = [year, brand, model, trim].map((s) => s.trim()).filter(Boolean).join(' ');
-  const canSave = brand.trim().length > 0 && model.trim().length > 0;
+  // Everything except Oil spec (and Last service) is required to register a car.
+  const canSave =
+    year.trim().length > 0 &&
+    brand.trim().length > 0 &&
+    model.trim().length > 0 &&
+    trim.trim().length > 0 &&
+    color.trim().length > 0 &&
+    vin.trim().length > 0 &&
+    odometer.trim().length > 0;
 
   const addMutation = useMutation({
     mutationFn: () =>
@@ -92,6 +101,7 @@ export function ProfCarAddScreen() {
         vin: vin.trim() || undefined,
         odometerMi: Number(odometer || 0),
         oilSpec: oilSpec.trim() || undefined,
+        lastService: lastService.trim() || undefined,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
@@ -156,13 +166,16 @@ export function ProfCarAddScreen() {
 
       {mode === 'manual' || vinScanned ? (
         <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.sm }}>
+            All fields required except Oil spec &amp; Last service.
+          </Text>
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
-              <Dropdown label="Year" value={year} options={YEARS} onChange={setYear} placeholder="2019" />
+              <Dropdown label="Year *" value={year} options={YEARS} onChange={setYear} placeholder="2019" />
             </View>
             <View style={{ flex: 1 }}>
               <Dropdown
-                label="Brand"
+                label="Brand *"
                 value={brand}
                 options={BRANDS}
                 placeholder="Honda"
@@ -176,7 +189,7 @@ export function ProfCarAddScreen() {
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
               <Dropdown
-                label="Model"
+                label="Model *"
                 value={model}
                 options={modelOptions}
                 onChange={setModel}
@@ -185,19 +198,20 @@ export function ProfCarAddScreen() {
               />
             </View>
             <View style={{ flex: 1 }}>
-              <Dropdown label="Trim" value={trim} options={TRIMS} onChange={setTrim} placeholder="EX-L" />
+              <Dropdown label="Trim *" value={trim} options={TRIMS} onChange={setTrim} placeholder="EX-L" />
             </View>
           </View>
-          <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Lunar Silver Metallic" />
-          <TextField label="VIN" value={vin} onChangeText={setVin} placeholder="Enter or scan VIN" autoCapitalize="characters" />
+          <Dropdown label="Color *" value={color} options={COLORS} onChange={setColor} placeholder="Lunar Silver Metallic" />
+          <TextField label="VIN *" value={vin} onChangeText={setVin} placeholder="Enter or scan VIN" autoCapitalize="characters" />
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
-              <TextField label="Odometer (mi)" value={odometer} onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="0" />
+              <TextField label="Odometer (mi) *" value={odometer} onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="0" />
             </View>
             <View style={{ flex: 1 }}>
               <Dropdown label="Oil spec" value={oilSpec} options={OIL_SPECS} onChange={setOilSpec} placeholder="5W-30 Full Synthetic" />
             </View>
           </View>
+          <TextField label="Last service" value={lastService} onChangeText={setLastService} placeholder="Mar 12, 2025" />
         </Card>
       ) : null}
 

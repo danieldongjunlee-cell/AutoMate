@@ -7,11 +7,13 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
 import { dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
-import { Screen } from '../../components/ui';
+import { PrimaryButton } from '../../components/PrimaryButton';
+import { Card, Screen } from '../../components/ui';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompCashIns'>;
@@ -38,6 +40,30 @@ export function CompCashInsScreen() {
   const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;
   const premiumPerYear = comparison?.input.premiumPerYear ?? INSURANCE_POLICY.premiumPerYear;
   const cashRecommended = (comparison?.result.recommendation ?? 'cash') === 'cash';
+
+  // The comparison math needs the policy's deductible AND annual premium. If the
+  // policy is missing either, gate the comparison and point the user to fill them in.
+  const policyIncomplete = !!comparison && (comparison.input.deductible <= 0 || comparison.input.premiumPerYear <= 0);
+  if (policyIncomplete) {
+    return (
+      <Screen>
+        <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, marginBottom: 8 }}>🔒</Text>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
+            Add your deductible & premium
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.md }}>
+            Cash-vs-insurance comparison needs your policy&apos;s deductible and annual premium. Add
+            them to your insurance policy to unlock the comparison.
+          </Text>
+          <PrimaryButton
+            label="Update insurance policy →"
+            onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfInsurance')}
+          />
+        </Card>
+      </Screen>
+    );
+  }
 
   return (
     <Screen>

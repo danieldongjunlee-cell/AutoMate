@@ -168,6 +168,21 @@ export const DEALERS: Dealer[] = [
   },
 ];
 
+/**
+ * Brand-exclusive dealerships only service their own marque; every other shop
+ * is an independent that works on any brand. Used to filter the maintenance
+ * shop list to the user's registered car.
+ */
+export const DEALER_BRANDS: Record<string, string[]> = {
+  'honda-fairfax': ['Honda'],
+};
+
+/** True when a shop can service the given brand (independents service all). */
+export const dealerServicesBrand = (dealerId: string, brand: string): boolean => {
+  const brands = DEALER_BRANDS[dealerId];
+  return !brands || brands.includes(brand);
+};
+
 export interface Quote {
   id: string;
   dealerId: string;
@@ -426,6 +441,8 @@ export interface ServiceRecord {
   mileage: string;
   cost: number;
   icon: string;
+  /** Image URI of the scanned receipt, when this record came from a scan. */
+  receiptUri?: string;
 }
 
 /** Seed history records from the wireframe (maint-history "Past services"). */

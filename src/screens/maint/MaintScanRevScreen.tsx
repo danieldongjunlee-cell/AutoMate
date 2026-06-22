@@ -38,6 +38,7 @@ export function MaintScanRevScreen() {
   // Fields extracted by the scan service (mock OCR or damage-ai /receipt);
   // the constant covers deep links that skip the scan step.
   const receipt = route.params?.receipt ?? SCANNED_RECEIPT;
+  const receiptUri = route.params?.receiptUri;
 
   const onSave = async () => {
     setSaving(true);
@@ -51,6 +52,8 @@ export function MaintScanRevScreen() {
         year: Number(receipt.date.match(/\d{4}/)?.[0] ?? new Date().getFullYear()),
         mileage: receipt.mileage,
         cost: Number(receipt.amount.replace(/[^0-9.]/g, '')) || 0,
+        // Keep the scanned receipt image so it shows in the history list.
+        receiptUri,
       },
       'scan',
     );

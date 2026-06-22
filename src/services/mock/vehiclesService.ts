@@ -19,6 +19,7 @@ export interface VehicleInput {
   vin?: string;
   odometerMi?: number;
   oilSpec?: string;
+  lastService?: string;
 }
 
 /** Module-state vehicle list seeded with the Accord, so prof-cars CRUD
@@ -62,7 +63,7 @@ export const vehiclesService = {
       vin: input.vin ?? '',
       odometerMi: input.odometerMi ?? 0,
       oilSpec: input.oilSpec ?? '',
-      lastService: '—',
+      lastService: input.lastService?.trim() || '—',
       isPrimary: vehicles.length === 0,
     };
     vehicles = [...vehicles, vehicle];

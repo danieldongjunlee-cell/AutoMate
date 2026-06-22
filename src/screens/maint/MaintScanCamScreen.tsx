@@ -79,7 +79,8 @@ export function MaintScanCamScreen() {
       // Mock: canonical receipt after a delay. API: POST /maintenance/scan,
       // which forwards to the damage-ai /receipt OCR endpoint.
       const receipt = await maintService.scanReceipt();
-      navigation.navigate('MaintScanRev', { receipt });
+      // Carry the real captured/imported receipt image into the saved record.
+      navigation.navigate('MaintScanRev', { receipt, receiptUri: captured?.uri });
     } finally {
       setScanning(false);
     }

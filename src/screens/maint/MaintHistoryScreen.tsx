@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 import Svg, { Circle } from 'react-native-svg';
@@ -55,6 +55,8 @@ export function MaintHistoryScreen() {
   const { colors } = useTheme();
   const [timeFilter, setTimeFilter] = useState(HISTORY_TIME_FILTERS[0]);
   const [typeFilter, setTypeFilter] = useState(HISTORY_TYPE_FILTERS[0]);
+  // Tapped receipt image shown full-size.
+  const [preview, setPreview] = useState<string | null>(null);
   const { data: records, isLoading } = useQuery({
     queryKey: ['service-history'],
     queryFn: maintService.getServiceHistory,
@@ -205,9 +207,46 @@ export function MaintHistoryScreen() {
                 {rec.dateLabel} · {rec.mileage} · ${rec.cost}
               </Text>
             </View>
+            {/* Scanned-receipt thumbnail — tap to view the photo full-size. */}
+            {rec.receiptUri ? (
+              <Tappable
+                onPress={() => setPreview(rec.receiptUri!)}
+                accessibilityLabel="View scanned receipt"
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: radii.sm,
+                  overflow: 'hidden',
+                  borderWidth: StyleSheet.hairlineWidth,
+                  borderColor: colors.border,
+                  backgroundColor: colors.surfaceAlt,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Image source={{ uri: rec.receiptUri }} style={{ width: 36, height: 36 }} resizeMode="cover" />
+                <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(0,0,0,.55)', paddingHorizontal: 2 }}>
+                  <Text style={{ fontSize: 9 }}>🧾</Text>
+                </View>
+              </Tappable>
+            ) : null}
           </View>
         ))
       )}
+
+      {/* Full-size receipt preview */}
+      <Modal visible={!!preview} transparent animationType="fade" onRequestClose={() => setPreview(null)}>
+        <Tappable
+          noFeedback
+          onPress={() => setPreview(null)}
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.85)', alignItems: 'center', justifyContent: 'center', padding: spacing.lg }}
+        >
+          {preview ? (
+            <Image source={{ uri: preview }} style={{ width: '100%', height: '80%', borderRadius: radii.md }} resizeMode="contain" />
+          ) : null}
+          <Text style={{ color: '#fff', fontSize: 13, marginTop: spacing.md }}>Tap anywhere to close</Text>
+        </Tappable>
+      </Modal>
     </Screen>
   );
 }

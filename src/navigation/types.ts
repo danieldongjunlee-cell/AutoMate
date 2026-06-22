@@ -65,7 +65,7 @@ export type MaintStackParamList = {
   MaintDashboard: undefined;
   MaintHistory: undefined;
   MaintScanCam: undefined;
-  MaintScanRev: { receipt?: ScannedReceipt } | undefined;
+  MaintScanRev: { receipt?: ScannedReceipt; receiptUri?: string } | undefined;
   MaintManual: undefined;
   MaintDiy: undefined;
   DiyUnlock: { returnTo?: 'DealerQuotes' | 'MaintDashboard' } | undefined;

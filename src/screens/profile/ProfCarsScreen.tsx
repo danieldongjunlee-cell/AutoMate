@@ -20,7 +20,16 @@ import { confirmAction } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCars'>;
 
-/** Inline edit/add form (modal) — name + odometer, the editable demo fields. */
+interface VehicleFormFields {
+  name: string;
+  colorName: string;
+  vin: string;
+  odometerMi: number;
+  oilSpec: string;
+  lastService: string;
+}
+
+/** Inline edit form (modal) — the same fields captured when registering a car. */
 function VehicleFormModal({
   vehicle,
   visible,
@@ -32,17 +41,25 @@ function VehicleFormModal({
   vehicle: Vehicle | null;
   visible: boolean;
   onClose: () => void;
-  onSave: (fields: { name: string; odometerMi: number }) => void;
+  onSave: (fields: VehicleFormFields) => void;
   saving: boolean;
 }) {
   const [name, setName] = useState('');
+  const [color, setColor] = useState('');
+  const [vin, setVin] = useState('');
   const [odometer, setOdometer] = useState('');
+  const [oilSpec, setOilSpec] = useState('');
+  const [lastService, setLastService] = useState('');
 
   // Re-seed the fields whenever the modal opens for a different vehicle.
   React.useEffect(() => {
     if (visible) {
       setName(vehicle?.name ?? '');
+      setColor(vehicle?.colorName ?? '');
+      setVin(vehicle?.vin ?? '');
       setOdometer(vehicle ? String(vehicle.odometerMi) : '');
+      setOilSpec(vehicle?.oilSpec ?? '');
+      setLastService(vehicle?.lastService && vehicle.lastService !== '—' ? vehicle.lastService : '');
     }
   }, [visible, vehicle]);
 
@@ -61,12 +78,27 @@ function VehicleFormModal({
         onChangeText={setName}
         placeholder="2019 Honda Accord EX-L"
       />
+      <TextField label="Color" value={color} onChangeText={setColor} placeholder="Lunar Silver Metallic" />
+      <TextField
+        label="VIN"
+        value={vin}
+        onChangeText={setVin}
+        placeholder="1HGCV1F34KA01234"
+        autoCapitalize="characters"
+      />
       <TextField
         label="Odometer (mi)"
         value={odometer}
         onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))}
         keyboardType="number-pad"
         placeholder="47230"
+      />
+      <TextField label="Oil spec" value={oilSpec} onChangeText={setOilSpec} placeholder="5W-30 Full Synthetic" />
+      <TextField
+        label="Last service"
+        value={lastService}
+        onChangeText={setLastService}
+        placeholder="Mar 12, 2025"
         containerStyle={{ marginBottom: spacing.lg }}
       />
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
@@ -75,7 +107,16 @@ function VehicleFormModal({
           label={vehicle ? 'Save' : 'Add car'}
           disabled={!canSave}
           loading={saving}
-          onPress={() => onSave({ name: name.trim(), odometerMi: Number(odometer || 0) })}
+          onPress={() =>
+            onSave({
+              name: name.trim(),
+              colorName: color.trim(),
+              vin: vin.trim(),
+              odometerMi: Number(odometer || 0),
+              oilSpec: oilSpec.trim(),
+              lastService: lastService.trim(),
+            })
+          }
           style={{ flex: 1 }}
         />
       </View>
@@ -110,7 +151,7 @@ export function ProfCarsScreen() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['vehicles'] });
 
   const saveMutation = useMutation({
-    mutationFn: async (fields: { name: string; odometerMi: number }) => {
+    mutationFn: async (fields: VehicleFormFields) => {
       if (editing) return vehiclesService.updateVehicle(editing.id, fields);
       return vehiclesService.addVehicle(fields);
     },

@@ -10,7 +10,7 @@ import { Dropdown } from '../../components/Dropdown';
 import { Card, Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
-import { insuranceService, pointsService } from '../../services';
+import { insuranceService, pointsService, vehiclesService } from '../../services';
 import { VEHICLE } from '../../services/mock/data';
 import { radii, spacing, useTheme } from '../../theme';
 
@@ -294,14 +294,23 @@ export function ProfInsAddScreen() {
   const navigation = useNavigation<Nav>();
   const queryClient = useQueryClient();
   const { colors } = useTheme();
-  const { active } = useActiveVehicle();
-  const coveredCar = active?.name ?? VEHICLE.name;
+
+  // Covered-vehicle options come from the user's registered cars. With more than
+  // one car we never auto-pick — the user filters/chooses from the list.
+  const { data: vehicles } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });
+  const carOptions = (vehicles ?? []).map((v) => v.name);
 
   const [carrier, setCarrier] = useState('');
   const [policyNumber, setPolicyNumber] = useState('');
   const [deductible, setDeductible] = useState('');
   const [premium, setPremium] = useState('');
   const [covers, setCovers] = useState('');
+
+  // Only auto-select when there's exactly one registered car.
+  useEffect(() => {
+    if (!covers && carOptions.length === 1) setCovers(carOptions[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [carOptions.length]);
   // Carried from the card scan; manual entries keep the wireframe defaults.
   const [coverage, setCoverage] = useState('Comprehensive + Collision');
   const [renewal, setRenewal] = useState('');
@@ -346,8 +355,9 @@ export function ProfInsAddScreen() {
   /** "Add policy" persists via the service, then back (list auto-refreshes). */
   const addPolicy = async () => {
     if (saving) return;
-    if (!carrier || !policyNumber) {
-      setError('Pick a provider and enter a policy number first.');
+    // Everything except deductible & premium is required.
+    if (!carrier || !policyNumber || !covers || !renewal) {
+      setError('Provider, policy number, covered vehicle and renewal date are required.');
       return;
     }
     setSaving(true);
@@ -357,9 +367,11 @@ export function ProfInsAddScreen() {
         carrier,
         coverage,
         policyNumber,
-        deductible: parseMoney(deductible) ?? 500,
+        // Left at 0 when not entered — the cash-vs-insurance comparison stays
+        // locked until the user fills these in (on prof-ins-edit).
+        deductible: parseMoney(deductible) ?? 0,
         premiumPerYear: parseMoney(premium) ?? 0,
-        covers: covers || coveredCar,
+        covers,
         renewal,
       });
       // "Add insurance policy" earn rule (+100 pts — s-prof-earn).
@@ -378,28 +390,37 @@ export function ProfInsAddScreen() {
       {/* Manual form */}
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <View style={fieldRowStyle(colors.divider)}>
-          <Dropdown label="Provider" value={carrier} options={CARRIERS} onChange={setCarrier} placeholder="Select your insurer" />
+          <Dropdown label="Provider *" value={carrier} options={CARRIERS} onChange={setCarrier} placeholder="Select your insurer" />
         </View>
         <View style={fieldRowStyle(colors.divider)}>
           <FormField
-            label="Policy number"
+            label="Policy number *"
             value={policyNumber}
             onChangeText={setPolicyNumber}
             placeholder="Enter policy number"
           />
+        </View>
+        <View style={fieldRowStyle(colors.divider)}>
+          <Dropdown
+            label="Covered vehicle *"
+            value={covers}
+            options={carOptions}
+            onChange={setCovers}
+            placeholder={carOptions.length ? 'Select your car' : 'Add a car first'}
+          />
+        </View>
+        <View style={fieldRowStyle(colors.divider)}>
+          <FormField label="Renewal date *" value={renewal} onChangeText={setRenewal} placeholder="Aug 15, 2027" trailing="📅" />
         </View>
         <View style={{ ...fieldRowStyle(colors.divider), flexDirection: 'row', gap: spacing.lg }}>
           <FormField label="Deductible" value={deductible} onChangeText={setDeductible} placeholder="$" keyboardType="numeric" />
           <FormField label="Premium /yr" value={premium} onChangeText={setPremium} placeholder="$" keyboardType="numeric" />
         </View>
         <View style={{ padding: spacing.md }}>
-          <FormField
-            label="Covered vehicle"
-            value={covers || coveredCar}
-            placeholder="Select vehicle..."
-            picker
-            onPress={() => setCovers(coveredCar)}
-          />
+          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+            Deductible &amp; premium are optional, but cash-vs-insurance comparison stays locked until
+            you add them.
+          </Text>
         </View>
       </Card>
 

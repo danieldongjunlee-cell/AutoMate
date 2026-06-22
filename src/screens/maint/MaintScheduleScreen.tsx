@@ -8,10 +8,12 @@ import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { FilterChips } from '../../components/FilterChips';
 import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { MaintStackParamList } from '../../navigation/types';
 import {
   DEALER_SERVICE_CHIPS,
   DEALERS,
+  dealerServicesBrand,
   DISTANCE_CAP,
   SCHEDULE_SERVICE_FILTERS,
   SERVICE_FILTER_KEY,
@@ -30,6 +32,7 @@ export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
+  const { brand } = useActiveVehicle();
   const [filter, setFilter] = useState(SCHEDULE_SERVICE_FILTERS[0]);
   const [radius, setRadius] = useState('Within 30 mi');
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -46,6 +49,9 @@ export function MaintScheduleScreen() {
     const chips = DEALER_SERVICE_CHIPS[d.id];
     if (!chips) return false;
     if (d.distanceMi > cap) return false;
+    // Only shops that service the user's registered brand (brand-exclusive
+    // dealerships for other makes are filtered out; independents always show).
+    if (!dealerServicesBrand(d.id, brand)) return false;
     if (filter === 'All') return true;
     const key = SERVICE_FILTER_KEY[filter] ?? filter;
     return chips.some((c) => c.startsWith(key));
@@ -55,7 +61,7 @@ export function MaintScheduleScreen() {
     id: d.id,
     lat: d.lat,
     lng: d.lng,
-    label: `${d.distanceMi} mi`,
+    label: d.name,
     color: d.id === selectedId ? palette.primaryDark : palette.primary,
     selected: d.id === selectedId,
   }));
@@ -70,6 +76,25 @@ export function MaintScheduleScreen() {
   return (
     <Screen scrollRef={scrollRef}>
       <FilterChips options={SCHEDULE_SERVICE_FILTERS} selected={filter} onSelect={setFilter} />
+
+      {/* Shops are scoped to the user's registered car brand. */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          backgroundColor: colors.primarySurface,
+          borderRadius: radii.sm,
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+          marginTop: spacing.sm,
+        }}
+      >
+        <Text style={{ fontSize: 14 }}>🔧</Text>
+        <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDeep }}>
+          Showing shops that service your <Text style={{ fontWeight: '800' }}>{brand}</Text>.
+        </Text>
+      </View>
       <View
         style={{
           marginTop: spacing.xs,
