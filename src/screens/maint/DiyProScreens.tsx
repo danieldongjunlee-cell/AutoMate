@@ -30,7 +30,7 @@ export function ProBadge() {
         alignSelf: 'flex-end',
       }}
     >
-      <Text style={{ fontSize: 11, fontWeight: '800', color: palette.dark }}>PRO</Text>
+      <Text style={{ fontSize: 12, fontWeight: '800', color: palette.dark }}>PRO</Text>
     </LinearGradient>
   );
 }
@@ -64,15 +64,15 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
           {guide.title}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{guide.sub}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{guide.sub}</Text>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
-        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark }}>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>
           {guide.time}
         </Text>
         <Text
           style={{
-            fontSize: 11,
+            fontSize: 12,
             color: guide.difficulty === 'Easy' ? colors.successDark : palette.warningMid,
           }}
         >
@@ -107,18 +107,18 @@ export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () =
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
           {guide.title}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
           {guide.steps.length} steps · {guide.tools.length} tool
           {guide.tools.length === 1 ? '' : 's'}
         </Text>
       </View>
       <View style={{ alignItems: 'flex-end' }}>
-        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark }}>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>
           {guide.minutes} min
         </Text>
         <Text
           style={{
-            fontSize: 11,
+            fontSize: 12,
             color: guide.difficulty === 'Easy' ? colors.successDark : palette.warningMid,
           }}
         >
@@ -135,7 +135,7 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
   return (
     <FormSheet visible onClose={onClose} title={`${guide.emoji}  ${guide.title}`}>
       <ScrollView style={{ maxHeight: 460 }} showsVerticalScrollIndicator={false}>
-        <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.md }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
           {guide.minutes} min · {guide.difficulty} · {guide.steps.length} steps
         </Text>
 
@@ -146,8 +146,8 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
               key={t}
               style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: 4, alignItems: 'flex-start' }}
             >
-              <Text style={{ fontSize: 13, color: colors.primaryDark }}>•</Text>
-              <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 19 }}>
+              <Text style={{ fontSize: 14, color: colors.primaryDark }}>•</Text>
+              <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary, lineHeight: 19 }}>
                 {t}
               </Text>
             </View>
@@ -172,7 +172,7 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
                   marginTop: 1,
                 }}
               >
-                <Text style={{ fontSize: 11, fontWeight: '800', color: colors.primaryDark }}>
+                <Text style={{ fontSize: 12, fontWeight: '800', color: colors.primaryDark }}>
                   {i + 1}
                 </Text>
               </View>
@@ -194,7 +194,7 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
               marginTop: spacing.xs,
             }}
           >
-            <Text style={{ fontSize: 13, color: colors.primaryDeep, lineHeight: 19 }}>
+            <Text style={{ fontSize: 14, color: colors.primaryDeep, lineHeight: 19 }}>
               💡 {guide.tip}
             </Text>
           </View>
@@ -257,7 +257,7 @@ export function DiyMatchScreen() {
         <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff', marginBottom: 3 }}>
           Your damage photos, auto-matched
         </Text>
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.55)', textAlign: 'center' }}>
+        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.55)', textAlign: 'center' }}>
           We scan every repair request and suggest a DIY option when one exists
         </Text>
       </View>
@@ -279,7 +279,7 @@ export function DiyMatchScreen() {
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
               Rear bumper dent → Guide #1
             </Text>
-            <Text style={{ fontSize: 12, color: colors.successDark }}>
+            <Text style={{ fontSize: 13, color: colors.successDark }}>
               94% match · DIY could save you ~$260
             </Text>
           </View>
@@ -296,7 +296,7 @@ export function DiyMatchScreen() {
               opacity: pressed ? 0.8 : 1,
             })}
           >
-            <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>Open guide</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Open guide</Text>
           </Tappable>
           <Tappable
             onPress={() => navigateCrossTab(navigation, 'HomeTab', 'DealerQuotes')}
@@ -311,7 +311,7 @@ export function DiyMatchScreen() {
               opacity: pressed ? 0.7 : 1,
             })}
           >
-            <Text style={{ fontSize: 13, color: colors.textSecondary }}>Compare to quotes</Text>
+            <Text style={{ fontSize: 14, color: colors.textSecondary }}>Compare to quotes</Text>
           </Tappable>
         </View>
       </View>
@@ -323,7 +323,7 @@ export function DiyMatchScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textTertiary }}>
               L. Fender scratch → Guide #3
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>
+            <Text style={{ fontSize: 13, color: colors.textPlaceholder }}>
               81% match · surface-level, good DIY candidate
             </Text>
           </View>
@@ -351,7 +351,7 @@ export function DiyToolsScreen() {
       <View style={{ marginBottom: spacing.sm }}>
         <ProBadge />
       </View>
-      <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+      <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.md }}>
         For: <Text style={{ fontWeight: '700', color: colors.primaryDark }}>Bumper dent removal</Text>{' '}
         (your matched guide)
       </Text>
@@ -373,7 +373,7 @@ export function DiyToolsScreen() {
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {t.title}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>{t.sub}</Text>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{t.sub}</Text>
             </View>
             <Text style={{ fontSize: 15, color: colors.success }}>✔</Text>
           </View>
@@ -396,7 +396,7 @@ export function DiyToolsScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDeep }}>
             Total tools: ~$42
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>
             vs. $285–480 shop quotes → save up to $438
           </Text>
         </View>
@@ -431,7 +431,7 @@ export function DiyFutureScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 13, color: colors.primaryDark, lineHeight: 19 }}>
+        <Text style={{ fontSize: 14, color: colors.primaryDark, lineHeight: 19 }}>
           ♾️ New guides ship monthly — all included in your AutoMate Pro membership. Vote below for
           what we build next!
         </Text>
@@ -454,7 +454,7 @@ export function DiyFutureScreen() {
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {g.title}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>{g.sub}</Text>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{g.sub}</Text>
             </View>
             <Tappable
               onPress={() => setVoted((v) => ({ ...v, [g.id]: !v[g.id] }))}
@@ -471,14 +471,14 @@ export function DiyFutureScreen() {
             >
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: '700',
                   color: on ? colors.onPrimary : colors.primaryDark,
                 }}
               >
                 ▲ {g.votes + (on ? 1 : 0)}
               </Text>
-              <Text style={{ fontSize: 10, color: on ? colors.onPrimary : colors.textTertiary }}>
+              <Text style={{ fontSize: 11, color: on ? colors.onPrimary : colors.textTertiary }}>
                 votes
               </Text>
             </Tappable>

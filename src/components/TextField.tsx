@@ -56,7 +56,7 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
         />
         {secure ? (
           <Tappable onPress={() => setHidden((h) => !h)} hitSlop={8}>
-            <Text style={{ color: palette.authAction, fontSize: 13, fontWeight: '500' }}>
+            <Text style={{ color: palette.authAction, fontSize: 14, fontWeight: '500' }}>
               {hidden ? 'Show' : 'Hide'}
             </Text>
           </Tappable>

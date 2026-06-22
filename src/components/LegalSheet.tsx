@@ -25,7 +25,7 @@ export function LegalSheet({ kind, onClose }: { kind: LegalKind; onClose: () => 
             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
               {s.heading}
             </Text>
-            <Text style={{ fontSize: 13, lineHeight: 20, color: colors.textSecondary }}>{s.body}</Text>
+            <Text style={{ fontSize: 14, lineHeight: 20, color: colors.textSecondary }}>{s.body}</Text>
           </View>
         ))}
       </ScrollView>

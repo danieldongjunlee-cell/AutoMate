@@ -56,7 +56,7 @@ export function SummaryCell({
     <View style={{ width: '50%', paddingVertical: spacing.xs }}>
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600',
           color: colors.textTertiary,
           textTransform: 'uppercase',
@@ -67,7 +67,7 @@ export function SummaryCell({
       </Text>
       <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
       {sub ? (
-        <Text style={{ fontSize: 12, color: subColor ?? colors.textTertiary }}>{sub}</Text>
+        <Text style={{ fontSize: 13, color: subColor ?? colors.textTertiary }}>{sub}</Text>
       ) : null}
     </View>
   );
@@ -110,10 +110,10 @@ export function ReminderRow() {
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
           Reminder set
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{REMINDER_COPY[pref]}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{REMINDER_COPY[pref]}</Text>
       </View>
       <Tappable onPress={() => setOpen(true)} hitSlop={6}>
-        <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
+        <Text style={{ fontSize: 14, color: colors.primary }}>Edit</Text>
       </Tappable>
 
       {/* Timing picker modal */}
@@ -139,7 +139,7 @@ export function ReminderRow() {
           >
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: '700',
                 letterSpacing: 0.6,
                 textTransform: 'uppercase',
@@ -181,7 +181,7 @@ export function ReminderRow() {
                     >
                       {option}
                     </Text>
-                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                    <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                       {REMINDER_COPY[option]}
                     </Text>
                   </View>

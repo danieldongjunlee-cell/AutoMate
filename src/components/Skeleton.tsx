@@ -202,7 +202,7 @@ export function ProcessingOverlay({ visible, label }: { visible: boolean; label?
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
             {label ?? 'Processing…'}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Don't close the app</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>Don't close the app</Text>
         </View>
       </View>
     </Modal>

@@ -83,11 +83,11 @@ export function ProSubscribeScreen() {
             justifyContent: 'center',
           }}
         >
-          {active && <Text style={{ color: '#fff', fontSize: 10 }}>✓</Text>}
+          {active && <Text style={{ color: '#fff', fontSize: 11 }}>✓</Text>}
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
         </View>
         {badge && <Badge label={badge} variant="success" />}
       </Tappable>
@@ -102,7 +102,7 @@ export function ProSubscribeScreen() {
       >
         <Text style={{ fontSize: 26 }}>⭐</Text>
         <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>
+        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
           Skip every security deposit — and more.
         </Text>
       </LinearGradient>
@@ -111,7 +111,7 @@ export function ProSubscribeScreen() {
         {BENEFITS.map((b) => (
           <View key={b} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 4 }}>
             <Text style={{ color: colors.success, fontWeight: '800' }}>✓</Text>
-            <Text style={{ fontSize: 13, color: colors.textSecondary }}>{b}</Text>
+            <Text style={{ fontSize: 14, color: colors.textSecondary }}>{b}</Text>
           </View>
         ))}
       </Card>
@@ -127,7 +127,7 @@ export function ProSubscribeScreen() {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDark }}>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>
           💚 Just $4 a month — cheaper than one coffee
         </Text>
       </View>
@@ -151,10 +151,10 @@ export function ProSubscribeScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             {cardLabel}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>default</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>default</Text>
         </View>
         <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Change</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>Change</Text>
         </Tappable>
       </Card>
       <PaymentMethodSheet
@@ -173,7 +173,7 @@ export function ProSubscribeScreen() {
         />
       </View>
       <ProcessingOverlay visible={busy} label="Activating Pro…" />
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Cancel anytime · used here to waive your booking deposit.
       </Text>
     </Screen>

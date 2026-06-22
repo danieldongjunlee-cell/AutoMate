@@ -15,12 +15,20 @@ const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 export function CalendarMonth({
   selectedDay,
   onSelectDay,
+  closedWeekdays,
 }: {
   selectedDay: number | null;
   onSelectDay: (day: number) => void;
+  /** Weekday indices (0=Sun) the selected shop is closed — disabled in the grid. */
+  closedWeekdays?: number[];
 }) {
   const { colors } = useTheme();
-  const { label, daysInMonth, firstWeekday, unavailable } = BOOKING_MONTH;
+  const { label, daysInMonth, firstWeekday, unavailable, year, month } = BOOKING_MONTH;
+  const closed = new Set(closedWeekdays ?? []);
+
+  // A day is bookable only if it's not past AND the shop is open that weekday.
+  const isDisabled = (day: number): boolean =>
+    unavailable.includes(day) || closed.has(new Date(year, month - 1, day).getDay());
 
   const cells: (number | null)[] = [
     ...Array.from({ length: firstWeekday }, () => null),
@@ -61,7 +69,7 @@ export function CalendarMonth({
             style={{
               flex: 1,
               textAlign: 'center',
-              fontSize: 12,
+              fontSize: 13,
               fontWeight: '600',
               color: colors.textTertiary,
             }}
@@ -75,7 +83,7 @@ export function CalendarMonth({
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {cells.map((day, i) => {
           if (day === null) return <View key={`b-${i}`} style={{ width: `${100 / 7}%`, height: 40 }} />;
-          const disabled = unavailable.includes(day);
+          const disabled = isDisabled(day);
           const selected = day === selectedDay;
           return (
             <View

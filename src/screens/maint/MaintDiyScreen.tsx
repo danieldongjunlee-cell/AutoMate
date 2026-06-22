@@ -48,7 +48,7 @@ export function MaintDiyScreen() {
           <Text style={{ fontSize: 24 }}>📚</Text>
           <View>
             <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>DIY Repair Guides</Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)' }}>
               {isPro
                 ? '12 expert guides · Pro unlocked'
                 : '12 expert guides · Free samples below · unlock all with AutoMate Pro'}
@@ -61,7 +61,7 @@ export function MaintDiyScreen() {
             const inner = (
               <>
                 <Text style={{ fontSize: 18, fontWeight: '700', color: s.color }}>{s.value}</Text>
-                <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.45)' }}>{s.label}</Text>
+                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>{s.label}</Text>
               </>
             );
             return isPriceChip ? (

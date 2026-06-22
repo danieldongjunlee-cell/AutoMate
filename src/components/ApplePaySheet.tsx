@@ -112,13 +112,13 @@ export function ApplePaySheet({
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '800', color: '#fff' }}>VISA</Text>
+              <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>VISA</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>{cardLabel}</Text>
-              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.55)' }}>{merchant}</Text>
+              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.55)' }}>{merchant}</Text>
             </View>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.4)' }}>›</Text>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }}>›</Text>
           </View>
 
           {/* Total (payment contexts only) */}
@@ -162,7 +162,7 @@ export function ApplePaySheet({
                 <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>
                   Confirm with Side Button
                 </Text>
-                <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
+                <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
                   Double-click to {totalLabel ? 'pay' : 'continue'}
                 </Text>
               </Tappable>

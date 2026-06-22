@@ -74,7 +74,7 @@ export function MaintScheduleConfirmScreen() {
         <SectionLabel>Summary</SectionLabel>
         {promoLabel ? (
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.sm }}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {promoLabel}</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>🎉 {promoLabel}</Text>
           </View>
         ) : null}
         <View
@@ -94,7 +94,7 @@ export function MaintScheduleConfirmScreen() {
               {dealer.name}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                 {dist.format(dealer.distanceMi)} ·{' '}
               </Text>
               <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
@@ -136,7 +136,7 @@ export function MaintScheduleConfirmScreen() {
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
           Add to calendar
         </Text>
       </Tappable>
@@ -144,7 +144,7 @@ export function MaintScheduleConfirmScreen() {
         onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
         style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
       </Tappable>
     </Screen>
   );

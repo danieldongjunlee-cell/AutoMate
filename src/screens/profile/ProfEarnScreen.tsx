@@ -33,7 +33,7 @@ export function ProfEarnScreen() {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>BALANCE</Text>
+        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)' }}>BALANCE</Text>
         <Text style={{ fontSize: 36, fontWeight: '700', color: '#fff' }}>
           {points.toLocaleString()} pts
         </Text>
@@ -51,7 +51,7 @@ export function ProfEarnScreen() {
           }}
           hitSlop={6}
         >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>View history →</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>View history →</Text>
         </Tappable>
       </LinearGradient>
 
@@ -73,7 +73,7 @@ export function ProfEarnScreen() {
             <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
               {action.title}
             </Text>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{action.sub}</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>{action.sub}</Text>
           </View>
           <View
             style={{
@@ -83,7 +83,7 @@ export function ProfEarnScreen() {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 12, color: colors.warningDeep }}>+{action.pts} pts</Text>
+            <Text style={{ fontSize: 13, color: colors.warningDeep }}>+{action.pts} pts</Text>
           </View>
         </View>
       ))}

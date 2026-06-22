@@ -124,7 +124,7 @@ export function MaintScheduleBookScreen() {
             justifyContent: 'center',
           }}
         >
-          {selected ? <Text style={{ color: '#fff', fontSize: 12 }}>✓</Text> : null}
+          {selected ? <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text> : null}
         </View>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -140,11 +140,11 @@ export function MaintScheduleBookScreen() {
               </View>
             ) : null}
           </View>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>~{sub.durationMin} min</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{sub.durationMin} min</Text>
         </View>
         {pct ? (
           <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 11, color: colors.textTertiary, textDecorationLine: 'line-through' }}>${sub.price}</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, textDecorationLine: 'line-through' }}>${sub.price}</Text>
             <Text style={{ fontSize: 14, fontWeight: '800', color: colors.successDeep }}>${now}</Text>
           </View>
         ) : (
@@ -172,10 +172,10 @@ export function MaintScheduleBookScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep, marginBottom: 2 }}>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.successDeep, marginBottom: 2 }}>
             🎉 {cart.promo.label} applied
           </Text>
-          <Text style={{ fontSize: 11, color: colors.successDark }}>
+          <Text style={{ fontSize: 12, color: colors.successDark }}>
             {Object.entries(cart.promo.discounts)
               .map(([cid, pct]) => `${MAINT_CATEGORIES.find((c) => c.id === cid)?.name ?? cid} ${pct}% off`)
               .join(' · ')}
@@ -197,7 +197,7 @@ export function MaintScheduleBookScreen() {
           }}
         >
           <Text style={{ fontSize: 14 }}>ℹ️</Text>
-          <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDeep, lineHeight: 17 }}>
+          <Text style={{ flex: 1, fontSize: 13, color: colors.primaryDeep, lineHeight: 17 }}>
             Some services are pre-selected for your{' '}
             <Text style={{ fontWeight: '800' }}>{active?.name ?? 'car'}</Text> — expand a category to
             review or change them.
@@ -221,14 +221,14 @@ export function MaintScheduleBookScreen() {
               <Text style={{ fontSize: 20 }}>{cat.icon}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{cat.name}</Text>
-                <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                <Text style={{ fontSize: 12, color: colors.textTertiary }}>
                   {cat.blurb}
                   {cat.byVehicleType && recoType ? ` · for your ${recoType}` : ''}
                 </Text>
               </View>
               {selectedCount > 0 ? (
                 <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
-                  <Text style={{ fontSize: 11, fontWeight: '800', color: colors.onPrimary }}>{selectedCount}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: '800', color: colors.onPrimary }}>{selectedCount}</Text>
                 </View>
               ) : null}
               <Text style={{ fontSize: 16, color: colors.textTertiary }}>{open ? '⌃' : '⌄'}</Text>
@@ -251,32 +251,32 @@ export function MaintScheduleBookScreen() {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: count ? spacing.sm : 0 }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: colors.primaryDeep }}>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.primaryDeep }}>
             {count} service{count !== 1 ? 's' : ''} selected
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>~{totalMin} min</Text>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>~{totalMin} min</Text>
         </View>
 
         {cart.services.map((s) => (
           <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 3 }}>
-            <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary }} numberOfLines={1}>
+            <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary }} numberOfLines={1}>
               {s.name}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               {s.originalPrice && s.originalPrice !== s.price ? (
-                <Text style={{ fontSize: 11, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
+                <Text style={{ fontSize: 12, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
                   ${s.originalPrice}
                 </Text>
               ) : null}
-              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>${s.price}</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>${s.price}</Text>
             </View>
           </View>
         ))}
 
         {savings > 0 ? (
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.primaryLight }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>Bundle savings</Text>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>− ${savings}</Text>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>Bundle savings</Text>
+            <Text style={{ fontSize: 14, fontWeight: '800', color: colors.successDeep }}>− ${savings}</Text>
           </View>
         ) : null}
 
@@ -291,7 +291,7 @@ export function MaintScheduleBookScreen() {
             borderTopColor: colors.primaryLight,
           }}
         >
-          <Text style={{ fontSize: 11, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.primaryDark }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.primaryDark }}>
             Total
           </Text>
           <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>

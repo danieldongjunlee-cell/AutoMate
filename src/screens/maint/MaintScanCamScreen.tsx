@@ -97,7 +97,7 @@ export function MaintScanCamScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>📷 Receipt scanner</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>📷 Receipt scanner</Text>
         </View>
         <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
@@ -149,7 +149,7 @@ export function MaintScanCamScreen() {
             />
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 color: '#fff',
                 fontWeight: '600',
                 backgroundColor: 'rgba(0,0,0,.55)',
@@ -223,7 +223,7 @@ export function MaintScanCamScreen() {
         <View style={{ position: 'absolute', bottom: 10, left: 0, right: 0, alignItems: 'center' }}>
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               color: colors.primaryLight,
               backgroundColor: 'rgba(0,0,0,.55)',
               paddingHorizontal: 12,
@@ -251,10 +251,10 @@ export function MaintScanCamScreen() {
       >
         <Text style={{ fontSize: 16 }}>💡</Text>
         <View>
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
             Tips
           </Text>
-          <Text style={{ fontSize: 12, color: colors.warningDeep, opacity: 0.85 }}>
+          <Text style={{ fontSize: 13, color: colors.warningDeep, opacity: 0.85 }}>
             Lay flat · Good lighting · Keep text visible
           </Text>
         </View>

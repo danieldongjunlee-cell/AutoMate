@@ -66,14 +66,14 @@ export function LiveCamera({
     return frame(
       <View style={{ alignItems: 'center', padding: spacing.lg }}>
         <Text style={{ fontSize: 40, marginBottom: 6 }}>📷</Text>
-        <Text style={{ color: 'rgba(255,255,255,.8)', fontSize: 13, textAlign: 'center', marginBottom: spacing.sm }}>
+        <Text style={{ color: 'rgba(255,255,255,.8)', fontSize: 14, textAlign: 'center', marginBottom: spacing.sm }}>
           Allow camera access to take photos
         </Text>
         <Tappable
           onPress={requestPermission}
           style={{ backgroundColor: palette.primary, borderRadius: radii.pill, paddingHorizontal: 18, paddingVertical: 9 }}
         >
-          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>Enable camera</Text>
+          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Enable camera</Text>
         </Tappable>
       </View>,
     );
@@ -104,7 +104,7 @@ export function LiveCamera({
           )}
         </Tappable>
         {shutterLabel ? (
-          <Text style={{ marginTop: 4, fontSize: 11, color: 'rgba(255,255,255,.85)', fontWeight: '600' }}>
+          <Text style={{ marginTop: 4, fontSize: 12, color: 'rgba(255,255,255,.85)', fontWeight: '600' }}>
             {busy ? 'Capturing…' : shutterLabel}
           </Text>
         ) : null}

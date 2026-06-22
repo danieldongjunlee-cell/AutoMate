@@ -1,14 +1,22 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { AvatarCircle, Badge, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { BOOKING_MONTH, dealerById, QUOTES, TIME_SLOTS } from '../../services/mock/data';
+import {
+  BOOKING_MONTH,
+  dealerById,
+  dealerClosedWeekdays,
+  dealerWeeklyHours,
+  QUOTES,
+  TIME_SLOTS,
+  WEEKDAY_NAMES,
+} from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -28,8 +36,21 @@ export function AcceptBookingScreen() {
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
   const priceLabel = quote?.priceHigh ? `$${quote.price}–$${quote.priceHigh}` : `$${quote?.price ?? 330}`;
 
-  // Default the picker to tomorrow (the current booking month).
-  const [day, setDay] = useState<number | null>(BOOKING_MONTH.defaultDay);
+  // The calendar only offers days this shop is actually open.
+  const weeklyHours = dealerWeeklyHours(dealer.id);
+  const closedWeekdays = dealerClosedWeekdays(dealer.id);
+  const todayWeekday = new Date().getDay();
+
+  // Default to the first open, non-past day from tomorrow onward.
+  const firstOpenDay = (() => {
+    const { year, month, daysInMonth, defaultDay, unavailable } = BOOKING_MONTH;
+    for (let d = defaultDay; d <= daysInMonth; d++) {
+      if (!unavailable.includes(d) && !closedWeekdays.includes(new Date(year, month - 1, d).getDay())) return d;
+    }
+    return defaultDay;
+  })();
+
+  const [day, setDay] = useState<number | null>(firstOpenDay);
   const [time, setTime] = useState<string | null>('10:30 AM');
   const [booking, setBooking] = useState(false);
 
@@ -75,20 +96,61 @@ export function AcceptBookingScreen() {
           <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDeep }}>
             {dealer.name}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>
             Rear bumper dent · {quote?.parts ?? 'OEM'} parts · {priceLabel} est.
           </Text>
         </View>
         <Badge label="Accepted" variant="primary" />
       </View>
 
+      {/* Shop hours — full week, sourced from the shop's Google listing. The
+          calendar below only opens days the shop is actually open. */}
+      <SectionLabel>{dealer.name} hours</SectionLabel>
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderRadius: radii.md,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.xs,
+          marginBottom: spacing.xxxl,
+        }}
+      >
+        {WEEKDAY_NAMES.map((name, i) => {
+          const hrs = weeklyHours[i];
+          const isClosed = hrs === 'Closed';
+          const isToday = i === todayWeekday;
+          return (
+            <View
+              key={name}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingVertical: 7,
+                borderBottomWidth: i < WEEKDAY_NAMES.length - 1 ? StyleSheet.hairlineWidth : 0,
+                borderBottomColor: colors.divider,
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: isToday ? '800' : '500', color: isToday ? colors.primary : colors.textSecondary }}>
+                {name}
+                {isToday ? ' · Today' : ''}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: isToday ? '700' : '500', color: isClosed ? colors.danger : colors.textPrimary }}>
+                {hrs}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+
       <SectionLabel>Select date</SectionLabel>
-      <View style={{ marginBottom: spacing.md }}>
-        <CalendarMonth selectedDay={day} onSelectDay={setDay} />
+      <View style={{ marginBottom: spacing.xxxl }}>
+        <CalendarMonth selectedDay={day} onSelectDay={setDay} closedWeekdays={closedWeekdays} />
       </View>
 
       <SectionLabel>{day ? `Select time — ${dateLabel}` : 'Select time'}</SectionLabel>
-      <View style={{ marginBottom: spacing.lg }}>
+      <View style={{ marginBottom: spacing.xxxl }}>
         <TimeSlots slots={TIME_SLOTS} selected={time} onSelect={setTime} />
       </View>
 

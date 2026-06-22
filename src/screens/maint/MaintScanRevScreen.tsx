@@ -101,7 +101,7 @@ export function MaintScanRevScreen() {
           >
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 color: colors.textTertiary,
                 textTransform: 'uppercase',
                 marginBottom: 3,
@@ -117,7 +117,7 @@ export function MaintScanRevScreen() {
                 onPress={() => Alert.alert('Edit field', 'Field editing arrives with real OCR.')}
                 hitSlop={8}
               >
-                <Text style={{ fontSize: 13, color: colors.primary }}>Edit</Text>
+                <Text style={{ fontSize: 14, color: colors.primary }}>Edit</Text>
               </Tappable>
             </View>
           </View>

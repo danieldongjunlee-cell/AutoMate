@@ -37,11 +37,11 @@ export function CarSwitchHeader({ align = 'flex-end' }: { align?: 'flex-end' | '
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 13 }}>🚗</Text>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
+          <Text style={{ fontSize: 14 }}>🚗</Text>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
             {brand}
           </Text>
-          {multi ? <Text style={{ fontSize: 12, color: colors.primary }}>⇅</Text> : null}
+          {multi ? <Text style={{ fontSize: 13, color: colors.primary }}>⇅</Text> : null}
         </Tappable>
       </View>
       <CarSwitcherSheet visible={open} vehicles={vehicles} activeId={active.id} onClose={() => setOpen(false)} />

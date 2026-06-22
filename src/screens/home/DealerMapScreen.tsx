@@ -75,7 +75,7 @@ export function DealerMapScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 11, color: '#555', fontWeight: '600' }}>
+          <Text style={{ fontSize: 12, color: '#555', fontWeight: '600' }}>
             🛣️ {dealer.distanceMi} mi · ~{driveMin} min drive
           </Text>
         </View>
@@ -99,7 +99,7 @@ export function DealerMapScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
               {dealer.name} Service Center
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{dealer.address}</Text>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{dealer.address}</Text>
           </View>
         </View>
         <View
@@ -110,18 +110,18 @@ export function DealerMapScreen() {
             paddingVertical: 6,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>⭐ Rating</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>⭐ Rating</Text>
           <RatingLink
             dealer={dealer}
             label={`${dealer.rating} (${dealer.reviews} reviews)`}
-            style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}
+            style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}
           />
         </View>
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
         >
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>📅 Your appointment</Text>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>📅 Your appointment</Text>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark }}>
             Thu, Apr 12 · 10:30 AM
           </Text>
         </View>

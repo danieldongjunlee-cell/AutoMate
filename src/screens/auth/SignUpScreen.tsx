@@ -124,10 +124,10 @@ export function SignUpScreen() {
       <View style={{ marginBottom: spacing.md, gap: 4 }}>
         {rules.map(({ label, ok }) => (
           <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: ok ? '#5DCFAA' : '#F09595' }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: ok ? '#5DCFAA' : '#F09595' }}>
               {ok ? '✓' : '✗'}
             </Text>
-            <Text style={{ fontSize: 13, color: ok ? '#5DCFAA' : 'rgba(255,255,255,.6)' }}>
+            <Text style={{ fontSize: 14, color: ok ? '#5DCFAA' : 'rgba(255,255,255,.6)' }}>
               {label}
             </Text>
           </View>
@@ -145,7 +145,7 @@ export function SignUpScreen() {
         containerStyle={{ marginBottom: showMismatch ? spacing.xs : spacing.xl }}
       />
       {showMismatch ? (
-        <Text style={{ fontSize: 13, color: '#F09595', marginBottom: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: '#F09595', marginBottom: spacing.lg }}>
           Passwords don't match
         </Text>
       ) : null}
@@ -153,7 +153,7 @@ export function SignUpScreen() {
       {/* ToS / Privacy disclaimer — links open the full document in a sheet. */}
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 13,
           lineHeight: 18,
           color: 'rgba(255,255,255,.55)',
           marginBottom: spacing.md,

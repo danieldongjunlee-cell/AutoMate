@@ -42,7 +42,7 @@ export function FilterChips({
           >
             <Text
               style={{
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: on ? '600' : '400',
                 color: on ? colors.onPrimary : colors.textSecondary,
               }}
@@ -64,7 +64,7 @@ export function PointsBadge({ points, usd = false }: { points: number; usd?: boo
       style={{
         backgroundColor: colors.warningSurface,
         color: colors.warningDeep,
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: '500',
         paddingHorizontal: 10,
         paddingVertical: 3,

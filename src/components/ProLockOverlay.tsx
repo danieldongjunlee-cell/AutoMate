@@ -60,7 +60,7 @@ export function ProLockOverlay({
         </Text>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 13,
             color: onDark ? 'rgba(255,255,255,.5)' : colors.textTertiary,
             textAlign: 'center',
             lineHeight: 17,
@@ -80,7 +80,7 @@ export function ProLockOverlay({
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>{cta}</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>{cta}</Text>
         </Tappable>
       </View>
     </View>
@@ -124,13 +124,13 @@ export function DiyGuideRow({
   const inner = (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
       <View style={{ backgroundColor: levelBg, borderRadius: 4, paddingHorizontal: 8, paddingVertical: 2 }}>
-        <Text style={{ fontSize: 10, fontWeight: '700', color: levelFg }}>{level}</Text>
+        <Text style={{ fontSize: 11, fontWeight: '700', color: levelFg }}>{level}</Text>
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 15, fontWeight: '600', color: onDark ? '#fff' : colors.textPrimary }}>
           {title}
         </Text>
-        <Text style={{ fontSize: 12, color: onDark ? 'rgba(255,255,255,.4)' : colors.textTertiary, marginTop: 2 }}>
+        <Text style={{ fontSize: 13, color: onDark ? 'rgba(255,255,255,.4)' : colors.textTertiary, marginTop: 2 }}>
           {meta}
         </Text>
       </View>
@@ -143,7 +143,7 @@ export function DiyGuideRow({
             paddingVertical: 2,
           }}
         >
-          <Text style={{ fontSize: 10, color: colors.successDeep }}>📄 Free</Text>
+          <Text style={{ fontSize: 11, color: colors.successDeep }}>📄 Free</Text>
         </View>
       ) : null}
       {showLink ? (

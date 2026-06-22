@@ -45,7 +45,7 @@ export function Select({
         {label ? (
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: '700',
               letterSpacing: 0.5,
               textTransform: 'uppercase',
@@ -63,7 +63,7 @@ export function Select({
           >
             {value}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textSecondary, marginLeft: spacing.xs }}>
+          <Text style={{ fontSize: 13, color: colors.textSecondary, marginLeft: spacing.xs }}>
             ▾
           </Text>
         </View>
@@ -92,7 +92,7 @@ export function Select({
             {label ? (
               <Text
                 style={{
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: '700',
                   letterSpacing: 0.6,
                   textTransform: 'uppercase',

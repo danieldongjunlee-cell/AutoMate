@@ -50,13 +50,13 @@ export function NotificationCard({
           <Text style={{ fontSize: 15, fontWeight: n.unread ? '700' : '600', color: tint.title }}>
             {n.title}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>{n.ago}</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>{n.ago}</Text>
         </View>
         {n.unread ? (
           <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: tint.dot }} />
         ) : null}
       </View>
-      <Text style={{ fontSize: 13, color: tint.body, lineHeight: 20 }}>{n.body}</Text>
+      <Text style={{ fontSize: 14, color: tint.body, lineHeight: 20 }}>{n.body}</Text>
     </Tappable>
   );
 }

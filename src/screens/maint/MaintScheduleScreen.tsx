@@ -91,7 +91,7 @@ export function MaintScheduleScreen() {
         }}
       >
         <Text style={{ fontSize: 14 }}>🔧</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.primaryDeep }}>
+        <Text style={{ flex: 1, fontSize: 13, color: colors.primaryDeep }}>
           Showing shops that service your <Text style={{ fontWeight: '800' }}>{brand}</Text>.
         </Text>
       </View>
@@ -116,8 +116,8 @@ export function MaintScheduleScreen() {
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>📍 {radius}</Text>
-          <Text style={{ fontSize: 11, color: colors.primaryDark }}>▾</Text>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>📍 {radius}</Text>
+          <Text style={{ fontSize: 12, color: colors.primaryDark }}>▾</Text>
         </Tappable>
       </View>
 
@@ -138,7 +138,7 @@ export function MaintScheduleScreen() {
       )}
 
       {dealers.length === 0 ? (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
           No partner shops within this radius — widen the distance.
         </Text>
       ) : null}
@@ -188,7 +188,7 @@ export function MaintScheduleScreen() {
           >
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: '700',
                 letterSpacing: 0.6,
                 textTransform: 'uppercase',

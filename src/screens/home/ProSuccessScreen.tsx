@@ -44,7 +44,7 @@ export function ProSuccessScreen() {
           <Text style={{ fontSize: 28 }}>⭐</Text>
         </View>
         <Text style={{ fontSize: 18, fontWeight: '800', color: colors.successDeep }}>You're a Pro!</Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
           Security deposits are now waived on all your bookings.
         </Text>
       </View>
@@ -54,7 +54,7 @@ export function ProSuccessScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             AutoMate Pro · {p.label}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{p.per} · cancel anytime</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{p.per} · cancel anytime</Text>
         </View>
         <Badge label="Active" variant="success" />
       </Card>

@@ -139,7 +139,7 @@ export function SupabaseDemoScreen() {
           <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary, marginBottom: 8 }}>
             Supabase isn’t configured
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 20 }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 20 }}>
             Add these to a <Text style={{ fontWeight: '700' }}>.env</Text> at the project root, then
             restart Expo:
             {'\n\n'}EXPO_PUBLIC_SUPABASE_URL=…{'\n'}EXPO_PUBLIC_SUPABASE_ANON_KEY=…
@@ -161,7 +161,7 @@ export function SupabaseDemoScreen() {
         marginBottom: spacing.md,
       }}
     >
-      <Text style={{ fontSize: 12, color: colors.primaryDeep, lineHeight: 18 }}>{msg}</Text>
+      <Text style={{ fontSize: 13, color: colors.primaryDeep, lineHeight: 18 }}>{msg}</Text>
     </View>
   ) : null;
 
@@ -190,7 +190,7 @@ export function SupabaseDemoScreen() {
           />
           <PrimaryButton label="Sign in" onPress={signIn} loading={busy} style={{ marginBottom: spacing.sm }} />
           <Tappable onPress={signUp} disabled={busy} style={{ alignItems: 'center', paddingVertical: 8 }}>
-            <Text style={{ fontSize: 13, color: colors.primary, fontWeight: '700' }}>
+            <Text style={{ fontSize: 14, color: colors.primary, fontWeight: '700' }}>
               New here? Create an account
             </Text>
           </Tappable>
@@ -204,11 +204,11 @@ export function SupabaseDemoScreen() {
     <Screen>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Signed in as</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>Signed in as</Text>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{userEmail}</Text>
         </View>
         <Tappable onPress={signOut} disabled={busy}>
-          <Text style={{ fontSize: 13, color: colors.danger, fontWeight: '700' }}>Sign out</Text>
+          <Text style={{ fontSize: 14, color: colors.danger, fontWeight: '700' }}>Sign out</Text>
         </Tappable>
       </View>
       {banner}
@@ -218,7 +218,7 @@ export function SupabaseDemoScreen() {
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         {profile ? (
           <>
-            <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.xs }}>
+            <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.xs }}>
               email: {profile.email ?? '—'} · phone: {profile.phone ?? '—'}
             </Text>
             <TextField
@@ -235,7 +235,7 @@ export function SupabaseDemoScreen() {
             />
           </>
         ) : (
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>
             No profile row yet — run docs/supabase-profiles.sql in Supabase so the signup trigger
             creates one.
           </Text>
@@ -257,7 +257,7 @@ export function SupabaseDemoScreen() {
         keyExtractor={(n) => n.id}
         scrollEnabled={false}
         ListEmptyComponent={
-          <Text style={{ fontSize: 13, color: colors.textTertiary, paddingVertical: spacing.md }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, paddingVertical: spacing.md }}>
             No notes yet — add one above. It’s stored in Supabase and only visible to you (RLS).
           </Text>
         }
@@ -265,7 +265,7 @@ export function SupabaseDemoScreen() {
           <Card style={{ padding: spacing.md, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>{item.body}</Text>
             <Tappable onPress={() => deleteNote(item.id)} hitSlop={8}>
-              <Text style={{ fontSize: 13, color: colors.danger }}>Delete</Text>
+              <Text style={{ fontSize: 14, color: colors.danger }}>Delete</Text>
             </Tappable>
           </Card>
         )}

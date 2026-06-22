@@ -41,7 +41,7 @@ export function SettingsRow({
         {label}
       </Text>
       {value ? (
-        <Text style={{ fontSize: 12, color: colors.textTertiary, marginRight: 8 }}>{value}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginRight: 8 }}>{value}</Text>
       ) : null}
       {right ?? (onPress ? <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text> : null)}
     </Tappable>

@@ -57,7 +57,7 @@ export function CommHondaScreen() {
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.onPrimary }}>+ Post</Text>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>+ Post</Text>
         </Tappable>
       ),
     });
@@ -74,7 +74,7 @@ export function CommHondaScreen() {
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>
             {channel.members.toLocaleString()} members
           </Text>
         </View>
@@ -86,7 +86,7 @@ export function CommHondaScreen() {
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 12, color: colors.successDeep }}>
+          <Text style={{ fontSize: 13, color: colors.successDeep }}>
             {channel.newPosts} new posts
           </Text>
         </View>

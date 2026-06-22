@@ -84,10 +84,10 @@ export function CameraScreen() {
                 paddingVertical: 8,
               }}
             >
-              {on ? <Text style={{ color: colors.onPrimary, fontSize: 12 }}>✓</Text> : null}
+              {on ? <Text style={{ color: colors.onPrimary, fontSize: 13 }}>✓</Text> : null}
               <Text
                 style={{
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: on ? '600' : '400',
                   color: on ? colors.onPrimary : colors.textSecondary,
                 }}
@@ -121,7 +121,7 @@ export function CameraScreen() {
                 paddingVertical: 1,
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>✔</Text>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>✔</Text>
             </View>
           </View>
         ))}
@@ -146,7 +146,7 @@ export function CameraScreen() {
             ) : (
               <>
                 <Text style={{ fontSize: 20, color: colors.primary }}>＋</Text>
-                <Text style={{ fontSize: 10, color: colors.textTertiary }}>Upload photo</Text>
+                <Text style={{ fontSize: 11, color: colors.textTertiary }}>Upload photo</Text>
               </>
             )}
           </Tappable>
@@ -156,7 +156,7 @@ export function CameraScreen() {
       {/* Optional description */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <SectionLabel style={{ marginTop: 0 }}>Describe the damage</SectionLabel>
-        <Text style={{ fontSize: 11, color: colors.textTertiary }}>Optional</Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>Optional</Text>
       </View>
       <TextInput
         value={note}
@@ -171,7 +171,7 @@ export function CameraScreen() {
           borderColor: colors.border,
           borderRadius: radii.md,
           padding: spacing.md,
-          fontSize: 13,
+          fontSize: 14,
           color: colors.textPrimary,
           textAlignVertical: 'top',
           marginBottom: spacing.lg,

@@ -94,7 +94,7 @@ function GoogleChooser({
         <Text style={{ fontSize: 17, fontWeight: '500', color: '#202124' }}>
           Sign in with Google
         </Text>
-        <Text style={{ fontSize: 13, color: '#5F6368', marginTop: 3 }}>
+        <Text style={{ fontSize: 14, color: '#5F6368', marginTop: 3 }}>
           to continue to AutoMate
         </Text>
       </View>
@@ -129,7 +129,7 @@ function GoogleChooser({
           <Text style={{ fontSize: 14, fontWeight: '600', color: '#202124' }}>
             {DEMO_ACCOUNT.name}
           </Text>
-          <Text style={{ fontSize: 12, color: '#5F6368' }}>{DEMO_ACCOUNT.email}</Text>
+          <Text style={{ fontSize: 13, color: '#5F6368' }}>{DEMO_ACCOUNT.email}</Text>
         </View>
         {loading ? <ActivityIndicator size="small" color="#4285F4" /> : null}
       </Tappable>
@@ -152,13 +152,13 @@ function GoogleChooser({
       </Tappable>
 
       <Tappable onPress={onClose} disabled={loading} style={{ paddingTop: spacing.md, alignItems: 'center' }}>
-        <Text style={{ fontSize: 13, color: '#5F6368' }}>Cancel</Text>
+        <Text style={{ fontSize: 14, color: '#5F6368' }}>Cancel</Text>
       </Tappable>
 
       {/* ToS / Privacy disclaimer near the confirm action. */}
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12,
           lineHeight: 16,
           color: '#5F6368',
           textAlign: 'center',
@@ -226,7 +226,7 @@ function AppleSheet({
       </View>
       <Text
         style={{
-          fontSize: 13,
+          fontSize: 14,
           color: 'rgba(255,255,255,.55)',
           textAlign: 'center',
           marginBottom: spacing.lg,
@@ -262,7 +262,7 @@ function AppleSheet({
           <Text style={{ fontSize: 14, fontWeight: '600', color: '#fff' }}>
             {DEMO_ACCOUNT.name}
           </Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.55)' }}>
+          <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.55)' }}>
             Apple ID · {DEMO_ACCOUNT.email}
           </Text>
         </View>
@@ -292,7 +292,7 @@ function AppleSheet({
       {/* ToS / Privacy disclaimer near the confirm action. */}
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12,
           lineHeight: 16,
           color: 'rgba(255,255,255,.5)',
           textAlign: 'center',

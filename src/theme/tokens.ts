@@ -35,11 +35,11 @@ export const typography = {
   bodySmall: { fontSize: 16, fontWeight: '400', lineHeight: 22 } as Type,
   caption: { fontSize: 14, fontWeight: '400', lineHeight: 19 } as Type,
   label: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     letterSpacing: 0.6,
     textTransform: 'uppercase',
     lineHeight: 17,
   } as Type,
-  badge: { fontSize: 13, fontWeight: '600', lineHeight: 17 } as Type,
+  badge: { fontSize: 14, fontWeight: '600', lineHeight: 17 } as Type,
 } as const;

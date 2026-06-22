@@ -36,8 +36,8 @@ export function SubmitProgress({
       </View>
       {left || right ? (
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{left}</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>{right}</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{left}</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{right}</Text>
         </View>
       ) : null}
     </View>

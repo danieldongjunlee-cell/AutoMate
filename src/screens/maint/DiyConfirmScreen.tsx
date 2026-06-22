@@ -56,7 +56,7 @@ export function DiyConfirmScreen() {
         <Text style={{ fontSize: 23, fontWeight: '800', color: colors.textPrimary, marginBottom: 3 }}>
           DIY guides unlocked!
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           $48.00/yr · AutoMate Pro active · 12 guides unlocked
         </Text>
       </View>
@@ -84,7 +84,7 @@ export function DiyConfirmScreen() {
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
               {b.title}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{b.sub}</Text>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{b.sub}</Text>
           </View>
           <Text style={{ fontSize: 17, color: colors.primary }}>→</Text>
         </Tappable>

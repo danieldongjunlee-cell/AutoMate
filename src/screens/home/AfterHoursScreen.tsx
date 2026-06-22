@@ -49,11 +49,11 @@ function TimelineNode({
           ...ring,
         }}
       >
-        <Text style={{ fontSize: 13, color: '#fff' }}>{icon}</Text>
+        <Text style={{ fontSize: 14, color: '#fff' }}>{icon}</Text>
       </View>
       <Text
         style={{
-          fontSize: 10,
+          fontSize: 11,
           color: state === 'next' ? palette.warning : 'rgba(255,255,255,.45)',
           fontWeight: state === 'next' ? '600' : '400',
           marginTop: 4,
@@ -92,7 +92,7 @@ export function AfterHoursScreen() {
             <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>
               Submitted at 11:48 PM
             </Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.5)', marginTop: 2 }}>
               Most auto shops are now closed
             </Text>
           </View>
@@ -106,7 +106,7 @@ export function AfterHoursScreen() {
               borderColor: 'rgba(239,159,39,.35)',
             }}
           >
-            <Text style={{ fontSize: 12, color: palette.warning }}>After hours</Text>
+            <Text style={{ fontSize: 13, color: palette.warning }}>After hours</Text>
           </View>
         </View>
 
@@ -137,7 +137,7 @@ export function AfterHoursScreen() {
               paddingVertical: 2,
             }}
           >
-            <Text style={{ fontSize: 11, fontWeight: '600', color: palette.primaryLight }}>Pro</Text>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: palette.primaryLight }}>Pro</Text>
           </View>
         </View>
 
@@ -153,7 +153,7 @@ export function AfterHoursScreen() {
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               color: 'rgba(175,169,236,.9)',
               fontWeight: '700',
               textTransform: 'uppercase',
@@ -167,7 +167,7 @@ export function AfterHoursScreen() {
             {primaryPart} dent — DIY feasible ✔
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)' }}>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)' }}>
               Shallow dent · Paint intact ·
             </Text>
             <View
@@ -180,7 +180,7 @@ export function AfterHoursScreen() {
                 paddingVertical: 1,
               }}
             >
-              <Text style={{ fontSize: 11, color: palette.successLight }}>
+              <Text style={{ fontSize: 12, color: palette.successLight }}>
                 87% confidence
               </Text>
             </View>
@@ -216,7 +216,7 @@ export function AfterHoursScreen() {
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               color: 'rgba(255,255,255,.45)',
               fontWeight: '500',
               textTransform: 'uppercase',
@@ -235,7 +235,7 @@ export function AfterHoursScreen() {
           </View>
         </View>
 
-        <Text style={{ fontSize: 13, color: palette.warning, lineHeight: 19 }}>
+        <Text style={{ fontSize: 14, color: palette.warning, lineHeight: 19 }}>
           📋 Your photos are queued. Dealers review when they open.
         </Text>
       </LinearGradient>

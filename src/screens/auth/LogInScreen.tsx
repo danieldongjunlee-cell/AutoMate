@@ -90,7 +90,7 @@ export function LogInScreen() {
         style={{ alignSelf: 'flex-end', marginBottom: spacing.xl }}
         hitSlop={8}
       >
-        <Text style={{ fontSize: 13, color: '#7FB1E8' }}>Forgot password?</Text>
+        <Text style={{ fontSize: 14, color: '#7FB1E8' }}>Forgot password?</Text>
       </Tappable>
 
       <PrimaryButton

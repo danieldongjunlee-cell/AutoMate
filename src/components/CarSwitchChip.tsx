@@ -50,18 +50,18 @@ export function CarSwitchChip() {
           {logo ? (
             <Image source={{ uri: logo }} style={{ width: 18, height: 18 }} resizeMode="contain" />
           ) : (
-            <Text style={{ fontSize: 12 }}>🚗</Text>
+            <Text style={{ fontSize: 13 }}>🚗</Text>
           )}
         </View>
         <View>
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
             {brand}
           </Text>
           <Text style={{ fontSize: 9, color: colors.textTertiary }} numberOfLines={1}>
             {modelOf(active.name, brand)}
           </Text>
         </View>
-        {multi ? <Text style={{ fontSize: 12, color: colors.primary }}>⇅</Text> : null}
+        {multi ? <Text style={{ fontSize: 13, color: colors.primary }}>⇅</Text> : null}
       </Tappable>
       <CarSwitcherSheet visible={open} vehicles={vehicles} activeId={active.id} onClose={() => setOpen(false)} />
     </>

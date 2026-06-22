@@ -45,7 +45,7 @@ export function SubmittedScreen() {
         <Text style={{ fontSize: 19, fontWeight: '700', color: colors.successDeep, marginBottom: 3 }}>
           Photos sent to {QUOTE_REQUEST.shopsNotified} shops
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
           Free · no obligation · 1–3 hr est. response
         </Text>
       </View>
@@ -69,10 +69,10 @@ export function SubmittedScreen() {
         })}
       >
         <Text style={{ fontSize: 18 }}>🔔</Text>
-        <Text style={{ flex: 1, fontSize: 13, fontWeight: '500', color: colors.warningDeep }}>
+        <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
           {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
         </Text>
-        <Text style={{ fontSize: 13, fontWeight: '700', color: notifyEnabled ? colors.success : colors.warningDeep }}>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? colors.success : colors.warningDeep }}>
           {notifyEnabled ? 'Enabled ✓' : 'Enable'}
         </Text>
       </Tappable>
@@ -120,7 +120,7 @@ export function SubmittedScreen() {
             {primaryPart} dent — DIY feasible ✔
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
               Paint intact · Est. ${priceLow}–${priceHigh} ·{' '}
             </Text>
             <Badge label={`${confidencePct}% confidence`} variant="success" />

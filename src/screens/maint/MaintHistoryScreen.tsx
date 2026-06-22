@@ -99,7 +99,7 @@ export function MaintHistoryScreen() {
           <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary }}>
             Good condition
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>
             Oil change due ~{VEHICLE.oilDueInMi} mi
           </Text>
         </View>
@@ -170,7 +170,7 @@ export function MaintHistoryScreen() {
       {isLoading ? (
         <SkeletonList variant="row" count={5} />
       ) : visible.length === 0 ? (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', padding: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', padding: spacing.lg }}>
           No services match this filter.
         </Text>
       ) : (
@@ -203,7 +203,7 @@ export function MaintHistoryScreen() {
                 {rec.type}
               </Text>
               {/* Price is primary info — secondary tier, not tertiary (feedback pass 1) */}
-              <Text style={{ fontSize: 13, color: colors.textSecondary }}>
+              <Text style={{ fontSize: 14, color: colors.textSecondary }}>
                 {rec.dateLabel} · {rec.mileage} · ${rec.cost}
               </Text>
             </View>
@@ -244,7 +244,7 @@ export function MaintHistoryScreen() {
           {preview ? (
             <Image source={{ uri: preview }} style={{ width: '100%', height: '80%', borderRadius: radii.md }} resizeMode="contain" />
           ) : null}
-          <Text style={{ color: '#fff', fontSize: 13, marginTop: spacing.md }}>Tap anywhere to close</Text>
+          <Text style={{ color: '#fff', fontSize: 14, marginTop: spacing.md }}>Tap anywhere to close</Text>
         </Tappable>
       </Modal>
     </Screen>

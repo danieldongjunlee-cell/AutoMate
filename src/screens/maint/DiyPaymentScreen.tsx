@@ -63,7 +63,7 @@ export function DiyPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>⭐ AutoMate Pro · 1 year</Text>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>⭐ AutoMate Pro · 1 year</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>$48.00</Text>
         </View>
         <View
@@ -75,10 +75,10 @@ export function DiyPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>
             Annual membership · just $4/mo
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Tax incl.</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>Tax incl.</Text>
         </View>
         {applied > 0 ? (
           <View
@@ -90,7 +90,7 @@ export function DiyPaymentScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 13, color: colors.successDeep }}>
+            <Text style={{ fontSize: 14, color: colors.successDeep }}>
               ★ Points applied ({applied.toLocaleString()} pts)
             </Text>
             <Text style={{ fontSize: 14, fontWeight: '600', color: colors.successDeep }}>
@@ -137,7 +137,7 @@ export function DiyPaymentScreen() {
             <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
               Visa ending {PAYMENT_CARD.last4}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.primaryDark }}>Default card</Text>
+            <Text style={{ fontSize: 13, color: colors.primaryDark }}>Default card</Text>
           </View>
           <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>
         </View>

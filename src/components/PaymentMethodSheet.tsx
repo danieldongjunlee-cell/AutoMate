@@ -57,7 +57,7 @@ export function PaymentMethodSheet({
           </Tappable>
         );
       })}
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs }}>
         Add or edit cards in More → Payment method.
       </Text>
     </FormSheet>

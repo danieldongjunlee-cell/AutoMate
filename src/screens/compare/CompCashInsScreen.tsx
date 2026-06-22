@@ -52,7 +52,7 @@ export function CompCashInsScreen() {
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
             Add your deductible & premium
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.md }}>
             Cash-vs-insurance comparison needs your policy&apos;s deductible and annual premium. Add
             them to your insurance policy to unlock the comparison.
           </Text>
@@ -77,15 +77,15 @@ export function CompCashInsScreen() {
         }}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
             Selected quote
           </Text>
-          <Text style={{ fontSize: 13, color: colors.primary }}>{dealer.name}</Text>
+          <Text style={{ fontSize: 14, color: colors.primary }}>{dealer.name}</Text>
         </View>
         <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primaryDeep }}>
           ${aq.priceLow}–${aq.priceHigh} est.
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
           ± may vary after in-person inspection
         </Text>
       </View>
@@ -104,11 +104,11 @@ export function CompCashInsScreen() {
       >
         <Text style={{ fontSize: 20 }}>🛡️</Text>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '500', color: SALMON_FG }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: SALMON_FG }}>
             {INSURANCE_POLICY.carrier} · ${deductible} ded. · ${premiumPerYear.toLocaleString()}
             /yr
           </Text>
-          <Text style={{ fontSize: 12, color: '#888' }}>
+          <Text style={{ fontSize: 13, color: '#888' }}>
             Policy #{INSURANCE_POLICY.policyNumber} · from your profile
           </Text>
         </View>
@@ -128,7 +128,7 @@ export function CompCashInsScreen() {
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
           💳 No money upfront — how you pay
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 19 }}>
+        <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 19 }}>
           The shop inspects, confirms a{' '}
           <Text style={{ fontWeight: '700' }}>
             final price within ${aq.priceLow}–${aq.priceHigh}
@@ -161,7 +161,7 @@ export function CompCashInsScreen() {
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.successDark }}>
             ${aq.priceLow}–${aq.priceHigh}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: 6 }}>
             final, at the shop
           </Text>
           {cashRecommended ? (
@@ -173,7 +173,7 @@ export function CompCashInsScreen() {
                 paddingVertical: 3,
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>
                 ✔ Best for this repair
               </Text>
             </View>
@@ -200,7 +200,7 @@ export function CompCashInsScreen() {
           <Text style={{ fontSize: 27, fontWeight: '700', color: colors.textPrimary }}>
             ${deductible}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: 6 }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: 6 }}>
             your deductible
           </Text>
           {cashRecommended ? (
@@ -214,7 +214,7 @@ export function CompCashInsScreen() {
                 paddingVertical: 3,
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.dangerDeep }}>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.dangerDeep }}>
                 ⚠ Premium ↑
               </Text>
             </View>
@@ -227,7 +227,7 @@ export function CompCashInsScreen() {
                 paddingVertical: 3,
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
+              <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
             </View>
           )}
         </Tappable>
@@ -249,7 +249,7 @@ export function CompCashInsScreen() {
           }}
         >
           <Text style={{ fontSize: 16 }}>⚠</Text>
-          <Text style={{ flex: 1, fontSize: 12, color: colors.warningDeep, lineHeight: 19 }}>
+          <Text style={{ flex: 1, fontSize: 13, color: colors.warningDeep, lineHeight: 19 }}>
             Your{' '}
             <Text style={{ fontWeight: '700' }}>
               ${deductible} deductible is more than this ${aq.priceLow}–${aq.priceHigh} repair
@@ -281,7 +281,7 @@ export function CompCashInsScreen() {
               <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>
                 See full cost breakdown
               </Text>
-              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', marginTop: 1 }}>
+              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)', marginTop: 1 }}>
                 3-yr projection · Break-even · Your verdict
               </Text>
             </View>

@@ -90,7 +90,7 @@ export function QuotesReceivedScreen() {
         <Card style={{ padding: spacing.xl, alignItems: 'center' }}>
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🧾</Text>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary }}>No active quote</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginTop: 4, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginTop: 4, marginBottom: spacing.md }}>
             Submit a damaged part for an AI estimate and nearby shops will send quotes here.
           </Text>
           <PrimaryButton
@@ -119,7 +119,7 @@ export function QuotesReceivedScreen() {
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             {filtered.length} shops responded
           </Text>
         </View>
@@ -139,7 +139,7 @@ export function QuotesReceivedScreen() {
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep }}>
               AI estimated repair cost
             </Text>
             <Badge label={`AI confidence ${aiEstimate.confidencePct}%`} variant="success" />
@@ -153,20 +153,20 @@ export function QuotesReceivedScreen() {
           </View>
           {/* Submitted parts: part + damage type as standout chips + photo count */}
           <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', paddingTop: spacing.sm, gap: spacing.xs }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
               Damaged parts assessed
             </Text>
             {damageParts.map((p) => (
               <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
                 {/* Part name — prominent dark chip */}
                 <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
                 </View>
                 {/* Damage type — colored badge so it's easy to spot */}
                 <View style={{ backgroundColor: colors.warningSurface, borderWidth: 1, borderColor: colors.warning, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2 }}>
-                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
                 </View>
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                   📷 {p.photos} photo{p.photos !== 1 ? 's' : ''}
                 </Text>
               </View>
@@ -181,13 +181,13 @@ export function QuotesReceivedScreen() {
           onPress={() => navigateCrossTab(navigation, 'HomeTab', 'CarDiagram')}
           style={{ flex: 1, backgroundColor: colors.surface, borderWidth: 1.5, borderStyle: 'dashed', borderColor: colors.primaryLight, borderRadius: radii.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.sm, alignItems: 'center' }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>➕ Add or revise parts</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDark }}>➕ Add or revise parts</Text>
         </Tappable>
         <Tappable
           onPress={onCancel}
           style={{ backgroundColor: colors.dangerSurface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.dangerBorder, borderRadius: radii.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, alignItems: 'center', justifyContent: 'center' }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.danger }}>Cancel</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.danger }}>Cancel</Text>
         </Tappable>
       </View>
 
@@ -220,7 +220,7 @@ export function QuotesReceivedScreen() {
         <SkeletonList variant="card" count={4} />
       ) : filtered.length === 0 ? (
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>No quotes match this filter.</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>No quotes match this filter.</Text>
         </Card>
       ) : (
         filtered.map((q) => (

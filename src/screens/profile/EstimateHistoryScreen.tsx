@@ -65,7 +65,7 @@ export function EstimateHistoryScreen() {
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
           <Text style={{ fontSize: 28, marginBottom: 6 }}>🔍</Text>
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>No estimates yet</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
             Submit a damaged part for an AI estimate and it’ll show up here with your photos.
           </Text>
         </Card>
@@ -103,7 +103,7 @@ export function EstimateHistoryScreen() {
       </View>
 
       {filtered.length === 0 ? (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
           No estimates match these filters.
         </Text>
       ) : null}
@@ -117,7 +117,7 @@ export function EstimateHistoryScreen() {
                   ? `$${est.priceLow}–$${est.priceHigh}`
                   : 'Estimate'}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>{when(est.createdAt)}</Text>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{when(est.createdAt)}</Text>
             </View>
             {est.confidencePct != null ? (
               <Badge label={`${est.confidencePct}% confidence`} variant="success" />
@@ -139,7 +139,7 @@ export function EstimateHistoryScreen() {
                 {p.damageType ? <Badge label={p.damageType} variant="primary" /> : null}
               </View>
               {p.note ? (
-                <Text style={{ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic', marginBottom: 6 }}>
+                <Text style={{ fontSize: 13, color: colors.textSecondary, fontStyle: 'italic', marginBottom: 6 }}>
                   “{p.note}”
                 </Text>
               ) : null}
@@ -155,7 +155,7 @@ export function EstimateHistoryScreen() {
                   ))}
                 </View>
               ) : (
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>No photos</Text>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>No photos</Text>
               )}
             </View>
           ))}

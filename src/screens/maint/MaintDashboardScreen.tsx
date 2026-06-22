@@ -43,7 +43,7 @@ export function MaintDashboardScreen() {
       >
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: '600',
             color: 'rgba(255,255,255,.45)',
             textTransform: 'uppercase',
@@ -56,7 +56,7 @@ export function MaintDashboardScreen() {
         <Text style={{ fontSize: 36, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
           ${mv.value.toLocaleString()}
         </Text>
-        <Text style={{ fontSize: 13, color: palette.success, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 14, color: palette.success, marginBottom: spacing.sm }}>
           ↑ ${mv.aboveAvg} above market avg
         </Text>
         <View
@@ -76,8 +76,8 @@ export function MaintDashboardScreen() {
           />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 11, color: '#888' }}>Low ${mv.low.toLocaleString()}</Text>
-          <Text style={{ fontSize: 11, color: '#888' }}>High ${mv.high.toLocaleString()}</Text>
+          <Text style={{ fontSize: 12, color: '#888' }}>Low ${mv.low.toLocaleString()}</Text>
+          <Text style={{ fontSize: 12, color: '#888' }}>High ${mv.high.toLocaleString()}</Text>
         </View>
       </LinearGradient>
 
@@ -111,12 +111,12 @@ export function MaintDashboardScreen() {
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
               {carName}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
               {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>Health</Text>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>Health</Text>
             <View
               style={{
                 width: 52,
@@ -135,7 +135,7 @@ export function MaintDashboardScreen() {
                 }}
               />
             </View>
-            <Text style={{ fontSize: 12, fontWeight: '500', color: colors.successDark }}>
+            <Text style={{ fontSize: 13, fontWeight: '500', color: colors.successDark }}>
               {VEHICLE.healthLabel} {VEHICLE.healthPct}%
             </Text>
           </View>
@@ -143,8 +143,8 @@ export function MaintDashboardScreen() {
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
           <Badge label="✓ VIN-decoded" variant="primarySoft" />
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>·</Text>
-          <Text style={{ fontSize: 12, color: colors.successDark }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>·</Text>
+          <Text style={{ fontSize: 13, color: colors.successDark }}>
             Oil due ~{VEHICLE.oilDueInMi} mi
           </Text>
         </View>
@@ -183,7 +183,7 @@ export function MaintDashboardScreen() {
             </Text>
             <Badge label="PRO" variant="primarySoft" />
           </View>
-          <Text style={{ fontSize: 12, color: colors.successDeep }}>
+          <Text style={{ fontSize: 13, color: colors.successDeep }}>
             Step-by-step guides & videos
           </Text>
         </Tappable>
@@ -216,7 +216,7 @@ export function MaintDashboardScreen() {
               <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 2 }}>
                 Book a Service
               </Text>
-              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.72)' }}>
+              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.72)' }}>
                 Oil · Tires · Filters · Fluids · Brakes
               </Text>
             </LinearGradient>
@@ -266,7 +266,7 @@ export function MaintDashboardScreen() {
               <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                 {svc.name}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{svc.due}</Text>
+              <Text style={{ fontSize: 14, color: colors.textTertiary }}>{svc.due}</Text>
             </View>
             <View
               style={{
@@ -276,7 +276,7 @@ export function MaintDashboardScreen() {
                 paddingVertical: 3,
               }}
             >
-              <Text style={{ fontSize: 12, color: badge.fg }}>{svc.status}</Text>
+              <Text style={{ fontSize: 13, color: badge.fg }}>{svc.status}</Text>
             </View>
           </View>
         );

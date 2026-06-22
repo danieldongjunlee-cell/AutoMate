@@ -79,7 +79,7 @@ export function MaintPaymentScreen() {
         <SectionLabel>Order summary</SectionLabel>
         {cart.promo ? (
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.xs }}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promo.label} applied</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promo.label} applied</Text>
           </View>
         ) : null}
         {cart.services.map((s) => (
@@ -97,7 +97,7 @@ export function MaintPaymentScreen() {
             <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary }} numberOfLines={1}>{s.name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
               {s.originalPrice && s.originalPrice !== s.price ? (
-                <Text style={{ fontSize: 12, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
+                <Text style={{ fontSize: 13, color: colors.textTertiary, textDecorationLine: 'line-through' }}>
                   ${s.originalPrice}
                 </Text>
               ) : null}
@@ -128,10 +128,10 @@ export function MaintPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>
             {dealer.name} · {formatDayLabel(cart.date)} {cart.time}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{totalMin} min</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>~{totalMin} min</Text>
         </View>
         {applied > 0 ? (
           <View
@@ -198,7 +198,7 @@ export function MaintPaymentScreen() {
                 >
                   {name}
                 </Text>
-                <Text style={{ fontSize: 12, color: on ? colors.primaryDark : colors.textTertiary }}>
+                <Text style={{ fontSize: 13, color: on ? colors.primaryDark : colors.textTertiary }}>
                   {sub}
                 </Text>
               </View>
@@ -225,7 +225,7 @@ export function MaintPaymentScreen() {
         }}
       >
         <Text style={{ fontSize: 16 }}>🔒</Text>
-        <Text style={{ flex: 1, fontSize: 13, color: colors.successDeep }}>
+        <Text style={{ flex: 1, fontSize: 14, color: colors.successDeep }}>
           Payment processed securely. Charged after service completion.
         </Text>
       </View>

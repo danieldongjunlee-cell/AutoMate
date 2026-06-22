@@ -60,7 +60,7 @@ export function ProfLinkedAccountsScreen() {
               <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
                 {row.name}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{row.sub}</Text>
+              <Text style={{ fontSize: 14, color: colors.textTertiary }}>{row.sub}</Text>
             </View>
             {connected[row.name] ? (
               <View
@@ -71,7 +71,7 @@ export function ProfLinkedAccountsScreen() {
                   paddingVertical: 4,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: '600', color: colors.successDeep }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.successDeep }}>
                   Connected
                 </Text>
               </View>
@@ -85,7 +85,7 @@ export function ProfLinkedAccountsScreen() {
                   paddingVertical: 4,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primaryDark }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDark }}>
                   Connect
                 </Text>
               </Tappable>
@@ -267,7 +267,7 @@ export function ProfDistanceScreen() {
               >
                 {row.name}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.textPlaceholder, marginTop: 2 }}>
+              <Text style={{ fontSize: 14, color: colors.textPlaceholder, marginTop: 2 }}>
                 {row.sub}
               </Text>
             </View>

@@ -34,7 +34,7 @@ function PinView({ marker }: { marker: MapMarker }) {
           elevation: 3,
         }}
       >
-        <Text style={{ fontSize: 12, fontWeight: '800', color: light ? '#1A1A1A' : '#fff' }}>
+        <Text style={{ fontSize: 13, fontWeight: '800', color: light ? '#1A1A1A' : '#fff' }}>
           {marker.label}
         </Text>
       </View>

@@ -132,7 +132,7 @@ function CardFormModal({
           }}
         >
           {setPrimary ? (
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>✓</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>✓</Text>
           ) : null}
         </View>
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
@@ -238,7 +238,7 @@ export function ProfPaymentScreen() {
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             No payment methods yet
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
             Add a card below to pay for bookings faster.
           </Text>
         </View>
@@ -294,13 +294,13 @@ export function ProfPaymentScreen() {
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View>
-                  <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>CARDHOLDER</Text>
+                  <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}>CARDHOLDER</Text>
                   <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>
                     {card.holder}
                   </Text>
                 </View>
                 <View>
-                  <Text style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>EXPIRES</Text>
+                  <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}>EXPIRES</Text>
                   <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>
                     {card.expires}
                   </Text>
@@ -320,7 +320,7 @@ export function ProfPaymentScreen() {
                     alignItems: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
                     Make primary
                   </Text>
                 </Tappable>
@@ -338,7 +338,7 @@ export function ProfPaymentScreen() {
                   alignItems: 'center',
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
                   Edit card
                 </Text>
               </Tappable>
@@ -354,7 +354,7 @@ export function ProfPaymentScreen() {
                   alignItems: 'center',
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>
+                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.danger }}>
                   Remove
                 </Text>
               </Tappable>
@@ -384,7 +384,7 @@ export function ProfPaymentScreen() {
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
           Add payment method
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           Credit / debit card
         </Text>
       </Tappable>
@@ -399,7 +399,7 @@ export function ProfPaymentScreen() {
         }}
       >
         <Text style={{ fontSize: 15 }}>🔒</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.textTertiary, lineHeight: 18 }}>
+        <Text style={{ flex: 1, fontSize: 13, color: colors.textTertiary, lineHeight: 18 }}>
           256-bit encrypted · PCI DSS compliant · AutoMate never stores full card numbers.
         </Text>
       </View>

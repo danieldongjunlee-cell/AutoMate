@@ -61,10 +61,10 @@ export function DealerCard({
             <RatingLink
               dealer={dealer}
               label={`★ ${dealer.rating.toFixed(1)} (${dealer.reviews})`}
-              style={{ fontSize: 13, fontWeight: '700' }}
+              style={{ fontSize: 14, fontWeight: '700' }}
             />
           </View>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 1 }}>
             {dist.format(dealer.distanceMi)}
             {open ? ` · Open until ${dealer.closesAt}` : ' · Closed'}
           </Text>
@@ -79,7 +79,7 @@ export function DealerCard({
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: '600',
               color: open ? colors.successDeep : colors.warningDeep,
             }}
@@ -100,7 +100,7 @@ export function DealerCard({
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 11, color: colors.primaryDark }}>{chip}</Text>
+            <Text style={{ fontSize: 12, color: colors.primaryDark }}>{chip}</Text>
           </View>
         ))}
       </View>

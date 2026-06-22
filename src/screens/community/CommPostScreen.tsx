@@ -134,7 +134,7 @@ export function CommPostScreen() {
             <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
               {post.author}
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
               {post.car} · Honda Owners · {post.ago}
             </Text>
           </View>
@@ -154,7 +154,7 @@ export function CommPostScreen() {
               marginBottom: spacing.sm,
             }}
           >
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.4)' }}>📸 Photo attached</Text>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }}>📸 Photo attached</Text>
           </LinearGradient>
         ) : null}
         <View
@@ -170,7 +170,7 @@ export function CommPostScreen() {
           <Tappable onPress={togglePostLike} hitSlop={6}>
             <Text
               style={{
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: postLiked ? '700' : '400',
                 color: postLiked ? colors.danger : colors.textTertiary,
               }}
@@ -178,12 +178,12 @@ export function CommPostScreen() {
               {postLiked ? '❤️' : '🤍'} {likeCount}
             </Text>
           </Tappable>
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primary }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primary }}>
             💬 {replyCount} replies
           </Text>
           <View style={{ flex: 1 }} />
           <Tappable onPress={sharePost} hitSlop={6}>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>Share</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>Share</Text>
           </Tappable>
         </View>
       </View>
@@ -206,14 +206,14 @@ export function CommPostScreen() {
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: 4 }}>
               <AvatarCircle initial={c.initial} color={c.color} size={28} />
-              <Text style={{ flex: 1, fontSize: 13 }}>
+              <Text style={{ flex: 1, fontSize: 14 }}>
                 <Text style={{ fontWeight: '600', color: colors.textPrimary }}>{c.author}</Text>
                 <Text style={{ color: colors.textTertiary }}> {c.car}</Text>
               </Text>
               <Tappable onPress={() => toggleCommentLike(c)} hitSlop={6}>
                 <Text
                   style={{
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: liked ? '700' : '400',
                     color: liked ? colors.danger : colors.textTertiary,
                   }}
@@ -223,7 +223,7 @@ export function CommPostScreen() {
               </Tappable>
             </View>
             <Text
-              style={{ fontSize: 13, color: colors.textPrimary, lineHeight: 19, marginLeft: 36 }}
+              style={{ fontSize: 14, color: colors.textPrimary, lineHeight: 19, marginLeft: 36 }}
             >
               {c.body}
             </Text>
@@ -232,7 +232,7 @@ export function CommPostScreen() {
               style={{ marginLeft: 36, marginTop: 4 }}
               hitSlop={6}
             >
-              <Text style={{ fontSize: 12, color: colors.primary }}>Reply</Text>
+              <Text style={{ fontSize: 13, color: colors.primary }}>Reply</Text>
             </Tappable>
           </View>
         );

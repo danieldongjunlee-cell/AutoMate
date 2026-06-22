@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
@@ -39,7 +39,10 @@ export function HomeLauncherScreen() {
     elevation: 2,
   } as const;
 
-  /** The hero action (largest): white card, prominent colored icon badge. */
+  // Subtitles use a lighter tone so the title leads.
+  const subColor = colors.textPlaceholder;
+
+  /** The hero action (largest): white card, big faded logo in the bottom-right. */
   const heroCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress}>
       <View
@@ -50,26 +53,20 @@ export function HomeLauncherScreen() {
           borderRadius: radii.lg,
           padding: spacing.lg,
           minHeight: 120,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.md,
+          justifyContent: 'center',
+          overflow: 'hidden',
           marginBottom: spacing.md,
           ...cardShadow,
         }}
       >
-        <View style={{ width: 60, height: 60, borderRadius: radii.md, backgroundColor: opts.accent, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontSize: 32 }}>{opts.icon}</Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textTertiary, marginTop: 4 }}>{opts.phrase}</Text>
-        </View>
-        <Text style={{ color: opts.accent, fontSize: 22, fontWeight: '800' }}>→</Text>
+        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: subColor, marginTop: 4 }}>{opts.phrase}</Text>
+        <Text style={{ position: 'absolute', right: -8, bottom: -22, fontSize: 96, opacity: 0.13 }}>{opts.icon}</Text>
       </View>
     </Tappable>
   );
 
-  /** Smaller side-by-side action tile (Maintenance / Compare). */
+  /** Smaller side-by-side action tile (Maintenance / Compare) — same size. */
   const miniCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress} style={{ flex: 1 }}>
       <View
@@ -79,15 +76,15 @@ export function HomeLauncherScreen() {
           borderColor: colors.border,
           borderRadius: radii.lg,
           padding: spacing.md,
-          minHeight: 116,
+          minHeight: 104,
+          justifyContent: 'center',
+          overflow: 'hidden',
           ...cardShadow,
         }}
       >
-        <View style={{ width: 40, height: 40, borderRadius: radii.sm, backgroundColor: opts.accent, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm }}>
-          <Text style={{ fontSize: 20 }}>{opts.icon}</Text>
-        </View>
         <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textTertiary, marginTop: 2 }}>{opts.phrase}</Text>
+        <Text style={{ fontSize: 13, fontWeight: '600', color: subColor, marginTop: 3 }}>{opts.phrase}</Text>
+        <Text style={{ position: 'absolute', right: -6, bottom: -14, fontSize: 58, opacity: 0.13 }}>{opts.icon}</Text>
       </View>
     </Tappable>
   );
@@ -110,7 +107,7 @@ export function HomeLauncherScreen() {
       <Text style={{ fontSize: 30 }}>{emoji}</Text>
       <View style={{ flex: 1 }}>
         <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 4 }}>
-          <Text style={{ fontSize: 12, fontWeight: '800', color: badgeFg }}>{badge}</Text>
+          <Text style={{ fontSize: 13, fontWeight: '800', color: badgeFg }}>{badge}</Text>
         </View>
         <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>{sub}</Text>
@@ -118,29 +115,30 @@ export function HomeLauncherScreen() {
     </Tappable>
   );
 
-  /** Real-customer review card with before/after repair photos. */
+  /** Real-customer review card with actual before/after repair photos. */
   const reviewCard = (r: HomeReview) => (
     <View style={{ backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, minHeight: 96 }}>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
-        {[{ label: 'Before', color: r.beforeColor }, { label: 'After', color: r.afterColor }].map((p) => (
+        {[{ label: 'Before', color: r.beforeColor, uri: r.beforeUri }, { label: 'After', color: r.afterColor, uri: r.afterUri }].map((p) => (
           <View key={p.label} style={{ flex: 1, height: 82, borderRadius: radii.sm, backgroundColor: p.color, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-            <Text style={{ fontSize: 26 }}>🚗</Text>
-            <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: 'rgba(0,0,0,.45)', borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
-              <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>{p.label}</Text>
+            {/* Real web photo over a colored fallback (shows if the image is slow/offline). */}
+            <Image source={{ uri: p.uri }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} resizeMode="cover" />
+            <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: 'rgba(0,0,0,.55)', borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
+              <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>{p.label}</Text>
             </View>
           </View>
         ))}
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3, flexWrap: 'wrap' }}>
         <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>{r.name}</Text>
-        <Text style={{ fontSize: 12 }}>
+        <Text style={{ fontSize: 13 }}>
           <Text style={{ color: STAR_YELLOW }}>{'★'.repeat(r.stars)}</Text>
           <Text style={{ color: colors.border }}>{'★'.repeat(5 - r.stars)}</Text>
         </Text>
-        <Text style={{ fontSize: 11, color: colors.textTertiary }}>· {r.car}</Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>· {r.car}</Text>
       </View>
-      <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primaryDark, marginBottom: 5 }}>{r.repair}</Text>
-      <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 19, fontStyle: 'italic' }}>“{r.quote}”</Text>
+      <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark, marginBottom: 5 }}>{r.repair}</Text>
+      <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 19, fontStyle: 'italic' }}>“{r.quote}”</Text>
     </View>
   );
 
@@ -221,7 +219,7 @@ export function HomeLauncherScreen() {
       {/* Real customer reviews — before & after (same spacing as Deals). */}
       <View style={{ marginTop: spacing.xxxl, marginBottom: spacing.sm }}>
         <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Real customer reviews')}</Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2 }}>
           Before &amp; after — from photo to fixed car
         </Text>
       </View>

@@ -38,7 +38,7 @@ export function CompDeepDiveScreen() {
     <Text
       style={{
         flex: align === 'left' ? 1.5 : 1,
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: '700',
         color,
         textTransform: 'uppercase',
@@ -54,7 +54,7 @@ export function CompDeepDiveScreen() {
       <Screen>
         <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
           <ActivityIndicator color={colors.primary} />
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.sm }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: spacing.sm }}>
             Crunching 3-year costs…
           </Text>
         </View>
@@ -111,7 +111,7 @@ export function CompDeepDiveScreen() {
             {dealer.name} — Rear bumper
           </Text>
           {/* Price range is primary info — secondary tier (feedback pass 1) */}
-          <Text style={{ fontSize: 12, color: colors.textSecondary }}>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
             ${aq.priceLow}–${aq.priceHigh} est. · {INSURANCE_POLICY.carrier} {usd(input.deductible)}{' '}
             ded.
           </Text>
@@ -155,9 +155,9 @@ export function CompDeepDiveScreen() {
             }}
           >
             <View style={{ flex: 1.5 }}>
-              <Text style={{ fontSize: 13, color: colors.textSecondary }}>{row.item}</Text>
+              <Text style={{ fontSize: 14, color: colors.textSecondary }}>{row.item}</Text>
               {row.sub ? (
-                <Text style={{ fontSize: 10, color: colors.textPlaceholder }}>{row.sub}</Text>
+                <Text style={{ fontSize: 11, color: colors.textPlaceholder }}>{row.sub}</Text>
               ) : null}
             </View>
             <Text
@@ -224,10 +224,10 @@ export function CompDeepDiveScreen() {
       >
         <Text style={{ fontSize: 16 }}>📊</Text>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary, marginBottom: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 1 }}>
             {breakEvenTitle}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{breakEvenSub}</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>{breakEvenSub}</Text>
         </View>
       </View>
 
@@ -245,7 +245,7 @@ export function CompDeepDiveScreen() {
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: '700',
               color: colors.successDeep,
               textTransform: 'uppercase',
@@ -258,7 +258,7 @@ export function CompDeepDiveScreen() {
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
             {cashWins ? 'Pay cash ✔' : 'File insurance'}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.successDark, marginTop: 3, lineHeight: 15 }}>
+          <Text style={{ fontSize: 12, color: colors.successDark, marginTop: 3, lineHeight: 15 }}>
             {cashWins
               ? `Saves ${usd(savings)} · No rate hike · No claim`
               : `Saves ${usd(savings)} vs paying cash`}
@@ -276,7 +276,7 @@ export function CompDeepDiveScreen() {
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: '700',
               color: colors.dangerDeep,
               textTransform: 'uppercase',
@@ -289,7 +289,7 @@ export function CompDeepDiveScreen() {
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>
             {cashWins ? 'High ⚠' : 'Moderate'}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.dangerDeep, marginTop: 3, lineHeight: 15 }}>
+          <Text style={{ fontSize: 12, color: colors.dangerDeep, marginTop: 3, lineHeight: 15 }}>
             {input.deductible >= result.cashTotal3yr
               ? `${usd(input.deductible)} ded. > repair · ${result.surchargeYears}-yr hike`
               : `+${usd(result.totalSurcharge)} hikes over ${result.surchargeYears} yrs`}
@@ -318,11 +318,11 @@ export function CompDeepDiveScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 13 }}>ⓘ</Text>
-          <Text style={{ flex: 1, fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>
+          <Text style={{ fontSize: 14 }}>ⓘ</Text>
+          <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
             Assumptions behind these numbers
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             {assumptionsOpen ? '▾' : '▸'}
           </Text>
         </Tappable>
@@ -336,8 +336,8 @@ export function CompDeepDiveScreen() {
           >
             {result.assumptions.map((line) => (
               <View key={line} style={{ flexDirection: 'row', gap: 6 }}>
-                <Text style={{ fontSize: 11, color: colors.textPlaceholder }}>•</Text>
-                <Text style={{ flex: 1, fontSize: 11, color: colors.textTertiary, lineHeight: 15 }}>
+                <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>•</Text>
+                <Text style={{ flex: 1, fontSize: 12, color: colors.textTertiary, lineHeight: 15 }}>
                   {line}
                 </Text>
               </View>

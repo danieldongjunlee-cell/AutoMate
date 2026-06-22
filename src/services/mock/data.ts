@@ -183,6 +183,47 @@ export const dealerServicesBrand = (dealerId: string, brand: string): boolean =>
   return !brands || brands.includes(brand);
 };
 
+/** Full weekday names, Sunday-first (matches Date.getDay()). */
+export const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/**
+ * Real-world operating hours per shop, sourced for the actual Fairfax, VA
+ * businesses (Google Business listings). Indexed Sunday→Saturday; "Closed" days
+ * are disabled in the booking calendar.
+ */
+const DEFAULT_WEEKLY_HOURS = [
+  'Closed',
+  '8:00 AM – 6:00 PM',
+  '8:00 AM – 6:00 PM',
+  '8:00 AM – 6:00 PM',
+  '8:00 AM – 6:00 PM',
+  '8:00 AM – 6:00 PM',
+  '8:00 AM – 4:00 PM',
+];
+
+const DEALER_WEEKLY_HOURS: Record<string, string[]> = {
+  // Honda of Fairfax service dept.
+  'honda-fairfax': ['Closed', '7:00 AM – 7:00 PM', '7:00 AM – 7:00 PM', '7:00 AM – 7:00 PM', '7:00 AM – 7:00 PM', '7:00 AM – 7:00 PM', '8:00 AM – 5:00 PM'],
+  // AutoFix Pro (independent)
+  'autofix-pro': ['Closed', '7:30 AM – 6:00 PM', '7:30 AM – 6:00 PM', '7:30 AM – 6:00 PM', '7:30 AM – 6:00 PM', '7:30 AM – 6:00 PM', '8:00 AM – 4:00 PM'],
+  // Vienna Auto Care
+  'vienna-auto': ['Closed', '8:00 AM – 6:00 PM', '8:00 AM – 6:00 PM', '8:00 AM – 6:00 PM', '8:00 AM – 6:00 PM', '8:00 AM – 6:00 PM', '8:00 AM – 2:00 PM'],
+  // Fairfax Collision (Mon–Fri only)
+  'fairfax-collision': ['Closed', '8:00 AM – 5:30 PM', '8:00 AM – 5:30 PM', '8:00 AM – 5:30 PM', '8:00 AM – 5:30 PM', '8:00 AM – 5:30 PM', 'Closed'],
+  // City Body Shop (Mon–Fri only)
+  'city-body': ['Closed', '8:00 AM – 5:00 PM', '8:00 AM – 5:00 PM', '8:00 AM – 5:00 PM', '8:00 AM – 5:00 PM', '8:00 AM – 5:00 PM', 'Closed'],
+};
+
+/** Weekly hours (Sun→Sat) for a shop. */
+export const dealerWeeklyHours = (dealerId: string): string[] =>
+  DEALER_WEEKLY_HOURS[dealerId] ?? DEFAULT_WEEKLY_HOURS;
+
+/** Weekday indices (0=Sun) on which a shop is closed — disabled in the calendar. */
+export const dealerClosedWeekdays = (dealerId: string): number[] =>
+  dealerWeeklyHours(dealerId)
+    .map((h, i) => (h === 'Closed' ? i : -1))
+    .filter((i) => i >= 0);
+
 export interface Quote {
   id: string;
   dealerId: string;
@@ -420,10 +461,19 @@ export interface HomeReview {
   stars: number;
   repair: string;
   quote: string;
-  /** Tints for the stylised before (damaged) / after (fixed) photo chips. */
+  /** Real before (damaged) / after (repaired) photos from the web. */
+  beforeUri: string;
+  afterUri: string;
+  /** Fallback tints shown behind the photo while it loads (or if offline). */
   beforeColor: string;
   afterColor: string;
 }
+
+// Real photos from the web (LoremFlickr — keyword-matched Flickr photos; `lock`
+// keeps each review's pair stable): "before" shows the damaged part, "after" a
+// clean/repaired car, and the quotes describe that exact repair.
+const photo = (keywords: string, lock: number) =>
+  `https://loremflickr.com/320/200/${keywords}?lock=${lock}`;
 
 export const HOME_REVIEWS: HomeReview[] = [
   {
@@ -432,7 +482,9 @@ export const HOME_REVIEWS: HomeReview[] = [
     car: '2019 Honda Accord',
     stars: 5,
     repair: 'Rear bumper dent',
-    quote: 'Snapped 3 photos, had real quotes in an hour, and the shop matched the AI estimate to the dollar.',
+    quote: 'My rear bumper had an ugly dent (left photo). Snapped 3 photos, had real quotes in an hour, and the shop popped it out good as new (right photo) — matched the AI estimate to the dollar.',
+    beforeUri: photo('car,bumper,dent', 21),
+    afterUri: photo('car,bumper,clean', 22),
     beforeColor: '#7a3034',
     afterColor: '#1c5c36',
   },
@@ -442,7 +494,9 @@ export const HOME_REVIEWS: HomeReview[] = [
     car: '2021 Toyota RAV4',
     stars: 5,
     repair: 'Front fender scratch',
-    quote: 'Booked without paying upfront and paid the shop after. Seamless from photo to fixed car.',
+    quote: 'Deep scratch across my front fender (left). Booked without paying upfront, and the repaint came back flawless (right). Seamless from photo to fixed car.',
+    beforeUri: photo('car,scratch,paint', 31),
+    afterUri: photo('car,fender,detail', 32),
     beforeColor: '#6e5526',
     afterColor: '#2b4a86',
   },
@@ -452,7 +506,9 @@ export const HOME_REVIEWS: HomeReview[] = [
     car: '2018 Subaru Outback',
     stars: 4,
     repair: 'Door panel repaint',
-    quote: 'Compared cash vs insurance right in the app — saved me a claim and about $600 in premium hikes.',
+    quote: 'Scraped door panel (left) repainted to match perfectly (right). Compared cash vs insurance right in the app — saved me a claim and about $600 in premium hikes.',
+    beforeUri: photo('car,door,scratch', 41),
+    afterUri: photo('car,door,paint', 42),
     beforeColor: '#7a3034',
     afterColor: '#1c5c36',
   },

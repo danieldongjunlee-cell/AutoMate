@@ -29,7 +29,7 @@ export function HowItWorksScreen() {
         style={{ borderRadius: radii.md, padding: spacing.lg, marginBottom: spacing.lg, alignItems: 'center' }}
       >
         <Text style={{ fontSize: 17, fontWeight: '800', color: '#fff' }}>4 steps to a fixed car</Text>
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.6)' }}>Real quotes · no upfront payment</Text>
+        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.6)' }}>Real quotes · no upfront payment</Text>
       </LinearGradient>
 
       {STEPS.map((s, i) => (
@@ -62,7 +62,7 @@ export function HowItWorksScreen() {
                   borderColor: colors.background,
                 }}
               >
-                <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{i + 1}</Text>
+                <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff' }}>{i + 1}</Text>
               </View>
             </View>
             {i < STEPS.length - 1 ? (
@@ -71,7 +71,7 @@ export function HowItWorksScreen() {
           </View>
           <View style={{ flex: 1, paddingBottom: i < STEPS.length - 1 ? 26 : 0, marginLeft: spacing.sm }}>
             <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{s.title}</Text>
-            <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 1 }}>{s.sub}</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 1 }}>{s.sub}</Text>
           </View>
         </View>
       ))}

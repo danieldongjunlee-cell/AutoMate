@@ -398,8 +398,8 @@ export function MainTabs() {
           paddingTop: 6,
           paddingBottom: 8,
         },
-        tabBarLabelStyle: { fontSize: 13, fontWeight: '700' },
-        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 11, fontWeight: '700' },
+        tabBarLabelStyle: { fontSize: 14, fontWeight: '700' },
+        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 12, fontWeight: '700' },
       }}
     >
       {TABS.map(({ name, label }) => (

@@ -186,7 +186,7 @@ function PolicyCard({
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{policy.carrier}</Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>{policy.coverage}</Text>
+          <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)' }}>{policy.coverage}</Text>
         </View>
         <View
           style={{
@@ -198,7 +198,7 @@ function PolicyCard({
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 12, color: palette.successLight }}>{policy.status}</Text>
+          <Text style={{ fontSize: 13, color: palette.successLight }}>{policy.status}</Text>
         </View>
       </LinearGradient>
       <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
@@ -213,8 +213,8 @@ function PolicyCard({
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
-            <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>{label}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
               {value}
             </Text>
           </View>
@@ -239,7 +239,7 @@ function PolicyCard({
             alignItems: 'center',
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
             Edit policy
           </Text>
         </Tappable>
@@ -255,7 +255,7 @@ function PolicyCard({
             alignItems: 'center',
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>Remove</Text>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.danger }}>Remove</Text>
         </Tappable>
       </View>
     </View>
@@ -344,8 +344,8 @@ export function ProfInsuranceScreen() {
         >
           <Text style={{ fontSize: 16 }}>🚗</Text>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
-            <Text style={{ fontSize: 11, color: linkedPolicy ? colors.successDark : colors.warningDeep }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
+            <Text style={{ fontSize: 12, color: linkedPolicy ? colors.successDark : colors.warningDeep }}>
               {linkedPolicy
                 ? `Covered by ${linkedPolicy.carrier} · $${linkedPolicy.deductible} deductible`
                 : 'No policy linked to this car yet'}
@@ -360,7 +360,7 @@ export function ProfInsuranceScreen() {
       ) : (policies ?? []).length === 0 ? (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 14,
             color: colors.textSecondary,
             textAlign: 'center',
             padding: spacing.lg,
@@ -405,7 +405,7 @@ export function ProfInsuranceScreen() {
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
           Add another policy
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Geico, Progressive, USAA...</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>Geico, Progressive, USAA...</Text>
       </Tappable>
 
       <PolicyFormModal

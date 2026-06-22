@@ -46,7 +46,7 @@ function ActionChip({
     >
       <Text
         style={{
-          fontSize: 13,
+          fontSize: 14,
           fontWeight: '600',
           color: danger ? colors.dangerDeep : colors.primaryDark,
         }}
@@ -111,12 +111,12 @@ function PartCard({
             </Text>
             <Badge label={item.type} variant="primary" />
           </View>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             {item.photos} photo{item.photos !== 1 ? 's' : ''} · {severity}
           </Text>
           {item.note ? (
             <Text
-              style={{ fontSize: 12, color: colors.textSecondary, fontStyle: 'italic', marginTop: 3 }}
+              style={{ fontSize: 13, color: colors.textSecondary, fontStyle: 'italic', marginTop: 3 }}
               numberOfLines={2}
             >
               “{item.note}”
@@ -177,7 +177,7 @@ function AnalyzingState({ partCount }: { partCount: number }) {
       >
         {ANALYZE_STAGES[stage]}
       </Text>
-      <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
+      <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
         AI is estimating repair costs for {partCount} part{partCount !== 1 ? 's' : ''}
       </Text>
       {/* Stage dots */}
@@ -260,13 +260,13 @@ export function ConfirmSubmitScreen() {
       <SubmitProgress step={2} left="Confirm parts" right="Almost there" />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <SectionLabel>Parts selected ({damageParts.length})</SectionLabel>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>Step 2 of 2</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>Step 2 of 2</Text>
       </View>
 
       {damageParts.length === 0 ? (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 14,
             color: colors.textTertiary,
             textAlign: 'center',
             paddingVertical: spacing.lg,
@@ -316,7 +316,7 @@ export function ConfirmSubmitScreen() {
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark, marginBottom: 2 }}>
           Add another damaged part
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
           Each part gets its own photos & quotes
         </Text>
       </Tappable>
@@ -329,7 +329,7 @@ export function ConfirmSubmitScreen() {
         onPress={onSubmit}
         style={{ marginBottom: spacing.sm, backgroundColor: palette.primaryDark }}
       />
-      <Text style={{ textAlign: 'center', fontSize: 13, color: colors.textTertiary }}>
+      <Text style={{ textAlign: 'center', fontSize: 14, color: colors.textTertiary }}>
         Sending to {QUOTE_REQUEST.shopsNotified} verified shops in {QUOTE_REQUEST.city}
       </Text>
     </Screen>

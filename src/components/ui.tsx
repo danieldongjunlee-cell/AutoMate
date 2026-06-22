@@ -133,7 +133,7 @@ export function Badge({
         style,
       ]}
     >
-      <Text style={{ fontSize: 13, fontWeight: '600', color: fg }}>{label}</Text>
+      <Text style={{ fontSize: 14, fontWeight: '600', color: fg }}>{label}</Text>
     </View>
   );
 }

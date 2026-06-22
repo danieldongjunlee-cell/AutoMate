@@ -35,7 +35,7 @@ export function NotificationsScreen() {
           }}
           hitSlop={8}
         >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>Mark all read</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>Mark all read</Text>
         </Tappable>
       ),
     });

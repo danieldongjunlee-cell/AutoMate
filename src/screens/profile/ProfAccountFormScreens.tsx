@@ -37,7 +37,7 @@ function AccountForm({
           >
             <Text
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: '600',
                 color: colors.textTertiary,
                 textTransform: 'uppercase',
@@ -75,7 +75,7 @@ function AccountForm({
             marginBottom: spacing.lg,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>ⓘ {note}</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>ⓘ {note}</Text>
         </View>
       ) : null}
 

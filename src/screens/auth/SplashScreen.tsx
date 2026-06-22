@@ -107,7 +107,7 @@ export function SplashScreen() {
         }}
       >
         <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,.18)' }} />
-        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.45)' }}>or continue with</Text>
+        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.45)' }}>or continue with</Text>
         <View style={{ flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,.18)' }} />
       </View>
 
@@ -146,7 +146,7 @@ export function SplashScreen() {
       {/* ToS / Privacy disclaimer — light/translucent on the navy background. */}
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 13,
           lineHeight: 18,
           color: 'rgba(255,255,255,.5)',
           textAlign: 'center',

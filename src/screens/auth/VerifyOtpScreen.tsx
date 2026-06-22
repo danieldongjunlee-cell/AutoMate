@@ -84,8 +84,8 @@ export function VerifyOtpScreen() {
             marginTop: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: '#5DCFAA' }}>✓</Text>
-          <Text style={{ flex: 1, fontSize: 13, color: '#9FE5CC' }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#5DCFAA' }}>✓</Text>
+          <Text style={{ flex: 1, fontSize: 14, color: '#9FE5CC' }}>
             Verification code sent via {channelLabel}
           </Text>
         </View>

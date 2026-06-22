@@ -32,7 +32,7 @@ export function TosBookingScreen() {
   };
   return (
     <Screen>
-      <Text style={{ fontSize: 12, color: colors.textTertiary, lineHeight: 18, marginBottom: spacing.md }}>
+      <Text style={{ fontSize: 13, color: colors.textTertiary, lineHeight: 18, marginBottom: spacing.md }}>
         By booking through AutoMate you agree to the following. These keep pricing honest and the
         marketplace fair for customers and shops.
       </Text>
@@ -45,7 +45,7 @@ export function TosBookingScreen() {
             {title}
           </Text>
           {title.startsWith('5') ? (
-            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>
+            <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
               You agree not to accept off-platform "cash discount" or "10% below quote" offers from a
               shop to bypass AutoMate. Shops sign a matching{' '}
               <Text
@@ -57,11 +57,11 @@ export function TosBookingScreen() {
               .
             </Text>
           ) : (
-            <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
+            <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
           )}
         </Card>
       ))}
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.xs }}>
         Last updated Jun 2026 · v1.2 · This summary is part of your booking agreement.
       </Text>
       <View style={{ marginTop: spacing.sm }}>

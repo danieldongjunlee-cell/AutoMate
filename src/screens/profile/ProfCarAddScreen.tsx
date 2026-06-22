@@ -130,8 +130,8 @@ export function ProfCarAddScreen() {
         }}
       >
         <Text style={{ fontSize: 16 }}>{emoji}</Text>
-        <Text style={{ fontSize: 12, fontWeight: '700', color: active ? colors.primary : colors.textSecondary }}>{title}</Text>
-        <Text style={{ fontSize: 10, color: colors.textTertiary }}>{sub}</Text>
+        <Text style={{ fontSize: 13, fontWeight: '700', color: active ? colors.primary : colors.textSecondary }}>{title}</Text>
+        <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
       </Tappable>
     );
   };
@@ -153,11 +153,11 @@ export function ProfCarAddScreen() {
             }}
           />
           {vinScanned ? (
-            <Text style={{ fontSize: 12, fontWeight: '600', color: colors.success, textAlign: 'center' }}>
+            <Text style={{ fontSize: 13, fontWeight: '600', color: colors.success, textAlign: 'center' }}>
               VIN captured ✓ — fill in details below
             </Text>
           ) : (
-            <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center' }}>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}>
               Point the camera at the VIN barcode, then tap Scan VIN.
             </Text>
           )}
@@ -166,7 +166,7 @@ export function ProfCarAddScreen() {
 
       {mode === 'manual' || vinScanned ? (
         <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 11, color: colors.textTertiary, marginBottom: spacing.sm }}>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
             All fields required except Oil spec &amp; Last service.
           </Text>
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
@@ -225,7 +225,7 @@ export function ProfCarAddScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 11, color: colors.primary }}>
+        <Text style={{ fontSize: 12, color: colors.primary }}>
           ⓘ Same details we keep for your registered cars — used to match quotes and track service.
         </Text>
       </View>

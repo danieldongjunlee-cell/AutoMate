@@ -67,7 +67,7 @@ export function CompSelectScreen() {
                 <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
                   {dealer.name}
                 </Text>
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                   Rear bumper · {aq.parts} parts
                 </Text>
               </View>
@@ -75,7 +75,7 @@ export function CompSelectScreen() {
                 <Text style={{ fontSize: 19, fontWeight: '700', color: colors.successDark }}>
                   ${aq.priceLow}–${aq.priceHigh}
                 </Text>
-                <Text style={{ fontSize: 11, color: colors.textTertiary }}>est. ±</Text>
+                <Text style={{ fontSize: 12, color: colors.textTertiary }}>est. ±</Text>
               </View>
             </View>
             <View
@@ -89,7 +89,7 @@ export function CompSelectScreen() {
                 alignSelf: 'flex-start',
               }}
             >
-              <Text style={{ fontSize: 12, color: colors.successDeep }}>
+              <Text style={{ fontSize: 13, color: colors.successDeep }}>
                 ✔ Accepted · {aq.acceptedOn}
               </Text>
             </View>
@@ -99,7 +99,7 @@ export function CompSelectScreen() {
 
       <Text
         style={{
-          fontSize: 13,
+          fontSize: 14,
           color: colors.textTertiary,
           textAlign: 'center',
           paddingVertical: spacing.sm,

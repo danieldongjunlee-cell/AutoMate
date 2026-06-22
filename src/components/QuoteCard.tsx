@@ -42,8 +42,8 @@ export function QuoteCard({
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {/* Tappable rating → Google reviews (feedback pass 2) */}
-            <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 13 }} />
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 14 }} />
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>
               {' '}· {dist.format(dealer.distanceMi)}
             </Text>
           </View>
@@ -52,7 +52,7 @@ export function QuoteCard({
           <Text style={{ fontSize: 21, fontWeight: '700', color: colors.successDark }}>
             ${quote.price}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>± inspection</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>± inspection</Text>
         </View>
       </View>
 
@@ -65,7 +65,7 @@ export function QuoteCard({
           marginVertical: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 13, color: colors.textSecondary }}>"{quote.note}"</Text>
+        <Text style={{ fontSize: 14, color: colors.textSecondary }}>"{quote.note}"</Text>
       </View>
 
       <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
@@ -80,7 +80,7 @@ export function QuoteCard({
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.onPrimary }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>
             Accept quote
           </Text>
         </Tappable>

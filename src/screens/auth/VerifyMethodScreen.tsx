@@ -70,7 +70,7 @@ export function VerifyMethodScreen() {
           <Text style={{ fontSize: 28 }}>{icon}</Text>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>{title}</Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)', marginTop: 2 }}>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.65)', marginTop: 2 }}>
               {destination}
             </Text>
           </View>
@@ -82,7 +82,7 @@ export function VerifyMethodScreen() {
         </Tappable>
       ))}
 
-      <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.45)', textAlign: 'center', marginTop: spacing.sm }}>
+      <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.45)', textAlign: 'center', marginTop: spacing.sm }}>
         Codes expire after 10 minutes
       </Text>
     </AuthScreenShell>

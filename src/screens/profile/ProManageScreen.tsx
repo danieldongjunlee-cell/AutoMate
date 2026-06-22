@@ -43,7 +43,7 @@ export function ProManageScreen() {
           <Text style={{ fontSize: 26 }}>⭐</Text>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.7)' }}>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
               {isPro ? `${plan.label} · ${priceLabel}` : 'Membership cancelled'}
             </Text>
           </View>
@@ -55,7 +55,7 @@ export function ProManageScreen() {
               paddingVertical: 5,
             }}
           >
-            <Text style={{ fontSize: 12, fontWeight: '800', color: '#fff' }}>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: '#fff' }}>
               {isPro ? 'Active' : 'Inactive'}
             </Text>
           </View>
@@ -76,8 +76,8 @@ export function ProManageScreen() {
             key={k}
             style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 7 }}
           >
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{k}</Text>
-            <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>{v}</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>{k}</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{v}</Text>
           </View>
         ))}
       </Card>
@@ -99,7 +99,7 @@ export function ProManageScreen() {
           />
         </>
       )}
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.md }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.md }}>
         Manage billing anytime · cancel keeps perks until the period ends.
       </Text>
     </Screen>

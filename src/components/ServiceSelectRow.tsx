@@ -45,7 +45,7 @@ export function ServiceSelectRow({
         >
           {service.name}
         </Text>
-        <Text style={{ fontSize: 12, color: selected ? colors.primaryDark : colors.textTertiary }}>
+        <Text style={{ fontSize: 13, color: selected ? colors.primaryDark : colors.textTertiary }}>
           {service.detail}
         </Text>
       </View>

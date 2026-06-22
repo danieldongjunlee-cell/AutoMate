@@ -198,7 +198,7 @@ export function ProfCarsScreen() {
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             No vehicles yet
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
             Add a car to start tracking quotes and service.
           </Text>
         </View>
@@ -255,7 +255,7 @@ export function ProfCarsScreen() {
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>
                     {vehicle.name}
                   </Text>
-                  <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.6)' }}>
+                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.6)' }}>
                     {vehicle.colorName || 'Color not set'}
                   </Text>
                 </View>
@@ -268,7 +268,7 @@ export function ProfCarsScreen() {
                       paddingVertical: 3,
                     }}
                   >
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: '#fff' }}>Active</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>Active</Text>
                   </View>
                 ) : vehicle.isPrimary ? (
                   <View
@@ -279,7 +279,7 @@ export function ProfCarsScreen() {
                       paddingVertical: 3,
                     }}
                   >
-                    <Text style={{ fontSize: 12, color: '#fff' }}>Primary</Text>
+                    <Text style={{ fontSize: 13, color: '#fff' }}>Primary</Text>
                   </View>
                 ) : null}
               </LinearGradient>
@@ -295,8 +295,8 @@ export function ProfCarsScreen() {
                       borderBottomColor: colors.divider,
                     }}
                   >
-                    <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
-                    <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
+                    <Text style={{ fontSize: 14, color: colors.textTertiary }}>{label}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
                       {value}
                     </Text>
                   </View>
@@ -333,7 +333,7 @@ export function ProfCarsScreen() {
                     alignItems: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
                     Edit car
                   </Text>
                 </Tappable>
@@ -349,7 +349,7 @@ export function ProfCarsScreen() {
                     alignItems: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 13, fontWeight: '500', color: colors.danger }}>
+                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.danger }}>
                     Remove
                   </Text>
                 </Tappable>
@@ -377,7 +377,7 @@ export function ProfCarsScreen() {
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
           Add another car
         </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           Scan VIN barcode or enter manually
         </Text>
       </Tappable>
@@ -392,7 +392,7 @@ export function ProfCarsScreen() {
         }}
       >
         <Text style={{ fontSize: 16 }}>💡</Text>
-        <Text style={{ flex: 1, fontSize: 13, color: colors.warningDeep, lineHeight: 19 }}>
+        <Text style={{ flex: 1, fontSize: 14, color: colors.warningDeep, lineHeight: 19 }}>
           Add all your vehicles to compare quotes and track service for each one.
         </Text>
       </View>

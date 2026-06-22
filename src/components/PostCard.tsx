@@ -21,7 +21,7 @@ export function CategoryBadge({ category }: { category: PostCategory }) {
   const { bg, fg } = map[category];
   return (
     <View style={{ backgroundColor: bg, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2 }}>
-      <Text style={{ fontSize: 11, color: fg }}>{category}</Text>
+      <Text style={{ fontSize: 12, color: fg }}>{category}</Text>
     </View>
   );
 }
@@ -48,7 +48,7 @@ export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () =
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
             {post.author}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             {post.car} · {post.ago}
           </Text>
         </View>
@@ -58,9 +58,9 @@ export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () =
         {post.body}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>💬 {post.replies} replies</Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>❤️ {post.likes}</Text>
-        <Text style={{ fontSize: 12, fontWeight: '500', color: colors.primaryDark }}>Read more</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>💬 {post.replies} replies</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>❤️ {post.likes}</Text>
+        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>Read more</Text>
       </View>
     </Tappable>
   );

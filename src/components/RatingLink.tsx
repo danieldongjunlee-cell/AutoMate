@@ -34,7 +34,7 @@ export function RatingLink({
       onPress={() => navigateCrossTab(navigation, 'HomeTab', 'Reviews', { dealerId: dealer.id })}
       hitSlop={6}
     >
-      <Text style={[{ fontSize: 12, color: colors.textTertiary }, style]}>
+      <Text style={[{ fontSize: 13, color: colors.textTertiary }, style]}>
         {hasStar ? <Text style={{ color: STAR_YELLOW }}>★</Text> : null}
         {hasStar ? text.slice(1) : text}
       </Text>

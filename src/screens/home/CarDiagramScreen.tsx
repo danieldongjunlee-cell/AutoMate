@@ -194,7 +194,7 @@ export function CarDiagramScreen() {
       <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.xs }}>
         Where is it damaged?
       </Text>
-      <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>
+      <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.sm }}>
         Tap the panel on the car — left side, top, or right side.
       </Text>
 
@@ -249,7 +249,7 @@ export function CarDiagramScreen() {
               style={{
                 flex: i === 1 ? 1.35 : 1,
                 textAlign: 'center',
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: '700',
                 color: colors.textTertiary,
                 textTransform: 'uppercase',
@@ -276,7 +276,7 @@ export function CarDiagramScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '600', color: draftPart === SIDE_MISC_PART ? '#fff' : colors.textSecondary }}>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: draftPart === SIDE_MISC_PART ? '#fff' : colors.textSecondary }}>
           Side mirror / Glass / Wheel / Light
         </Text>
       </Tappable>
@@ -286,9 +286,9 @@ export function CarDiagramScreen() {
         <Card style={{ padding: spacing.md }}>
           <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
             Damage photos · {draftPart}{' '}
-            <Text style={{ color: colors.danger, fontSize: 12 }}>(required)</Text>
+            <Text style={{ color: colors.danger, fontSize: 13 }}>(required)</Text>
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>
             More photos = a more accurate estimate.
           </Text>
 
@@ -312,8 +312,8 @@ export function CarDiagramScreen() {
                     paddingVertical: 7,
                   }}
                 >
-                  {on ? <Text style={{ color: colors.onPrimary, fontSize: 12 }}>✓</Text> : null}
-                  <Text style={{ fontSize: 13, fontWeight: on ? '600' : '400', color: on ? colors.onPrimary : colors.textSecondary }}>
+                  {on ? <Text style={{ color: colors.onPrimary, fontSize: 13 }}>✓</Text> : null}
+                  <Text style={{ fontSize: 14, fontWeight: on ? '600' : '400', color: on ? colors.onPrimary : colors.textSecondary }}>
                     {tp}
                   </Text>
                 </Tappable>
@@ -322,7 +322,7 @@ export function CarDiagramScreen() {
           </View>
 
           {/* Photos */}
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textTertiary, marginBottom: spacing.xs }}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textTertiary, marginBottom: spacing.xs }}>
             Photos {photoUris.length}/{MAX_PHOTOS}
           </Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
@@ -346,7 +346,7 @@ export function CarDiagramScreen() {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ color: '#fff', fontSize: 13, fontWeight: '700', lineHeight: 15 }}>✕</Text>
+                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700', lineHeight: 15 }}>✕</Text>
                 </Tappable>
               </View>
             ))}
@@ -371,7 +371,7 @@ export function CarDiagramScreen() {
           </View>
 
           {/* Description */}
-          <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textTertiary, marginBottom: spacing.xs }}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textTertiary, marginBottom: spacing.xs }}>
             Add a description <Text style={{ fontWeight: '400' }}>(optional)</Text>
           </Text>
           <TextInputArea note={note} setNote={setNote} />
@@ -399,7 +399,7 @@ export function CarDiagramScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 2 }}>Select a damaged part</Text>
-            <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.55)' }}>
+            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.55)' }}>
               Tap a part above to add photos {damageParts.length > 0 ? `· ${damageParts.length} added` : ''}
             </Text>
           </View>
@@ -431,7 +431,7 @@ function TextInputArea({ note, setNote }: { note: string; setNote: (s: string) =
         borderColor: colors.border,
         borderRadius: radii.md,
         padding: spacing.md,
-        fontSize: 13,
+        fontSize: 14,
         color: colors.textPrimary,
         textAlignVertical: 'top',
       }}

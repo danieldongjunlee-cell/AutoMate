@@ -84,7 +84,7 @@ export function CompCashBookScreen() {
           <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDeep }}>
             {dealer.name}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>
             Rear bumper · Cash · ${aq.priceLow}–${aq.priceHigh} est.
           </Text>
         </View>
@@ -123,7 +123,7 @@ export function CompCashBookScreen() {
           onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfPayment')}
           hitSlop={8}
         >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>Change</Text>
         </Tappable>
       </View>
 

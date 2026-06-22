@@ -48,7 +48,7 @@ export function PointsHistoryScreen() {
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
           <Text style={{ fontSize: 28, marginBottom: 6 }}>✨</Text>
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>No activity yet</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
             Check in, book a service, or post in the community to start earning.
           </Text>
         </Card>
@@ -74,7 +74,7 @@ export function PointsHistoryScreen() {
                 <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                   {r.reason ?? 'Points adjustment'}
                 </Text>
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>{when(r.created_at)}</Text>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>{when(r.created_at)}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={{ fontSize: 15, fontWeight: '800', color: earn ? colors.success : colors.danger }}>
@@ -82,7 +82,7 @@ export function PointsHistoryScreen() {
                   {r.delta} pts
                 </Text>
                 {r.balance_after != null ? (
-                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                  <Text style={{ fontSize: 12, color: colors.textTertiary }}>
                     balance {r.balance_after}
                   </Text>
                 ) : null}

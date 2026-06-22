@@ -164,7 +164,7 @@ export function BundleDealsScreen() {
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{deal.name}</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>{deal.sub}</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>{deal.sub}</Text>
         </View>
         <Badge label={deal.badge} variant="primarySoft" />
       </View>
@@ -209,7 +209,7 @@ export function BundleDealsScreen() {
           </Text>
         </Tappable>
       ) : (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.md }}>
           Exclusive deals from AutoMate partner dealerships · This week only
         </Text>
       )}

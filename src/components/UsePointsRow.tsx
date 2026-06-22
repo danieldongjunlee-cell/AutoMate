@@ -46,7 +46,7 @@ export function UsePointsRow({
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.warningDeep }}>
           Use points
         </Text>
-        <Text style={{ fontSize: 12, color: colors.warningDeep }}>
+        <Text style={{ fontSize: 13, color: colors.warningDeep }}>
           {on
             ? `Applying ${applied.toLocaleString()} pts · − ${pointsToUsd(applied)}`
             : `${balance.toLocaleString()} pts available · = ${pointsToUsd(balance)}`}

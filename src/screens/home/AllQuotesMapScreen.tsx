@@ -139,7 +139,7 @@ export function AllQuotesMapScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 11, color: '#555', fontWeight: '600' }}>
+          <Text style={{ fontSize: 12, color: '#555', fontWeight: '600' }}>
             📍 {QUOTE_REQUEST.city}
           </Text>
         </View>
@@ -172,7 +172,7 @@ export function AllQuotesMapScreen() {
                 borderColor: '#ccc',
               }}
             />
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{label}</Text>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
           </View>
         ))}
       </View>
@@ -203,7 +203,7 @@ export function AllQuotesMapScreen() {
       {!isLoading && filtered.length === 0 ? (
         <Text
           style={{
-            fontSize: 13,
+            fontSize: 14,
             color: colors.textTertiary,
             textAlign: 'center',
             paddingVertical: spacing.lg,
@@ -272,12 +272,12 @@ export function AllQuotesMapScreen() {
                   ) : null}
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-                  <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                     {dealer.distanceMi} mi ·{' '}
                   </Text>
                   <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
                   {q.tier === 'recommended' ? (
-                    <Text style={{ fontSize: 12, color: colors.textTertiary }}> · OEM parts</Text>
+                    <Text style={{ fontSize: 13, color: colors.textTertiary }}> · OEM parts</Text>
                   ) : null}
                 </View>
               </View>
@@ -309,7 +309,7 @@ export function AllQuotesMapScreen() {
                   marginTop: spacing.sm,
                 }}
               >
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.onPrimary }}>
+                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>
                   Accept & book {dealer.name} →
                 </Text>
               </Tappable>

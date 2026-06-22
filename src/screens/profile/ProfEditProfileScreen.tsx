@@ -70,7 +70,7 @@ export function ProfEditProfileScreen() {
     >
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600',
           color: colors.textTertiary,
           textTransform: 'uppercase',
@@ -115,7 +115,7 @@ export function ProfEditProfileScreen() {
           </LinearGradient>
         )}
         <Tappable onPress={changePhoto} hitSlop={8}>
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>Change photo</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>Change photo</Text>
         </Tappable>
       </View>
 

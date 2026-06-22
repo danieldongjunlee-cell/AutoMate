@@ -60,7 +60,7 @@ export function DiyUnlockScreen() {
         </Text>
         <Text
           style={{
-            fontSize: 12,
+            fontSize: 13,
             color: 'rgba(255,255,255,.6)',
             textAlign: 'center',
           }}
@@ -88,7 +88,7 @@ export function DiyUnlockScreen() {
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {b.title}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>{b.sub}</Text>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{b.sub}</Text>
             </View>
             <Text style={{ fontSize: 16, color: colors.success }}>✔</Text>
           </View>
@@ -119,7 +119,7 @@ export function DiyUnlockScreen() {
             paddingVertical: 3,
           }}
         >
-          <Text style={{ fontSize: 10, fontWeight: '800', color: colors.onPrimary }}>BEST VALUE</Text>
+          <Text style={{ fontSize: 11, fontWeight: '800', color: colors.onPrimary }}>BEST VALUE</Text>
         </View>
         <View
           style={{
@@ -146,15 +146,15 @@ export function DiyUnlockScreen() {
             <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
               AutoMate Pro
             </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
               DIY guides + no deposits + priority quotes + 2× points
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>
-              $48<Text style={{ fontSize: 11, fontWeight: '600', color: colors.textTertiary }}>/yr</Text>
+              $48<Text style={{ fontSize: 12, fontWeight: '600', color: colors.textTertiary }}>/yr</Text>
             </Text>
-            <Text style={{ fontSize: 11, color: colors.successDark }}>DIY included</Text>
+            <Text style={{ fontSize: 12, color: colors.successDark }}>DIY included</Text>
           </View>
         </View>
         <Tappable
@@ -173,7 +173,7 @@ export function DiyUnlockScreen() {
         </Tappable>
       </View>
 
-      <Text style={{ textAlign: 'center', fontSize: 11, color: colors.textTertiary }}>
+      <Text style={{ textAlign: 'center', fontSize: 12, color: colors.textTertiary }}>
         30-day money-back guarantee on either option
       </Text>
     </Screen>

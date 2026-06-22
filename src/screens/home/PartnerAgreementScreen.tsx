@@ -22,7 +22,7 @@ export function PartnerAgreementScreen() {
       <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 3 }}>
         {n} · {title}
       </Text>
-      <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
+      <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{body}</Text>
     </Card>
   );
 
@@ -31,7 +31,7 @@ export function PartnerAgreementScreen() {
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: spacing.xs }}>
         <Badge label="For shops" variant="primarySoft" />
       </View>
-      <Text style={{ fontSize: 12, color: colors.textTertiary, lineHeight: 18, marginBottom: spacing.md }}>
+      <Text style={{ fontSize: 13, color: colors.textTertiary, lineHeight: 18, marginBottom: spacing.md }}>
         Every auto shop accepts this when they sign up. It keeps the marketplace fair for customers
         and shops alike.
       </Text>
@@ -51,7 +51,7 @@ export function PartnerAgreementScreen() {
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.warningDeep, marginBottom: 3 }}>
           ⚠ Penalties for abuse
         </Text>
-        <Text style={{ fontSize: 12, color: colors.warningDeep, lineHeight: 18 }}>
+        <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 18 }}>
           Poaching or quote-dodging → warning → suspension → permanent removal plus a recovery fee.
           Customers get the same fair-use pledge in their booking agreement.
         </Text>
@@ -72,9 +72,9 @@ export function PartnerAgreementScreen() {
             justifyContent: 'center',
           }}
         >
-          {agreed && <Text style={{ color: '#fff', fontSize: 12 }}>✓</Text>}
+          {agreed && <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text>}
         </View>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.textSecondary }}>
+        <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary }}>
           As the shop owner, I agree to these terms.
         </Text>
       </Tappable>

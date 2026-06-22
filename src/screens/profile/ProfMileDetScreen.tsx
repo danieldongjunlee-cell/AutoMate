@@ -37,7 +37,7 @@ export function ProfMileDetScreen() {
           <Text style={{ fontSize: 32 }}>{milestone.icon}</Text>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 17, fontWeight: '600', color: '#fff' }}>{milestone.title}</Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>{milestone.sub}</Text>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.7)' }}>{milestone.sub}</Text>
           </View>
           <Text style={{ fontSize: 14, fontWeight: '700', color: palette.warning }}>
             {milestone.costPts.toLocaleString()} pts
@@ -86,8 +86,8 @@ export function ProfMileDetScreen() {
                 </Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   {/* Tappable rating → Google reviews (feedback pass 2) */}
-                  <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 13 }} />
-                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+                  <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} style={{ fontSize: 14 }} />
+                  <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                     {' '}· {dealer.distanceMi} mi
                   </Text>
                 </View>
@@ -100,7 +100,7 @@ export function ProfMileDetScreen() {
                   paddingVertical: 3,
                 }}
               >
-                <Text style={{ fontSize: 12, color: colors.textSecondary }}>{tag}</Text>
+                <Text style={{ fontSize: 13, color: colors.textSecondary }}>{tag}</Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', gap: spacing.xs }}>
@@ -115,7 +115,7 @@ export function ProfMileDetScreen() {
                   opacity: pressed ? 0.7 : 1,
                 })}
               >
-                <Text style={{ fontSize: 13, color: colors.primaryDark }}>Get directions</Text>
+                <Text style={{ fontSize: 14, color: colors.primaryDark }}>Get directions</Text>
               </Tappable>
               {(() => {
                 const locked = points < milestone.costPts;
@@ -139,7 +139,7 @@ export function ProfMileDetScreen() {
                   >
                     <Text
                       style={{
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: locked ? '600' : '500',
                         color: locked ? colors.textTertiary : colors.onPrimary,
                       }}

@@ -66,9 +66,9 @@ export function BookDepositScreen() {
 
   const row = (label: string, value: React.ReactNode) => (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
-      <Text style={{ fontSize: 13, color: colors.textSecondary }}>{label}</Text>
+      <Text style={{ fontSize: 14, color: colors.textSecondary }}>{label}</Text>
       {typeof value === 'string' ? (
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
       ) : (
         value
       )}
@@ -82,7 +82,7 @@ export function BookDepositScreen() {
         <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>
           Book now, pay the shop later
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
           We only hold a refundable deposit to protect the shop's time.
         </Text>
       </View>
@@ -103,7 +103,7 @@ export function BookDepositScreen() {
             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
               Refundable security deposit
             </Text>
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
               Held, not charged · auto-released after your visit
             </Text>
           </View>
@@ -123,7 +123,7 @@ export function BookDepositScreen() {
         {row('Repair estimate', '$320–$345 · pay shop after')}
         {row(
           'Charged today',
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDark }}>$0.00</Text>,
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>$0.00</Text>,
         )}
       </Card>
 
@@ -141,7 +141,7 @@ export function BookDepositScreen() {
           }}
         >
           <Text>🎉</Text>
-          <Text style={{ fontWeight: '700', color: colors.successDeep, fontSize: 13 }}>
+          <Text style={{ fontWeight: '700', color: colors.successDeep, fontSize: 14 }}>
             Deposit waived — Pro member
           </Text>
         </View>
@@ -149,11 +149,11 @@ export function BookDepositScreen() {
         <>
           <Card style={{ padding: spacing.sm, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
             <Text>💳</Text>
-            <Text style={{ flex: 1, fontSize: 13, color: colors.textPrimary }}>
-              {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 11 }}>· hold only</Text>
+            <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
+              {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 12 }}>· hold only</Text>
             </Text>
             <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
-              <Text style={{ color: colors.primary, fontSize: 12, fontWeight: '700' }}>Change</Text>
+              <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '700' }}>Change</Text>
             </Tappable>
           </Card>
           <Tappable
@@ -170,15 +170,15 @@ export function BookDepositScreen() {
           >
             <Text style={{ fontSize: 18 }}>⭐</Text>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
                 Skip the deposit with Pro
               </Text>
-              <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.6)' }}>
+              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.6)' }}>
                 No deposits, ever · from $4/mo
               </Text>
             </View>
             <View style={{ backgroundColor: colors.warning, borderRadius: radii.sm, paddingHorizontal: 11, paddingVertical: 6 }}>
-              <Text style={{ fontSize: 12, fontWeight: '800', color: palette.dark }}>Get Pro →</Text>
+              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.dark }}>Get Pro →</Text>
             </View>
           </Tappable>
         </>
@@ -191,7 +191,7 @@ export function BookDepositScreen() {
         onPress={confirm}
       />
       <ProcessingOverlay visible={booking} label="Confirming booking…" />
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Cancel 12h+ ahead for a full refund · no-show forfeits the deposit.
       </Text>
       <PaymentMethodSheet

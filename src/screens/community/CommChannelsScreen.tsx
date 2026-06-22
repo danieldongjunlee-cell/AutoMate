@@ -87,7 +87,7 @@ export function CommChannelsScreen() {
           </Text>
           <Text
             style={{
-              fontSize: 13,
+              fontSize: 14,
               color: colors.textTertiary,
               textAlign: 'center',
               lineHeight: 19,
@@ -127,16 +127,16 @@ export function CommChannelsScreen() {
           onChangeText={setQuery}
           placeholder={`Search ${brand} communities…`}
           placeholderTextColor={colors.textTertiary}
-          style={{ flex: 1, fontSize: 13, color: colors.textPrimary, padding: 0 }}
+          style={{ flex: 1, fontSize: 14, color: colors.textPrimary, padding: 0 }}
         />
       </View>
 
       {/* Explanatory banner — scopes the list to the active brand. */}
       <Card tinted style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primaryDeep }}>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
           These are communities for your {brand}.
         </Text>
-        <Text style={{ fontSize: 12, color: colors.primaryDark, marginTop: 2 }}>
+        <Text style={{ fontSize: 13, color: colors.primaryDark, marginTop: 2 }}>
           You can join communities for your registered car&apos;s brand — switch cars to see another
           brand&apos;s communities.
         </Text>
@@ -155,7 +155,7 @@ export function CommChannelsScreen() {
       </View>
 
       {filteredChannels.length === 0 ? (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.md }}>
           No {brand} communities match “{query.trim()}”
         </Text>
       ) : null}
@@ -197,7 +197,7 @@ export function CommChannelsScreen() {
               >
                 {channel.emoji} {channel.name}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                 {channel.members.toLocaleString()} members
                 {channel.newPosts ? ` · ${channel.newPosts} new posts` : ''}
               </Text>
@@ -215,7 +215,7 @@ export function CommChannelsScreen() {
             >
               <Text
                 style={{
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: '600',
                   color: joined ? colors.onPrimary : colors.textTertiary,
                 }}
@@ -239,7 +239,7 @@ export function CommChannelsScreen() {
         }}
       >
         <Text style={{ fontSize: 17 }}>💬</Text>
-        <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>
+        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
           Share tips, ask questions, help fellow {brand} owners
         </Text>
       </View>

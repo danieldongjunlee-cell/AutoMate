@@ -90,12 +90,12 @@ export function BookAgreementScreen() {
             No payment today
           </Text>
           {kind === 'maintenance' ? (
-            <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
+            <Text style={{ fontSize: 13, color: colors.successDark, lineHeight: 18 }}>
               Your <Text style={{ fontWeight: '700' }}>{serviceTotalLabel}</Text> for the selected
               services is paid at the shop after your visit.
             </Text>
           ) : (
-            <Text style={{ fontSize: 12, color: colors.successDark, lineHeight: 18 }}>
+            <Text style={{ fontSize: 13, color: colors.successDark, lineHeight: 18 }}>
               You pay the shop after the work. Your <Text style={{ fontWeight: '700' }}>{estimateLabel}</Text> estimate is not charged now.
             </Text>
           )}
@@ -128,9 +128,9 @@ export function BookAgreementScreen() {
             justifyContent: 'center',
           }}
         >
-          {agreed && <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text>}
+          {agreed && <Text style={{ color: '#fff', fontSize: 14 }}>✓</Text>}
         </View>
-        <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 19 }}>
+        <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary, lineHeight: 19 }}>
           I have read and agree to AutoMate's{' '}
           <Text
             style={{ color: colors.primary, fontWeight: '700' }}
@@ -144,7 +144,7 @@ export function BookAgreementScreen() {
       </Tappable>
 
       <PrimaryButton label="Agree & continue →" disabled={!agreed} onPress={onContinue} />
-      <Text style={{ fontSize: 11, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Shops sign a matching{' '}
         <Text style={{ color: colors.primary }} onPress={() => navigation.navigate('PartnerAgreement')}>
           Partner Agreement

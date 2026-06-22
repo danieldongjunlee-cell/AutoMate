@@ -55,7 +55,7 @@ export function Dropdown({
           borderWidth: 1,
           borderColor: colors.border,
           borderRadius: radii.md,
-          backgroundColor: colors.inputBg,
+          backgroundColor: colors.surface,
           paddingHorizontal: spacing.md,
           paddingVertical: 13,
           opacity: isDisabled ? 0.5 : 1,
@@ -71,7 +71,7 @@ export function Dropdown({
         >
           {hasValue ? value : placeholder || `Select ${label.toLowerCase()}`}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textSecondary, marginLeft: spacing.xs }}>▾</Text>
+        <Text style={{ fontSize: 13, color: colors.textSecondary, marginLeft: spacing.xs }}>▾</Text>
       </Tappable>
 
       <Modal visible={open} transparent animationType="slide" onRequestClose={() => setOpen(false)}>
@@ -97,7 +97,7 @@ export function Dropdown({
           >
             <Text
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: '700',
                 letterSpacing: 0.6,
                 textTransform: 'uppercase',

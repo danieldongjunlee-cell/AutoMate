@@ -37,7 +37,7 @@ export function WriteReviewScreen() {
         <AvatarCircle initial="H" color={colors.primary} size={26} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>Honda Fairfax Service</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>Rear bumper · Apr 12</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Rear bumper · Apr 12</Text>
         </View>
         <Badge label="✓ Verified booking" variant="success" />
       </Card>
@@ -51,7 +51,7 @@ export function WriteReviewScreen() {
             </Tappable>
           ))}
         </View>
-        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary, marginTop: 4 }}>{LABELS[stars]}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary, marginTop: 4 }}>{LABELS[stars]}</Text>
       </View>
 
       <SectionLabel>Your review</SectionLabel>
@@ -69,7 +69,7 @@ export function WriteReviewScreen() {
           minHeight: 96,
           marginBottom: spacing.md,
           backgroundColor: colors.surface,
-          fontSize: 13,
+          fontSize: 14,
           color: colors.textPrimary,
           textAlignVertical: 'top',
         }}
@@ -103,7 +103,7 @@ export function WriteReviewScreen() {
           }}
         >
           <Text style={{ fontSize: 14 }}>🎁</Text>
-          <Text style={{ fontSize: 11, color: colors.primary, lineHeight: 16 }}>
+          <Text style={{ fontSize: 12, color: colors.primary, lineHeight: 16 }}>
             Earn <Text style={{ fontWeight: '700' }}>+30 pts</Text> for a review with a photo
           </Text>
         </View>

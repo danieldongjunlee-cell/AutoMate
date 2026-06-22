@@ -81,12 +81,12 @@ export function RescheduleScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
             {booking ? `${booking.dealerName} · ${booking.title}` : 'Honda Fairfax · Rear bumper'}
           </Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.82)' }}>
+          <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.82)' }}>
             📅 {booking ? `${booking.dateLabel} · ${booking.time}` : 'Thu, Apr 12 · 10:30 AM'}
           </Text>
         </View>
         <View style={{ backgroundColor: 'rgba(255,255,255,.22)', borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3 }}>
-          <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: '#fff' }}>
             {proposedTime ? 'New time' : 'Confirmed'}
           </Text>
         </View>
@@ -97,7 +97,7 @@ export function RescheduleScreen() {
           <Text style={{ fontSize: 14, fontWeight: '800', color: colors.warningDeep, marginBottom: 2 }}>
             ⏰ The shop proposed a new time
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textSecondary, marginBottom: spacing.sm }}>
+          <Text style={{ fontSize: 13, color: colors.textSecondary, marginBottom: spacing.sm }}>
             {booking?.dealerName ?? 'The shop'} suggested{' '}
             <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{proposedTime}</Text>. Accept
             it, or pick another time below.
@@ -111,10 +111,10 @@ export function RescheduleScreen() {
                 marginBottom: spacing.sm,
               }}
             >
-              <Text style={{ fontSize: 11, fontWeight: '700', color: colors.warningDeep, marginBottom: 2 }}>
+              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.warningDeep, marginBottom: 2 }}>
                 Why the change?
               </Text>
-              <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18 }}>{booking.reason}</Text>
+              <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{booking.reason}</Text>
             </View>
           ) : null}
           <PrimaryButton variant="success" label={`Accept ${proposedTime} →`} onPress={onAcceptProposed} />
@@ -129,7 +129,7 @@ export function RescheduleScreen() {
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md }}>
           {DAYS.map(({ day: n, weekday: d }) => (
             <Tappable key={n} onPress={() => setDay(n)} style={{ ...pill(day === n), paddingVertical: 8, paddingHorizontal: 11, alignItems: 'center' }}>
-              <Text style={{ fontSize: 10, color: day === n ? colors.primaryDark : colors.textTertiary }}>{d}</Text>
+              <Text style={{ fontSize: 11, color: day === n ? colors.primaryDark : colors.textTertiary }}>{d}</Text>
               <Text style={{ fontSize: 14, fontWeight: '800', color: day === n ? colors.primaryDark : colors.textPrimary }}>{n}</Text>
             </Tappable>
           ))}
@@ -138,7 +138,7 @@ export function RescheduleScreen() {
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md, flexWrap: 'wrap' }}>
           {TIMES.map((t) => (
             <Tappable key={t} onPress={() => setTime(t)} style={{ ...pill(time === t), paddingVertical: 8, paddingHorizontal: 13 }}>
-              <Text style={{ fontSize: 13, fontWeight: time === t ? '700' : '400', color: time === t ? colors.primaryDark : colors.textSecondary }}>{t}</Text>
+              <Text style={{ fontSize: 14, fontWeight: time === t ? '700' : '400', color: time === t ? colors.primaryDark : colors.textSecondary }}>{t}</Text>
             </Tappable>
           ))}
         </View>
@@ -160,7 +160,7 @@ export function RescheduleScreen() {
         <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.xs }}>
           🗑️ Need to cancel?
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textSecondary, lineHeight: 18, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18, marginBottom: spacing.sm }}>
           Cancel <Text style={{ color: colors.successDark, fontWeight: '700' }}>12+ hours ahead</Text> and
           your deposit is fully refunded. Within 12 hours or a no-show, the deposit is kept and a
           strike is added — 3 strikes removes your account.

@@ -37,10 +37,10 @@ export function QuoteRow({
 
   const line = (label: string, value: string, strong = false) => (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
-      <Text style={{ fontSize: 13, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '400' }}>
+      <Text style={{ fontSize: 14, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '400' }}>
         {label}
       </Text>
-      <Text style={{ fontSize: 13, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '500' }}>
+      <Text style={{ fontSize: 14, color: strong ? colors.textPrimary : colors.textSecondary, fontWeight: strong ? '800' : '500' }}>
         {value}
       </Text>
     </View>
@@ -53,7 +53,7 @@ export function QuoteRow({
         <AvatarCircle initial={dealer.initial} color={dealer.color} size={38} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{dealer.name}</Text>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             <Text style={{ color: STAR_YELLOW }}>★</Text> {dealer.rating} ({dealer.reviews}) · {dealer.distanceMi} mi
           </Text>
         </View>
@@ -66,7 +66,7 @@ export function QuoteRow({
       </Tappable>
 
       <Tappable onPress={() => setOpen((o) => !o)} hitSlop={6} style={{ paddingVertical: 8 }}>
-        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
           {open ? 'Hide price breakdown ⌃' : 'See price breakdown ⌄'}
         </Text>
       </Tappable>
@@ -85,7 +85,7 @@ export function QuoteRow({
       ) : null}
 
       {quote.note ? (
-        <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: selected ? spacing.sm : 0 }}>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: selected ? spacing.sm : 0 }}>
           {quote.note}
         </Text>
       ) : null}

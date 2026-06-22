@@ -192,11 +192,11 @@ export function BookingsScreen() {
           {dateBadge(b)}
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: titleColor }}>{b.title}</Text>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: completed ? colors.textTertiary : kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 2 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: completed ? colors.textTertiary : kindStyle(b).accent, textTransform: 'uppercase', letterSpacing: 0.4, marginTop: 2 }}>
               {b.kind === 'repair' ? 'Repair' : 'Maintenance'}
             </Text>
             {(b.status === 'reschedule_proposed' || cancelled) && b.reason ? (
-              <Text style={{ fontSize: 11, fontWeight: '700', color: cancelled ? colors.danger : colors.warningDeep, marginTop: 2 }}>
+              <Text style={{ fontSize: 12, fontWeight: '700', color: cancelled ? colors.danger : colors.warningDeep, marginTop: 2 }}>
                 ⓘ Tap to see why
               </Text>
             ) : null}
@@ -234,10 +234,10 @@ export function BookingsScreen() {
               backgroundColor: completed ? colors.primarySurface : colors.surfaceAlt,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: '700', color: completed ? colors.primary : colors.textSecondary }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: completed ? colors.primary : colors.textSecondary }}>
               {completed ? '★ Leave a review' : '✓ Mark service completed'}
             </Text>
-            <Text style={{ fontSize: 13, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
+            <Text style={{ fontSize: 14, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
           </Tappable>
         ) : null}
       </View>
@@ -271,7 +271,7 @@ export function BookingsScreen() {
           }}
         >
           <Text style={{ fontSize: 14, color: colors.onPrimary }}>＋</Text>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Book service</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>Book service</Text>
         </Tappable>
         <CarSwitchChip />
       </View>
@@ -300,7 +300,7 @@ export function BookingsScreen() {
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
             <Text
               key={`h${i}`}
-              style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: colors.textTertiary }}
+              style={{ flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '700', color: colors.textTertiary }}
             >
               {d}
             </Text>
@@ -332,7 +332,7 @@ export function BookingsScreen() {
                 >
                   <Text
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: mark || isToday ? '800' : '500',
                       color: mark ? colors.onPrimary : isToday ? colors.primary : colors.textSecondary,
                     }}
@@ -348,11 +348,11 @@ export function BookingsScreen() {
         <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.sm }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: colors.warning }} />
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>{t('Repair')}</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{t('Repair')}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: colors.primary }} />
-            <Text style={{ fontSize: 11, color: colors.textTertiary }}>{t('Maintenance')}</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary }}>{t('Maintenance')}</Text>
           </View>
         </View>
       </Card>
@@ -366,12 +366,12 @@ export function BookingsScreen() {
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             {t('No bookings yet')}
           </Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2, textAlign: 'center' }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2, textAlign: 'center' }}>
             Book a repair or schedule a service and it will show up here.
           </Text>
         </Card>
       ) : scheduledBookings.length === 0 ? (
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
           No {statusFilter === 'All' ? 'scheduled' : statusFilter.toLowerCase()} bookings.
         </Text>
       ) : (

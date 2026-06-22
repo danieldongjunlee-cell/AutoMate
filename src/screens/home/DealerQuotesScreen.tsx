@@ -110,7 +110,7 @@ export function DealerQuotesScreen() {
               paddingVertical: 3,
             }}
           >
-            <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: '#fff' }}>
               {t('AI confidence')} {confidencePct}%
             </Text>
           </View>
@@ -119,7 +119,7 @@ export function DealerQuotesScreen() {
           <Text style={{ fontSize: 26, fontWeight: '800', color: colors.successDark }}>
             ${priceLow} – ${priceHigh}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
             {QUOTE_REQUEST.quotesReceived} quotes · price range
           </Text>
         </View>
@@ -145,18 +145,18 @@ export function DealerQuotesScreen() {
         {/* Damaged parts + type as standout chips */}
         {damageParts.length > 0 ? (
           <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', marginTop: spacing.sm, paddingTop: spacing.sm, gap: spacing.xs }}>
-            <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
               Damaged parts assessed
             </Text>
             {damageParts.map((p) => (
               <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 6 }}>
                 <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
-                  <Text style={{ fontSize: 13, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '800', color: colors.onPrimary }}>{p.part}</Text>
                 </View>
                 <View style={{ backgroundColor: colors.warningSurface, borderWidth: 1, borderColor: colors.warning, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2 }}>
-                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep }}>{p.type}</Text>
                 </View>
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>📷 {p.photos} photo{p.photos !== 1 ? 's' : ''}</Text>
+                <Text style={{ fontSize: 13, color: colors.textTertiary }}>📷 {p.photos} photo{p.photos !== 1 ? 's' : ''}</Text>
               </View>
             ))}
           </View>
@@ -191,7 +191,7 @@ export function DealerQuotesScreen() {
         }}
       >
         <Text style={{ fontSize: 14 }}>ⓘ</Text>
-        <Text style={{ flex: 1, fontSize: 12, color: colors.warningDeep, lineHeight: 18 }}>
+        <Text style={{ flex: 1, fontSize: 13, color: colors.warningDeep, lineHeight: 18 }}>
           Photo-based estimates.{' '}
           <Text style={{ fontWeight: '700' }}>Final price may vary slightly</Text> after in-person
           inspection.

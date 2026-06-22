@@ -165,9 +165,9 @@ export function ProfSettingsScreen() {
         }
         style={{ alignItems: 'center', marginBottom: spacing.sm }}
       >
-        <Text style={{ fontSize: 13, color: colors.disabled }}>Delete account</Text>
+        <Text style={{ fontSize: 14, color: colors.disabled }}>Delete account</Text>
       </Tappable>
-      <Text style={{ fontSize: 12, color: colors.disabled, textAlign: 'center' }}>
+      <Text style={{ fontSize: 13, color: colors.disabled, textAlign: 'center' }}>
         AutoMate v1.0.0 · Build 2027.1
       </Text>
 

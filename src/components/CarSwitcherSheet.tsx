@@ -63,7 +63,7 @@ export function CarSwitcherSheet({
                 <AvatarCircle initial={brandOf(v.name).charAt(0)} color={colors.primary} size={36} />
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{v.name}</Text>
-                  <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+                  <Text style={{ fontSize: 12, color: colors.textTertiary }}>
                     {v.odometerMi.toLocaleString()} mi · {brandOf(v.name)}
                   </Text>
                 </View>

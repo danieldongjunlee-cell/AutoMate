@@ -53,7 +53,7 @@ function FormField({
     <View style={{ flex: 1 }}>
       <Text
         style={{
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600',
           color: colors.textTertiary,
           textTransform: 'uppercase',
@@ -84,7 +84,7 @@ function FormField({
           >
             {value || placeholder}
           </Text>
-          <Text style={{ fontSize: 13, color: colors.primary }}>▾</Text>
+          <Text style={{ fontSize: 14, color: colors.primary }}>▾</Text>
         </Tappable>
       ) : (
         <View
@@ -103,7 +103,7 @@ function FormField({
             keyboardType={keyboardType}
             style={{ flex: 1, fontSize: 15, color: colors.textPrimary, paddingVertical: 0, paddingBottom: 6 }}
           />
-          {trailing ? <Text style={{ fontSize: 13 }}>{trailing}</Text> : null}
+          {trailing ? <Text style={{ fontSize: 14 }}>{trailing}</Text> : null}
         </View>
       )}
     </View>
@@ -205,7 +205,7 @@ export function ProfInsEditScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.warningDeep }}>
             {policy.carrier} · {policy.policyNumber}
           </Text>
-          <Text style={{ fontSize: 12, color: '#854F0B' }}>
+          <Text style={{ fontSize: 13, color: '#854F0B' }}>
             {policy.coverage} · {policy.status}
           </Text>
         </View>
@@ -241,13 +241,13 @@ export function ProfInsEditScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 12, color: colors.primaryDark, lineHeight: 18 }}>
+        <Text style={{ fontSize: 13, color: colors.primaryDark, lineHeight: 18 }}>
           ⓘ Updating your deductible helps AutoMate compare cash vs. insurance more accurately.
         </Text>
       </View>
 
       {error ? (
-        <Text style={{ fontSize: 12, color: colors.danger, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 13, color: colors.danger, marginBottom: spacing.sm }}>
           {error}
         </Text>
       ) : null}
@@ -417,7 +417,7 @@ export function ProfInsAddScreen() {
           <FormField label="Premium /yr" value={premium} onChangeText={setPremium} placeholder="$" keyboardType="numeric" />
         </View>
         <View style={{ padding: spacing.md }}>
-          <Text style={{ fontSize: 11, color: colors.textTertiary }}>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
             Deductible &amp; premium are optional, but cash-vs-insurance comparison stays locked until
             you add them.
           </Text>
@@ -430,7 +430,7 @@ export function ProfInsAddScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             🔗 Connect my insurer
           </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
             Log in once — your policies import automatically
           </Text>
         </View>
@@ -463,7 +463,7 @@ export function ProfInsAddScreen() {
                   paddingVertical: 2,
                 }}
               >
-                <Text style={{ fontSize: 10, fontWeight: '700', color: colors.successDeep }}>
+                <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep }}>
                   DEFAULT
                 </Text>
               </View>
@@ -471,14 +471,14 @@ export function ProfInsAddScreen() {
             {connectingId === p.id ? (
               <ActivityIndicator size="small" color={colors.primary} />
             ) : (
-              <Text style={{ fontSize: 13, color: colors.primary }}>Connect →</Text>
+              <Text style={{ fontSize: 14, color: colors.primary }}>Connect →</Text>
             )}
           </Tappable>
         ))}
       </Card>
 
       {error ? (
-        <Text style={{ fontSize: 12, color: colors.danger, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 13, color: colors.danger, marginBottom: spacing.sm }}>
           {error}
         </Text>
       ) : null}

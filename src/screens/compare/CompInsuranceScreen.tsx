@@ -51,7 +51,7 @@ export function CompInsuranceScreen() {
             <Text style={{ fontSize: 19, fontWeight: '700', color: colors.textPrimary }}>
               File a claim
             </Text>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            <Text style={{ fontSize: 14, color: colors.textTertiary }}>
               {INSURANCE_POLICY.carrier} · Policy #{INSURANCE_POLICY.policyNumber}
             </Text>
           </View>
@@ -70,7 +70,7 @@ export function CompInsuranceScreen() {
         >
           <Text
             style={{
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: '700',
               color: colors.textTertiary,
               textTransform: 'uppercase',
@@ -86,7 +86,7 @@ export function CompInsuranceScreen() {
               <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>
                 {INSURANCE_POLICY.claimsPhone}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+              <Text style={{ fontSize: 14, color: colors.textTertiary }}>
                 {INSURANCE_POLICY.claimsPhoneDigits}
               </Text>
             </View>
@@ -97,7 +97,7 @@ export function CompInsuranceScreen() {
           </View>
         </View>
 
-        <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 20, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 20, marginBottom: spacing.sm }}>
           Mention your policy and reference:{' '}
           <Text style={{ fontWeight: '700', color: colors.textPrimary }}>
             {INSURANCE_POLICY.claimReference}
@@ -116,7 +116,7 @@ export function CompInsuranceScreen() {
             marginBottom: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 12, color: colors.warningDeep, lineHeight: 19 }}>
+          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 19 }}>
             <Text style={{ fontWeight: '700' }}>⚠ Note:</Text> Filing a claim may raise your premium
             12–18% per year for 2–3 years. Consider paying cash ($320) to avoid ~$750–$960 in future
             hikes.

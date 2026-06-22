@@ -51,7 +51,7 @@ function HelpArticle({
         <Text style={{ fontSize: 32 }}>{icon}</Text>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep }}>{title}</Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>Help article · 2 min read</Text>
+          <Text style={{ fontSize: 13, color: colors.primaryDark }}>Help article · 2 min read</Text>
         </View>
       </View>
 
@@ -69,13 +69,13 @@ function HelpArticle({
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: '700', color: colors.onPrimary }}>{i + 1}</Text>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>{i + 1}</Text>
             </View>
             <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
               {step.title}
             </Text>
           </View>
-          <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 21 }}>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 21 }}>
             {step.body}
           </Text>
         </Card>

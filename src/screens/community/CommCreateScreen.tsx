@@ -97,7 +97,7 @@ export function CommCreateScreen() {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '700', color: '#fff' }}>H</Text>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>H</Text>
         </View>
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
           Honda Owners
@@ -123,7 +123,7 @@ export function CommCreateScreen() {
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Text style={{ fontSize: 13, color: on ? colors.onPrimary : colors.textTertiary }}>
+              <Text style={{ fontSize: 14, color: on ? colors.onPrimary : colors.textTertiary }}>
                 {cat}
               </Text>
             </Tappable>
@@ -157,7 +157,7 @@ export function CommCreateScreen() {
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
           Add photo(s)
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textPlaceholder }}>· Up to 4</Text>
+        <Text style={{ fontSize: 13, color: colors.textPlaceholder }}>· Up to 4</Text>
       </View>
       <View
         style={{
@@ -195,7 +195,7 @@ export function CommCreateScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 10, color: '#fff' }}>✕</Text>
+              <Text style={{ fontSize: 11, color: '#fff' }}>✕</Text>
             </Tappable>
           </View>
         ))}

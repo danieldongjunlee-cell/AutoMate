@@ -85,7 +85,7 @@ export function BookingConfirmScreen() {
               {dealer.name} Service Center
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                 {dist.format(dealer.distanceMi)} away ·{' '}
               </Text>
               <RatingLink dealer={dealer} />
@@ -132,7 +132,7 @@ export function BookingConfirmScreen() {
         onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
         style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.danger }}>Cancel</Text>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Cancel</Text>
       </Tappable>
 
       {/* Secondary, smaller: add to calendar + view on map (wireframe v15.10). */}
@@ -150,7 +150,7 @@ export function BookingConfirmScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
             📅 Add to calendar
           </Text>
         </Tappable>
@@ -167,7 +167,7 @@ export function BookingConfirmScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textSecondary }}>
+          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
             📍 View on map
           </Text>
         </Tappable>
@@ -177,7 +177,7 @@ export function BookingConfirmScreen() {
         onPress={() => navigation.navigate('Reviews', { dealerId: dealer.id })}
         style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.xs }}
       >
-        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.primary }}>
+        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
           ★ Leave a review after your visit
         </Text>
       </Tappable>

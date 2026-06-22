@@ -64,7 +64,7 @@ export function MaintManualScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 13, color: colors.primaryDark }}>✏️ Manual entry</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>✏️ Manual entry</Text>
         </View>
         <PointsBadge points={EARN_RULES.manualLog} usd />
       </View>
@@ -90,7 +90,7 @@ export function MaintManualScreen() {
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Text style={{ fontSize: 13, color: on ? colors.onPrimary : colors.textTertiary }}>
+              <Text style={{ fontSize: 14, color: on ? colors.onPrimary : colors.textTertiary }}>
                 {type}
               </Text>
             </Tappable>

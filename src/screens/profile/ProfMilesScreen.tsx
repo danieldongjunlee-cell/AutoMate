@@ -34,7 +34,7 @@ export function ProfMilesScreen() {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }}>CURRENT BALANCE</Text>
+        <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)' }}>CURRENT BALANCE</Text>
         <Text style={{ fontSize: 32, fontWeight: '700', color: '#fff' }}>
           {points.toLocaleString()} pts
         </Text>
@@ -73,7 +73,7 @@ export function ProfMilesScreen() {
                   <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                     {m.title}
                   </Text>
-                  <Text style={{ fontSize: 12, color: colors.textTertiary }}>{m.sub}</Text>
+                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>{m.sub}</Text>
                 </View>
               </View>
               <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>
