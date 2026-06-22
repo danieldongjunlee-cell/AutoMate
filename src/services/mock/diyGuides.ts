@@ -3,6 +3,20 @@
  * teasers in `data.ts` (PRO_GUIDES / DIY_GUIDES), each entry here has full,
  * follow-along instructions so the user can actually do the job.
  */
+/** A material to buy for a DIY repair: photo + cheapest place to get it. */
+export interface DiyMaterial {
+  name: string;
+  emoji: string;
+  /** Real product photo (web). */
+  photo: string;
+  /** Typical cheapest price. */
+  price: string;
+  /** Cheapest retailer. */
+  store: string;
+  /** Where to buy (retailer listing/search). */
+  url: string;
+}
+
 export interface DiyGuide {
   id: string;
   title: string;
@@ -12,7 +26,25 @@ export interface DiyGuide {
   tools: string[];
   steps: string[];
   tip?: string;
+  /** Shopping list with photos + cheapest buy links. */
+  materials?: DiyMaterial[];
+  /** A how-to video walkthrough. */
+  videoUrl?: string;
+  videoTitle?: string;
 }
+
+let _mLock = 1;
+/** Build a material with a stable web product photo + retailer link. */
+const mat = (name: string, emoji: string, photoKw: string, price: string, store: string, url: string): DiyMaterial => ({
+  name,
+  emoji,
+  photo: `https://loremflickr.com/120/120/${photoKw}?lock=${_mLock++}`,
+  price,
+  store,
+  url,
+});
+/** YouTube search link for a how-to video (always resolves). */
+const vid = (query: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 
 export const DIY_GUIDES: DiyGuide[] = [
   {
@@ -32,6 +64,12 @@ export const DIY_GUIDES: DiyGuide[] = [
       'Repeat on the other side, then run the wipers with washer fluid to check for streaks.',
     ],
     tip: 'Replace blades every 6–12 months. If they chatter or streak even when new, wipe the rubber edge with a little glass cleaner — road film is often the culprit.',
+    materials: [
+      mat('Wiper blades (pair)', '🌧️', 'windshield,wiper', '$12.99', 'AutoZone', 'https://www.autozone.com/search?searchText=wiper+blades'),
+      mat('Glass cleaner', '🧴', 'glass,cleaner,spray', '$3.48', 'Walmart', 'https://www.walmart.com/search?q=auto+glass+cleaner'),
+    ],
+    videoUrl: vid('how to replace windshield wiper blades'),
+    videoTitle: 'Replace wiper blades in 2 minutes',
   },
   {
     id: 'engine-air-filter',
@@ -68,6 +106,11 @@ export const DIY_GUIDES: DiyGuide[] = [
       'Run the fan on high for a minute to confirm strong, odor-free airflow.',
     ],
     tip: 'A clogged cabin filter causes weak A/C airflow and musty smells. Replace it about once a year or every 15,000 miles.',
+    materials: [
+      mat('Cabin air filter', '😮‍💨', 'car,air,filter', '$8.99', 'Amazon', 'https://www.amazon.com/s?k=cabin+air+filter'),
+    ],
+    videoUrl: vid('how to replace cabin air filter behind glovebox'),
+    videoTitle: 'Replace a cabin air filter (glovebox)',
   },
   {
     id: 'tire-pressure',
@@ -176,6 +219,13 @@ export const DIY_GUIDES: DiyGuide[] = [
       'Repeat once or twice if a shallow dent remains. Deep creases may still need a body shop.',
     ],
     tip: 'Works best on warm days and on bumpers where the plastic flexes. It will not fix dents with cracked or chipped paint.',
+    materials: [
+      mat('Rubber dish gloves', '🧤', 'rubber,gloves', '$5.98', 'Walmart', 'https://www.walmart.com/search?q=rubber+gloves'),
+      mat('Cup-style plunger', '🪠', 'plunger,rubber', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Electric kettle', '♨️', 'electric,kettle', '$14.99', 'Amazon', 'https://www.amazon.com/s?k=electric+kettle'),
+    ],
+    videoUrl: vid('how to fix car bumper dent with boiling water'),
+    videoTitle: 'How to pop a bumper dent with boiling water',
   },
   {
     id: 'plunger-dent',
@@ -193,6 +243,12 @@ export const DIY_GUIDES: DiyGuide[] = [
       'Dry the area and inspect in good light; small high spots can be tapped gently from behind.',
     ],
     tip: 'Keep the pull straight, not at an angle, or the seal breaks. A sharp crease likely needs paintless dent repair by a pro.',
+    materials: [
+      mat('Cup-style sink plunger', '🪠', 'plunger,cup', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Microfiber towel', '🧽', 'microfiber,cloth', '$1.97', 'Walmart', 'https://www.walmart.com/search?q=microfiber+towel'),
+    ],
+    videoUrl: vid('how to remove car dent with plunger'),
+    videoTitle: 'Pull a door/panel dent with a plunger',
   },
   {
     id: 'scratch-buff',
@@ -210,6 +266,13 @@ export const DIY_GUIDES: DiyGuide[] = [
       'Repeat two or three times for stubborn marks; finish with a coat of wax to seal and protect the area.',
     ],
     tip: 'If your nail catches the scratch, it has gone through the clear coat and needs touch-up paint or a shop — buffing alone won’t fill it.',
+    materials: [
+      mat('Scratch & swirl remover', '🧴', 'car,polish,bottle', '$7.97', 'AutoZone', 'https://www.autozone.com/search?searchText=scratch+remover'),
+      mat('Microfiber cloths (6pk)', '🧽', 'microfiber,cloths', '$6.99', 'Amazon', 'https://www.amazon.com/s?k=microfiber+cloth'),
+      mat('Car wax', '✨', 'car,wax', '$8.47', 'Walmart', 'https://www.walmart.com/search?q=car+wax'),
+    ],
+    videoUrl: vid('how to buff out car scratch clear coat'),
+    videoTitle: 'Buff a light clear-coat scratch by hand',
   },
 ];
 

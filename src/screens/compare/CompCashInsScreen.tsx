@@ -12,9 +12,14 @@ import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
 import { dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useAppStore } from '../../store/useAppStore';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { palette, radii, spacing, useTheme } from '../../theme';
+
+/** Comprehensive (low-surcharge) claims: glass, weather, theft, vandalism. */
+const COMPREHENSIVE_KEYWORDS = ['glass', 'windshield', 'shatter', 'hail', 'weather', 'theft', 'vandal', 'lamp'];
 
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompCashIns'>;
 type Route = RouteProp<CompareStackParamList, 'CompCashIns'>;
@@ -31,15 +36,32 @@ export function CompCashInsScreen() {
   const { colors } = useTheme();
   const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
+  const { active } = useActiveVehicle();
+  const damageParts = useAppStore((s) => s.damageParts);
+
+  // The damage type drives the claim type: glass/weather/theft = comprehensive
+  // (small surcharge), everything else = collision (larger surcharge).
+  const claimType: 'collision' | 'comprehensive' = damageParts.some((p) =>
+    COMPREHENSIVE_KEYWORDS.some((k) => p.type.toLowerCase().includes(k)),
+  )
+    ? 'comprehensive'
+    : 'collision';
 
   const { data: comparison } = useQuery({
-    queryKey: ['comparison', aq.id, aq.priceLow],
-    queryFn: () => compareService.getComparison({ quoteId: aq.id, claimAmount: aq.priceLow }),
+    queryKey: ['comparison', aq.id, aq.priceLow, claimType],
+    queryFn: () => compareService.getComparison({ quoteId: aq.id, claimAmount: aq.priceLow, claimType }),
   });
   // Wireframe defaults while the model loads (same numbers for seeded data).
   const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;
   const premiumPerYear = comparison?.input.premiumPerYear ?? INSURANCE_POLICY.premiumPerYear;
-  const cashRecommended = (comparison?.result.recommendation ?? 'cash') === 'cash';
+  const result = comparison?.result;
+  const cashRecommended = (result?.recommendation ?? 'cash') === 'cash';
+
+  // Recommended option is green; the costlier option is red (driven by the model).
+  const good = { surface: colors.successSurface, border: colors.success, deep: colors.successDeep, dark: colors.successDark, solid: colors.success };
+  const bad = { surface: colors.dangerSurface, border: colors.danger, deep: colors.dangerDeep, dark: colors.danger, solid: colors.danger };
+  const cashC = cashRecommended ? good : bad;
+  const insC = cashRecommended ? bad : good;
 
   // The comparison math needs the policy's deductible AND annual premium. If the
   // policy is missing either, gate the comparison and point the user to fill them in.
@@ -108,11 +130,53 @@ export function CompCashInsScreen() {
             {INSURANCE_POLICY.carrier} · ${deductible} ded. · ${premiumPerYear.toLocaleString()}
             /yr
           </Text>
-          <Text style={{ fontSize: 13, color: '#888' }}>
-            Policy #{INSURANCE_POLICY.policyNumber} · from your profile
+          {/* Comparison is run against the registered car (VIN). */}
+          <Text style={{ fontSize: 13, color: '#888' }} numberOfLines={1}>
+            {active ? `${active.name} · VIN ${active.vin || '—'}` : `Policy #${INSURANCE_POLICY.policyNumber}`}
           </Text>
         </View>
       </View>
+
+      {/* What the insurance model found if you file a claim. */}
+      {result ? (
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radii.md,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.border,
+            padding: spacing.md,
+            marginBottom: spacing.md,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 6 }}>
+            🧮 If you file a {claimType} claim
+          </Text>
+          {(
+            [
+              ['Deductible you pay', `$${deductible}`],
+              ['Premium hike', `+${result.surchargePctPerYear}%/yr (+$${result.totalSurcharge} over ${result.surchargeYears} yr)`],
+              ['Claim on record', `${result.surchargeYears} years`],
+              ['3-yr insurance cost', `$${result.insuranceTotal3yr.toLocaleString()}`],
+              ['Pay cash (once)', `$${result.cashTotal3yr.toLocaleString()}`],
+            ] as const
+          ).map(([label, value], i, arr) => (
+            <View
+              key={label}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingVertical: 5,
+                borderBottomWidth: i < arr.length - 1 ? StyleSheet.hairlineWidth : 0,
+                borderBottomColor: colors.divider,
+              }}
+            >
+              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{value}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
 
       {/* No money upfront explainer */}
       <View
@@ -139,97 +203,66 @@ export function CompCashInsScreen() {
         </Text>
       </View>
 
-      {/* Cash vs insurance */}
+      {/* Cash vs insurance — the recommended option is green, the costlier is red. */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <Tappable
           onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
-            backgroundColor: colors.successSurface,
+            backgroundColor: cashC.surface,
             borderRadius: radii.md,
             borderWidth: 1.5,
-            borderColor: colors.success,
+            borderColor: cashC.border,
             padding: spacing.md,
             alignItems: 'center',
             opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 30, marginBottom: 6 }}>💳</Text>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.successDeep, marginBottom: 4 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: cashC.deep, marginBottom: 4 }}>
             Pay it yourself
           </Text>
-          <Text style={{ fontSize: 27, fontWeight: '700', color: colors.successDark }}>
+          <Text style={{ fontSize: 27, fontWeight: '700', color: cashC.dark }}>
             ${aq.priceLow}–${aq.priceHigh}
           </Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: 6 }}>
             final, at the shop
           </Text>
-          {cashRecommended ? (
-            <View
-              style={{
-                backgroundColor: colors.success,
-                borderRadius: radii.pill,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>
-                ✔ Best for this repair
-              </Text>
-            </View>
-          ) : null}
+          <View style={{ backgroundColor: cashRecommended ? cashC.solid : cashC.surface, borderWidth: cashRecommended ? 0 : StyleSheet.hairlineWidth, borderColor: cashC.border, borderRadius: radii.pill, paddingHorizontal: 11, paddingVertical: 3 }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: cashRecommended ? '#fff' : cashC.deep }}>
+              {cashRecommended ? '✔ Recommended' : '✗ Costs more'}
+            </Text>
+          </View>
         </Tappable>
 
         <Tappable
           onPress={() => navigation.navigate('CompInsurance', { quoteId: aq.id })}
           style={({ pressed }) => ({
             flex: 1,
-            backgroundColor: colors.dangerSurface,
+            backgroundColor: insC.surface,
             borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.dangerBorder,
+            borderWidth: 1.5,
+            borderColor: insC.border,
             padding: spacing.md,
             alignItems: 'center',
             opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🛡️</Text>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.dangerDeep, marginBottom: 4 }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: insC.deep, marginBottom: 4 }}>
             Use insurance
           </Text>
-          <Text style={{ fontSize: 27, fontWeight: '700', color: colors.textPrimary }}>
+          <Text style={{ fontSize: 27, fontWeight: '700', color: insC.dark }}>
             ${deductible}
           </Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: 6 }}>
             your deductible
           </Text>
-          {cashRecommended ? (
-            <View
-              style={{
-                backgroundColor: colors.dangerSurface,
-                borderRadius: radii.pill,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: colors.dangerBorder,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.dangerDeep }}>
-                ⚠ Premium ↑
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                backgroundColor: colors.success,
-                borderRadius: radii.pill,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>✔ Recommended</Text>
-            </View>
-          )}
+          <View style={{ backgroundColor: !cashRecommended ? insC.solid : insC.surface, borderWidth: !cashRecommended ? 0 : StyleSheet.hairlineWidth, borderColor: insC.border, borderRadius: radii.pill, paddingHorizontal: 11, paddingVertical: 3 }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: !cashRecommended ? '#fff' : insC.deep }}>
+              {!cashRecommended ? '✔ Recommended' : '⚠ Costs more'}
+            </Text>
+          </View>
         </Tappable>
       </View>
 

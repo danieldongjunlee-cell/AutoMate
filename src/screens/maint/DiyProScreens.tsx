@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { FormSheet } from '../../components/FormSheet';
 import { Tappable } from '../../components/Tappable';
@@ -153,6 +153,71 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
             </View>
           ))}
         </View>
+
+        {/* Shopping list: product photo + cheapest place to buy. */}
+        {guide.materials?.length ? (
+          <>
+            <SectionLabel>Materials &amp; where to buy (cheapest)</SectionLabel>
+            <View style={{ marginBottom: spacing.md }}>
+              {guide.materials.map((m) => (
+                <Tappable
+                  key={m.name}
+                  onPress={() => Linking.openURL(m.url)}
+                  style={({ pressed }) => ({
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.sm,
+                    backgroundColor: colors.surface,
+                    borderWidth: StyleSheet.hairlineWidth,
+                    borderColor: colors.border,
+                    borderRadius: radii.sm,
+                    padding: spacing.sm,
+                    marginBottom: spacing.xs,
+                    opacity: pressed ? 0.75 : 1,
+                  })}
+                >
+                  <View style={{ width: 44, height: 44, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ position: 'absolute', fontSize: 22 }}>{m.emoji}</Text>
+                    <Image source={{ uri: m.photo }} style={{ width: 44, height: 44 }} resizeMode="cover" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{m.name}</Text>
+                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>
+                      <Text style={{ fontWeight: '800', color: colors.successDeep }}>{m.price}</Text> · cheapest at {m.store}
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primary }}>Buy →</Text>
+                </Tappable>
+              ))}
+            </View>
+          </>
+        ) : null}
+
+        {/* How-to video */}
+        {guide.videoUrl ? (
+          <Tappable
+            onPress={() => Linking.openURL(guide.videoUrl!)}
+            style={({ pressed }) => ({
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing.sm,
+              backgroundColor: '#2a1517',
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginBottom: spacing.md,
+              opacity: pressed ? 0.85 : 1,
+            })}
+          >
+            <Text style={{ fontSize: 24 }}>▶️</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Watch the how-to video</Text>
+              <Text style={{ fontSize: 12, color: 'rgba(255,255,255,.65)' }} numberOfLines={1}>
+                {guide.videoTitle ?? 'Step-by-step walkthrough'}
+              </Text>
+            </View>
+            <Text style={{ fontSize: 18, color: '#fff' }}>→</Text>
+          </Tappable>
+        ) : null}
 
         <SectionLabel>Steps</SectionLabel>
         <View style={{ marginBottom: spacing.sm }}>

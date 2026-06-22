@@ -213,22 +213,35 @@ export function ConfirmSubmitScreen() {
   const setDamageRequestId = useAppStore((s) => s.setDamageRequestId);
   const { active, brand } = useActiveVehicle();
   const [submitting, setSubmitting] = useState(false);
+  // YOLO safety guard: a non-null message means the photos were rejected.
+  const [rejected, setRejected] = useState<string | null>(null);
 
   const onSubmit = async () => {
     setSubmitting(true);
+    setRejected(null);
     try {
       // The AI estimate comes from the swappable DamageEstimator adapter
       // (services/damage-ai when EXPO_PUBLIC_DAMAGE_AI_URL is set, deterministic
-      // mock otherwise). submitDamageRequest still owns after-hours routing +
-      // points. Pad to ~2s so the analyzing stages read.
+      // mock otherwise). Pad to ~2s so the analyzing stages read.
       const vehicle = active
         ? { make: brand, model: modelOf(active.name, brand), year: (active.name.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
         : undefined;
-      const [{ afterHours, pointsEarned }, estimate] = await Promise.all([
-        quoteService.submitDamageRequest(damageParts),
+      const [estimate] = await Promise.all([
         damageEstimator.estimate({ parts: damageParts, vehicle }),
         new Promise((r) => setTimeout(r, 2000)),
       ]);
+
+      // Safety guard: if YOLO isn't confident the photos show car damage, stop
+      // here — no range, no quote request, no points.
+      if (estimate.rejected) {
+        setRejected(
+          estimate.rejectReason ??
+            "We couldn't confidently detect car damage in these photos.",
+        );
+        return;
+      }
+
+      const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(damageParts);
       addPoints(pointsEarned, 'Submitted damage photos');
       // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
       setAiEstimate(estimate.aiEstimate);
@@ -251,6 +264,58 @@ export function ConfirmSubmitScreen() {
     return (
       <Screen>
         <AnalyzingState partCount={damageParts.length} />
+      </Screen>
+    );
+  }
+
+  // YOLO safety guard fired — show why and how to retake instead of a range.
+  if (rejected) {
+    return (
+      <Screen>
+        <View style={{ alignItems: 'center', paddingTop: spacing.xl, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>🚫</Text>
+          <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: 6, textAlign: 'center' }}>
+            Couldn’t detect car damage
+          </Text>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 21 }}>
+            {rejected}
+          </Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: colors.warningSurface,
+            borderWidth: 1,
+            borderColor: colors.warning,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginBottom: spacing.lg,
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep, marginBottom: 4 }}>
+            Tips for a good photo
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
+            • Fill the frame with the damaged part{'\n'}• Good, even lighting — avoid glare{'\n'}• Hold steady, about 1–2 ft away{'\n'}• Make sure the actual dent / scratch / crack is in view
+          </Text>
+        </View>
+        <PrimaryButton
+          label="Retake photos →"
+          onPress={() => {
+            setRejected(null);
+            navigation.navigate('CarDiagram');
+          }}
+        />
+        <Tappable
+          onPress={() => setRejected(null)}
+          style={({ pressed }) => ({
+            marginTop: spacing.sm,
+            paddingVertical: 13,
+            alignItems: 'center',
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to my parts</Text>
+        </Tappable>
       </Screen>
     );
   }

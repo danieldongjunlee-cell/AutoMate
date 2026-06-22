@@ -30,6 +30,11 @@ export interface DamageEstimateResult {
   modelVersion: string;
   pricingVersion: string;
   modelMode: string;
+  /** Safety guard: true when YOLO isn't confident the photos show car damage,
+   *  so no price range is produced. */
+  rejected?: boolean;
+  /** Why the photos were rejected (shown to the user). */
+  rejectReason?: string;
 }
 
 export interface DamageEstimator {
@@ -66,6 +71,23 @@ const DEFAULT_MODERATE: Record<string, [number, number]> = {
 // what users see reflects the model's real accuracy rather than a magic number.
 const MOCK_CONFIDENCE = YOLO_MODEL.mAP50;
 
+// Safety guard: below this per-detection confidence the YOLO model is treated as
+// "unsure", so the photos are rejected instead of returning a price range.
+export const YOLO_MIN_CONFIDENCE = 0.5;
+
+// Damage classes the YOLO model is trained to detect. A part whose type isn't
+// one of these (e.g. an undamaged panel or a non-car photo) scores low and is
+// rejected by the guard.
+const KNOWN_DAMAGE = new Set([
+  'dent', 'scratch', 'crack', 'paint', 'glass shatter', 'lamp broken', 'tire flat',
+]);
+
+/** Mock per-detection confidence: high for a recognised damage class, low otherwise. */
+const detectionConfidence = (rawType: string): number => {
+  const recognised = splitTypes(rawType).some((t) => KNOWN_DAMAGE.has(t));
+  return recognised ? MOCK_CONFIDENCE : 0.34;
+};
+
 const splitTypes = (t: string): string[] => {
   const out = (t || '')
     .toLowerCase()
@@ -98,21 +120,41 @@ function mockResult(input: EstimateInput): DamageEstimateResult {
   const parts = input.parts.length ? input.parts : [{ part: 'rear bumper', type: 'dent', photos: 3 }];
   let low = 0;
   let high = 0;
+  let minConf = 1;
   const damages: DamageDetection[] = parts.map((p) => {
     const [l, h] = dominantRange(p.part, p.type);
     low += l;
     high += h;
+    const confidence = detectionConfidence(p.type);
+    minConf = Math.min(minConf, confidence);
     return {
       type: splitTypes(p.type).join(', '),
       part: p.part,
       severity: 'moderate',
-      confidence: MOCK_CONFIDENCE,
+      confidence,
       area_ratio: 0.12,
     };
   });
+
+  // Safety guard: if the least-confident detection is below threshold, the model
+  // is unsure the photos show car damage — reject instead of returning a range.
+  if (minConf < YOLO_MIN_CONFIDENCE) {
+    return {
+      estimateId: 'est_rejected',
+      aiEstimate: { priceLow: 0, priceHigh: 0, confidencePct: Math.round(minConf * 100) },
+      damages,
+      modelVersion: 'mock-app-1',
+      pricingVersion: 'nova-2026.06',
+      modelMode: 'mock',
+      rejected: true,
+      rejectReason:
+        "Our YOLOv8 model couldn't confidently identify car damage in these photos. Retake clear, close-up shots of the damaged part in good light — make sure the damage is in frame.",
+    };
+  }
+
   return {
     estimateId: `est_mock_${parts.map((p) => p.part).join('-').toLowerCase().replace(/\s+/g, '')}`,
-    aiEstimate: { priceLow: low, priceHigh: high, confidencePct: Math.round(MOCK_CONFIDENCE * 100) },
+    aiEstimate: { priceLow: low, priceHigh: high, confidencePct: Math.round(minConf * 100) },
     damages,
     modelVersion: 'mock-app-1',
     pricingVersion: 'nova-2026.06',
@@ -139,6 +181,9 @@ interface ApiEstimate {
   model_version: string;
   pricing_version: string;
   model_mode: string;
+  /** Safety guard from the YOLO service (low-confidence / non-damage photos). */
+  rejected?: boolean;
+  reject_reason?: string;
 }
 
 /** Read a local/remote image URI into a Blob for multipart upload. */
@@ -187,6 +232,8 @@ export const httpDamageEstimator: DamageEstimator = {
       modelVersion: data.model_version,
       pricingVersion: data.pricing_version,
       modelMode: data.model_mode,
+      rejected: data.rejected,
+      rejectReason: data.reject_reason,
     };
   },
 };
