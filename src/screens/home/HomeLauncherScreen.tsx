@@ -98,7 +98,6 @@ export function HomeLauncherScreen() {
         <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>{sub}</Text>
       </View>
-      <Text style={{ color: colors.primary, fontWeight: '800', fontSize: 20 }}>→</Text>
     </Tappable>
   );
 
@@ -145,29 +144,42 @@ export function HomeLauncherScreen() {
           sub: colors.successDark,
           iconColor: colors.successDark,
         })}
-        {aiEstimate
-          ? miniCard({
-              title: t('Compare Costs'),
-              phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
-              icon: '⚖️',
-              onPress: () => navigation.navigate('CompSelect'),
-              tint: colors.warningSurface,
-              border: colors.warning,
-              fg: colors.warningDeep,
-              sub: colors.warningDeep,
-              iconColor: colors.warningDeep,
-            })
-          : miniCard({
-              title: t('Compare Costs'),
-              phrase: 'Run an AI estimate first',
-              icon: '🔒',
-              onPress: () => navigation.navigate('CarDiagram'),
-              tint: colors.surfaceAlt,
-              border: colors.border,
-              fg: colors.textTertiary,
-              sub: colors.textTertiary,
-              iconColor: colors.textTertiary,
-            })}
+        {aiEstimate ? (
+          miniCard({
+            title: t('Compare Costs'),
+            phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
+            icon: '⚖️',
+            onPress: () => navigation.navigate('CompSelect'),
+            tint: colors.warningSurface,
+            border: colors.warning,
+            fg: colors.warningDeep,
+            sub: colors.warningDeep,
+            iconColor: colors.warningDeep,
+          })
+        ) : (
+          // Locked until an AI estimate exists — a centered lock makes the gate
+          // obvious, while the subtitle still names what the tool does.
+          <Tappable onPress={() => navigation.navigate('CarDiagram')} style={{ flex: 1 }}>
+            <View
+              style={{
+                backgroundColor: colors.surfaceAlt,
+                borderWidth: 1,
+                borderColor: colors.border,
+                borderRadius: radii.lg,
+                padding: spacing.md,
+                minHeight: 104,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 26, marginBottom: 4 }}>🔒</Text>
+              <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textTertiary }}>{t('Compare Costs')}</Text>
+              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textTertiary, marginTop: 2 }}>
+                Cash vs insurance
+              </Text>
+            </View>
+          </Tappable>
+        )}
       </View>
 
       {/* Deals & offers — larger header (extra top gap separates it from the actions) */}

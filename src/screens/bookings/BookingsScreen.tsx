@@ -257,7 +257,7 @@ export function BookingsScreen() {
           }}
         >
           <Text style={{ fontSize: 14, color: colors.onPrimary }}>＋</Text>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Book</Text>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.onPrimary }}>Book service</Text>
         </Tappable>
         <CarSwitchChip />
       </View>

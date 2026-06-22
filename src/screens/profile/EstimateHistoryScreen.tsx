@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
+import { Dropdown } from '../../components/Dropdown';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { fetchDamageEstimates, SavedDamageRequest } from '../../lib/damageEstimates';
 import { isSupabaseConfigured } from '../../lib/supabase';
@@ -10,9 +11,24 @@ import { radii, spacing, useTheme } from '../../theme';
 const when = (iso: string) =>
   new Date(iso).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
+const ALL_TYPES = 'All types';
+const DATE_OPTS = ['All dates', 'Last 30 days', 'Last 90 days', 'This year'] as const;
+
+/** Does an estimate's timestamp fall inside the chosen date window? */
+function withinDateRange(iso: string, range: string): boolean {
+  if (range === 'All dates') return true;
+  const d = new Date(iso);
+  if (range === 'This year') return d.getFullYear() === new Date().getFullYear();
+  const days = range === 'Last 30 days' ? 30 : 90;
+  return Date.now() - d.getTime() <= days * 24 * 60 * 60 * 1000;
+}
+
 /** Past AI damage estimates with their uploaded before-photos (from Supabase). */
 export function EstimateHistoryScreen() {
   const { colors } = useTheme();
+  // Dropdown filters (damage type + date window).
+  const [typeFilter, setTypeFilter] = useState<string>(ALL_TYPES);
+  const [dateFilter, setDateFilter] = useState<string>(DATE_OPTS[0]);
   const { data: estimates = [], isLoading } = useQuery({
     queryKey: ['damage-estimates'],
     queryFn: fetchDamageEstimates,
@@ -57,10 +73,42 @@ export function EstimateHistoryScreen() {
     );
   }
 
+  // Damage-type options are derived from what the user actually has on file.
+  const typeOptions = [
+    ALL_TYPES,
+    ...Array.from(
+      new Set(
+        estimates.flatMap((e) => e.parts.map((p) => p.damageType).filter((t): t is string => !!t)),
+      ),
+    ),
+  ];
+  const filtered = estimates.filter(
+    (est) =>
+      (typeFilter === ALL_TYPES || est.parts.some((p) => p.damageType === typeFilter)) &&
+      withinDateRange(est.createdAt, dateFilter),
+  );
+
   return (
     <Screen>
       <SectionLabel>Your AI estimates</SectionLabel>
-      {estimates.map((est: SavedDamageRequest) => (
+
+      {/* Filters: damage type + date window */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
+        <View style={{ flex: 1 }}>
+          <Dropdown label="Damage type" value={typeFilter} options={typeOptions} onChange={setTypeFilter} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Dropdown label="Date" value={dateFilter} options={DATE_OPTS as unknown as string[]} onChange={setDateFilter} />
+        </View>
+      </View>
+
+      {filtered.length === 0 ? (
+        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
+          No estimates match these filters.
+        </Text>
+      ) : null}
+
+      {filtered.map((est: SavedDamageRequest) => (
         <Card key={est.id} style={{ padding: spacing.md, marginBottom: spacing.md }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
             <View style={{ flex: 1 }}>

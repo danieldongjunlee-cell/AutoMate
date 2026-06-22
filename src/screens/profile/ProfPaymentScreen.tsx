@@ -3,8 +3,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ApplePaySheet } from '../../components/ApplePaySheet';
-import { AppleLogo } from '../../components/BrandLogos';
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
@@ -163,13 +161,12 @@ function CardFormModal({
   );
 }
 
-/** Wireframe s-prof-payment, now live CRUD + simulated Apple Pay sheet. */
+/** Wireframe s-prof-payment, now live card CRUD. */
 export function ProfPaymentScreen() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<PaymentCard | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [applePayOpen, setApplePayOpen] = useState(false);
 
   const { data: cards, isLoading } = useQuery({
     queryKey: ['payment-cards'],
@@ -366,51 +363,6 @@ export function ProfPaymentScreen() {
         ))
       )}
 
-      {/* Apple Pay → simulated sheet */}
-      <Tappable
-        onPress={() => setApplePayOpen(true)}
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.border,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.sm,
-        }}
-      >
-        <View
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: radii.sm,
-            backgroundColor: palette.dark,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <AppleLogo size={22} color="#fff" />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
-            Apple Pay
-          </Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>Configured · opens  Pay sheet</Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: colors.successSurface,
-            borderRadius: radii.pill,
-            paddingHorizontal: 10,
-            paddingVertical: 3,
-          }}
-        >
-          <Text style={{ fontSize: 12, color: colors.successDeep }}>Ready</Text>
-        </View>
-      </Tappable>
-
       {/* Add method */}
       <Tappable
         onPress={() => {
@@ -433,7 +385,7 @@ export function ProfPaymentScreen() {
           Add payment method
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-          Credit / debit · Apple Pay · Google Pay
+          Credit / debit card
         </Text>
       </Tappable>
 
@@ -459,7 +411,6 @@ export function ProfPaymentScreen() {
         onSave={(fields) => saveMutation.mutate(fields)}
         saving={saveMutation.isPending}
       />
-      <ApplePaySheet visible={applePayOpen} onClose={() => setApplePayOpen(false)} />
     </Screen>
   );
 }

@@ -13,7 +13,6 @@ import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Screen, SectionLabel } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
-import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, Policy, vehiclesService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -132,10 +131,13 @@ function PolicyFormModal({
 
 function PolicyCard({
   policy,
+  coversLabel,
   onEdit,
   onRemove,
 }: {
   policy: Policy;
+  /** The covered car, resolved against the user's registered car info. */
+  coversLabel: string;
   onEdit: () => void;
   onRemove: () => void;
 }) {
@@ -144,7 +146,7 @@ function PolicyCard({
     ['Policy number', policy.policyNumber],
     ['Deductible', `$${policy.deductible} (collision)`],
     ['Annual premium', `$${policy.premiumPerYear.toLocaleString()}/yr`],
-    ['Covers', policy.covers],
+    ['Covers', coversLabel],
     ['Renewal date', policy.renewal],
   ] as const;
 
@@ -281,6 +283,12 @@ export function ProfInsuranceScreen() {
   });
   const carOptions = (vehicles ?? []).map((v) => v.name);
 
+  // "Covers" should reflect the car the user actually registered in their car
+  // info — so we resolve the policy's stored covers text to a registered car
+  // name when one matches (e.g. "2019 Honda Accord" → "2019 Honda Accord EX-L").
+  const coversLabelFor = (policy: Policy): string =>
+    (vehicles ?? []).find((v) => policyCoversVehicle(policy.covers, v.name))?.name ?? policy.covers;
+
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['policies'] });
 
   const saveMutation = useMutation({
@@ -359,6 +367,7 @@ export function ProfInsuranceScreen() {
           <PolicyCard
             key={policy.id}
             policy={policy}
+            coversLabel={coversLabelFor(policy)}
             onEdit={() => openEdit(policy)}
             onRemove={() =>
               confirmAction(
@@ -391,32 +400,6 @@ export function ProfInsuranceScreen() {
           Add another policy
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>Geico, Progressive, USAA...</Text>
-      </Tappable>
-
-      {/* Compare link (cross-tab → Compare) */}
-      <Tappable
-        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'CompSelect')}
-        style={({ pressed }) => ({
-          backgroundColor: colors.successSurface,
-          borderRadius: radii.sm,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.success,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          opacity: pressed ? 0.7 : 1,
-        })}
-      >
-        <Text style={{ fontSize: 16 }}>⚖</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
-            Compare cash vs. insurance →
-          </Text>
-          <Text style={{ fontSize: 12, color: colors.successDark }}>
-            See if filing a claim is worth it
-          </Text>
-        </View>
       </Tappable>
 
       <PolicyFormModal

@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { ApplePaySheet } from '../../components/ApplePaySheet';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { Card, SectionLabel, Screen } from '../../components/ui';
@@ -26,10 +25,8 @@ export function DiyPaymentScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const points = useAppStore((s) => s.points);
-  const [method, setMethod] = useState<'card' | 'apple'>('card');
   const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
-  const [applePayOpen, setApplePayOpen] = useState(false);
 
   // Redemption: up to min(balance, total × 100) points (1 pt = $0.01).
   const maxRedeemable = Math.min(points, Math.round(PRO_PRICE_USD * POINTS_PER_USD));
@@ -125,16 +122,13 @@ export function DiyPaymentScreen() {
 
       <SectionLabel>Pay with</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <Tappable
-          onPress={() => setMethod('card')}
+        <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             padding: spacing.md,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: colors.divider,
-            backgroundColor: method === 'card' ? colors.primarySurface : undefined,
-            borderLeftWidth: method === 'card' ? 3 : 0,
+            backgroundColor: colors.primarySurface,
+            borderLeftWidth: 3,
             borderLeftColor: colors.primary,
           }}
         >
@@ -145,47 +139,11 @@ export function DiyPaymentScreen() {
             </Text>
             <Text style={{ fontSize: 12, color: colors.primaryDark }}>Default card</Text>
           </View>
-          {method === 'card' ? (
-            <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>
-          ) : (
-            <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
-          )}
-        </Tappable>
-        <Tappable
-          onPress={() => {
-            setMethod('apple');
-            // Apple Pay option → simulated  Pay sheet; confirming completes
-            // the same onPay path.
-            setApplePayOpen(true);
-          }}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            padding: spacing.md,
-            backgroundColor: method === 'apple' ? colors.primarySurface : undefined,
-            borderLeftWidth: method === 'apple' ? 3 : 0,
-            borderLeftColor: colors.primary,
-          }}
-        >
-          <Text style={{ fontSize: 20, marginRight: spacing.sm }}>💵</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
-              Apple Pay
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>opens  Pay sheet</Text>
-          </View>
-          {method === 'apple' ? (
-            <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>
-          ) : (
-            <Text style={{ fontSize: 16, color: colors.disabled }}>›</Text>
-          )}
-        </Tappable>
+          <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>
+        </View>
       </Card>
 
-      <Tappable
-        onPress={() => (method === 'apple' ? setApplePayOpen(true) : onPay())}
-        disabled={paying}
-      >
+      <Tappable onPress={onPay} disabled={paying}>
         {({ pressed }) => (
           <LinearGradient
             colors={[palette.warning, '#F5B947']}
@@ -209,12 +167,6 @@ export function DiyPaymentScreen() {
         )}
       </Tappable>
       <ProcessingOverlay visible={paying} label="Processing payment…" />
-      <ApplePaySheet
-        visible={applePayOpen}
-        onClose={() => setApplePayOpen(false)}
-        onConfirmed={onPay}
-        totalLabel={`$${payTotal.toFixed(2)}`}
-      />
     </Screen>
   );
 }
