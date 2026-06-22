@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
+import { useAppStore } from '../../store/useAppStore';
 import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
 
 /**
@@ -65,6 +66,8 @@ export function DealerMap({
 }: DealerMapProps) {
   const mapRef = useRef<MapView>(null);
   const delta = zoomToDelta(zoom);
+  // The "you are here" dot only shows once the user grants location access.
+  const showUser = useAppStore((s) => s.locationPermission === 'granted');
 
   // Pan when the focus changes (e.g. a card/pin gets selected).
   useEffect(() => {
@@ -85,7 +88,7 @@ export function DealerMap({
         longitudeDelta: delta,
       }}
     >
-      {userLocation ? (
+      {userLocation && showUser ? (
         <Marker
           coordinate={{ latitude: userLocation.lat, longitude: userLocation.lng }}
           anchor={{ x: 0.5, y: 0.5 }}

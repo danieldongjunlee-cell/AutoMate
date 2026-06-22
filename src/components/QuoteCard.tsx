@@ -84,20 +84,6 @@ export function QuoteCard({
             Accept quote
           </Text>
         </Tappable>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
-            backgroundColor: colors.surfaceAlt,
-            borderRadius: radii.sm,
-            paddingHorizontal: spacing.sm,
-            paddingVertical: 8,
-          }}
-        >
-          <Text style={{ fontSize: 13 }}>🕐</Text>
-          <Text style={{ fontSize: 11, color: colors.textSecondary }}>{dealer.hours}</Text>
-        </View>
       </View>
     </View>
   );

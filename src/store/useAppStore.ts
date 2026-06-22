@@ -302,9 +302,16 @@ interface AppState {
   noShowCount: number;
   addNoShow: () => void;
 
-  // Active vehicle (v17 car switcher — shown when >2 cars registered)
+  // Active vehicle (v17 car switcher — shown when >2 cars registered).
+  // Switching cars swaps the per-car damage/quotes flow (see damageByVehicle).
   activeVehicleId: string | null;
   setActiveVehicle: (id: string) => void;
+  /** Per-car snapshots of the damage/quotes flow, keyed by vehicle id. */
+  damageByVehicle: Record<string, DamageSlice>;
+
+  // Location permission (asked once so the maps can show "you are here").
+  locationPermission: 'unasked' | 'granted' | 'denied';
+  setLocationPermission: (p: 'granted' | 'denied') => void;
 
   // Damage flow: committed parts + the in-progress draft (one part per pass)
   damageParts: DamagePart[];
@@ -389,6 +396,20 @@ const emptyDraft = {
   draftNote: '',
 };
 
+/** Per-car snapshot of the damage/quotes flow, so switching cars swaps it. */
+interface DamageSlice {
+  damageParts: DamagePart[];
+  aiEstimate: AiEstimateSummary | null;
+  currentDamageRequestId: string | null;
+  quotesViewed: boolean;
+}
+const emptySlice: DamageSlice = {
+  damageParts: [],
+  aiEstimate: null,
+  currentDamageRequestId: null,
+  quotesViewed: true,
+};
+
 export const useAppStore = create<AppState>((set) => ({
   isAuthenticated: false,
   authToken: null,
@@ -420,6 +441,7 @@ export const useAppStore = create<AppState>((set) => ({
       dailyCheckedIn: false,
       noShowCount: 0,
       activeVehicleId: null,
+      damageByVehicle: {},
       joinedCommunityIds: [],
       bookings: SEED_BOOKINGS,
       bookingsViewed: true,
@@ -465,7 +487,36 @@ export const useAppStore = create<AppState>((set) => ({
   addNoShow: () => set((s) => ({ noShowCount: s.noShowCount + 1 })),
 
   activeVehicleId: null,
-  setActiveVehicle: (activeVehicleId) => set({ activeVehicleId }),
+  damageByVehicle: {},
+  // Switching cars saves the current car's quotes/estimate and loads the target
+  // car's, so bookings/quotes/estimate reflect the selected car (none if it has
+  // never had an estimate).
+  setActiveVehicle: (id) =>
+    set((s) => {
+      if (s.activeVehicleId === id) return {};
+      const byVehicle = { ...s.damageByVehicle };
+      if (s.activeVehicleId) {
+        byVehicle[s.activeVehicleId] = {
+          damageParts: s.damageParts,
+          aiEstimate: s.aiEstimate,
+          currentDamageRequestId: s.currentDamageRequestId,
+          quotesViewed: s.quotesViewed,
+        };
+      }
+      const slice = byVehicle[id] ?? emptySlice;
+      return {
+        activeVehicleId: id,
+        damageByVehicle: byVehicle,
+        damageParts: slice.damageParts,
+        aiEstimate: slice.aiEstimate,
+        currentDamageRequestId: slice.currentDamageRequestId,
+        quotesViewed: slice.quotesViewed,
+        ...emptyDraft,
+      };
+    }),
+
+  locationPermission: 'unasked',
+  setLocationPermission: (locationPermission) => set({ locationPermission }),
 
   damageParts: [],
   ...emptyDraft,
@@ -506,7 +557,12 @@ export const useAppStore = create<AppState>((set) => ({
   resetDraft: () => set({ ...emptyDraft }),
   removePart: (index) =>
     set((s) => ({ damageParts: s.damageParts.filter((_, i) => i !== index) })),
-  resetDamageFlow: () => set({ damageParts: [], ...emptyDraft, aiEstimate: null, currentDamageRequestId: null }),
+  resetDamageFlow: () =>
+    set((s) => {
+      const byVehicle = { ...s.damageByVehicle };
+      if (s.activeVehicleId) delete byVehicle[s.activeVehicleId];
+      return { damageParts: [], ...emptyDraft, aiEstimate: null, currentDamageRequestId: null, damageByVehicle: byVehicle };
+    }),
   aiEstimate: null,
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
   currentDamageRequestId: null,

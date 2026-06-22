@@ -103,14 +103,6 @@ export function DealerMapScreen() {
           </View>
         </View>
         <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
-        >
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>🕐 Hours</Text>
-          <Text style={{ fontSize: 13, fontWeight: '500', color: colors.textPrimary }}>
-            {dealer.hours}
-          </Text>
-        </View>
-        <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',

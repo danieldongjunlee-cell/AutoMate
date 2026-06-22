@@ -2,6 +2,7 @@ import L from 'leaflet';
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
+import { useAppStore } from '../../store/useAppStore';
 import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
 
 /**
@@ -79,6 +80,8 @@ export function DealerMap({
   const pinLayerRef = useRef<L.LayerGroup | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  // The "you are here" dot only shows once the user grants location access.
+  const showUser = useAppStore((s) => s.locationPermission === 'granted');
 
   // Init once the container div exists.
   useEffect(() => {
@@ -117,7 +120,7 @@ export function DealerMap({
     if (!layer) return;
     layer.clearLayers();
 
-    if (userLocation) {
+    if (userLocation && showUser) {
       L.marker([userLocation.lat, userLocation.lng], {
         icon: L.divIcon({ className: 'am-divicon', html: USER_DOT_HTML, iconSize: [0, 0] }),
         interactive: false,
@@ -133,7 +136,7 @@ export function DealerMap({
       marker.on('click', () => onSelectRef.current?.(m.id));
       marker.addTo(layer);
     });
-  }, [markers, userLocation]);
+  }, [markers, userLocation, showUser]);
 
   // RN-web: the View ref is the underlying HTMLDivElement Leaflet needs.
   return <View ref={containerRef as any} style={style} />;

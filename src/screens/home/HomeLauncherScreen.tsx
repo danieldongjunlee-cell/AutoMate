@@ -1,17 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
 import { useT } from '../../i18n';
 import { HomeStackParamList } from '../../navigation/types';
+import { HOME_REVIEWS, HomeReview } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { STAR_YELLOW } from '../../components/RatingLink';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeLauncher'>;
 
@@ -27,50 +29,65 @@ export function HomeLauncherScreen() {
   // populates it.
   const aiEstimate = useAppStore((s) => s.aiEstimate);
 
-  /** The hero action (largest): full-width gradient, big corner icon. */
-  const heroCard = (opts: { title: string; phrase: string; icon: string; onPress: () => void }) => (
+  // All home actions share one white card surface; the colored icon badge is
+  // what makes each action stand out.
+  const cardShadow = {
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  } as const;
+
+  /** The hero action (largest): white card, prominent colored icon badge. */
+  const heroCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress}>
-      <LinearGradient
-        colors={[palette.accent, '#5b51c4']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ borderRadius: radii.lg, padding: spacing.lg, minHeight: 156, justifyContent: 'center', overflow: 'hidden', marginBottom: spacing.md }}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.lg,
+          minHeight: 120,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          marginBottom: spacing.md,
+          ...cardShadow,
+        }}
       >
-        <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff' }}>{opts.title}</Text>
-        <Text style={{ fontSize: 16, fontWeight: '600', color: 'rgba(255,255,255,.9)', marginTop: 5 }}>{opts.phrase}</Text>
-        <Text style={{ position: 'absolute', right: -10, bottom: -26, fontSize: 110, opacity: 0.16, color: '#fff' }}>{opts.icon}</Text>
-      </LinearGradient>
+        <View style={{ width: 60, height: 60, borderRadius: radii.md, backgroundColor: opts.accent, alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontSize: 32 }}>{opts.icon}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textTertiary, marginTop: 4 }}>{opts.phrase}</Text>
+        </View>
+        <Text style={{ color: opts.accent, fontSize: 22, fontWeight: '800' }}>→</Text>
+      </View>
     </Tappable>
   );
 
   /** Smaller side-by-side action tile (Maintenance / Compare). */
-  const miniCard = (opts: {
-    title: string;
-    phrase: string;
-    icon: string;
-    onPress: () => void;
-    tint: string;
-    border: string;
-    fg: string;
-    sub: string;
-    iconColor: string;
-  }) => (
+  const miniCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress} style={{ flex: 1 }}>
       <View
         style={{
-          backgroundColor: opts.tint,
+          backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: opts.border,
+          borderColor: colors.border,
           borderRadius: radii.lg,
           padding: spacing.md,
-          minHeight: 104,
-          justifyContent: 'center',
-          overflow: 'hidden',
+          minHeight: 116,
+          ...cardShadow,
         }}
       >
-        <Text style={{ fontSize: 18, fontWeight: '800', color: opts.fg }}>{opts.title}</Text>
-        <Text style={{ fontSize: 12, fontWeight: '600', color: opts.sub, marginTop: 3 }}>{opts.phrase}</Text>
-        <Text style={{ position: 'absolute', right: -6, bottom: -14, fontSize: 60, opacity: 0.15, color: opts.iconColor }}>{opts.icon}</Text>
+        <View style={{ width: 40, height: 40, borderRadius: radii.sm, backgroundColor: opts.accent, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.sm }}>
+          <Text style={{ fontSize: 20 }}>{opts.icon}</Text>
+        </View>
+        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textTertiary, marginTop: 2 }}>{opts.phrase}</Text>
       </View>
     </Tappable>
   );
@@ -101,6 +118,32 @@ export function HomeLauncherScreen() {
     </Tappable>
   );
 
+  /** Real-customer review card with before/after repair photos. */
+  const reviewCard = (r: HomeReview) => (
+    <View style={{ backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, minHeight: 96 }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
+        {[{ label: 'Before', color: r.beforeColor }, { label: 'After', color: r.afterColor }].map((p) => (
+          <View key={p.label} style={{ flex: 1, height: 82, borderRadius: radii.sm, backgroundColor: p.color, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <Text style={{ fontSize: 26 }}>🚗</Text>
+            <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: 'rgba(0,0,0,.45)', borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: '#fff' }}>{p.label}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3, flexWrap: 'wrap' }}>
+        <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary }}>{r.name}</Text>
+        <Text style={{ fontSize: 12 }}>
+          <Text style={{ color: STAR_YELLOW }}>{'★'.repeat(r.stars)}</Text>
+          <Text style={{ color: colors.border }}>{'★'.repeat(5 - r.stars)}</Text>
+        </Text>
+        <Text style={{ fontSize: 11, color: colors.textTertiary }}>· {r.car}</Text>
+      </View>
+      <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primaryDark, marginBottom: 5 }}>{r.repair}</Text>
+      <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 19, fontStyle: 'italic' }}>“{r.quote}”</Text>
+    </View>
+  );
+
   return (
     <Screen safeTop>
       {/* Greeting + active-car switcher */}
@@ -128,6 +171,7 @@ export function HomeLauncherScreen() {
         title: t('Get an AI Repair Estimate'),
         phrase: 'Free quote in under 5 minutes',
         icon: '🚗',
+        accent: palette.accent,
         onPress: () => navigation.navigate('CarDiagram'),
       })}
 
@@ -137,49 +181,26 @@ export function HomeLauncherScreen() {
           title: t('Maintenance'),
           phrase: 'Book service fast',
           icon: '🔧',
+          accent: colors.success,
           onPress: () => navigation.navigate('MaintDashboard'),
-          tint: colors.successSurface,
-          border: colors.successLight,
-          fg: colors.successDeep,
-          sub: colors.successDark,
-          iconColor: colors.successDark,
         })}
-        {aiEstimate ? (
-          miniCard({
-            title: t('Compare Costs'),
-            phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
-            icon: '⚖️',
-            onPress: () => navigation.navigate('CompSelect'),
-            tint: colors.warningSurface,
-            border: colors.warning,
-            fg: colors.warningDeep,
-            sub: colors.warningDeep,
-            iconColor: colors.warningDeep,
-          })
-        ) : (
-          // Locked until an AI estimate exists — a centered lock makes the gate
-          // obvious, while the subtitle still names what the tool does.
-          <Tappable onPress={() => navigation.navigate('CarDiagram')} style={{ flex: 1 }}>
-            <View
-              style={{
-                backgroundColor: colors.surfaceAlt,
-                borderWidth: 1,
-                borderColor: colors.border,
-                borderRadius: radii.lg,
-                padding: spacing.md,
-                minHeight: 104,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 26, marginBottom: 4 }}>🔒</Text>
-              <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textTertiary }}>{t('Compare Costs')}</Text>
-              <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textTertiary, marginTop: 2 }}>
-                Cash vs insurance
-              </Text>
-            </View>
-          </Tappable>
-        )}
+        {aiEstimate
+          ? miniCard({
+              title: t('Compare Costs'),
+              phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
+              icon: '⚖️',
+              accent: colors.warning,
+              onPress: () => navigation.navigate('CompSelect'),
+            })
+          : // Locked until an AI estimate exists — the lock icon badge signals the
+            // gate; the subtitle still names what the tool does.
+            miniCard({
+              title: t('Compare Costs'),
+              phrase: 'Cash vs insurance · run an estimate',
+              icon: '🔒',
+              accent: colors.disabled,
+              onPress: () => navigation.navigate('CarDiagram'),
+            })}
       </View>
 
       {/* Deals & offers — larger header (extra top gap separates it from the actions) */}
@@ -196,7 +217,18 @@ export function HomeLauncherScreen() {
           dealItem('🛡️', 'SPONSORED', colors.success, '#fff', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', colors.successSurface, colors.success, 'vienna-auto'),
         ]}
       />
+
+      {/* Real customer reviews — before & after (same spacing as Deals). */}
+      <View style={{ marginTop: spacing.xxxl, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Real customer reviews')}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
+          Before &amp; after — from photo to fixed car
+        </Text>
+      </View>
+      <PagedCarousel items={HOME_REVIEWS.map((r) => reviewCard(r))} />
+
       <View style={{ marginBottom: spacing.lg }} />
+      <LocationPermissionSheet />
     </Screen>
   );
 }

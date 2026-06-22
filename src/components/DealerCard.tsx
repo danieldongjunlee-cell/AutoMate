@@ -65,7 +65,7 @@ export function DealerCard({
             />
           </View>
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>
-            {dist.format(dealer.distanceMi)} · 🕐 {dealer.hours}
+            {dist.format(dealer.distanceMi)}
             {open ? ` · Open until ${dealer.closesAt}` : ' · Closed'}
           </Text>
         </View>

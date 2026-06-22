@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 import { Vehicle, vehiclesService } from '../services';
 import { VehicleType } from '../services/mock/data';
@@ -70,11 +71,19 @@ export interface ActiveVehicle {
  */
 export function useActiveVehicle(): ActiveVehicle {
   const activeId = useAppStore((s) => s.activeVehicleId);
+  const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
   const { data: vehicles } = useQuery({
     queryKey: ['vehicles'],
     queryFn: vehiclesService.listVehicles,
   });
   const list = vehicles ?? [];
   const active = list.find((v) => v.id === activeId) ?? list.find((v) => v.isPrimary) ?? list[0];
+
+  // Pin the active id to the resolved primary once vehicles load, so the
+  // per-car damage/quotes snapshots key consistently (no null bucket).
+  useEffect(() => {
+    if (!activeId && active) setActiveVehicle(active.id);
+  }, [activeId, active, setActiveVehicle]);
+
   return { vehicles: list, active, brand: active ? brandOf(active.name) : 'your car' };
 }

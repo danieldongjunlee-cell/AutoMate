@@ -280,9 +280,6 @@ export function AllQuotesMapScreen() {
                     <Text style={{ fontSize: 12, color: colors.textTertiary }}> · OEM parts</Text>
                   ) : null}
                 </View>
-                <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>
-                  🕐 {dealer.hours}
-                </Text>
               </View>
               <Text
                 style={{

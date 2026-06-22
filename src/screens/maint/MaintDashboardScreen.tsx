@@ -10,7 +10,7 @@ import { Tappable } from '../../components/Tappable';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { MaintStackParamList } from '../../navigation/types';
-import { UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
+import { marketValueFor, UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
 import { maintService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -29,7 +29,8 @@ export function MaintDashboardScreen() {
   const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
   const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0]; // "5W-30"
   const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
-  const mv = VEHICLE.marketValue;
+  // Market value tracks the selected car.
+  const mv = marketValueFor(carName);
 
   return (
     <Screen>

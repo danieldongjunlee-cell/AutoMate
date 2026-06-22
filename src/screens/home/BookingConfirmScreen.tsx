@@ -90,7 +90,6 @@ export function BookingConfirmScreen() {
               </Text>
               <RatingLink dealer={dealer} />
             </View>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>🕐 {dealer.hours}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>

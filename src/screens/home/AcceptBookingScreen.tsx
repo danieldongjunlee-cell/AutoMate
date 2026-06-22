@@ -78,7 +78,6 @@ export function AcceptBookingScreen() {
           <Text style={{ fontSize: 12, color: colors.primaryDark }}>
             Rear bumper dent · {quote?.parts ?? 'OEM'} parts · {priceLabel} est.
           </Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>🕐 {dealer.hours}</Text>
         </View>
         <Badge label="Accepted" variant="primary" />
       </View>

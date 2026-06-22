@@ -412,6 +412,89 @@ export const VEHICLE = {
   },
 };
 
+/** Real-customer review with before/after repair photos (home s-home-launcher). */
+export interface HomeReview {
+  id: string;
+  name: string;
+  car: string;
+  stars: number;
+  repair: string;
+  quote: string;
+  /** Tints for the stylised before (damaged) / after (fixed) photo chips. */
+  beforeColor: string;
+  afterColor: string;
+}
+
+export const HOME_REVIEWS: HomeReview[] = [
+  {
+    id: 'rv-marcus',
+    name: 'Marcus T.',
+    car: '2019 Honda Accord',
+    stars: 5,
+    repair: 'Rear bumper dent',
+    quote: 'Snapped 3 photos, had real quotes in an hour, and the shop matched the AI estimate to the dollar.',
+    beforeColor: '#7a3034',
+    afterColor: '#1c5c36',
+  },
+  {
+    id: 'rv-priya',
+    name: 'Priya S.',
+    car: '2021 Toyota RAV4',
+    stars: 5,
+    repair: 'Front fender scratch',
+    quote: 'Booked without paying upfront and paid the shop after. Seamless from photo to fixed car.',
+    beforeColor: '#6e5526',
+    afterColor: '#2b4a86',
+  },
+  {
+    id: 'rv-deshawn',
+    name: 'DeShawn W.',
+    car: '2018 Subaru Outback',
+    stars: 4,
+    repair: 'Door panel repaint',
+    quote: 'Compared cash vs insurance right in the app — saved me a claim and about $600 in premium hikes.',
+    beforeColor: '#7a3034',
+    afterColor: '#1c5c36',
+  },
+];
+
+export interface MarketValue {
+  value: number;
+  aboveAvg: number;
+  low: number;
+  high: number;
+  /** Position of value within low–high band. */
+  barPct: number;
+}
+
+/** Nice round values for the seeded demo cars; others fall back to a hash. */
+const KNOWN_MARKET_VALUES: Record<string, number> = {
+  '2019 Honda Accord EX-L': 17400,
+  '2021 Toyota RAV4 XLE': 26800,
+  '2018 Subaru Outback': 19200,
+};
+
+/**
+ * Estimated market value for a vehicle — changes per car so the Maintenance
+ * dashboard reflects the selected car. Known demo cars use fixed figures; any
+ * other car derives a plausible, deterministic value from its name + year.
+ */
+export function marketValueFor(name: string): MarketValue {
+  let value = KNOWN_MARKET_VALUES[name];
+  if (!value) {
+    const year = parseInt(name.match(/\b(?:19|20)\d{2}\b/)?.[0] ?? '2017', 10);
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+    const base = 11000 + (h % 13000); // $11k–$24k spread
+    value = Math.max(6000, Math.round((base + (year - 2015) * 750) / 100) * 100);
+  }
+  const low = Math.round((value * 0.82) / 100) * 100;
+  const high = Math.round((value * 1.18) / 100) * 100;
+  const aboveAvg = Math.round((value * 0.025) / 10) * 10;
+  const barPct = Math.round(((value - low) / (high - low)) * 100);
+  return { value, aboveAvg, low, high, barPct };
+}
+
 export interface UpcomingService {
   id: string;
   name: string;
