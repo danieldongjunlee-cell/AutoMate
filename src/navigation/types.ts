@@ -53,8 +53,8 @@ type HomeFlowParamList = {
   WriteReview: { dealerId?: string } | undefined;
   TosBooking: undefined;
   PartnerAgreement: undefined;
-  ProSubscribe: { returnTo?: 'DealerQuotes' | 'MaintDashboard' } | undefined;
-  ProSuccess: { returnTo?: 'BookDeposit' | 'DealerQuotes' | 'MaintDashboard' } | undefined;
+  ProSubscribe: { returnTo?: 'DealerQuotes' | 'MaintDashboard' | 'ProfHub' } | undefined;
+  ProSuccess: { returnTo?: 'BookDeposit' | 'DealerQuotes' | 'MaintDashboard' | 'ProfHub' } | undefined;
   HowItWorks: undefined;
   DealerMap: { dealerId?: string } | undefined;
   BundleDeals: { focus?: string } | undefined;

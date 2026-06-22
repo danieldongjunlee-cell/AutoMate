@@ -10,6 +10,7 @@ import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
 import { useT } from '../../i18n';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { HOME_REVIEWS, HomeReview } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
@@ -228,6 +229,38 @@ export function HomeLauncherScreen() {
         </Text>
       </View>
       <PagedCarousel items={HOME_REVIEWS.map((r) => reviewCard(r))} />
+
+      {/* Footer: help, legal & support documents (like other apps). */}
+      <View
+        style={{
+          marginTop: spacing.xxxl,
+          paddingTop: spacing.md,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          alignItems: 'center',
+        }}
+      >
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: spacing.sm }}>
+          {(
+            [
+              ['Help & FAQ', 'ProfHelpCenter'],
+              ['Terms of Service', 'ProfTerms'],
+              ['Privacy Policy', 'ProfPrivacy'],
+              ['Contact us', 'HelpContact'],
+            ] as const
+          ).map(([label, route], i) => (
+            <View key={route} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {i > 0 ? <Text style={{ fontSize: 13, color: colors.border, marginRight: spacing.sm }}>·</Text> : null}
+              <Tappable onPress={() => navigateCrossTab(navigation, 'MoreTab', route)} hitSlop={6}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary }}>{label}</Text>
+              </Tappable>
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontSize: 12, color: colors.textPlaceholder, marginTop: spacing.sm }}>
+          AutoMate · Fairfax, VA · v1.0
+        </Text>
+      </View>
 
       <View style={{ marginBottom: spacing.lg }} />
       <LocationPermissionSheet />

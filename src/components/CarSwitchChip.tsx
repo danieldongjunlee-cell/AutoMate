@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { CarBrandLogo } from './CarBrandLogo';
 import { CarSwitcherSheet } from './CarSwitcherSheet';
 import { Tappable } from './Tappable';
-import { brandLogoUrl, modelOf, useActiveVehicle } from '../hooks/useActiveVehicle';
+import { modelOf, useActiveVehicle } from '../hooks/useActiveVehicle';
 import { radii, spacing, useTheme } from '../theme';
 
 /**
@@ -16,7 +17,6 @@ export function CarSwitchChip() {
   const [open, setOpen] = useState(false);
   if (!active) return null;
   const multi = vehicles.length > 1;
-  const logo = brandLogoUrl(brand);
 
   return (
     <>
@@ -36,23 +36,8 @@ export function CarSwitchChip() {
           paddingVertical: 5,
         }}
       >
-        <View
-          style={{
-            width: 22,
-            height: 22,
-            borderRadius: 11,
-            backgroundColor: '#fff',
-            alignItems: 'center',
-            justifyContent: 'center',
-            overflow: 'hidden',
-          }}
-        >
-          {logo ? (
-            <Image source={{ uri: logo }} style={{ width: 18, height: 18 }} resizeMode="contain" />
-          ) : (
-            <Text style={{ fontSize: 13 }}>🚗</Text>
-          )}
-        </View>
+        {/* Always the actual brand logo. */}
+        <CarBrandLogo brand={brand} size={22} />
         <View>
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
             {brand}

@@ -6,9 +6,11 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
+import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, vehiclesService } from '../../services';
@@ -24,6 +26,7 @@ const NEXT_REWARD_PTS = 6000;
 export function ProfHubScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const { brand: carBrand } = useActiveVehicle();
   const points = useAppStore((s) => s.points);
   const isPro = useAppStore((s) => s.isPro);
   const checkedIn = useAppStore((s) => s.dailyCheckedIn);
@@ -76,7 +79,7 @@ export function ProfHubScreen() {
   );
 
   const accountRow = (
-    icon: string,
+    icon: React.ReactNode,
     iconBg: string,
     title: string,
     sub: string,
@@ -109,7 +112,7 @@ export function ProfHubScreen() {
           justifyContent: 'center',
         }}
       >
-        <Text style={{ fontSize: 17 }}>{icon}</Text>
+        {typeof icon === 'string' ? <Text style={{ fontSize: 17 }}>{icon}</Text> : icon}
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>{title}</Text>
@@ -286,7 +289,7 @@ export function ProfHubScreen() {
         onPress={() =>
           isPro
             ? navigation.navigate('ProManage')
-            : navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')
+            : navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo: 'ProfHub' })
         }
         style={{
           flexDirection: 'row',
@@ -324,7 +327,7 @@ export function ProfHubScreen() {
       </Tappable>
 
       <SectionLabel>Account details</SectionLabel>
-      {accountRow('🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge)}
+      {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : '🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge)}
       {accountRow(
         '🛡️',
         '#FAECE7',

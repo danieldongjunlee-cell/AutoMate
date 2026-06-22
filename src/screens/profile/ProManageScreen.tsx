@@ -95,7 +95,7 @@ export function ProManageScreen() {
           <PrimaryButton
             label="Change plan"
             variant="outline"
-            onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe')}
+            onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo: 'ProfHub' })}
           />
         </>
       )}

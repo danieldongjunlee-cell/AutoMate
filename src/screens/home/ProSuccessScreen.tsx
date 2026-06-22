@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, Card, Screen } from '../../components/ui';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { PRO_PLANS, useAppStore } from '../../store/useAppStore';
 import { spacing, useTheme } from '../../theme';
@@ -20,8 +21,9 @@ export function ProSuccessScreen() {
   const plan = useAppStore((s) => s.proPlan) ?? 'annual';
   const p = PRO_PLANS[plan];
   // Where to send the user after activating Pro, based on where they came from:
-  // the maintenance DIY tips → Maintenance, the post-submit DIY lock → quotes,
-  // otherwise back into the booking-deposit flow.
+  // the More tab → Profile, the maintenance DIY tips → Maintenance, the
+  // post-submit DIY lock → quotes, otherwise back into the booking-deposit flow.
+  const toProfile = returnTo === 'ProfHub';
   const toMaint = returnTo === 'MaintDashboard';
   const toQuotes = returnTo === 'DealerQuotes';
 
@@ -61,14 +63,17 @@ export function ProSuccessScreen() {
       <PrimaryButton
         variant="success"
         label={
-          toMaint
-            ? 'Back to maintenance →'
-            : toQuotes
-              ? 'View available quotes →'
-              : 'Back to confirm booking →'
+          toProfile
+            ? 'Back to More →'
+            : toMaint
+              ? 'Back to maintenance →'
+              : toQuotes
+                ? 'View available quotes →'
+                : 'Back to confirm booking →'
         }
         onPress={() => {
-          if (toMaint) navigation.navigate('MaintDashboard');
+          if (toProfile) navigateCrossTab(navigation, 'MoreTab', 'ProfHub');
+          else if (toMaint) navigation.navigate('MaintDashboard');
           else if (toQuotes) navigation.navigate('DealerQuotes');
           else navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' });
         }}

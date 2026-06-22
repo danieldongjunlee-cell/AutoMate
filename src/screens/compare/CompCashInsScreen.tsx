@@ -12,7 +12,6 @@ import { CompareStackParamList } from '../../navigation/types';
 import { compareService } from '../../services';
 import { dealerById, INSURANCE_POLICY } from '../../services/mock/data';
 import { useAcceptedQuote } from '../../hooks/useAcceptedQuote';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useAppStore } from '../../store/useAppStore';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
@@ -24,10 +23,6 @@ const COMPREHENSIVE_KEYWORDS = ['glass', 'windshield', 'shatter', 'hail', 'weath
 type Nav = NativeStackNavigationProp<CompareStackParamList, 'CompCashIns'>;
 type Route = RouteProp<CompareStackParamList, 'CompCashIns'>;
 
-/** Salmon insurance-banner surface from the wireframe (#FAECE7 / #4A1B0C). */
-const SALMON_BG = '#FAECE7';
-const SALMON_FG = '#4A1B0C';
-
 /** Wireframe s-comp-cash-ins: pay cash vs. file insurance side-by-side.
  * Verdict + numbers come from the actuarial model via compareService. */
 export function CompCashInsScreen() {
@@ -36,7 +31,6 @@ export function CompCashInsScreen() {
   const { colors } = useTheme();
   const aq = useAcceptedQuote(route.params?.quoteId);
   const dealer = dealerById(aq.dealerId);
-  const { active } = useActiveVehicle();
   const damageParts = useAppStore((s) => s.damageParts);
 
   // The damage type drives the claim type: glass/weather/theft = comprehensive
@@ -53,7 +47,6 @@ export function CompCashInsScreen() {
   });
   // Wireframe defaults while the model loads (same numbers for seeded data).
   const deductible = comparison?.input.deductible ?? INSURANCE_POLICY.deductible;
-  const premiumPerYear = comparison?.input.premiumPerYear ?? INSURANCE_POLICY.premiumPerYear;
   const result = comparison?.result;
   const cashRecommended = (result?.recommendation ?? 'cash') === 'cash';
 
@@ -111,72 +104,6 @@ export function CompCashInsScreen() {
           ± may vary after in-person inspection
         </Text>
       </View>
-
-      {/* Policy banner */}
-      <View
-        style={{
-          backgroundColor: SALMON_BG,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
-        }}
-      >
-        <Text style={{ fontSize: 20 }}>🛡️</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: SALMON_FG }}>
-            {INSURANCE_POLICY.carrier} · ${deductible} ded. · ${premiumPerYear.toLocaleString()}
-            /yr
-          </Text>
-          {/* Comparison is run against the registered car (VIN). */}
-          <Text style={{ fontSize: 13, color: '#888' }} numberOfLines={1}>
-            {active ? `${active.name} · VIN ${active.vin || '—'}` : `Policy #${INSURANCE_POLICY.policyNumber}`}
-          </Text>
-        </View>
-      </View>
-
-      {/* What the insurance model found if you file a claim. */}
-      {result ? (
-        <View
-          style={{
-            backgroundColor: colors.surface,
-            borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            padding: spacing.md,
-            marginBottom: spacing.md,
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary, marginBottom: 6 }}>
-            🧮 If you file a {claimType} claim
-          </Text>
-          {(
-            [
-              ['Deductible you pay', `$${deductible}`],
-              ['Premium hike', `+${result.surchargePctPerYear}%/yr (+$${result.totalSurcharge} over ${result.surchargeYears} yr)`],
-              ['Claim on record', `${result.surchargeYears} years`],
-              ['3-yr insurance cost', `$${result.insuranceTotal3yr.toLocaleString()}`],
-              ['Pay cash (once)', `$${result.cashTotal3yr.toLocaleString()}`],
-            ] as const
-          ).map(([label, value], i, arr) => (
-            <View
-              key={label}
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingVertical: 5,
-                borderBottomWidth: i < arr.length - 1 ? StyleSheet.hairlineWidth : 0,
-                borderBottomColor: colors.divider,
-              }}
-            >
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>{label}</Text>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{value}</Text>
-            </View>
-          ))}
-        </View>
-      ) : null}
 
       {/* No money upfront explainer */}
       <View

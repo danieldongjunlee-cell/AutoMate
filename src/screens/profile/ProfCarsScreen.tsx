@@ -5,13 +5,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
 import { Vehicle, vehiclesService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
@@ -249,7 +250,7 @@ export function ProfCarsScreen() {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text style={{ fontSize: 22 }}>🚗</Text>
+                  <CarBrandLogo brand={brandOf(vehicle.name)} size={36} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>
