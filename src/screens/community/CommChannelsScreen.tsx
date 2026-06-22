@@ -61,8 +61,8 @@ export function CommChannelsScreen() {
 
   return (
     <Screen safeTop>
-      {/* Community title + active-car switch (same line) */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md }}>
+      {/* Community title + active-car switch (chip pinned top-right) */}
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, marginBottom: spacing.md }}>
         <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>
           Community
         </Text>

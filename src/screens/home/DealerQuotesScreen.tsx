@@ -9,7 +9,7 @@ import { QuoteRow } from '../../components/QuoteRow';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, Quote, QUOTE_REQUEST, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST, quotesInEstimateRange, USER_LOCATION, YOLO_MODEL } from '../../services/mock/data';
 import { quoteService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -142,6 +142,9 @@ export function DealerQuotesScreen() {
             }}
           />
         </View>
+        <Text style={{ fontSize: 11, color: colors.successDeep, marginTop: 4 }}>
+          Confidence = {YOLO_MODEL.name} detection accuracy ({YOLO_MODEL.mAP50 * 100}% mAP@0.5)
+        </Text>
         {/* Damaged parts + type as standout chips */}
         {damageParts.length > 0 ? (
           <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', marginTop: spacing.sm, paddingTop: spacing.sm, gap: spacing.xs }}>

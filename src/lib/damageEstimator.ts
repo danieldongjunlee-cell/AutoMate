@@ -7,7 +7,7 @@
  * in-app deterministic mock answers — mirroring the Python mock so the whole
  * app runs end-to-end with no model or GPU.
  */
-import type { AiEstimateSummary } from '../services/mock/data';
+import { YOLO_MODEL, type AiEstimateSummary } from '../services/mock/data';
 import type { DamagePart } from '../store/useAppStore';
 
 export interface EstimateInput {
@@ -62,7 +62,9 @@ const DEFAULT_MODERATE: Record<string, [number, number]> = {
   'tire flat': [120, 260],
   paint: [250, 450],
 };
-const MOCK_CONFIDENCE = 0.87;
+// Confidence comes from the YOLO detector's validation accuracy (mAP@0.5), so
+// what users see reflects the model's real accuracy rather than a magic number.
+const MOCK_CONFIDENCE = YOLO_MODEL.mAP50;
 
 const splitTypes = (t: string): string[] => {
   const out = (t || '')

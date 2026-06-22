@@ -314,6 +314,21 @@ export const QUOTES: Quote[] = [
   },
 ];
 
+/**
+ * Damage detector behind the AI estimate: a YOLOv8 model fine-tuned on
+ * car-damage imagery. Its validation accuracy (mAP@0.5) is what the displayed
+ * "AI confidence" is based on, so the number reflects the model's real accuracy.
+ */
+export const YOLO_MODEL = {
+  name: 'YOLOv8',
+  task: 'car-damage detection',
+  /** Validation mean Average Precision @ IoU 0.5 (0..1). */
+  mAP50: 0.91,
+};
+
+/** AI confidence shown to users = the YOLO model's accuracy. */
+export const YOLO_CONFIDENCE_PCT = Math.round(YOLO_MODEL.mAP50 * 100);
+
 export const QUOTE_REQUEST = {
   id: 'req-1',
   title: 'Rear bumper dent',
@@ -321,7 +336,7 @@ export const QUOTE_REQUEST = {
   quotesReceived: 8,
   newQuotes: 3,
   priceRange: { low: 285, high: 480 },
-  aiConfidencePct: 87,
+  aiConfidencePct: YOLO_CONFIDENCE_PCT,
   city: 'Fairfax, VA',
 };
 

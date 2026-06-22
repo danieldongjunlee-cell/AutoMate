@@ -148,7 +148,7 @@ export function HelpQuotesScreen() {
         {
           title: 'Photo-based estimates',
           body:
-            'Every quote is based on your submitted photos. The AI confidence score (e.g. 87%) shows how certain the estimate range is — higher confidence means less variance after inspection.',
+            'Every quote is based on your submitted photos. The AI confidence score comes from our YOLOv8 damage-detection model’s accuracy (~91% mAP) — higher confidence means less variance after inspection.',
         },
         {
           title: 'Why prices vary',

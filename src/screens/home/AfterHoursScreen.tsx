@@ -10,6 +10,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
+import { YOLO_CONFIDENCE_PCT } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
@@ -181,7 +182,7 @@ export function AfterHoursScreen() {
               }}
             >
               <Text style={{ fontSize: 12, color: palette.successLight }}>
-                87% confidence
+                {YOLO_CONFIDENCE_PCT}% confidence
               </Text>
             </View>
           </View>

@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 
+import { CarLogo } from '../../components/CarLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
@@ -61,7 +62,10 @@ export function HomeLauncherScreen() {
       >
         <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
         <Text style={{ fontSize: 14, fontWeight: '600', color: subColor, marginTop: 4 }}>{opts.phrase}</Text>
-        <Text style={{ position: 'absolute', right: -8, bottom: -22, fontSize: 96, opacity: 0.13 }}>{opts.icon}</Text>
+        {/* Silver-car logo in the bottom-right corner. */}
+        <View style={{ position: 'absolute', right: 4, bottom: 6, opacity: 0.5 }}>
+          <CarLogo size={132} />
+        </View>
       </View>
     </Tappable>
   );
@@ -144,8 +148,8 @@ export function HomeLauncherScreen() {
 
   return (
     <Screen safeTop>
-      {/* Greeting + active-car switcher */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+      {/* Greeting + active-car switcher (chip pinned top-right, consistent across tabs) */}
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
         <CarSwitchChip />
       </View>

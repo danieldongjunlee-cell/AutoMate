@@ -142,7 +142,10 @@ export function ProfHubScreen() {
           </View>
           <Text style={{ fontSize: 14, color: colors.textTertiary }}>{displayHandle}</Text>
         </View>
-        <CarSwitchChip />
+        {/* Pinned to the top-right so the car switch sits in the same spot as every other tab. */}
+        <View style={{ alignSelf: 'flex-start' }}>
+          <CarSwitchChip />
+        </View>
       </View>
 
       {/* Daily check-in */}
@@ -210,7 +213,8 @@ export function ProfHubScreen() {
             <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep }}>YOUR POINTS</Text>
             <Text style={{ fontSize: 26, fontWeight: '800', color: colors.warningDeep }}>
               {points.toLocaleString()} pts{' '}
-              <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warning }}>
+              {/* Dollar value in deep green — a complementary accent that blends with the yellow card. */}
+              <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDeep }}>
                 = {pointsToUsd(points)}
               </Text>
             </Text>

@@ -9,7 +9,7 @@ import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Badge, Card } from '../../components/ui';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { dealerById, USER_LOCATION } from '../../services/mock/data';
+import { DEALERS, dealerById, USER_LOCATION } from '../../services/mock/data';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { openDirections } from '../../utils/links';
 
@@ -24,6 +24,15 @@ export function DealerMapScreen() {
   const route = useRoute<Route>();
   const { colors } = useTheme();
   const dealer = dealerById(route.params?.dealerId);
+
+  // Always surface a few nearby shops so the map never shows a lone pin.
+  const nearby = DEALERS.filter((d) => d.id !== dealer.id)
+    .sort(
+      (a, b) =>
+        (a.lat - dealer.lat) ** 2 + (a.lng - dealer.lng) ** 2 -
+        ((b.lat - dealer.lat) ** 2 + (b.lng - dealer.lng) ** 2),
+    )
+    .slice(0, 3);
 
   const driveMin = Math.max(3, Math.round(dealer.distanceMi * 5));
 
@@ -59,6 +68,14 @@ export function DealerMapScreen() {
               color: palette.danger,
               selected: true,
             },
+            // Nearby shops (≥3 pins on every map).
+            ...nearby.map((d) => ({
+              id: d.id,
+              lat: d.lat,
+              lng: d.lng,
+              label: d.name,
+              color: '#fff',
+            })),
           ]}
         />
 

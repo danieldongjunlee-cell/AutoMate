@@ -246,18 +246,31 @@ export function BookingsScreen() {
 
   return (
     <Screen safeTop>
+      {/* Title row — car switch pinned top-right (consistent across tabs). */}
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: spacing.sm,
           marginBottom: spacing.md,
         }}
       >
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
-        </View>
+        <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
+        <CarSwitchChip />
+      </View>
+
+      {/* Calendar header row — "Book service" sits right below the car switch,
+          aligned with the calendar. */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: spacing.sm,
+        }}
+      >
+        <SectionLabel style={{ marginBottom: 0 }}>{t('Calendar')}</SectionLabel>
         <Tappable
           onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintSchedule')}
           style={{
@@ -273,11 +286,6 @@ export function BookingsScreen() {
           <Text style={{ fontSize: 14, color: colors.onPrimary }}>＋</Text>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>Book service</Text>
         </Tappable>
-        <CarSwitchChip />
-      </View>
-
-      <View>
-        <SectionLabel>{t('Calendar')}</SectionLabel>
       </View>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         {/* Month/year nav: «=year ‹=month  title  ›=month »=year */}

@@ -15,7 +15,7 @@ import { Tappable } from '../../components/Tappable';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { QuotesStackParamList } from '../../navigation/types';
 import { quoteService } from '../../services';
-import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
+import { dealerById, DISTANCE_CAP, DISTANCE_FILTERS, quotesInEstimateRange, USER_LOCATION, YOLO_MODEL } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
@@ -116,7 +116,7 @@ export function QuotesReceivedScreen() {
 
   return (
     <Screen safeTop scrollRef={scrollRef}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary }}>
@@ -148,9 +148,12 @@ export function QuotesReceivedScreen() {
             ${aiEstimate.priceLow} – ${aiEstimate.priceHigh}
           </Text>
           {/* Confidence bar */}
-          <View style={{ height: 6, backgroundColor: 'rgba(29,158,117,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: spacing.sm }}>
+          <View style={{ height: 6, backgroundColor: 'rgba(29,158,117,.18)', borderRadius: 3, overflow: 'hidden', marginBottom: 4 }}>
             <View style={{ width: `${aiEstimate.confidencePct}%`, height: '100%', backgroundColor: colors.success, borderRadius: 3 }} />
           </View>
+          <Text style={{ fontSize: 11, color: colors.successDeep, marginBottom: spacing.sm }}>
+            Confidence = {YOLO_MODEL.name} detection accuracy ({YOLO_MODEL.mAP50 * 100}% mAP@0.5)
+          </Text>
           {/* Submitted parts: part + damage type as standout chips + photo count */}
           <View style={{ borderTopWidth: 1, borderTopColor: 'rgba(29,158,117,.25)', paddingTop: spacing.sm, gap: spacing.xs }}>
             <Text style={{ fontSize: 12, fontWeight: '700', color: colors.successDeep, textTransform: 'uppercase', letterSpacing: 0.4 }}>
