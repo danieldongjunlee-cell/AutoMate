@@ -67,7 +67,7 @@ export function MaintDiyScreen() {
             return isPriceChip ? (
               <Tappable
                 key={s.label}
-                onPress={() => navigation.navigate('DiyUnlock')}
+                onPress={() => navigation.navigate('DiyUnlock', { returnTo: 'MaintDashboard' })}
                 style={({ pressed }) => ({
                   flex: 1,
                   backgroundColor: s.tint,
@@ -121,7 +121,7 @@ export function MaintDiyScreen() {
               title="+10 more guides with Pro"
               subtitle="All difficulty levels · AI recommendations · New guides weekly"
               cta="Unlock with Pro · $48/yr →"
-              onUnlock={() => navigation.navigate('DiyUnlock')}
+              onUnlock={() => navigation.navigate('DiyUnlock', { returnTo: 'MaintDashboard' })}
             >
               {locked.map((g) => (
                 <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} />

@@ -8,6 +8,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 
 import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { MaintStackParamList } from '../../navigation/types';
 import { UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
 import { maintService } from '../../services';
@@ -22,6 +23,12 @@ export function MaintDashboardScreen() {
     queryKey: ['upcoming-services'],
     queryFn: maintService.getUpcomingServices,
   });
+  // Car info follows the car the user entered/selected in More → My cars.
+  const { active } = useActiveVehicle();
+  const carName = active?.name ?? VEHICLE.name;
+  const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
+  const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0]; // "5W-30"
+  const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
   const mv = VEHICLE.marketValue;
 
   return (
@@ -101,10 +108,10 @@ export function MaintDashboardScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
-              {VEHICLE.name}
+              {carName}
             </Text>
             <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              {VEHICLE.odometerMi.toLocaleString()} mi · 5W-30 · Lunar Silver
+              {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>

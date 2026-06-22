@@ -8,6 +8,7 @@ import { Tappable } from '../../components/Tappable';
 
 import { Dropdown } from '../../components/Dropdown';
 import { Card, Screen } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, pointsService } from '../../services';
 import { VEHICLE } from '../../services/mock/data';
@@ -123,6 +124,7 @@ export function ProfInsEditScreen() {
   const route = useRoute<RouteProp<ProfileStackParamList, 'ProfInsEdit'>>();
   const queryClient = useQueryClient();
   const { colors } = useTheme();
+  const { active } = useActiveVehicle();
 
   const { data: policies } = useQuery({
     queryKey: ['policies'],
@@ -222,7 +224,7 @@ export function ProfInsEditScreen() {
           <FormField label="Premium /yr" value={premium} onChangeText={setPremium} keyboardType="numeric" />
         </View>
         <View style={fieldRowStyle(colors.divider)}>
-          <FormField label="Covered vehicle" value={policy.covers || VEHICLE.name} picker />
+          <FormField label="Covered vehicle" value={active?.name || policy.covers || VEHICLE.name} picker />
         </View>
         <View style={{ padding: spacing.md }}>
           <FormField label="Renewal date" value={renewal} onChangeText={setRenewal} trailing="📅" />
@@ -292,6 +294,8 @@ export function ProfInsAddScreen() {
   const navigation = useNavigation<Nav>();
   const queryClient = useQueryClient();
   const { colors } = useTheme();
+  const { active } = useActiveVehicle();
+  const coveredCar = active?.name ?? VEHICLE.name;
 
   const [carrier, setCarrier] = useState('');
   const [policyNumber, setPolicyNumber] = useState('');
@@ -355,7 +359,7 @@ export function ProfInsAddScreen() {
         policyNumber,
         deductible: parseMoney(deductible) ?? 500,
         premiumPerYear: parseMoney(premium) ?? 0,
-        covers: covers || VEHICLE.name,
+        covers: covers || coveredCar,
         renewal,
       });
       // "Add insurance policy" earn rule (+100 pts — s-prof-earn).
@@ -391,10 +395,10 @@ export function ProfInsAddScreen() {
         <View style={{ padding: spacing.md }}>
           <FormField
             label="Covered vehicle"
-            value={covers}
+            value={covers || coveredCar}
             placeholder="Select vehicle..."
             picker
-            onPress={() => setCovers(VEHICLE.name)}
+            onPress={() => setCovers(coveredCar)}
           />
         </View>
       </Card>

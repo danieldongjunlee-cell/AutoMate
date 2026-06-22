@@ -19,7 +19,10 @@ export function ProSuccessScreen() {
   const { colors } = useTheme();
   const plan = useAppStore((s) => s.proPlan) ?? 'annual';
   const p = PRO_PLANS[plan];
-  // Unlocking Pro from the post-submit DIY lock returns to the quotes screen.
+  // Where to send the user after activating Pro, based on where they came from:
+  // the maintenance DIY tips → Maintenance, the post-submit DIY lock → quotes,
+  // otherwise back into the booking-deposit flow.
+  const toMaint = returnTo === 'MaintDashboard';
   const toQuotes = returnTo === 'DealerQuotes';
 
   return (
@@ -57,12 +60,18 @@ export function ProSuccessScreen() {
       </Card>
       <PrimaryButton
         variant="success"
-        label={toQuotes ? 'View available quotes →' : 'Back to confirm booking →'}
-        onPress={() =>
-          toQuotes
-            ? navigation.navigate('DealerQuotes')
-            : navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' })
+        label={
+          toMaint
+            ? 'Back to maintenance →'
+            : toQuotes
+              ? 'View available quotes →'
+              : 'Back to confirm booking →'
         }
+        onPress={() => {
+          if (toMaint) navigation.navigate('MaintDashboard');
+          else if (toQuotes) navigation.navigate('DealerQuotes');
+          else navigation.navigate('BookDeposit', { kind: 'repair', next: 'BookingConfirm' });
+        }}
       />
     </Screen>
   );

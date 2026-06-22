@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { PanResponder, StyleSheet, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { FilterChips } from '../../components/FilterChips';
@@ -68,6 +68,20 @@ export function BookingsScreen() {
       return { year: v.year + Math.floor(m / 12), month: ((m % 12) + 12) % 12 };
     });
   const stepYear = (delta: number) => setView((v) => ({ ...v, year: v.year + delta }));
+
+  // Let users swipe the calendar left/right to change months (in addition to the
+  // arrow buttons). A horizontal drag past the threshold steps a month; taps and
+  // vertical scrolls are left alone.
+  const calendarPan = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_e, g) =>
+        Math.abs(g.dx) > 18 && Math.abs(g.dx) > Math.abs(g.dy) * 1.5,
+      onPanResponderRelease: (_e, g) => {
+        if (g.dx <= -40) stepMonth(1); // swipe left → next month
+        else if (g.dx >= 40) stepMonth(-1); // swipe right → previous month
+      },
+    }),
+  ).current;
 
   const openBooking = (b: AppBooking) => {
     if (b.status === 'cancelled') {
@@ -281,6 +295,7 @@ export function BookingsScreen() {
           <CalNav label="›" onPress={() => stepMonth(1)} />
           <CalNav label="»" onPress={() => stepYear(1)} />
         </View>
+        <View {...calendarPan.panHandlers}>
         <View style={{ flexDirection: 'row', marginBottom: 4 }}>
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
             <Text
@@ -328,6 +343,7 @@ export function BookingsScreen() {
               </View>
             );
           })}
+        </View>
         </View>
         <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.sm }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>

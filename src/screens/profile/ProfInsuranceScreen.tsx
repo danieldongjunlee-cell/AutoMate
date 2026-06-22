@@ -283,11 +283,17 @@ export function ProfInsuranceScreen() {
   });
   const carOptions = (vehicles ?? []).map((v) => v.name);
 
-  // "Covers" should reflect the car the user actually registered in their car
-  // info — so we resolve the policy's stored covers text to a registered car
-  // name when one matches (e.g. "2019 Honda Accord" → "2019 Honda Accord EX-L").
-  const coversLabelFor = (policy: Policy): string =>
-    (vehicles ?? []).find((v) => policyCoversVehicle(policy.covers, v.name))?.name ?? policy.covers;
+  // "Covers" should reflect the car the user registered in their car info. We
+  // resolve the policy's stored covers text to a registered car when one matches
+  // (e.g. "2019 Honda Accord" → "2019 Honda Accord EX-L"); when nothing matches
+  // we fall back to the primary registered car so it never shows a stale name.
+  const coversLabelFor = (policy: Policy): string => {
+    const list = vehicles ?? [];
+    const matched = list.find((v) => policyCoversVehicle(policy.covers, v.name));
+    if (matched) return matched.name;
+    const primary = list.find((v) => v.isPrimary) ?? list[0];
+    return primary?.name ?? policy.covers;
+  };
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['policies'] });
 

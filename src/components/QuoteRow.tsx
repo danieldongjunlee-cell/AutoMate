@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { AvatarCircle, Badge, Card } from './ui';
 import { PrimaryButton } from './PrimaryButton';
+import { STAR_YELLOW } from './RatingLink';
 import { Tappable } from './Tappable';
 import { dealerById, Quote, quoteBreakdown } from '../services/mock/data';
 import { radii, spacing, useTheme } from '../theme';
@@ -53,7 +54,7 @@ export function QuoteRow({
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{dealer.name}</Text>
           <Text style={{ fontSize: 11, color: colors.textTertiary }}>
-            ★ {dealer.rating} ({dealer.reviews}) · {dealer.distanceMi} mi · 🕐 {dealer.hours}
+            <Text style={{ color: STAR_YELLOW }}>★</Text> {dealer.rating} ({dealer.reviews}) · {dealer.distanceMi} mi · 🕐 {dealer.hours}
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>

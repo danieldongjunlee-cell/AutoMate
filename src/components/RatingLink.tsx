@@ -4,13 +4,16 @@ import { StyleProp, Text, TextStyle } from 'react-native';
 
 import { navigateCrossTab } from '../navigation/crossTab';
 import { Dealer } from '../services/mock/data';
-import { useTheme } from '../theme';
+import { palette, useTheme } from '../theme';
 import { Tappable } from './Tappable';
+
+/** Shared yellow used for every review star across the app. */
+export const STAR_YELLOW = palette.warning;
 
 /**
  * Tappable "★ 4.9 (312 reviews)" rating → the in-app Reviews screen for the
- * shop (internal AutoMate reviews, NOT Google). Dotted underline signals the
- * link without shouting inside meta rows.
+ * shop (internal AutoMate reviews, NOT Google). The leading star renders in the
+ * shared review-star yellow; the text itself is not underlined.
  */
 export function RatingLink({
   dealer,
@@ -24,23 +27,16 @@ export function RatingLink({
 }) {
   const { colors } = useTheme();
   const navigation = useNavigation();
+  const text = label ?? `★ ${dealer.rating} (${dealer.reviews} reviews)`;
+  const hasStar = text.startsWith('★');
   return (
     <Tappable
       onPress={() => navigateCrossTab(navigation, 'HomeTab', 'Reviews', { dealerId: dealer.id })}
       hitSlop={6}
     >
-      <Text
-        style={[
-          {
-            fontSize: 12,
-            color: colors.textTertiary,
-            textDecorationLine: 'underline',
-            textDecorationStyle: 'dotted',
-          },
-          style,
-        ]}
-      >
-        {label ?? `★ ${dealer.rating} (${dealer.reviews} reviews)`}
+      <Text style={[{ fontSize: 12, color: colors.textTertiary }, style]}>
+        {hasStar ? <Text style={{ color: STAR_YELLOW }}>★</Text> : null}
+        {hasStar ? text.slice(1) : text}
       </Text>
     </Tappable>
   );

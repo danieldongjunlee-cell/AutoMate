@@ -369,9 +369,12 @@ export function MainTabs() {
   const bookings = useAppStore((s) => s.bookings);
 
   // Per-tab notification counts.
-  // Bookings badge = how many upcoming services the user has (confirmed or
-  // prepaid), so the red circle always reflects that count.
-  const upcoming = bookings.filter((b) => b.status === 'confirmed' || b.status === 'paid').length;
+  // Bookings badge = how many upcoming services the ACTIVE car has (confirmed or
+  // prepaid). Scoping to the active car matches the Bookings list (which filters
+  // by car), so an empty list never shows a stray count.
+  const upcoming = bookings.filter(
+    (b) => b.brand === brand && (b.status === 'confirmed' || b.status === 'paid'),
+  ).length;
   // Community = unread posts in the communities the user has JOINED (no joins →
   // no badge). Cleared as the posts are read.
   const unreadPosts = joinedBrandPosts(brand, joinedCommunityIds).filter((p) => !readPostIds[p.id]).length;

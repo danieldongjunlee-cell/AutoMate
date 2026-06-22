@@ -53,8 +53,8 @@ type HomeFlowParamList = {
   WriteReview: { dealerId?: string } | undefined;
   TosBooking: undefined;
   PartnerAgreement: undefined;
-  ProSubscribe: { returnTo?: 'DealerQuotes' } | undefined;
-  ProSuccess: { returnTo?: 'BookDeposit' | 'DealerQuotes' } | undefined;
+  ProSubscribe: { returnTo?: 'DealerQuotes' | 'MaintDashboard' } | undefined;
+  ProSuccess: { returnTo?: 'BookDeposit' | 'DealerQuotes' | 'MaintDashboard' } | undefined;
   HowItWorks: undefined;
   DealerMap: { dealerId?: string } | undefined;
   BundleDeals: { focus?: string } | undefined;
@@ -68,7 +68,7 @@ export type MaintStackParamList = {
   MaintScanRev: { receipt?: ScannedReceipt } | undefined;
   MaintManual: undefined;
   MaintDiy: undefined;
-  DiyUnlock: { returnTo?: 'DealerQuotes' } | undefined;
+  DiyUnlock: { returnTo?: 'DealerQuotes' | 'MaintDashboard' } | undefined;
   DiyPayment: undefined;
   DiyConfirm: undefined;
   DiyGuides: undefined;
