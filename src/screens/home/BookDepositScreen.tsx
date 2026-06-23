@@ -147,18 +147,6 @@ export function BookDepositScreen() {
         </View>
       ) : (
         <>
-          <View style={{ marginTop: spacing.md }}>
-            <SectionLabel>Payment method</SectionLabel>
-          </View>
-          <Card style={{ padding: spacing.sm, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Text>💳</Text>
-            <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
-              {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 12 }}>· hold only</Text>
-            </Text>
-            <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
-              <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '700' }}>Change</Text>
-            </Tappable>
-          </Card>
           <Tappable
             onPress={() => navigation.navigate('ProSubscribe')}
             style={{
@@ -184,6 +172,18 @@ export function BookDepositScreen() {
               <Text style={{ fontSize: 13, fontWeight: '800', color: palette.dark }}>Get Pro →</Text>
             </View>
           </Tappable>
+          <View>
+            <SectionLabel>Payment method</SectionLabel>
+          </View>
+          <Card style={{ padding: spacing.sm, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+            <Text>💳</Text>
+            <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
+              {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 12 }}>· hold only</Text>
+            </Text>
+            <Tappable onPress={() => setCardSheet(true)} hitSlop={8}>
+              <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '700' }}>Change</Text>
+            </Tappable>
+          </Card>
         </>
       )}
 
