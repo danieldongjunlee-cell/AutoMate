@@ -54,18 +54,18 @@ export function HomeLauncherScreen() {
           borderColor: colors.border,
           borderRadius: radii.lg,
           padding: spacing.lg,
-          minHeight: 120,
+          minHeight: 150,
           justifyContent: 'center',
           overflow: 'hidden',
           marginBottom: spacing.md,
           ...cardShadow,
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 14, fontWeight: '600', color: subColor, marginTop: 4 }}>{opts.phrase}</Text>
+        <Text style={{ fontSize: 25, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+        <Text style={{ fontSize: 15, fontWeight: '600', color: subColor, marginTop: 5 }}>{opts.phrase}</Text>
         {/* Silver-car logo in the bottom-right corner. */}
         <View style={{ position: 'absolute', right: 4, bottom: 6, opacity: 0.5 }}>
-          <CarLogo size={132} />
+          <CarLogo size={152} />
         </View>
       </View>
     </Tappable>
@@ -107,25 +107,25 @@ export function HomeLauncherScreen() {
   ) => (
     <Tappable
       onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.md, minHeight: 96 }}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.sm, minHeight: 74 }}
     >
-      <Text style={{ fontSize: 30 }}>{emoji}</Text>
+      <Text style={{ fontSize: 24 }}>{emoji}</Text>
       <View style={{ flex: 1 }}>
-        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 4 }}>
-          <Text style={{ fontSize: 13, fontWeight: '800', color: badgeFg }}>{badge}</Text>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 1, marginBottom: 3 }}>
+          <Text style={{ fontSize: 11, fontWeight: '800', color: badgeFg }}>{badge}</Text>
         </View>
-        <Text style={{ fontSize: 17, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>{sub}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
+        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
       </View>
     </Tappable>
   );
 
   /** Real-customer review card with actual before/after repair photos. */
   const reviewCard = (r: HomeReview) => (
-    <View style={{ backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.md, minHeight: 96 }}>
+    <View style={{ backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: radii.md, padding: spacing.sm, minHeight: 78 }}>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
         {[{ label: 'Before', color: r.beforeColor, uri: r.beforeUri }, { label: 'After', color: r.afterColor, uri: r.afterUri }].map((p) => (
-          <View key={p.label} style={{ flex: 1, height: 82, borderRadius: radii.sm, backgroundColor: p.color, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <View key={p.label} style={{ flex: 1, height: 62, borderRadius: radii.sm, backgroundColor: p.color, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
             {/* Real web photo over a colored fallback (shows if the image is slow/offline). */}
             <Image source={{ uri: p.uri }} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }} resizeMode="cover" />
             <View style={{ position: 'absolute', top: 6, left: 6, backgroundColor: 'rgba(0,0,0,.55)', borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 1 }}>
@@ -206,9 +206,9 @@ export function HomeLauncherScreen() {
             })}
       </View>
 
-      {/* Deals & offers — larger header (extra top gap separates it from the actions) */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xxxl, marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Deals & offers')}</Text>
+      {/* Deals & offers — compact section below the actions */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xl, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 17, fontWeight: '800', color: colors.textPrimary }}>{t('Deals & offers')}</Text>
         <Tappable onPress={() => navigation.navigate('BundleDeals')} hitSlop={8}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all →</Text>
         </Tappable>
@@ -222,9 +222,9 @@ export function HomeLauncherScreen() {
       />
 
       {/* Real customer reviews — before & after (same spacing as Deals). */}
-      <View style={{ marginTop: spacing.xxxl, marginBottom: spacing.sm }}>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary }}>{t('Real customer reviews')}</Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2 }}>
+      <View style={{ marginTop: spacing.xl, marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 17, fontWeight: '800', color: colors.textPrimary }}>{t('Real customer reviews')}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
           Before &amp; after — from photo to fixed car
         </Text>
       </View>

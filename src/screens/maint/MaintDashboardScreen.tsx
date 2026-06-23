@@ -156,10 +156,10 @@ export function MaintDashboardScreen() {
           onPress={() => navigation.navigate('MaintDiy')}
           style={({ pressed }) => ({
             flex: 1,
-            backgroundColor: colors.successSurface,
+            backgroundColor: colors.surface,
             borderRadius: radii.md,
             borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.success,
+            borderColor: colors.border,
             padding: spacing.md,
             opacity: pressed ? 0.8 : 1,
           })}

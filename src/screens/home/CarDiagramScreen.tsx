@@ -147,8 +147,9 @@ export function CarDiagramScreen() {
   /** Render one side profile (front at top) with two wheels on the ground edge. */
   const sidePanel = (side: 'L' | 'R') => {
     const onLeft = side === 'L';
+    // Driver/passenger side columns are narrower so the top-down view leads.
     return (
-      <View style={{ flex: 1, height: PANEL_H, position: 'relative' }}>
+      <View style={{ flex: 0.78, height: PANEL_H, position: 'relative' }}>
         <View
           style={{
             flex: 1,
@@ -247,7 +248,7 @@ export function CarDiagramScreen() {
             <Text
               key={cap}
               style={{
-                flex: i === 1 ? 1.35 : 1,
+                flex: i === 1 ? 1.35 : 0.78,
                 textAlign: 'center',
                 fontSize: 11,
                 fontWeight: '700',
