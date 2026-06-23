@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
@@ -342,22 +343,7 @@ export function ProfPaymentScreen() {
                   Edit card
                 </Text>
               </Tappable>
-              <Tappable
-                onPress={() => onRemove(card)}
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.surface,
-                  borderRadius: radii.sm,
-                  borderWidth: StyleSheet.hairlineWidth,
-                  borderColor: colors.danger,
-                  paddingVertical: 9,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.danger }}>
-                  Remove
-                </Text>
-              </Tappable>
+              <RemoveButton onPress={() => onRemove(card)} />
             </View>
           </View>
         ))

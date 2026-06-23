@@ -291,7 +291,7 @@ interface AppState {
   diyUnlocked: boolean; // true via Pro OR the $10 DIY-only purchase
   unlockPro: () => void; // legacy entry — defaults to annual
   subscribePro: (plan: 'annual' | 'monthly') => void;
-  cancelPro: () => void; // cancel membership (keeps last plan for easy renew)
+  cancelPro: () => void; // cancel membership — effective immediately across the app
   unlockDiyOnly: () => void;
 
   // Daily check-in (Home): claim once → award points + show the checked state.
@@ -472,7 +472,9 @@ export const useAppStore = create<AppState>((set) => ({
   // Pro includes DIY guides, so unlocking Pro also flips diyUnlocked.
   unlockPro: () => set({ isPro: true, proPlan: 'annual', diyUnlocked: true }),
   subscribePro: (plan) => set({ isPro: true, proPlan: plan, diyUnlocked: true }),
-  cancelPro: () => set({ isPro: false }),
+  // Cancelling takes effect immediately: Pro perks (deposit waiver) and the
+  // bundled DIY-guide access are revoked right away across the whole app.
+  cancelPro: () => set({ isPro: false, diyUnlocked: false }),
   unlockDiyOnly: () => set({ diyUnlocked: true }),
 
   dailyCheckedIn: false,

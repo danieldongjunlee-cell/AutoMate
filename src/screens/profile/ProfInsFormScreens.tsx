@@ -7,6 +7,7 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-nati
 import { Tappable } from '../../components/Tappable';
 
 import { Dropdown } from '../../components/Dropdown';
+import { InsurerLogo } from '../../components/InsurerLogo';
 import { Card, Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
@@ -200,7 +201,7 @@ export function ProfInsEditScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 20 }}>🛡️</Text>
+        <InsurerLogo carrier={policy.carrier} size={36} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.warningDeep }}>
             {policy.carrier} · {policy.policyNumber}
@@ -450,7 +451,7 @@ export function ProfInsAddScreen() {
               opacity: pressed || (connectingId !== null && connectingId !== p.id) ? 0.6 : 1,
             })}
           >
-            <Text style={{ fontSize: 16 }}>🛡️</Text>
+            <InsurerLogo carrier={p.name} size={30} />
             <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
               {p.name}
             </Text>

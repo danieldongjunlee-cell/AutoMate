@@ -118,7 +118,7 @@ export function MaintScheduleConfirmScreen() {
 
       {/* Primary action: manage (reschedule / cancel) the booking. */}
       <PrimaryButton
-        label="Reschedule booking"
+        label="🗓 Reschedule"
         onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
       />
 

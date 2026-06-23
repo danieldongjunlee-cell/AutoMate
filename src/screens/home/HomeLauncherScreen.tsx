@@ -54,18 +54,18 @@ export function HomeLauncherScreen() {
           borderColor: colors.border,
           borderRadius: radii.lg,
           padding: spacing.lg,
-          minHeight: 150,
+          minHeight: 188,
           justifyContent: 'center',
           overflow: 'hidden',
           marginBottom: spacing.md,
           ...cardShadow,
         }}
       >
-        <Text style={{ fontSize: 25, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 15, fontWeight: '600', color: subColor, marginTop: 5 }}>{opts.phrase}</Text>
+        <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: subColor, marginTop: 6 }}>{opts.phrase}</Text>
         {/* Silver-car logo in the bottom-right corner. */}
         <View style={{ position: 'absolute', right: 4, bottom: 6, opacity: 0.5 }}>
-          <CarLogo size={152} />
+          <CarLogo size={184} />
         </View>
       </View>
     </Tappable>

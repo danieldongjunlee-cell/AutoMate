@@ -28,7 +28,7 @@ export function ProManageScreen() {
   const onCancel = () =>
     confirmAction(
       'Cancel AutoMate Pro?',
-      'You’ll keep Pro perks until the end of the current period, then deposits and DIY guides return to standard.',
+      'Your membership ends immediately — deposits and DIY guides return to standard right away across the app.',
       () => cancelPro(),
       'Cancel subscription',
     );
@@ -100,7 +100,7 @@ export function ProManageScreen() {
         </>
       )}
       <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.md }}>
-        Manage billing anytime · cancel keeps perks until the period ends.
+        Manage billing anytime · cancelling takes effect immediately.
       </Text>
     </Screen>
   );

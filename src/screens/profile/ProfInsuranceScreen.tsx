@@ -7,7 +7,9 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Dropdown } from '../../components/Dropdown';
 import { FormSheet } from '../../components/FormSheet';
+import { InsurerLogo } from '../../components/InsurerLogo';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
@@ -172,18 +174,7 @@ function PolicyCard({
           gap: spacing.sm,
         }}
       >
-        <View
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: radii.sm,
-            backgroundColor: 'rgba(255,255,255,.2)',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 22 }}>🛡️</Text>
-        </View>
+        <InsurerLogo carrier={policy.carrier} size={44} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{policy.carrier}</Text>
           <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)' }}>{policy.coverage}</Text>
@@ -243,20 +234,7 @@ function PolicyCard({
             Edit policy
           </Text>
         </Tappable>
-        <Tappable
-          onPress={onRemove}
-          style={{
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderRadius: radii.sm,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.danger,
-            paddingVertical: 9,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.danger }}>Remove</Text>
-        </Tappable>
+        <RemoveButton onPress={onRemove} />
       </View>
     </View>
   );
