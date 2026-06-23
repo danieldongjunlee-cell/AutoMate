@@ -9,7 +9,7 @@ import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
-import { Card, Screen } from '../../components/ui';
+import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import { dealerById, defaultBookingISO } from '../../services/mock/data';
@@ -147,7 +147,10 @@ export function BookDepositScreen() {
         </View>
       ) : (
         <>
-          <Card style={{ padding: spacing.sm, marginBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+          <View style={{ marginTop: spacing.md }}>
+            <SectionLabel>Payment method</SectionLabel>
+          </View>
+          <Card style={{ padding: spacing.sm, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
             <Text>💳</Text>
             <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
               {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 12 }}>· hold only</Text>

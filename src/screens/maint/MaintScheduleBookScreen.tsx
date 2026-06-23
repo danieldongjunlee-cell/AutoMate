@@ -18,8 +18,9 @@ import {
   MaintCategory,
   MaintSubService,
 } from '../../services/mock/data';
-import { cartTotals, discountedPrice, useAppStore } from '../../store/useAppStore';
+import { cartTotals, dateBadgeParts, discountedPrice, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
 
@@ -30,7 +31,10 @@ export function MaintScheduleBookScreen() {
   const cart = useAppStore((s) => s.cart);
   const toggleCartService = useAppStore((s) => s.toggleCartService);
   const setCartSlot = useAppStore((s) => s.setCartSlot);
-  const { active } = useActiveVehicle();
+  const addBooking = useAppStore((s) => s.addBooking);
+  const { active, brand } = useActiveVehicle();
+  // Booking agreement is folded into this screen (no separate consent screen).
+  const [agreed, setAgreed] = useState(false);
 
   // Auto-pick the brake row that matches the active car's size (KIA Sportage → SUV).
   const recoType = active ? vehicleTypeOf(active.name) : null;
@@ -68,6 +72,28 @@ export function MaintScheduleBookScreen() {
   const { total, totalMin, savings } = cartTotals(cart);
   const count = cart.services.length;
   const canContinue = count > 0 && !!cart.date && !!cart.time;
+  const totalLabel = `$${total}`;
+
+  // Maintenance is pay-at-shop (no deposit), so booking is confirmed right here
+  // once the agreement is checked — the separate agreement screen is gone.
+  const onConfirm = () => {
+    if (!canContinue || !agreed) return;
+    const dateLabel = formatDayLabel(cart.date, formatDayLabel(defaultBookingISO()));
+    addBooking({
+      kind: 'maintenance',
+      brand,
+      dealerId: cart.dealerId ?? undefined,
+      icon: '🛢️',
+      title: cart.services.map((s) => s.name).join(' + ') || 'Service',
+      dealerName: dealerById(cart.dealerId).name,
+      dateLabel,
+      ...dateBadgeParts(dateLabel),
+      time: cart.time ?? '8:00 AM',
+      priceLabel: totalLabel,
+      status: 'confirmed',
+    });
+    navigation.navigate('MaintScheduleConfirm');
+  };
 
   // Claimed-deal discount for a category (0 when none).
   const pctFor = (categoryId: string) => cart.promo?.discounts[categoryId] ?? 0;
@@ -313,16 +339,50 @@ export function MaintScheduleBookScreen() {
         />
       </View>
 
+      {/* Booking agreement — folded into this screen as a compact consent. */}
+      <View
+        style={{
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        }}
+      >
+        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 6 }}>
+          No payment today — you pay the shop after your service.
+        </Text>
+        <Tappable onPress={() => setAgreed((v) => !v)} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' }}>
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 5,
+              borderWidth: 1.5,
+              borderColor: agreed ? colors.success : colors.border,
+              backgroundColor: agreed ? colors.success : 'transparent',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: 1,
+            }}
+          >
+            {agreed ? <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text> : null}
+          </View>
+          <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
+            I agree to AutoMate&apos;s{' '}
+            <Text style={{ color: colors.primary, fontWeight: '700' }} onPress={() => navigation.navigate('TosBooking')}>
+              Terms of Service
+            </Text>{' '}
+            — show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
+          </Text>
+        </Tappable>
+      </View>
+
       <PrimaryButton
-        label="Continue to booking →"
-        disabled={!canContinue}
-        onPress={() =>
-          navigation.navigate('BookAgreement', {
-            kind: 'maintenance',
-            dealerId: cart.dealerId ?? undefined,
-            next: 'MaintScheduleConfirm',
-          })
-        }
+        label={canContinue ? `Confirm booking — ${totalLabel} →` : 'Select services, date & time'}
+        disabled={!canContinue || !agreed}
+        onPress={onConfirm}
       />
     </Screen>
   );

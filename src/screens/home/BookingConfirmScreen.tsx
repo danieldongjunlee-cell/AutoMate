@@ -6,7 +6,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
+import {
+  ConfirmationNumber,
+  confirmationCode,
+  ReminderRow,
+  SuccessHeader,
+  SummaryCell,
+} from '../../components/Confirmation';
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -23,7 +29,6 @@ type Route = RouteProp<HomeStackParamList, 'BookingConfirm'>;
 const BRING_ITEMS = [
   { icon: '📄', label: "Insurance card & driver's license" },
   { icon: '🔑', label: 'Vehicle keys' },
-  { icon: '📱', label: 'AutoMate app for check-in QR' },
 ];
 
 /** Wireframe s-booking-confirm: success summary after accepting a quote. */
@@ -39,6 +44,9 @@ export function BookingConfirmScreen() {
   const dateLabel = route.params?.dateLabel ?? formatDayLabel(defaultBookingISO());
   const time = route.params?.time ?? '10:30 AM';
   const isCash = route.params?.paid === 'cash';
+  const confirmation = confirmationCode(
+    route.params?.bookingId ?? `${dealer.id}-${route.params?.dateLabel ?? ''}-${route.params?.time ?? ''}`,
+  );
   // Cross-tab cash bookings price from ACCEPTED_QUOTES and pass their label.
   const priceLabel =
     route.params?.priceLabel ??
@@ -64,6 +72,8 @@ export function BookingConfirmScreen() {
         title="You're all set!"
         subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
       />
+
+      <ConfirmationNumber code={confirmation} />
 
       {/* Booking summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
@@ -93,7 +103,7 @@ export function BookingConfirmScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <SummaryCell label="Date & time" value={dateLabel} sub={time} subColor={colors.primaryDark} />
+          <SummaryCell label="Date & time" value={dateLabel} sub={time} subColor={colors.primaryDark} emphasizeSub />
           <SummaryCell label="Estimate" value={priceLabel} sub={isCash ? 'cash payment' : '± after inspection'} />
           <SummaryCell label="Service" value="Rear bumper dent" sub={`${quote?.parts ?? 'OEM'} parts`} />
           <SummaryCell label="Drop-off" value="Self drop-off" sub="15 min check-in" />

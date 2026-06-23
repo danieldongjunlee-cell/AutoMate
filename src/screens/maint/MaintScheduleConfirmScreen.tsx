@@ -6,7 +6,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import { ReminderRow, SuccessHeader, SummaryCell } from '../../components/Confirmation';
+import {
+  ConfirmationNumber,
+  confirmationCode,
+  ReminderRow,
+  SuccessHeader,
+  SummaryCell,
+} from '../../components/Confirmation';
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -42,6 +48,9 @@ export function MaintScheduleConfirmScreen() {
   const promoLabel = (booking as { promo?: { label: string } }).promo?.label;
   const serviceNames = booking.services.map((s) => s.name).join(' + ');
   const reminderPref = useAppStore((s) => s.reminderPref);
+  const confirmation = confirmationCode(
+    `${booking.dealerId ?? ''}-${booking.date ?? ''}-${booking.time ?? ''}-${serviceNames}`,
+  );
 
   // The summary is snapshotted in `booking` above, so we can clear the live
   // cart immediately — leaving via reschedule/back/tab no longer strands it.
@@ -69,6 +78,8 @@ export function MaintScheduleConfirmScreen() {
         title="You're booked!"
         subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
       />
+
+      <ConfirmationNumber code={confirmation} />
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
         <SectionLabel>Summary</SectionLabel>
@@ -108,6 +119,7 @@ export function MaintScheduleConfirmScreen() {
             value={formatDayLabel(booking.date, 'Mon, Apr 7')}
             sub={booking.time ?? '8:00 AM'}
             subColor={colors.primaryDark}
+            emphasizeSub
           />
           <SummaryCell label="Pay at shop" value={`$${total}`} sub="$0 today" subColor={colors.successDark} />
           <SummaryCell label="Duration" value={`~${totalMin} min`} />

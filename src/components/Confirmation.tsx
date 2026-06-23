@@ -45,11 +45,14 @@ export function SummaryCell({
   value,
   sub,
   subColor,
+  emphasizeSub,
 }: {
   label: string;
   value: string;
   sub?: string;
   subColor?: string;
+  /** Render the sub line larger/bolder than the value (used for the time). */
+  emphasizeSub?: boolean;
 }) {
   const { colors } = useTheme();
   return (
@@ -67,8 +70,65 @@ export function SummaryCell({
       </Text>
       <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
       {sub ? (
-        <Text style={{ fontSize: 13, color: subColor ?? colors.textTertiary }}>{sub}</Text>
+        <Text
+          style={{
+            fontSize: emphasizeSub ? 18 : 13,
+            fontWeight: emphasizeSub ? '800' : '400',
+            color: subColor ?? colors.textTertiary,
+            marginTop: emphasizeSub ? 1 : 0,
+          }}
+        >
+          {sub}
+        </Text>
       ) : null}
+    </View>
+  );
+}
+
+/** Stable confirmation code (e.g. "AM-3F9K2") derived from a booking seed. */
+export function confirmationCode(seed: string): string {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const base = (h.toString(36).toUpperCase() + '00000').replace(/[^A-Z0-9]/g, '').slice(0, 5);
+  return `AM-${base}`;
+}
+
+/**
+ * Confirmation-number card the customer shows the shop at check-in (replaces the
+ * old "AutoMate app for check-in QR"). Big, legible code on a tinted card.
+ */
+export function ConfirmationNumber({ code }: { code: string }) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={{
+        backgroundColor: colors.primarySurface,
+        borderRadius: radii.md,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.primaryLight,
+        padding: spacing.md,
+        marginBottom: spacing.sm,
+        alignItems: 'center',
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 12,
+          fontWeight: '700',
+          letterSpacing: 0.6,
+          textTransform: 'uppercase',
+          color: colors.primaryDark,
+          marginBottom: 4,
+        }}
+      >
+        Confirmation number
+      </Text>
+      <Text style={{ fontSize: 28, fontWeight: '800', letterSpacing: 3, color: colors.primaryDeep }}>
+        {code}
+      </Text>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 4, textAlign: 'center' }}>
+        Show this to the shop when you arrive
+      </Text>
     </View>
   );
 }

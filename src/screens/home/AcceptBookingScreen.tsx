@@ -188,7 +188,7 @@ export function AcceptBookingScreen() {
         }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 6 }}>
-          ✅ No payment today — you pay the shop after the work.
+          No payment today — you pay the shop after the work.
         </Text>
         <Tappable onPress={() => setAgreed((v) => !v)} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' }}>
           <View
