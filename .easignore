@@ -1,0 +1,8 @@
+# Backend (Express/Prisma) — not part of the mobile app bundle.
+server/
+
+# Local artifacts that should never be uploaded to EAS Build.
+node_modules/
+dist/
+web-build/
+.expo/
