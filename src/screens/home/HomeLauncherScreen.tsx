@@ -1,9 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 
-import { CarLogo } from '../../components/CarLogo';
+import { AiInspectLogo } from '../../components/AiInspectLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
@@ -31,92 +32,97 @@ export function HomeLauncherScreen() {
   // populates it.
   const aiEstimate = useAppStore((s) => s.aiEstimate);
 
-  // All home actions share one white card surface; the colored icon badge is
-  // what makes each action stand out.
+  // All home actions share one white card surface; a soft outer drop shadow
+  // lifts each button off the background.
   const cardShadow = {
     shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    shadowOpacity: 0.14,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 6,
   } as const;
 
   // Subtitles use a lighter tone so the title leads.
   const subColor = colors.textPlaceholder;
 
-  /** The hero action (largest): white card, big faded logo in the bottom-right. */
+  /** The hero action (largest): white card, AI-inspection icon in the corner.
+      Outer view carries the drop shadow; inner view clips the icon (a single
+      view can't both clip with overflow:'hidden' and cast an iOS shadow). */
   const heroCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress}>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: radii.lg,
-          padding: spacing.lg,
-          minHeight: 188,
-          justifyContent: 'center',
-          overflow: 'hidden',
-          marginBottom: spacing.md,
-          ...cardShadow,
-        }}
-      >
-        <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 16, fontWeight: '600', color: subColor, marginTop: 6 }}>{opts.phrase}</Text>
-        {/* Silver-car logo in the bottom-right corner. */}
-        <View style={{ position: 'absolute', right: 4, bottom: 6, opacity: 0.5 }}>
-          <CarLogo size={184} />
+      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, marginBottom: spacing.md, ...cardShadow }}>
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: radii.lg,
+            padding: spacing.lg,
+            minHeight: 188,
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: subColor, marginTop: 6 }}>{opts.phrase}</Text>
+          {/* AI inspecting the car — sits opaque in the bottom-right corner. */}
+          <View style={{ position: 'absolute', right: 2, bottom: 4, opacity: 0.95 }}>
+            <AiInspectLogo size={188} />
+          </View>
         </View>
       </View>
     </Tappable>
   );
 
-  /** Smaller side-by-side action tile (Maintenance / Compare) — same size. */
+  /** Smaller side-by-side action tile (Maintenance / Compare) — same size. The
+      icon now sits opaque in the corner like a product illustration. */
   const miniCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
     <Tappable onPress={opts.onPress} style={{ flex: 1 }}>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: radii.lg,
-          padding: spacing.md,
-          minHeight: 104,
-          justifyContent: 'center',
-          overflow: 'hidden',
-          ...cardShadow,
-        }}
-      >
-        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 13, fontWeight: '600', color: subColor, marginTop: 3 }}>{opts.phrase}</Text>
-        <Text style={{ position: 'absolute', right: -6, bottom: -14, fontSize: 58, opacity: 0.13 }}>{opts.icon}</Text>
+      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, ...cardShadow }}>
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: radii.lg,
+            padding: spacing.md,
+            minHeight: 104,
+            justifyContent: 'center',
+            overflow: 'hidden',
+          }}
+        >
+          <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: subColor, marginTop: 3 }}>{opts.phrase}</Text>
+          <Text style={{ position: 'absolute', right: 6, bottom: 2, fontSize: 42 }}>{opts.icon}</Text>
+        </View>
       </View>
     </Tappable>
   );
 
+  // Solid, borderless promo banner (filled gradient + white text), like a
+  // store coupon card. The big emoji sits opaque on the right.
   const dealItem = (
     emoji: string,
     badge: string,
-    badgeBg: string,
-    badgeFg: string,
     title: string,
     sub: string,
-    bg: string,
-    border: string,
+    gradient: readonly [string, string],
     dealerId: string,
   ) => (
-    <Tappable
-      onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: bg, borderColor: border, borderWidth: 1.5, borderRadius: radii.md, padding: spacing.sm, minHeight: 74 }}
-    >
-      <Text style={{ fontSize: 24 }}>{emoji}</Text>
-      <View style={{ flex: 1 }}>
-        <View style={{ alignSelf: 'flex-start', backgroundColor: badgeBg, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 1, marginBottom: 3 }}>
-          <Text style={{ fontSize: 11, fontWeight: '800', color: badgeFg }}>{badge}</Text>
+    <Tappable onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}>
+      <LinearGradient
+        colors={gradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, minHeight: 84, overflow: 'hidden' }}
+      >
+        <View style={{ flex: 1 }}>
+          <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
+            <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{badge}</Text>
+          </View>
+          <Text style={{ fontSize: 15, fontWeight: '800', color: '#fff' }}>{title}</Text>
+          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{sub}</Text>
         </View>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
-        <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
-      </View>
+        <Text style={{ fontSize: 40 }}>{emoji}</Text>
+      </LinearGradient>
     </Tappable>
   );
 
@@ -171,7 +177,7 @@ export function HomeLauncherScreen() {
 
       {/* Primary action — largest */}
       {heroCard({
-        title: t('Get an AI Repair Estimate'),
+        title: t('AI Repair Estimate'),
         phrase: 'Free quote in under 5 minutes',
         icon: '🚗',
         accent: palette.accent,
@@ -215,9 +221,9 @@ export function HomeLauncherScreen() {
       </View>
       <PagedCarousel
         items={[
-          dealItem('🛢️', 'LIMITED · BUNDLE', colors.warning, palette.dark, 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', colors.warningSurface, colors.warning, 'honda-fairfax'),
-          dealItem('🔧', '20% OFF', colors.primary, '#fff', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', colors.primarySurface, colors.primary, 'autofix-pro'),
-          dealItem('🛡️', 'SPONSORED', colors.success, '#fff', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', colors.successSurface, colors.success, 'vienna-auto'),
+          dealItem('🛢️', 'LIMITED · BUNDLE', 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', ['#E0A93E', '#C2871F'], 'honda-fairfax'),
+          dealItem('🔧', '20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', [palette.primary, palette.primaryDark], 'autofix-pro'),
+          dealItem('🛡️', 'SPONSORED', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', ['#1f9e75', '#13795a'], 'vienna-auto'),
         ]}
       />
 
