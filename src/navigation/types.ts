@@ -85,6 +85,7 @@ export type MaintStackParamList = {
   DiyMatch: undefined;
   DiyTools: undefined;
   DiyFuture: undefined;
+  MaintLanding: undefined;
   MaintServiceType: undefined;
   MaintSchedule: undefined;
   MaintScheduleBook: undefined;

@@ -941,6 +941,18 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
       { id: 'brk-perf', name: 'Performance', price: 389, durationMin: 120, vehicleType: 'Performance' },
     ],
   },
+  {
+    id: 'inspection',
+    name: 'Inspection',
+    icon: '🔎',
+    blurb: 'Multi-point & safety checks',
+    services: [
+      { id: 'insp-multi', name: 'Multi-point Inspection', price: 49, durationMin: 45 },
+      { id: 'insp-safety', name: 'State Safety Inspection', price: 20, durationMin: 30 },
+      { id: 'insp-emissions', name: 'Emissions / Smog Check', price: 35, durationMin: 30 },
+      { id: 'insp-prepurchase', name: 'Pre-purchase Inspection', price: 129, durationMin: 60 },
+    ],
+  },
 ];
 
 export const MAINT_TIME_SLOTS = ['8:00 AM', '10:00 AM', '1:00 PM', '3:30 PM'];

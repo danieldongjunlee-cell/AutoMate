@@ -1,11 +1,14 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { palette, spacing } from '../../theme';
+import { spacing, useTheme } from '../../theme';
 
-/** Navy-gradient shell shared by the four auth screens (wireframe .auth-screen). */
+/**
+ * Shared shell for the auth screens. Uses the app background (light by default)
+ * so log in / sign up match the returning-vs-new chooser — not a separate navy
+ * gradient.
+ */
 export function AuthScreenShell({
   children,
   centered,
@@ -13,14 +16,10 @@ export function AuthScreenShell({
   children: React.ReactNode;
   centered?: boolean;
 }) {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   return (
-    <LinearGradient
-      colors={[palette.navy, palette.navyMid]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.6, y: 1 }}
-      style={{ flex: 1 }}
-    >
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -37,6 +36,6 @@ export function AuthScreenShell({
           {children}
         </ScrollView>
       </KeyboardAvoidingView>
-    </LinearGradient>
+    </View>
   );
 }

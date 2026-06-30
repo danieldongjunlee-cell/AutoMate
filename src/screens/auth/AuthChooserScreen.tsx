@@ -21,6 +21,16 @@ const INTENT_COPY: Record<string, string> = {
   writeReview: 'Sign in to post your review.',
   saveCar: 'Sign in to save your car.',
   signIn: 'Log in or create an account to continue.',
+  deals: 'Sign in to view deals & offers.',
+  myCars: 'Sign in to manage your cars.',
+  insurance: 'Sign in to manage your insurance.',
+  payment: 'Sign in to manage payment methods.',
+  estimateHistory: 'Sign in to view your estimate history.',
+  getPro: 'Sign in to get AutoMate Pro.',
+  maintDashboard: 'Sign in to open your maintenance dashboard.',
+  checkIn: 'Sign in to claim your daily check-in.',
+  milestones: 'Sign in to view your milestones.',
+  pointsHistory: 'Sign in to view your points history.',
 };
 
 /**

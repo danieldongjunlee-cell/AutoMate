@@ -7,7 +7,7 @@ import { Tappable } from '../../components/Tappable';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService, MOCK_PHONE } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing } from '../../theme';
+import { palette, radii, spacing, useTheme } from '../../theme';
 import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
@@ -18,6 +18,7 @@ type Route = RouteProp<AuthStackParamList, 'VerifyOtp'>;
 
 export function VerifyOtpScreen() {
   const { params } = useRoute<Route>();
+  const { colors } = useTheme();
   const signIn = useAppStore((s) => s.signIn);
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -75,17 +76,17 @@ export function VerifyOtpScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             gap: spacing.sm,
-            backgroundColor: 'rgba(29,158,117,.25)',
+            backgroundColor: colors.successSurface,
             borderWidth: 1,
-            borderColor: 'rgba(93,207,170,.5)',
+            borderColor: colors.successLight,
             borderRadius: radii.sm,
             paddingHorizontal: spacing.md,
             paddingVertical: 9,
             marginTop: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: '#5DCFAA' }}>✓</Text>
-          <Text style={{ flex: 1, fontSize: 14, color: '#9FE5CC' }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>✓</Text>
+          <Text style={{ flex: 1, fontSize: 14, color: colors.successDeep }}>
             Verification code sent via {channelLabel}
           </Text>
         </View>
@@ -95,10 +96,10 @@ export function VerifyOtpScreen() {
         <Text style={{ fontSize: 52, marginBottom: spacing.md }}>
           {params?.method === 'email' ? '📧' : '📱'}
         </Text>
-        <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff', marginBottom: spacing.xs }}>
+        <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary, marginBottom: spacing.xs }}>
           Code sent to {destination}
         </Text>
-        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.6)' }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           Enter the 6-digit code below
         </Text>
       </View>
@@ -123,13 +124,13 @@ export function VerifyOtpScreen() {
                 height: 58,
                 borderRadius: radii.md,
                 borderWidth: active ? 1.5 : 1,
-                borderColor: active ? palette.authAction : 'rgba(255,255,255,.25)',
-                backgroundColor: active ? '#E8F0FB' : '#FAFAF8',
+                borderColor: active ? palette.authAction : colors.border,
+                backgroundColor: active ? colors.primarySurface : colors.inputBg,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 24, fontWeight: '600', color: palette.textPrimary }}>
+              <Text style={{ fontSize: 24, fontWeight: '600', color: colors.textPrimary }}>
                 {code[i] ?? ''}
               </Text>
             </View>
@@ -156,9 +157,9 @@ export function VerifyOtpScreen() {
       />
 
       <Tappable onPress={onResend} hitSlop={8} style={{ alignItems: 'center' }} noFeedback={secondsLeft > 0}>
-        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.6)' }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
           Didn't receive it?{' '}
-          <Text style={{ color: '#7FB1E8' }}>
+          <Text style={{ color: colors.primary }}>
             {secondsLeft > 0 ? `Resend (${mmss})` : 'Resend'}
           </Text>
         </Text>

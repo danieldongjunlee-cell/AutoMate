@@ -5,33 +5,32 @@ import React, { useEffect } from 'react';
 import { AuthChooserScreen } from '../screens/auth/AuthChooserScreen';
 import { LogInScreen } from '../screens/auth/LogInScreen';
 import { SignUpScreen } from '../screens/auth/SignUpScreen';
-import { SplashScreen } from '../screens/auth/SplashScreen';
 import { VerifyMethodScreen } from '../screens/auth/VerifyMethodScreen';
 import { VerifyOtpScreen } from '../screens/auth/VerifyOtpScreen';
 import { useAppStore } from '../store/useAppStore';
-import { palette } from '../theme';
+import { useTheme } from '../theme';
 import { SCREEN_TITLES } from './registry';
 import { AuthStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-/** The auth flow itself (returning/new chooser → log in / sign up → verify). */
+/** The auth flow itself (returning/new chooser → log in / sign up → verify).
+ *  On the app background so it matches the chooser (not a navy gradient). */
 export function AuthStack() {
+  const { colors } = useTheme();
   return (
     <Stack.Navigator
       initialRouteName="AuthChooser"
       screenOptions={{
-        // Auth screens sit on the navy gradient in the wireframe.
-        headerStyle: { backgroundColor: palette.navy },
-        headerTitleStyle: { color: '#fff', fontSize: 17, fontWeight: '600' },
-        headerTintColor: '#FFFFFF',
+        headerStyle: { backgroundColor: colors.background },
+        headerTitleStyle: { color: colors.textPrimary, fontSize: 17, fontWeight: '600' },
+        headerTintColor: colors.textPrimary,
         headerShadowVisible: false,
         headerBackButtonDisplayMode: 'minimal',
-        contentStyle: { backgroundColor: palette.navy },
+        contentStyle: { backgroundColor: colors.background },
       }}
     >
       <Stack.Screen name="AuthChooser" component={AuthChooserScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ title: '' }} />
       <Stack.Screen name="LogIn" component={LogInScreen} options={{ title: '' }} />
       <Stack.Screen

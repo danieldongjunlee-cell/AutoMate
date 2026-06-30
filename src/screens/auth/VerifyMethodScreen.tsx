@@ -6,7 +6,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService, VerifyChannel } from '../../services';
-import { radii, spacing } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 import { AuthScreenShell } from './AuthScreenShell';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'VerifyMethod'>;
@@ -19,6 +19,7 @@ type Route = RouteProp<AuthStackParamList, 'VerifyMethod'>;
  */
 export function VerifyMethodScreen() {
   const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
   const { params } = useRoute<Route>();
   const [sending, setSending] = useState<VerifyChannel | null>(null);
 
@@ -42,10 +43,10 @@ export function VerifyMethodScreen() {
     <AuthScreenShell>
       <View style={{ alignItems: 'center', marginVertical: spacing.xxl }}>
         <Text style={{ fontSize: 52, marginBottom: spacing.md }}>🔐</Text>
-        <Text style={{ fontSize: 18, fontWeight: '600', color: '#fff', marginBottom: spacing.xs }}>
+        <Text style={{ fontSize: 18, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
           Almost there
         </Text>
-        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.6)', textAlign: 'center' }}>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
           Where should we send your verification code?
         </Text>
       </View>
@@ -59,9 +60,9 @@ export function VerifyMethodScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             gap: spacing.md,
-            backgroundColor: 'rgba(255,255,255,.08)',
+            backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: 'rgba(255,255,255,.25)',
+            borderColor: colors.border,
             borderRadius: radii.md,
             padding: spacing.lg,
             marginBottom: spacing.md,
@@ -69,20 +70,20 @@ export function VerifyMethodScreen() {
         >
           <Text style={{ fontSize: 28 }}>{icon}</Text>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>{title}</Text>
-            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.65)', marginTop: 2 }}>
+            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{title}</Text>
+            <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2 }}>
               {destination}
             </Text>
           </View>
           {sending === method ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.primary} />
           ) : (
-            <Text style={{ fontSize: 18, color: 'rgba(255,255,255,.5)' }}>›</Text>
+            <Text style={{ fontSize: 18, color: colors.textTertiary }}>›</Text>
           )}
         </Tappable>
       ))}
 
-      <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.45)', textAlign: 'center', marginTop: spacing.sm }}>
+      <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.sm }}>
         Codes expire after 10 minutes
       </Text>
     </AuthScreenShell>

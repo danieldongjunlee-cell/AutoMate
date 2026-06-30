@@ -14,7 +14,7 @@ import { signInWithSupabase } from '../../lib/supabaseAuth';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService, DEMO_EMAIL, DEMO_PASSWORD } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
-import { spacing } from '../../theme';
+import { spacing, useTheme } from '../../theme';
 import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
@@ -22,6 +22,7 @@ type Nav = NativeStackNavigationProp<AuthStackParamList, 'LogIn'>;
 
 export function LogInScreen() {
   const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
   const setAuth = useAppStore((s) => s.setAuth);
   const signIn = useAppStore((s) => s.signIn);
   // Demo flow (spec §6): pre-fill the seeded demo credentials on the mock path.
@@ -56,16 +57,15 @@ export function LogInScreen() {
       <View style={{ marginBottom: spacing.lg }}>
         <LogoRow markSize={28} textSize={16} />
       </View>
-      <Text style={{ fontSize: 22, fontWeight: '600', color: '#fff', marginBottom: spacing.xs }}>
+      <Text style={{ fontSize: 22, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
         Welcome back
       </Text>
-      <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', marginBottom: spacing.xl }}>
+      <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.xl }}>
         Sign in to your account
       </Text>
 
       <TextField
         label="Email"
-        onDark
         value={email}
         onChangeText={setEmail}
         placeholder="johndoe@email.com"
@@ -75,7 +75,6 @@ export function LogInScreen() {
       />
       <TextField
         label="Password"
-        onDark
         secure
         value={password}
         onChangeText={setPassword}
@@ -91,7 +90,7 @@ export function LogInScreen() {
         style={{ alignSelf: 'flex-end', marginBottom: spacing.xl }}
         hitSlop={8}
       >
-        <Text style={{ fontSize: 14, color: '#7FB1E8' }}>Forgot password?</Text>
+        <Text style={{ fontSize: 14, color: colors.primary }}>Forgot password?</Text>
       </Tappable>
 
       <PrimaryButton
@@ -102,7 +101,7 @@ export function LogInScreen() {
         onPress={onSubmit}
       />
 
-      <SocialAuthButtons onDark />
+      <SocialAuthButtons />
     </AuthScreenShell>
   );
 }

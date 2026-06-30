@@ -13,7 +13,7 @@ import { signUpWithSupabase } from '../../lib/supabaseAuth';
 import { AuthStackParamList } from '../../navigation/types';
 import { authService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
-import { palette, spacing } from '../../theme';
+import { spacing, useTheme } from '../../theme';
 import { showAlert } from '../../utils/alerts';
 import { AuthScreenShell } from './AuthScreenShell';
 
@@ -28,6 +28,7 @@ const PASSWORD_RULES: { label: string; test: (pw: string) => boolean }[] = [
 
 export function SignUpScreen() {
   const navigation = useNavigation<Nav>();
+  const { colors } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -75,16 +76,15 @@ export function SignUpScreen() {
       <View style={{ marginBottom: spacing.lg }}>
         <LogoRow markSize={28} textSize={16} />
       </View>
-      <Text style={{ fontSize: 22, fontWeight: '600', color: '#fff', marginBottom: spacing.xs }}>
+      <Text style={{ fontSize: 22, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
         Create account
       </Text>
-      <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.55)', marginBottom: spacing.xl }}>
+      <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.xl }}>
         Get real dealer quotes in minutes
       </Text>
 
       <TextField
         label="Full name"
-        onDark
         value={fullName}
         onChangeText={setFullName}
         placeholder="John Doe"
@@ -93,7 +93,6 @@ export function SignUpScreen() {
       />
       <TextField
         label="Email"
-        onDark
         value={email}
         onChangeText={setEmail}
         placeholder="johndoe@email.com"
@@ -103,7 +102,6 @@ export function SignUpScreen() {
       />
       <TextField
         label="Phone"
-        onDark
         value={phone}
         onChangeText={setPhone}
         placeholder="+1 (703) 555-0198"
@@ -112,7 +110,6 @@ export function SignUpScreen() {
       />
       <TextField
         label="Password"
-        onDark
         secure
         value={password}
         onChangeText={setPassword}
@@ -125,10 +122,10 @@ export function SignUpScreen() {
       <View style={{ marginBottom: spacing.md, gap: 4 }}>
         {rules.map(({ label, ok }) => (
           <View key={label} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: ok ? '#5DCFAA' : '#F09595' }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: ok ? colors.successDark : colors.danger }}>
               {ok ? '✓' : '✗'}
             </Text>
-            <Text style={{ fontSize: 14, color: ok ? '#5DCFAA' : 'rgba(255,255,255,.6)' }}>
+            <Text style={{ fontSize: 14, color: ok ? colors.successDark : colors.textTertiary }}>
               {label}
             </Text>
           </View>
@@ -137,7 +134,6 @@ export function SignUpScreen() {
 
       <TextField
         label="Confirm password"
-        onDark
         secure
         value={confirm}
         onChangeText={setConfirm}
@@ -146,7 +142,7 @@ export function SignUpScreen() {
         containerStyle={{ marginBottom: showMismatch ? spacing.xs : spacing.xl }}
       />
       {showMismatch ? (
-        <Text style={{ fontSize: 14, color: '#F09595', marginBottom: spacing.lg }}>
+        <Text style={{ fontSize: 14, color: colors.danger, marginBottom: spacing.lg }}>
           Passwords don't match
         </Text>
       ) : null}
@@ -156,20 +152,20 @@ export function SignUpScreen() {
         style={{
           fontSize: 13,
           lineHeight: 18,
-          color: 'rgba(255,255,255,.55)',
+          color: colors.textTertiary,
           marginBottom: spacing.md,
         }}
       >
         By creating an account, you agree to our{' '}
         <Text
-          style={{ color: palette.primaryLight, fontWeight: '700' }}
+          style={{ color: colors.primary, fontWeight: '700' }}
           onPress={() => setLegal('terms')}
         >
           Terms of Service
         </Text>{' '}
         and{' '}
         <Text
-          style={{ color: palette.primaryLight, fontWeight: '700' }}
+          style={{ color: colors.primary, fontWeight: '700' }}
           onPress={() => setLegal('privacy')}
         >
           Privacy Policy
@@ -187,7 +183,7 @@ export function SignUpScreen() {
         onPress={onSubmit}
       />
 
-      <SocialAuthButtons onDark />
+      <SocialAuthButtons />
     </AuthScreenShell>
   );
 }

@@ -84,15 +84,6 @@ export function MaintServiceTypeScreen() {
         disabled={count === 0}
         onPress={() => navigation.navigate('MaintSchedule')}
       />
-
-      <Tappable
-        onPress={() => navigation.navigate('MaintDashboard')}
-        style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.xs }}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>
-          View maintenance dashboard
-        </Text>
-      </Tappable>
     </Screen>
   );
 }

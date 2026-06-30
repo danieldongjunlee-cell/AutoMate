@@ -691,6 +691,14 @@ window.pickPart = function(el, name){
 </div>
 </div>
 <!-- s-maint-service-type: multi-select service types before the shop map -->
+<!-- s-maint-landing: maintenance entry from Home — book a service / dashboard -->
+<div id="s-maint-landing" class="screen" data-tab="maint" style="display:none">
+<div style="display:flex;align-items:center;gap:5px;margin-bottom:10px"><span style="font-size:16px;color:var(--ce8edf5);cursor:pointer" data-back="1">←</span><span style="font-size:10.5px;font-weight:600;flex:1">Maintenance</span></div>
+<div style="font-size:13px;font-weight:800;color:var(--ce8edf5);margin-bottom:2px">Maintenance</div>
+<div style="font-size:8px;color:var(--c8a94a6);margin-bottom:14px">Book a service or check on your car's health.</div>
+<div style="background:#2e6bff;border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:center" onclick="nav('maint-service-type')"><div style="font-size:24px;margin-bottom:5px">📅</div><div style="font-size:11px;font-weight:800;color:#fff">Book a service</div><div style="font-size:8px;color:rgba(255,255,255,.8);margin-top:2px">Oil, tires, brakes, inspection &amp; more</div></div>
+<div style="background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:16px;padding:16px;cursor:pointer;min-height:96px;display:flex;flex-direction:column;justify-content:center" onclick="nav('maint-dashboard')"><div style="font-size:24px;margin-bottom:5px">📊</div><div style="font-size:11px;font-weight:800;color:var(--ce8edf5)">View maintenance dashboard</div><div style="font-size:8px;color:var(--c8a94a6);margin-top:2px">Health, market value, history &amp; DIY guides</div></div>
+</div>
 <div id="s-maint-service-type" class="screen" data-tab="maint" style="display:none">
 <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px"><span style="font-size:16px;color:var(--ce8edf5);cursor:pointer" data-back="1">←</span><span style="font-size:10.5px;font-weight:600;flex:1">Book a service</span></div>
 <div style="font-size:12px;font-weight:800;color:var(--ce8edf5);margin-bottom:2px">What service do you need?</div>
@@ -701,9 +709,9 @@ window.pickPart = function(el, name){
   <div style="width:47%;flex-grow:1;background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:13px;padding:11px;min-height:74px;cursor:pointer"><span style="font-size:24px">🌬️</span><div style="font-size:10px;font-weight:800;color:var(--ce8edf5);margin-top:6px">Filters</div><div style="font-size:7px;color:var(--c8a94a6)">Air, cabin, fuel &amp; PCV</div></div>
   <div style="width:47%;flex-grow:1;background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:13px;padding:11px;min-height:74px;cursor:pointer"><span style="font-size:24px">💧</span><div style="font-size:10px;font-weight:800;color:var(--ce8edf5);margin-top:6px">Fluids</div><div style="font-size:7px;color:var(--c8a94a6)">Transmission, coolant &amp; brake</div></div>
   <div style="width:47%;flex-grow:1;background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:13px;padding:11px;min-height:74px;cursor:pointer"><span style="font-size:24px">🛑</span><div style="font-size:10px;font-weight:800;color:var(--ce8edf5);margin-top:6px">Brakes</div><div style="font-size:7px;color:var(--c8a94a6)">Pads, rotors &amp; inspection</div></div>
+  <div style="width:47%;flex-grow:1;background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:13px;padding:11px;min-height:74px;cursor:pointer"><span style="font-size:24px">🔎</span><div style="font-size:10px;font-weight:800;color:var(--ce8edf5);margin-top:6px">Inspection</div><div style="font-size:7px;color:var(--c8a94a6)">Multi-point &amp; safety checks</div></div>
 </div>
 <div style="background:#16a34a;border-radius:11px;padding:12px;text-align:center;cursor:pointer" onclick="nav('maint-schedule')"><span style="font-size:9.5px;font-weight:700;color:#fff">Find shops — 1 service →</span></div>
-<div style="text-align:center;padding:9px;cursor:pointer" onclick="nav('maint-dashboard')"><span style="font-size:8px;font-weight:600;color:var(--c6fa0ff)">View maintenance dashboard</span></div>
 </div>
 <div id="s-home-launcher" class="screen" data-tab="home" style="display:block">
 <!-- Guest banner — shown at the top of every tab until the user signs in -->
@@ -729,7 +737,7 @@ window.pickPart = function(el, name){
 </div>
 <!-- Two smaller actions, same size; Compare populates once an AI estimate exists -->
 <div style="display:flex;gap:9px;margin-bottom:26px">
-  <div style="flex:1;background:var(--c121a2b);border:0.5px solid var(--c1f2940);border-radius:16px;padding:13px;cursor:pointer;position:relative;overflow:hidden;min-height:88px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 5px 16px rgba(0,0,0,.40)" onclick="nav('maint-service-type')">
+  <div style="flex:1;background:var(--c121a2b);border:0.5px solid var(--c1f2940);border-radius:16px;padding:13px;cursor:pointer;position:relative;overflow:hidden;min-height:88px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 5px 16px rgba(0,0,0,.40)" onclick="nav('maint-landing')">
     <div style="font-size:14px;font-weight:800;color:var(--ce8edf5)">Maintenance</div>
     <div style="font-size:10px;font-weight:600;color:var(--c6e7a8c);margin-top:2px">Book service fast</div>
     <div style="position:absolute;right:6px;bottom:2px;font-size:36px">🔧</div>

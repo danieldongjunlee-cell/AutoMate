@@ -50,6 +50,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   DiyMatch: 'AI guide matching', // s-diy-match
   DiyTools: 'Shopping lists', // s-diy-tools
   DiyFuture: 'Coming soon', // s-diy-future
+  MaintLanding: 'Maintenance', // s-maint-landing (book a service / dashboard)
   MaintServiceType: 'Book a service', // s-maint-service-type (multi-select)
   MaintSchedule: 'Choose a shop', // s-maint-schedule (map + shop list)
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book

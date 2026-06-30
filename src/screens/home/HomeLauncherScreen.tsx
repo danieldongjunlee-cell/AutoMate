@@ -7,6 +7,7 @@ import { Image, Text, View } from 'react-native';
 import { AiInspectLogo } from '../../components/AiInspectLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { GuestBanner } from '../../components/GuestBanner';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
@@ -37,6 +38,7 @@ export function HomeLauncherScreen() {
   // Greeting shows the signed-in user's first name; just "Hi" for guests.
   const user = useAppStore((s) => s.user);
   const firstName = isAuthenticated ? (user?.name ?? '').trim().split(/\s+/)[0] : '';
+  const requireAuth = useRequireAuth();
 
   // All home actions share one white card surface; a soft outer drop shadow
   // lifts each button off the background.
@@ -113,7 +115,7 @@ export function HomeLauncherScreen() {
     gradient: readonly [string, string],
     dealerId: string,
   ) => (
-    <Tappable onPress={() => navigation.navigate('BundleDeals', { focus: dealerId })}>
+    <Tappable onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals', { focus: dealerId }))}>
       <LinearGradient
         colors={gradient}
         start={{ x: 0, y: 0 }}
@@ -200,7 +202,7 @@ export function HomeLauncherScreen() {
           phrase: 'Book service fast',
           icon: '🔧',
           accent: colors.success,
-          onPress: () => navigation.navigate('MaintServiceType'),
+          onPress: () => navigation.navigate('MaintLanding'),
         })}
         {aiEstimate
           ? miniCard({
@@ -224,7 +226,7 @@ export function HomeLauncherScreen() {
       {/* Deals & offers — compact section below the actions */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xl, marginBottom: spacing.sm }}>
         <Text style={{ fontSize: 17, fontWeight: '800', color: colors.textPrimary }}>{t('Deals & offers')}</Text>
-        <Tappable onPress={() => navigation.navigate('BundleDeals')} hitSlop={8}>
+        <Tappable onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals'))} hitSlop={8}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all →</Text>
         </Tappable>
       </View>

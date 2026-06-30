@@ -16,6 +16,7 @@ import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, vehiclesService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
 import { GuestBanner } from '../../components/GuestBanner';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -32,6 +33,7 @@ export function ProfHubScreen() {
   const isPro = useAppStore((s) => s.isPro);
   const checkedIn = useAppStore((s) => s.dailyCheckedIn);
   const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
+  const requireAuth = useRequireAuth();
   // Authenticated user context (set after the demo login); falls back to the
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
@@ -86,10 +88,15 @@ export function ProfHubScreen() {
     sub: string,
     to: keyof ProfileStackParamList,
     extra?: React.ReactNode,
+    gate?: string,
   ) => (
     <Tappable
       key={title}
-      onPress={() => navigation.navigate(to as never)}
+      onPress={() =>
+        gate
+          ? requireAuth(gate, () => navigation.navigate(to as never))
+          : navigation.navigate(to as never)
+      }
       style={({ pressed }) => ({
         flexDirection: 'row',
         alignItems: 'center',
@@ -156,7 +163,7 @@ export function ProfHubScreen() {
 
       {/* Daily check-in */}
       <Tappable
-        onPress={checkedIn ? undefined : claimCheckIn}
+        onPress={checkedIn ? undefined : () => requireAuth('checkIn', claimCheckIn)}
         disabled={checkedIn}
         style={{
           flexDirection: 'row',
@@ -263,13 +270,13 @@ export function ProfHubScreen() {
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           {(
             [
-              { label: '🏆 Milestones', to: 'ProfMiles' as const },
-              { label: '📊 Points history', to: 'ProfPointsHistory' as const },
+              { label: '🏆 Milestones', to: 'ProfMiles' as const, gate: 'milestones' },
+              { label: '📊 Points history', to: 'ProfPointsHistory' as const, gate: 'pointsHistory' },
             ]
-          ).map(({ label, to }) => (
+          ).map(({ label, to, gate }) => (
             <Tappable
               key={to}
-              onPress={() => navigation.navigate(to)}
+              onPress={() => requireAuth(gate, () => navigation.navigate(to))}
               style={({ pressed }) => ({
                 flex: 1,
                 backgroundColor: colors.surface,
@@ -292,7 +299,9 @@ export function ProfHubScreen() {
         onPress={() =>
           isPro
             ? navigation.navigate('ProManage')
-            : navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo: 'ProfHub' })
+            : requireAuth('getPro', () =>
+                navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo: 'ProfHub' }),
+              )
         }
         style={{
           flexDirection: 'row',
@@ -330,7 +339,7 @@ export function ProfHubScreen() {
       </Tappable>
 
       <SectionLabel>Account details</SectionLabel>
-      {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : '🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge)}
+      {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : '🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge, 'myCars')}
       {accountRow(
         '🛡️',
         '#FAECE7',
@@ -338,9 +347,10 @@ export function ProfHubScreen() {
         insuranceSub,
         'ProfInsurance',
         policy ? undefined : checkBadge,
+        'insurance',
       )}
-      {accountRow('💳', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment')}
-      {accountRow('🔍', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates')}
+      {accountRow('💳', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment', undefined, 'payment')}
+      {accountRow('🔍', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates', undefined, 'estimateHistory')}
       {accountRow('⚙️', colors.surfaceAlt, 'Settings', 'Notifications · Privacy · Account', 'ProfSettings')}
     </Screen>
   );
