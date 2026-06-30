@@ -53,37 +53,16 @@ export function HomeLauncherScreen() {
   // Subtitles use a lighter tone so the title leads.
   const subColor = colors.textPlaceholder;
 
-  /** The hero action (largest): white card, AI-inspection icon in the corner.
-      Outer view carries the drop shadow; inner view clips the icon (a single
-      view can't both clip with overflow:'hidden' and cast an iOS shadow). */
-  const heroCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
-    <Tappable onPress={opts.onPress}>
-      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, marginBottom: spacing.md, ...cardShadow }}>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: radii.lg,
-            padding: spacing.lg,
-            minHeight: 188,
-            justifyContent: 'center',
-            overflow: 'hidden',
-          }}
-        >
-          <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: subColor, marginTop: 6 }}>{opts.phrase}</Text>
-          {/* AI inspecting the car — sits opaque in the bottom-right corner. */}
-          <View style={{ position: 'absolute', right: 2, bottom: 4, opacity: 0.95 }}>
-            <AiInspectLogo size={188} />
-          </View>
-        </View>
-      </View>
-    </Tappable>
-  );
-
-  /** Smaller side-by-side action tile (Maintenance / Compare) — same size. The
-      icon now sits opaque in the corner like a product illustration. */
-  const miniCard = (opts: { title: string; phrase: string; icon: string; accent: string; onPress: () => void }) => (
+  /** A white action card with the title top-left and a big icon bottom-right.
+      Used side-by-side for AI Repair Estimate + Maintenance. Outer view carries
+      the drop shadow; inner view clips the corner icon. */
+  const actionCard = (opts: {
+    title: string;
+    phrase: string;
+    icon?: string;
+    iconNode?: React.ReactNode;
+    onPress: () => void;
+  }) => (
     <Tappable onPress={opts.onPress} style={{ flex: 1 }}>
       <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, ...cardShadow }}>
         <View
@@ -92,18 +71,56 @@ export function HomeLauncherScreen() {
             borderColor: colors.border,
             borderRadius: radii.lg,
             padding: spacing.md,
-            minHeight: 104,
-            justifyContent: 'center',
+            minHeight: 128,
             overflow: 'hidden',
           }}
         >
           <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
           <Text style={{ fontSize: 13, fontWeight: '600', color: subColor, marginTop: 3 }}>{opts.phrase}</Text>
-          <Text style={{ position: 'absolute', right: 6, bottom: 2, fontSize: 42 }}>{opts.icon}</Text>
+          {opts.iconNode ? (
+            <View style={{ position: 'absolute', right: 0, bottom: 0, opacity: 0.95 }}>{opts.iconNode}</View>
+          ) : (
+            <Text style={{ position: 'absolute', right: 6, bottom: 2, fontSize: 46 }}>{opts.icon}</Text>
+          )}
         </View>
       </View>
     </Tappable>
   );
+
+  /** Full-width Compare Costs button — greyed out until an AI estimate exists. */
+  const compareCard = () => {
+    const unlocked = !!aiEstimate;
+    return (
+      <Tappable onPress={() => navigation.navigate(unlocked ? 'CompSelect' : 'CarDiagram')}>
+        <View style={{ backgroundColor: unlocked ? colors.surface : colors.surfaceAlt, borderRadius: radii.lg, marginBottom: spacing.md, ...(unlocked ? cardShadow : {}) }}>
+          <View
+            style={{
+              borderWidth: 1,
+              borderColor: colors.border,
+              borderRadius: radii.lg,
+              padding: spacing.md,
+              minHeight: 78,
+              justifyContent: 'center',
+              overflow: 'hidden',
+              opacity: unlocked ? 1 : 0.7,
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: '800', color: unlocked ? colors.textPrimary : colors.textTertiary }}>
+              {t('Compare Costs')}
+            </Text>
+            <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginTop: 3 }}>
+              {unlocked
+                ? `$${aiEstimate?.priceLow}–$${aiEstimate?.priceHigh} · cash vs insurance`
+                : 'Run AI repair estimate first to unlock'}
+            </Text>
+            <Text style={{ position: 'absolute', right: 10, bottom: 4, fontSize: 40, opacity: unlocked ? 1 : 0.5 }}>
+              {unlocked ? '⚖️' : '🔒'}
+            </Text>
+          </View>
+        </View>
+      </Tappable>
+    );
+  };
 
   // Solid, borderless promo banner (filled gradient + white text), like a
   // store coupon card. The big emoji sits opaque on the right.
@@ -186,42 +203,24 @@ export function HomeLauncherScreen() {
         </Tappable>
       ) : null}
 
-      {/* Primary action — largest */}
-      {heroCard({
-        title: t('AI Repair Estimate'),
-        phrase: 'Free quote in under 5 minutes',
-        icon: '🚗',
-        accent: palette.accent,
-        onPress: () => navigation.navigate('CarDiagram'),
-      })}
-
-      {/* Two smaller actions. Compare unlocks once an AI estimate exists. */}
+      {/* AI Repair Estimate + Maintenance, side by side. */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {miniCard({
+        {actionCard({
+          title: t('AI Repair Estimate'),
+          phrase: 'Free quote in 5 min',
+          iconNode: <AiInspectLogo size={108} />,
+          onPress: () => navigation.navigate('CarDiagram'),
+        })}
+        {actionCard({
           title: t('Maintenance'),
           phrase: 'Book service fast',
           icon: '🔧',
-          accent: colors.success,
           onPress: () => navigation.navigate('MaintLanding'),
         })}
-        {aiEstimate
-          ? miniCard({
-              title: t('Compare Costs'),
-              phrase: `$${aiEstimate.priceLow}–$${aiEstimate.priceHigh} · cash vs insurance`,
-              icon: '⚖️',
-              accent: colors.warning,
-              onPress: () => navigation.navigate('CompSelect'),
-            })
-          : // Locked until an AI estimate exists — the lock icon badge signals the
-            // gate; the subtitle still names what the tool does.
-            miniCard({
-              title: t('Compare Costs'),
-              phrase: 'Cash vs insurance · run an estimate',
-              icon: '🔒',
-              accent: colors.disabled,
-              onPress: () => navigation.navigate('CarDiagram'),
-            })}
       </View>
+
+      {/* Compare Costs — full width, greyed out until an AI estimate exists. */}
+      {compareCard()}
 
       {/* Deals & offers — compact section below the actions */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xl, marginBottom: spacing.sm }}>

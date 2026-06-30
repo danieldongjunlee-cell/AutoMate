@@ -6,6 +6,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
@@ -19,6 +20,8 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDashboard'>;
 export function MaintDashboardScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  // Guests can view the dashboard, but acting on any button asks them to sign up.
+  const requireAuth = useRequireAuth();
   const { data: upcoming } = useQuery({
     queryKey: ['upcoming-services'],
     queryFn: maintService.getUpcomingServices,
@@ -83,7 +86,7 @@ export function MaintDashboardScreen() {
 
       {/* Car info */}
       <Tappable
-        onPress={() => navigation.navigate('MaintHistory')}
+        onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintHistory'))}
         style={({ pressed }) => ({
           backgroundColor: colors.surface,
           borderRadius: radii.md,
@@ -153,7 +156,7 @@ export function MaintDashboardScreen() {
       {/* DIY tips + Book a service (side-by-side) */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
         <Tappable
-          onPress={() => navigation.navigate('MaintDiy')}
+          onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintDiy'))}
           style={({ pressed }) => ({
             flex: 1,
             backgroundColor: colors.surface,
@@ -188,7 +191,7 @@ export function MaintDashboardScreen() {
           </Text>
         </Tappable>
 
-        <Tappable onPress={() => navigation.navigate('MaintServiceType')} style={{ flex: 1 }}>
+        <Tappable onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintServiceType'))} style={{ flex: 1 }}>
           {({ pressed }) => (
             <LinearGradient
               colors={[palette.primary, palette.primaryDark]}

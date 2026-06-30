@@ -29,6 +29,7 @@ const INTENT_COPY: Record<string, string> = {
   estimateHistory: 'Sign in to view your estimate history.',
   getPro: 'Sign in to get AutoMate Pro.',
   maintDashboard: 'Sign in to open your maintenance dashboard.',
+  maintAction: 'Sign in to use the maintenance dashboard.',
   checkIn: 'Sign in to claim your daily check-in.',
   milestones: 'Sign in to view your milestones.',
   pointsHistory: 'Sign in to view your points history.',
@@ -46,40 +47,27 @@ export function AuthChooserScreen() {
   const intent = route.params?.intent;
   const reason = (intent && INTENT_COPY[intent]) || 'Log in or create an account to continue.';
 
-  const choice = (opts: { title: string; sub: string; primary?: boolean; onPress: () => void }) => (
+  // Both options share the same white card; only bigger, simple text.
+  const choice = (opts: { title: string; sub: string; onPress: () => void }) => (
     <Tappable
       onPress={opts.onPress}
       style={{
         flex: 1,
-        minHeight: 132,
+        minHeight: 150,
         alignItems: 'center',
         justifyContent: 'center',
         paddingHorizontal: spacing.sm,
         paddingVertical: spacing.lg,
-        backgroundColor: opts.primary ? colors.primary : colors.surface,
-        borderWidth: opts.primary ? 0 : 1,
+        backgroundColor: colors.surface,
+        borderWidth: 1,
         borderColor: colors.border,
         borderRadius: radii.lg,
       }}
     >
-      <Text
-        style={{
-          fontSize: 17,
-          fontWeight: '800',
-          textAlign: 'center',
-          color: opts.primary ? colors.onPrimary : colors.textPrimary,
-        }}
-      >
+      <Text style={{ fontSize: 22, fontWeight: '800', textAlign: 'center', color: colors.textPrimary }}>
         {opts.title}
       </Text>
-      <Text
-        style={{
-          fontSize: 12,
-          textAlign: 'center',
-          marginTop: 5,
-          color: opts.primary ? 'rgba(255,255,255,0.8)' : colors.textTertiary,
-        }}
-      >
+      <Text style={{ fontSize: 15, textAlign: 'center', marginTop: 6, color: colors.textTertiary }}>
         {opts.sub}
       </Text>
     </Tappable>
@@ -102,7 +90,6 @@ export function AuthChooserScreen() {
         {choice({
           title: 'Returning user',
           sub: 'Log in',
-          primary: true,
           onPress: () => navigation.navigate('LogIn'),
         })}
         {choice({

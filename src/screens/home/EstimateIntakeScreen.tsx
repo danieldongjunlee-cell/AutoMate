@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { SubmitProgress } from '../../components/SubmitProgress';
 import { TextField } from '../../components/TextField';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen } from '../../components/ui';
@@ -296,6 +297,7 @@ export function EstimateIntakeScreen() {
 
   return (
     <Screen>
+      <SubmitProgress step={1} left="Your car details" right="Step 1 of 3" />
       <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, marginBottom: 2 }}>
         Tell us about your car
       </Text>
