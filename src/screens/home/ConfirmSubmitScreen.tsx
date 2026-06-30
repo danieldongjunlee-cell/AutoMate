@@ -301,8 +301,11 @@ export function ConfirmSubmitScreen() {
       await finalize(estimate);
       return;
     }
-    // Guest: show the estimate + a blurred quotes preview; the CTA opens the
-    // returning/new chooser.
+    // Guest: persist the AI estimate now so the Quotes tab shows the range +
+    // submitted parts even if they decide NOT to sign up (the shop quotes stay
+    // gated). Then show the estimate + blurred-quotes preview.
+    setAiEstimate(estimate.aiEstimate);
+    setQuotesViewed(false);
     setSubmitting(false);
     setPendingEstimate(estimate);
     setShowPreview(true);

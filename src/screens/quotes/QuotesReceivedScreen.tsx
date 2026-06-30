@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { GuestBanner } from '../../components/GuestBanner';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { Dropdown } from '../../components/Dropdown';
@@ -33,6 +34,10 @@ export function QuotesReceivedScreen() {
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   const resetDamageFlow = useAppStore((s) => s.resetDamageFlow);
   const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
+  // Guests see the AI estimate + their submitted parts, but the real shop quotes
+  // stay empty until they sign up / log in.
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const requireAuth = useRequireAuth();
   const { data: rawQuotes, isLoading } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
   // Shop quotes reflect the AI estimate range (no-op until an estimate exists).
   const quotes = useMemo(() => quotesInEstimateRange(rawQuotes ?? [], aiEstimate), [rawQuotes, aiEstimate]);
@@ -60,6 +65,7 @@ export function QuotesReceivedScreen() {
   };
 
   const filtered = useMemo(() => {
+    if (!isAuthenticated) return []; // guests: no shop quotes until they sign up
     let list = [...(quotes ?? [])];
     const cap = DISTANCE_CAP[distance] ?? Infinity;
     if (Number.isFinite(cap)) list = list.filter((q) => dealerById(q.dealerId).distanceMi <= cap);
@@ -70,7 +76,7 @@ export function QuotesReceivedScreen() {
       return dealerById(a.dealerId).distanceMi - dealerById(b.dealerId).distanceMi;
     });
     return list;
-  }, [quotes, distance, sort]);
+  }, [quotes, distance, sort, isAuthenticated]);
 
   const onCancel = () =>
     confirmAction(
@@ -121,9 +127,11 @@ export function QuotesReceivedScreen() {
       <GuestBanner />
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>
+          <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>
+            {isAuthenticated ? 'Quote Received' : 'Your estimate'}
+          </Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-            {filtered.length} shops responded
+            {isAuthenticated ? `${filtered.length} shops responded` : 'Sign up to get real quotes'}
           </Text>
         </View>
         <CarSwitchChip />
@@ -197,6 +205,8 @@ export function QuotesReceivedScreen() {
         </Tappable>
       </View>
 
+      {isAuthenticated ? (
+        <>
       {/* Shops near you — larger map. Tap a price to select that dealership. */}
       {markers.length > 0 ? (
         <View style={{ marginBottom: spacing.md }}>
@@ -249,6 +259,20 @@ export function QuotesReceivedScreen() {
             />
           </View>
         ))
+      )}
+        </>
+      ) : (
+        // Guest who submitted but hasn't signed up — quotes stay locked.
+        <Card style={{ padding: spacing.xl, alignItems: 'center' }}>
+          <Text style={{ fontSize: 30, marginBottom: 6 }}>🔒</Text>
+          <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary, marginBottom: 4, textAlign: 'center' }}>
+            Sign up to see your quotes
+          </Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.md, lineHeight: 20 }}>
+            Nearby shops are ready to send real quotes for your submitted parts. Sign up or log in to view them.
+          </Text>
+          <PrimaryButton label="Sign up or log in →" onPress={() => requireAuth('unlockQuotes')} />
+        </Card>
       )}
       <View style={{ marginBottom: spacing.lg }} />
     </Screen>
