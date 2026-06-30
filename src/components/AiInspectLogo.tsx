@@ -4,11 +4,9 @@ import Svg, {
   Defs,
   Ellipse,
   G,
-  Line,
   LinearGradient,
   Path,
   RadialGradient,
-  Rect,
   Stop,
 } from 'react-native-svg';
 
@@ -22,8 +20,8 @@ function sparkle(cx: number, cy: number, s: number) {
 }
 
 /**
- * "AI Repair Estimate" hero icon: a friendly AI robot holding a magnifying
- * glass to examine the car. Renders fully opaque so it reads as an icon.
+ * "AI Repair Estimate" hero icon: a magnifying glass inspecting a car with AI
+ * sparkles. Renders fully opaque so it reads as an icon.
  */
 export function AiInspectLogo({ size = 120, opacity = 1 }: { size?: number; opacity?: number }) {
   const height = size * 0.74;
@@ -58,15 +56,10 @@ export function AiInspectLogo({ size = 120, opacity = 1 }: { size?: number; opac
           <Stop offset="0" stopColor="#eaf2ff" stopOpacity="0.55" />
           <Stop offset="1" stopColor="#8fb4ff" stopOpacity="0.22" />
         </RadialGradient>
-        {/* Robot body: glossy blue metal. */}
-        <LinearGradient id="ai-robot" x1="0" y1="0" x2="1" y2="1">
-          <Stop offset="0" stopColor="#7aa6ff" />
-          <Stop offset="1" stopColor="#2747b8" />
-        </LinearGradient>
       </Defs>
 
-      {/* Car (smaller, lower-left) — the thing being examined. */}
-      <G transform="translate(-4,28) scale(0.88)">
+      {/* Car (shifted down to leave room for the magnifier overlay). */}
+      <G transform="translate(2,22)">
         <Ellipse cx="61" cy="62" rx="52" ry="6" fill="#000" opacity={0.18} />
         <Path
           d="M4 46 C4 38 9 35 18 34 L30 21 C34 16 40 14 49 14 L74 14 C86 14 92 18 98 28 L111 32 C117 34 118 39 118 45 L118 48 C118 50 116 51 113 51 L9 51 C6 51 4 49 4 47 Z"
@@ -81,6 +74,7 @@ export function AiInspectLogo({ size = 120, opacity = 1 }: { size?: number; opac
         />
         <Path d="M33 24 L47 19 L57 19 L57 31 L31 31 Z" fill="url(#ai-glass)" />
         <Path d="M61 19 L73 19 C81 19 86 22 90 30 L61 31 Z" fill="url(#ai-glass)" />
+        <Path d="M59 19 L59 49" stroke="#9aa3b1" strokeWidth={0.8} />
         <Circle cx="33" cy="51" r="10" fill="#202329" />
         <Circle cx="33" cy="51" r="6" fill="url(#ai-rim)" />
         <Circle cx="33" cy="51" r="2" fill="#3a3f48" />
@@ -89,36 +83,21 @@ export function AiInspectLogo({ size = 120, opacity = 1 }: { size?: number; opac
         <Circle cx="92" cy="51" r="2" fill="#3a3f48" />
       </G>
 
-      {/* Robot arm reaching from the robot to grip the magnifier handle. */}
-      <Path d="M84 62 L74 63 L63 60" stroke="url(#ai-robot)" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      {/* Robot hand/claw gripping the handle. */}
-      <Circle cx="62" cy="60" r="4" fill="url(#ai-robot)" stroke="#1f3a8a" strokeWidth={0.6} />
+      {/* Magnifying glass inspecting the car. */}
+      <Path d="M50 40 L70 60" stroke="#23314d" strokeWidth={9} strokeLinecap="round" />
+      <Path d="M50 40 L70 60" stroke="#4a5f86" strokeWidth={4} strokeLinecap="round" />
+      <Circle cx="40" cy="30" r="20" fill="url(#ai-lensglass)" stroke="url(#ai-lensrim)" strokeWidth={6} />
+      <Circle cx="40" cy="30" r="17" fill="none" stroke="#eaf2ff" strokeWidth={1} opacity={0.7} />
+      {/* Glass glare */}
+      <Path d="M30 22 Q36 17 45 19" stroke="#ffffff" strokeWidth={2.5} strokeLinecap="round" opacity={0.85} />
+      {/* AI sparkle inside the lens (it's "thinking"/analyzing). */}
+      <Path d={sparkle(40, 30, 9)} fill="#2e6bff" />
+      <Path d={sparkle(40, 30, 4.2)} fill="#ffffff" />
 
-      {/* Magnifying glass examining the car. */}
-      <Path d="M47 48 L63 60" stroke="#23314d" strokeWidth={8} strokeLinecap="round" />
-      <Path d="M47 48 L63 60" stroke="#4a5f86" strokeWidth={3.5} strokeLinecap="round" />
-      <Circle cx="36" cy="40" r="17" fill="url(#ai-lensglass)" stroke="url(#ai-lensrim)" strokeWidth={5.5} />
-      <Circle cx="36" cy="40" r="14" fill="none" stroke="#eaf2ff" strokeWidth={1} opacity={0.7} />
-      <Path d="M27 33 Q33 28 41 30" stroke="#ffffff" strokeWidth={2.2} strokeLinecap="round" opacity={0.85} />
-
-      {/* Robot — head + body holding the magnifier, on the right. */}
-      <Rect x="84" y="52" width="24" height="26" rx="6" fill="url(#ai-robot)" stroke="#1f3a8a" strokeWidth={0.8} />
-      <Circle cx="96" cy="64" r="3" fill="#bcd6ff" />
-      <Rect x="87" y="33" width="18" height="19" rx="6" fill="url(#ai-robot)" stroke="#1f3a8a" strokeWidth={0.8} />
-      {/* Antenna */}
-      <Line x1="96" y1="33" x2="96" y2="27" stroke="#7aa6ff" strokeWidth={1.6} strokeLinecap="round" />
-      <Circle cx="96" cy="26" r="2" fill="#f0b44e" />
-      {/* Eyes + smile */}
-      <Circle cx="92" cy="42" r="2.7" fill="#eaf2ff" />
-      <Circle cx="92" cy="42" r="1.1" fill="#1f49c4" />
-      <Circle cx="101" cy="42" r="2.7" fill="#eaf2ff" />
-      <Circle cx="101" cy="42" r="1.1" fill="#1f49c4" />
-      <Path d="M92 47 Q96.5 49.5 101 47" stroke="#dfeaff" strokeWidth={1.4} strokeLinecap="round" fill="none" />
-
-      {/* AI sparkles. */}
-      <Path d={sparkle(58, 12, 5)} fill="#f0b44e" />
-      <Path d={sparkle(110, 20, 3.4)} fill="#5b8bff" />
-      <Path d={sparkle(16, 16, 3)} fill="#9bc0ff" />
+      {/* AI sparkles around the scene. */}
+      <Path d={sparkle(100, 14, 6)} fill="#f0b44e" />
+      <Path d={sparkle(110, 28, 3.4)} fill="#5b8bff" />
+      <Path d={sparkle(64, 10, 3)} fill="#9bc0ff" />
     </Svg>
   );
 }
