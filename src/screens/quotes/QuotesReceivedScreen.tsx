@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { GuestBanner } from '../../components/GuestBanner';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { Dropdown } from '../../components/Dropdown';
@@ -86,6 +87,7 @@ export function QuotesReceivedScreen() {
   if (!hasRequest) {
     return (
       <Screen safeTop>
+        <GuestBanner />
         <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.md }}>Quotes</Text>
         <Card style={{ padding: spacing.xl, alignItems: 'center' }}>
           <Text style={{ fontSize: 30, marginBottom: 6 }}>🧾</Text>
@@ -116,6 +118,7 @@ export function QuotesReceivedScreen() {
 
   return (
     <Screen safeTop scrollRef={scrollRef}>
+      <GuestBanner />
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Quote Received</Text>

@@ -15,7 +15,7 @@ import { navigateCrossTab } from '../../navigation/crossTab';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, vehiclesService } from '../../services';
 import { INSURANCE_POLICY, PAYMENT_CARD, USER, VEHICLE } from '../../services/mock/data';
-import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { GuestBanner } from '../../components/GuestBanner';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -35,8 +35,6 @@ export function ProfHubScreen() {
   // Authenticated user context (set after the demo login); falls back to the
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
-  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  const requireAuth = useRequireAuth();
   const displayName = authedUser?.name ?? USER.name;
   // Secondary line: the @username (never the email). Falls back to a handle
   // derived from the name until the user sets a username in Edit profile.
@@ -128,34 +126,7 @@ export function ProfHubScreen() {
 
   return (
     <Screen safeTop>
-      {/* Guest banner — sign in is reachable any time, not just at gates. */}
-      {!isAuthenticated ? (
-        <Tappable
-          onPress={() => requireAuth('signIn')}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            backgroundColor: colors.primarySurface,
-            borderWidth: 1,
-            borderColor: colors.primaryLight,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginBottom: spacing.md,
-          }}
-        >
-          <Text style={{ fontSize: 22 }}>👋</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.primaryDeep }}>
-              You&apos;re browsing as a guest
-            </Text>
-            <Text style={{ fontSize: 13, color: colors.primaryDark }}>
-              Sign in to save your cars, bookings &amp; points
-            </Text>
-          </View>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary }}>Sign in →</Text>
-        </Tappable>
-      ) : null}
+      <GuestBanner />
 
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>

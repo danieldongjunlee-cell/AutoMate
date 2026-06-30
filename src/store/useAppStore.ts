@@ -479,7 +479,7 @@ export const useAppStore = create<AppState>()(
   },
 
   // Dark mode — v17 defaults to its dark-navy theme (toggle to light in Settings).
-  darkMode: true,
+  darkMode: false,
   toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
 
   language: 'English',
@@ -732,6 +732,7 @@ export const useAppStore = create<AppState>()(
         authToken: s.authToken,
         user: s.user,
         isNewUser: s.isNewUser,
+        darkMode: s.darkMode,
       }),
     },
   ),

@@ -34,7 +34,6 @@ export type RootStackParamList = {
 /** Repair-estimate flow + the new v17 booking/Pro/reviews flows. */
 type HomeFlowParamList = {
   HomeLauncher: undefined;
-  EstimateStart: undefined;
   CarDiagram: undefined;
   Camera: undefined;
   EstimateIntake: undefined;

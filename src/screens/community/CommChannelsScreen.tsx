@@ -9,6 +9,7 @@ import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { CommunityStackParamList } from '../../navigation/types';
 import { brandChannels, channelKind } from '../../services/mock/communityChannels';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { GuestBanner } from '../../components/GuestBanner';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -61,6 +62,7 @@ export function CommChannelsScreen() {
 
   return (
     <Screen safeTop>
+      <GuestBanner />
       {/* Community title + active-car switch (chip pinned top-right) */}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, marginBottom: spacing.md }}>
         <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>

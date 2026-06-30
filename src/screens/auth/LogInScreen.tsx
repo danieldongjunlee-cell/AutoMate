@@ -7,6 +7,7 @@ import { Tappable } from '../../components/Tappable';
 
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { SocialAuthButtons } from '../../components/SocialAuthButtons';
 import { TextField } from '../../components/TextField';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { signInWithSupabase } from '../../lib/supabaseAuth';
@@ -100,6 +101,8 @@ export function LogInScreen() {
         loading={loading}
         onPress={onSubmit}
       />
+
+      <SocialAuthButtons onDark />
     </AuthScreenShell>
   );
 }

@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { LegalKind, LegalSheet } from '../../components/LegalSheet';
 import { LogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { SocialAuthButtons } from '../../components/SocialAuthButtons';
 import { TextField } from '../../components/TextField';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { signUpWithSupabase } from '../../lib/supabaseAuth';
@@ -185,6 +186,8 @@ export function SignUpScreen() {
         loading={loading}
         onPress={onSubmit}
       />
+
+      <SocialAuthButtons onDark />
     </AuthScreenShell>
   );
 }

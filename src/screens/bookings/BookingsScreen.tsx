@@ -7,6 +7,7 @@ import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { FilterChips } from '../../components/FilterChips';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { GuestBanner } from '../../components/GuestBanner';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { BookingsStackParamList } from '../../navigation/types';
@@ -246,6 +247,7 @@ export function BookingsScreen() {
 
   return (
     <Screen safeTop>
+      <GuestBanner />
       {/* Title row — car switch pinned top-right (consistent across tabs). */}
       <View
         style={{

@@ -12,7 +12,6 @@ export const SCREEN_TITLES: Record<string, string> = {
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
   Quotes: 'Quotes', // ➕ Quotes tab main (quotes received)
-  EstimateStart: 'AI repair estimate', // s-estimate-start (returning vs new)
   CarDiagram: 'Select damaged part', // s-car-diagram
   Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
   EstimateIntake: 'Your car details', // s-estimate-intake (first estimate, no car on file)

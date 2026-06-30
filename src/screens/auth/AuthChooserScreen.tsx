@@ -3,10 +3,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
 
+import { LogoRow } from '../../components/Logo';
 import { Tappable } from '../../components/Tappable';
+import { Screen } from '../../components/ui';
 import { AuthStackParamList } from '../../navigation/types';
-import { palette, radii, spacing } from '../../theme';
-import { AuthScreenShell } from './AuthScreenShell';
+import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<AuthStackParamList, 'AuthChooser'>;
 type Route = RouteProp<AuthStackParamList, 'AuthChooser'>;
@@ -19,74 +20,93 @@ const INTENT_COPY: Record<string, string> = {
   acceptQuote: 'Sign in to accept this quote.',
   writeReview: 'Sign in to post your review.',
   saveCar: 'Sign in to save your car.',
-  savePayment: 'Sign in to save a payment method.',
-  savePolicy: 'Sign in to save your policy.',
-  redeemPoints: 'Sign in to redeem your points.',
+  signIn: 'Log in or create an account to continue.',
 };
 
 /**
- * Guest-first auth gate entry: two big buttons — returning user (→ log in) or
- * new user (→ sign up). Shown as a modal over the tabs at value-action gates.
+ * Guest-first auth gate: returning vs new in two side-by-side buttons (centered
+ * text, no icons). On the app background — not the navy auth gradient. Each
+ * button leads to log in / sign up, both of which offer Google & Apple.
  */
 export function AuthChooserScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
+  const { colors } = useTheme();
   const intent = route.params?.intent;
-  const reason = intent ? INTENT_COPY[intent] : undefined;
+  const reason = (intent && INTENT_COPY[intent]) || 'Log in or create an account to continue.';
 
-  const bigButton = (opts: {
-    emoji: string;
-    title: string;
-    sub: string;
-    primary?: boolean;
-    onPress: () => void;
-  }) => (
+  const choice = (opts: { title: string; sub: string; primary?: boolean; onPress: () => void }) => (
     <Tappable
       onPress={opts.onPress}
       style={{
-        backgroundColor: opts.primary ? palette.primary : 'rgba(255,255,255,0.08)',
+        flex: 1,
+        minHeight: 132,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.lg,
+        backgroundColor: opts.primary ? colors.primary : colors.surface,
         borderWidth: opts.primary ? 0 : 1,
-        borderColor: 'rgba(255,255,255,0.18)',
+        borderColor: colors.border,
         borderRadius: radii.lg,
-        padding: spacing.lg,
-        marginBottom: spacing.md,
       }}
     >
-      <Text style={{ fontSize: 30, marginBottom: 6 }}>{opts.emoji}</Text>
-      <Text style={{ fontSize: 19, fontWeight: '800', color: '#fff', marginBottom: 3 }}>{opts.title}</Text>
-      <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>{opts.sub}</Text>
+      <Text
+        style={{
+          fontSize: 17,
+          fontWeight: '800',
+          textAlign: 'center',
+          color: opts.primary ? colors.onPrimary : colors.textPrimary,
+        }}
+      >
+        {opts.title}
+      </Text>
+      <Text
+        style={{
+          fontSize: 12,
+          textAlign: 'center',
+          marginTop: 5,
+          color: opts.primary ? 'rgba(255,255,255,0.8)' : colors.textTertiary,
+        }}
+      >
+        {opts.sub}
+      </Text>
     </Tappable>
   );
 
   return (
-    <AuthScreenShell centered>
-      <Text style={{ fontSize: 26, fontWeight: '800', color: '#fff', marginBottom: 4 }}>
-        Welcome to AutoMate
-      </Text>
-      <Text style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', marginBottom: spacing.xl }}>
-        {reason ?? 'Log in or create an account to continue.'}
-      </Text>
+    <Screen safeTop style={{ flexGrow: 1, justifyContent: 'center' }}>
+      <View style={{ alignItems: 'center', marginBottom: spacing.xl }}>
+        <LogoRow markSize={30} textSize={20} />
+        <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.lg, textAlign: 'center' }}>
+          Welcome to AutoMate
+        </Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 4, textAlign: 'center' }}>
+          {reason}
+        </Text>
+      </View>
 
-      {bigButton({
-        emoji: '👋',
-        title: "I'm a returning user",
-        sub: 'Log in to your account',
-        primary: true,
-        onPress: () => navigation.navigate('LogIn'),
-      })}
-      {bigButton({
-        emoji: '✨',
-        title: "I'm new here",
-        sub: 'Create an account in under a minute',
-        onPress: () => navigation.navigate('SignUp'),
-      })}
+      {/* Returning (left) · New (right) */}
+      <View style={{ flexDirection: 'row', gap: spacing.md }}>
+        {choice({
+          title: 'Returning user',
+          sub: 'Log in',
+          primary: true,
+          onPress: () => navigation.navigate('LogIn'),
+        })}
+        {choice({
+          title: 'New user',
+          sub: 'Create an account',
+          onPress: () => navigation.navigate('SignUp'),
+        })}
+      </View>
 
       <Tappable
         onPress={() => navigation.getParent()?.goBack()}
-        style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.sm }}
+        style={{ alignItems: 'center', paddingVertical: spacing.md, marginTop: spacing.lg }}
       >
-        <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Not now</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary }}>Not now</Text>
       </Tappable>
-    </AuthScreenShell>
+    </Screen>
   );
 }

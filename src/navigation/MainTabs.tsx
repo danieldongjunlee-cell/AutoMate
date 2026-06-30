@@ -15,7 +15,6 @@ import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
 import { EstimateIntakeScreen } from '../screens/home/EstimateIntakeScreen';
-import { EstimateStartScreen } from '../screens/home/EstimateStartScreen';
 import { DealerMapScreen } from '../screens/home/DealerMapScreen';
 import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
 import { HomeLauncherScreen } from '../screens/home/HomeLauncherScreen';
@@ -110,7 +109,6 @@ const HomeNative = createNativeStackNavigator<HomeStackParamList>();
 const homeScreens = buildScreens(
   [
     'HomeLauncher',
-    'EstimateStart',
     'CarDiagram',
     'Camera',
     'EstimateIntake',
@@ -160,7 +158,6 @@ const homeScreens = buildScreens(
   ] as const,
   {
     HomeLauncher: HomeLauncherScreen,
-    EstimateStart: EstimateStartScreen,
     CarDiagram: CarDiagramScreen,
     Camera: CameraScreen,
     EstimateIntake: EstimateIntakeScreen,

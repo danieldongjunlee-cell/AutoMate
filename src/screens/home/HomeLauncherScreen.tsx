@@ -6,6 +6,7 @@ import { Image, Text, View } from 'react-native';
 
 import { AiInspectLogo } from '../../components/AiInspectLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { GuestBanner } from '../../components/GuestBanner';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
@@ -33,6 +34,9 @@ export function HomeLauncherScreen() {
   const aiEstimate = useAppStore((s) => s.aiEstimate);
   // Guests see the returning/new chooser first; signed-in users go straight in.
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // Greeting shows the signed-in user's first name; just "Hi" for guests.
+  const user = useAppStore((s) => s.user);
+  const firstName = isAuthenticated ? (user?.name ?? '').trim().split(/\s+/)[0] : '';
 
   // All home actions share one white card surface; a soft outer drop shadow
   // lifts each button off the background.
@@ -157,9 +161,12 @@ export function HomeLauncherScreen() {
 
   return (
     <Screen safeTop>
+      <GuestBanner />
       {/* Greeting + active-car switcher (chip pinned top-right, consistent across tabs) */}
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.md }}>
-        <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>Hi Daniel 👋</Text>
+        <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>
+          {firstName ? `Hi ${firstName} 👋` : 'Hi 👋'}
+        </Text>
         <CarSwitchChip />
       </View>
 
@@ -183,7 +190,7 @@ export function HomeLauncherScreen() {
         phrase: 'Free quote in under 5 minutes',
         icon: '🚗',
         accent: palette.accent,
-        onPress: () => navigation.navigate(isAuthenticated ? 'CarDiagram' : 'EstimateStart'),
+        onPress: () => navigation.navigate('CarDiagram'),
       })}
 
       {/* Two smaller actions. Compare unlocks once an AI estimate exists. */}

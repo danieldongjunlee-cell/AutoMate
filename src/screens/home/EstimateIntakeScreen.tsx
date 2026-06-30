@@ -24,6 +24,44 @@ const CAR_BRANDS = [
 const YEARS = Array.from({ length: 28 }, (_, i) => String(2027 - i));
 const COLORS = ['White', 'Black', 'Silver', 'Gray', 'Blue', 'Red', 'Green', 'Brown', 'Beige', 'Gold', 'Orange', 'Yellow', 'Other'];
 
+/** Common models per brand → the Model field becomes a dropdown filtered by the
+ *  selected brand (consistent values instead of free text). */
+const MODELS_BY_BRAND: Record<string, string[]> = {
+  Honda: ['Accord', 'Civic', 'CR-V', 'Pilot', 'HR-V', 'Odyssey', 'Ridgeline', 'Passport'],
+  Toyota: ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Tacoma', 'Tundra', '4Runner', 'Prius', 'Sienna'],
+  Subaru: ['Outback', 'Forester', 'Crosstrek', 'Impreza', 'Legacy', 'Ascent', 'WRX'],
+  Ford: ['F-150', 'Escape', 'Explorer', 'Mustang', 'Edge', 'Bronco', 'Ranger', 'Expedition'],
+  Chevrolet: ['Silverado', 'Equinox', 'Malibu', 'Tahoe', 'Traverse', 'Camaro', 'Colorado', 'Blazer'],
+  Nissan: ['Altima', 'Rogue', 'Sentra', 'Pathfinder', 'Murano', 'Frontier', 'Kicks', 'Maxima'],
+  Mazda: ['CX-5', 'Mazda3', 'CX-30', 'CX-9', 'Mazda6', 'MX-5 Miata', 'CX-50'],
+  Hyundai: ['Elantra', 'Tucson', 'Santa Fe', 'Sonata', 'Kona', 'Palisade', 'Venue'],
+  Kia: ['Sportage', 'Sorento', 'Forte', 'Telluride', 'Soul', 'Seltos', 'Carnival', 'K5'],
+  BMW: ['3 Series', '5 Series', 'X3', 'X5', 'X1', '4 Series', 'X7', '2 Series'],
+  Mercedes: ['C-Class', 'E-Class', 'GLC', 'GLE', 'A-Class', 'GLA', 'S-Class', 'GLB'],
+  Audi: ['A4', 'Q5', 'A3', 'Q7', 'A6', 'Q3', 'A5', 'Q8'],
+  Volkswagen: ['Jetta', 'Tiguan', 'Atlas', 'Passat', 'Golf', 'Taos', 'ID.4'],
+  Tesla: ['Model 3', 'Model Y', 'Model S', 'Model X', 'Cybertruck'],
+  Jeep: ['Grand Cherokee', 'Wrangler', 'Cherokee', 'Compass', 'Gladiator', 'Renegade', 'Wagoneer'],
+  Lexus: ['RX', 'NX', 'ES', 'GX', 'IS', 'UX', 'TX'],
+  Acura: ['MDX', 'RDX', 'TLX', 'Integra', 'ILX'],
+  GMC: ['Sierra', 'Acadia', 'Terrain', 'Yukon', 'Canyon'],
+  Ram: ['1500', '2500', '3500', 'ProMaster'],
+  Dodge: ['Charger', 'Challenger', 'Durango', 'Hornet'],
+  Volvo: ['XC90', 'XC60', 'XC40', 'S60', 'V60'],
+  Porsche: ['Macan', 'Cayenne', '911', 'Panamera', 'Taycan'],
+};
+const modelsForBrand = (brand: string): string[] => MODELS_BY_BRAND[brand] ?? [];
+
+/** Canonical service locations (NoVA) — typing a city / county / ZIP filters
+ *  this list so every user stores the exact same location string. */
+const LOCATIONS = [
+  'Fairfax, VA', 'Arlington, VA', 'Alexandria, VA', 'Vienna, VA', 'Falls Church, VA',
+  'Reston, VA', 'Herndon, VA', 'McLean, VA', 'Annandale, VA', 'Springfield, VA',
+  'Burke, VA', 'Centreville, VA', 'Chantilly, VA', 'Tysons, VA', 'Oakton, VA',
+  'Fairfax County, VA', 'Arlington County, VA', 'Loudoun County, VA', 'Prince William County, VA',
+  '22030', '22031', '22033', '22042', '22101', '22180', '22201', '22314', '20170', '20191',
+];
+
 /** A numbered, progressively-revealed section card. */
 function Section({
   n,
@@ -138,6 +176,69 @@ function ToggleRow({
   );
 }
 
+/** Location autocomplete: typing a city / county / ZIP filters the canonical
+ *  list so the stored value is consistent across users. */
+function LocationField({ value, onSelect }: { value: string; onSelect: (v: string) => void }) {
+  const { colors } = useTheme();
+  const [query, setQuery] = useState(value);
+  const [open, setOpen] = useState(false);
+  const q = query.trim().toLowerCase();
+  const matches = q.length >= 1 ? LOCATIONS.filter((l) => l.toLowerCase().includes(q)).slice(0, 6) : [];
+  return (
+    <View>
+      <TextField
+        label="Service location"
+        value={query}
+        onChangeText={(t) => {
+          setQuery(t);
+          setOpen(true);
+          if (value) onSelect(''); // re-typing clears the confirmed pick
+        }}
+        placeholder="City, county or ZIP — e.g. Fairfax, VA"
+      />
+      {open && matches.length > 0 ? (
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: radii.md,
+            overflow: 'hidden',
+            marginTop: -spacing.xs,
+            marginBottom: spacing.sm,
+          }}
+        >
+          {matches.map((m, i) => (
+            <Tappable
+              key={m}
+              onPress={() => {
+                onSelect(m);
+                setQuery(m);
+                setOpen(false);
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.sm,
+                paddingHorizontal: spacing.md,
+                paddingVertical: 11,
+                borderTopWidth: i === 0 ? 0 : 1,
+                borderTopColor: colors.divider,
+                backgroundColor: colors.surface,
+              }}
+            >
+              <Text style={{ fontSize: 14, color: colors.textTertiary }}>📍</Text>
+              <Text style={{ fontSize: 14, color: colors.textPrimary }}>{m}</Text>
+            </Tappable>
+          ))}
+        </View>
+      ) : null}
+      {value && (!open || matches.length === 0) ? (
+        <Text style={{ fontSize: 12, color: colors.successDark, marginTop: 2 }}>✓ {value}</Text>
+      ) : null}
+    </View>
+  );
+}
+
 /**
  * Shown when a user starts an estimate with no car on file. Captures the car
  * (brand/model/year/color) and then progressively reveals location, then
@@ -174,7 +275,7 @@ export function EstimateIntakeScreen() {
       location: location.trim(),
       hasInsurance,
       isRental,
-      needsPickup: isRental && needsPickup,
+      needsPickup,
     });
     // Hold the car. New users (guests) sign up at submit, where this is saved;
     // signed-in users without a car on file get it saved right now.
@@ -202,10 +303,38 @@ export function EstimateIntakeScreen() {
         We need a few details to get accurate quotes from shops near you.
       </Text>
 
-      {/* 1 — Car info (always shown) */}
+      {/* 1 — Car info (always shown). Model is a dropdown filtered by brand. */}
       <Section n={1} title="Your car" subtitle="Brand, model, year & color">
-        <Dropdown label="Brand" value={brand} options={CAR_BRANDS} onChange={setBrand} placeholder="Select brand" containerStyle={{ marginBottom: spacing.sm }} />
-        <TextField label="Model" value={model} onChangeText={setModel} placeholder="e.g. Accord EX-L" containerStyle={{ marginBottom: spacing.sm }} />
+        <Dropdown
+          label="Brand"
+          value={brand}
+          options={CAR_BRANDS}
+          onChange={(b) => {
+            setBrand(b);
+            setModel(''); // reset the model when the brand changes
+          }}
+          placeholder="Select brand"
+          containerStyle={{ marginBottom: spacing.sm }}
+        />
+        {modelsForBrand(brand).length > 0 ? (
+          <Dropdown
+            label="Model"
+            value={model}
+            options={modelsForBrand(brand)}
+            onChange={setModel}
+            placeholder={brand ? `Select a ${brand} model` : 'Select a model'}
+            containerStyle={{ marginBottom: spacing.sm }}
+          />
+        ) : (
+          <TextField
+            label="Model"
+            value={model}
+            onChangeText={setModel}
+            placeholder={brand ? 'Enter your model' : 'Select a brand first'}
+            editable={!!brand}
+            containerStyle={{ marginBottom: spacing.sm }}
+          />
+        )}
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           <Dropdown label="Year" value={year} options={YEARS} onChange={setYear} placeholder="Year" containerStyle={{ flex: 1 }} />
           <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Color" containerStyle={{ flex: 1 }} />
@@ -215,16 +344,11 @@ export function EstimateIntakeScreen() {
       {/* 2 — Location (expands once the car is filled in) */}
       {carDone ? (
         <Section n={2} title="Where are you?" subtitle="So we can find shops near you">
-          <TextField
-            label="Service location"
-            value={location}
-            onChangeText={setLocation}
-            placeholder="City or ZIP — e.g. Fairfax, VA"
-          />
+          <LocationField value={location} onSelect={setLocation} />
         </Section>
       ) : null}
 
-      {/* 3 — Insurance + rental/pick-up (expands once location is filled in) */}
+      {/* 3 — Insurance + optional rental & pick-up (separate, both optional) */}
       {carDone && locationDone ? (
         <Section n={3} title="Insurance & pick-up" subtitle="Helps shops quote the right way">
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
@@ -238,19 +362,14 @@ export function EstimateIntakeScreen() {
             label="This is a rental car"
             sub="Optional"
             value={isRental}
-            onChange={(v) => {
-              setIsRental(v);
-              if (!v) setNeedsPickup(false);
-            }}
+            onChange={setIsRental}
           />
-          {isRental ? (
-            <ToggleRow
-              label="Requires pick-up"
-              sub="A shop collects the car instead of you dropping it off"
-              value={needsPickup}
-              onChange={setNeedsPickup}
-            />
-          ) : null}
+          <ToggleRow
+            label="Requires pick-up"
+            sub="Optional — a shop collects the car instead of you dropping it off"
+            value={needsPickup}
+            onChange={setNeedsPickup}
+          />
         </Section>
       ) : null}
 
