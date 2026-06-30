@@ -15,6 +15,8 @@ export type BookingConfirmParams = {
 
 export type AuthStackParamList = {
   Splash: undefined;
+  /** Guest-first entry to the auth modal: returning vs new chooser. */
+  AuthChooser: { intent?: string } | undefined;
   SignUp: undefined;
   LogIn: undefined;
   /** Pick how to receive the code — shows the actual sign-up email/phone. */
@@ -22,9 +24,17 @@ export type AuthStackParamList = {
   VerifyOtp: { method: 'email' | 'sms'; destination: string } | undefined;
 };
 
+/** Root stack (guest-first): the tabs are always mounted; auth is a modal
+ *  presented over them at value-action gates. */
+export type RootStackParamList = {
+  Main: undefined;
+  Auth: { intent?: string } | undefined;
+};
+
 /** Repair-estimate flow + the new v17 booking/Pro/reviews flows. */
 type HomeFlowParamList = {
   HomeLauncher: undefined;
+  EstimateStart: undefined;
   CarDiagram: undefined;
   Camera: undefined;
   EstimateIntake: undefined;
@@ -76,6 +86,7 @@ export type MaintStackParamList = {
   DiyMatch: undefined;
   DiyTools: undefined;
   DiyFuture: undefined;
+  MaintServiceType: undefined;
   MaintSchedule: undefined;
   MaintScheduleBook: undefined;
   MaintPayment: undefined;

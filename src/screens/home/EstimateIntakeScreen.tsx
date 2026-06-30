@@ -149,6 +149,8 @@ export function EstimateIntakeScreen() {
   const queryClient = useQueryClient();
   const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
   const setEstimateContext = useAppStore((s) => s.setEstimateContext);
+  const setPendingVehicle = useAppStore((s) => s.setPendingVehicle);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
@@ -167,23 +169,28 @@ export function EstimateIntakeScreen() {
 
   const onContinue = async () => {
     if (!canContinue) return;
-    setSaving(true);
-    try {
-      const name = `${year} ${brand} ${model.trim()}`;
-      const { vehicle } = await vehiclesService.addVehicle({ name, colorName: color });
-      await queryClient.invalidateQueries({ queryKey: ['vehicles'] });
-      setActiveVehicle(vehicle.id);
-      setEstimateContext({
-        location: location.trim(),
-        hasInsurance,
-        isRental,
-        needsPickup: isRental && needsPickup,
-      });
-      // Car is registered now — go (back) to submit and run the estimate.
-      navigation.navigate('ConfirmSubmit', { autoSubmit: true });
-    } finally {
-      setSaving(false);
+    const name = `${year} ${brand} ${model.trim()}`;
+    setEstimateContext({
+      location: location.trim(),
+      hasInsurance,
+      isRental,
+      needsPickup: isRental && needsPickup,
+    });
+    // Hold the car. New users (guests) sign up at submit, where this is saved;
+    // signed-in users without a car on file get it saved right now.
+    setPendingVehicle({ name, colorName: color });
+    if (isAuthenticated) {
+      setSaving(true);
+      try {
+        const { vehicle } = await vehiclesService.addVehicle({ name, colorName: color });
+        await queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+        setActiveVehicle(vehicle.id);
+        setPendingVehicle(null);
+      } finally {
+        setSaving(false);
+      }
     }
+    navigation.navigate('ConfirmSubmit');
   };
 
   return (
@@ -255,7 +262,7 @@ export function EstimateIntakeScreen() {
               ? 'Add your location'
               : !insuranceDone
                 ? 'Insurance — Yes or No'
-                : 'Get my estimate →'
+                : 'Continue →'
         }
         disabled={!canContinue}
         loading={saving}

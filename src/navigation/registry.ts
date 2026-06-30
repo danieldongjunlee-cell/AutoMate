@@ -12,6 +12,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
   Quotes: 'Quotes', // ➕ Quotes tab main (quotes received)
+  EstimateStart: 'AI repair estimate', // s-estimate-start (returning vs new)
   CarDiagram: 'Select damaged part', // s-car-diagram
   Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
   EstimateIntake: 'Your car details', // s-estimate-intake (first estimate, no car on file)
@@ -50,7 +51,8 @@ export const SCREEN_TITLES: Record<string, string> = {
   DiyMatch: 'AI guide matching', // s-diy-match
   DiyTools: 'Shopping lists', // s-diy-tools
   DiyFuture: 'Coming soon', // s-diy-future
-  MaintSchedule: 'Select service type', // s-maint-schedule
+  MaintServiceType: 'Book a service', // s-maint-service-type (multi-select)
+  MaintSchedule: 'Choose a shop', // s-maint-schedule (map + shop list)
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book
   MaintPayment: 'Payment', // s-maint-payment
   MaintScheduleConfirm: 'Booking confirmed', // s-maint-schedule-confirm

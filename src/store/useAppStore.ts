@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import {
   deleteBookingRow,
@@ -265,6 +267,14 @@ interface AppState {
   isNewUser: boolean;
   setIsNewUser: (v: boolean) => void;
 
+  /** Guest-first auth gate: the value action to resume once the guest signs
+   *  in/up (a string intent the originating screen watches), plus a car
+   *  captured during the estimate flow that's persisted only after sign-up. */
+  pendingAuth: string | null;
+  setPendingAuth: (intent: string | null) => void;
+  pendingVehicle: { name: string; colorName: string } | null;
+  setPendingVehicle: (v: { name: string; colorName: string } | null) => void;
+
   // Dark mode (Settings → App preferences)
   darkMode: boolean;
   toggleDarkMode: () => void;
@@ -420,7 +430,9 @@ const emptySlice: DamageSlice = {
   quotesViewed: true,
 };
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
   isAuthenticated: false,
   authToken: null,
   user: null,
@@ -429,6 +441,11 @@ export const useAppStore = create<AppState>((set) => ({
   signIn: () => set({ isAuthenticated: true }),
   isNewUser: false,
   setIsNewUser: (isNewUser) => set({ isNewUser }),
+
+  pendingAuth: null,
+  setPendingAuth: (pendingAuth) => set({ pendingAuth }),
+  pendingVehicle: null,
+  setPendingVehicle: (pendingVehicle) => set({ pendingVehicle }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
   signOut: () => {
@@ -439,6 +456,8 @@ export const useAppStore = create<AppState>((set) => ({
       authToken: null,
       user: null,
       isNewUser: false,
+      pendingAuth: null,
+      pendingVehicle: null,
       damageParts: [],
       ...emptyDraft,
       aiEstimate: null,
@@ -701,4 +720,19 @@ export const useAppStore = create<AppState>((set) => ({
     set((s) => ({
       reviews: [{ ...review, id: `rv-${Date.now()}`, createdAt: Date.now() }, ...s.reviews],
     })),
-}));
+    }),
+    {
+      name: 'automate-session',
+      storage: createJSONStorage(() => AsyncStorage),
+      // Persist only the session so a returning user stays logged in across
+      // app restarts ("logged in forever" until Sign out). Flow/draft state
+      // is intentionally not persisted.
+      partialize: (s) => ({
+        isAuthenticated: s.isAuthenticated,
+        authToken: s.authToken,
+        user: s.user,
+        isNewUser: s.isNewUser,
+      }),
+    },
+  ),
+);

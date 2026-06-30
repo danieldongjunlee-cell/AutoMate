@@ -272,7 +272,7 @@ export function BookingsScreen() {
       >
         <SectionLabel style={{ marginBottom: 0 }}>{t('Calendar')}</SectionLabel>
         <Tappable
-          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintSchedule')}
+          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintServiceType')}
           style={{
             flexDirection: 'row',
             alignItems: 'center',

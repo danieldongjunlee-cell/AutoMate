@@ -6,6 +6,7 @@ import { TextInput, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { AvatarCircle, Badge, Card, Screen, SectionLabel } from '../../components/ui';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { HomeStackParamList } from '../../navigation/types';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -18,10 +19,13 @@ export function WriteReviewScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const addReview = useAppStore((s) => s.addReview);
+  const requireAuth = useRequireAuth();
   const [stars, setStars] = useState(5);
   const [body, setBody] = useState('');
 
   const onPost = () => {
+    // Posting a review is a value action — guests sign in first.
+    if (!requireAuth('writeReview')) return;
     addReview({
       stars,
       body: body.trim() || 'Great experience — the price matched my quote and the work was solid.',

@@ -14,6 +14,7 @@ import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { ProfileStackParamList } from '../../navigation/types';
 import { Vehicle, vehiclesService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
@@ -130,6 +131,7 @@ function VehicleFormModal({
 export function ProfCarsScreen() {
   const { colors } = useTheme();
   const navigation = useNavigation<Nav>();
+  const requireAuth = useRequireAuth();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [formOpen, setFormOpen] = useState(false);
@@ -346,9 +348,9 @@ export function ProfCarsScreen() {
         })
       )}
 
-      {/* Add car → dedicated v17 prof-car-add screen */}
+      {/* Add car → dedicated v17 prof-car-add screen (guests sign in first) */}
       <Tappable
-        onPress={() => navigation.navigate('ProfCarAdd')}
+        onPress={() => requireAuth('saveCar', () => navigation.navigate('ProfCarAdd'))}
         style={{
           backgroundColor: colors.surface,
           borderRadius: radii.md,

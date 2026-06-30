@@ -9,6 +9,7 @@ import { FilterChips } from '../../components/FilterChips';
 import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { MaintStackParamList } from '../../navigation/types';
 import {
   DEALER_SERVICE_CHIPS,
@@ -32,7 +33,29 @@ export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
+  const requireAuth = useRequireAuth();
+  const [pendingDealer, setPendingDealer] = useState<string | null>(null);
   const { brand } = useActiveVehicle();
+
+  const goBook = (id: string) => {
+    startBooking(id);
+    navigation.navigate('MaintScheduleBook');
+  };
+  /** Picking a shop is a value action — guests sign in first, then resume. */
+  const selectShop = (id: string) => {
+    if (!requireAuth('selectShop')) {
+      setPendingDealer(id);
+      return;
+    }
+    goBook(id);
+  };
+  useResumeAfterAuth('selectShop', () => {
+    if (pendingDealer) {
+      const id = pendingDealer;
+      setPendingDealer(null);
+      goBook(id);
+    }
+  });
   const [filter, setFilter] = useState(SCHEDULE_SERVICE_FILTERS[0]);
   const [radius, setRadius] = useState('Within 30 mi');
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -157,10 +180,7 @@ export function MaintScheduleScreen() {
           <DealerCard
             dealer={dealer}
             serviceChips={DEALER_SERVICE_CHIPS[dealer.id]}
-            onPress={() => {
-              startBooking(dealer.id);
-              navigation.navigate('MaintScheduleBook');
-            }}
+            onPress={() => selectShop(dealer.id)}
           />
         </View>
       ))}

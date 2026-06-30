@@ -7,6 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPES, SIDE_MISC_PART } from '../../services/mock/data';
 import { pickFromGallery } from '../../services/photos';
@@ -124,6 +125,9 @@ export function CarDiagramScreen() {
   const commitDraftPart = useAppStore((s) => s.commitDraftPart);
   const note = useAppStore((s) => s.draftNote);
   const setNote = useAppStore((s) => s.setDraftNote);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const pendingVehicle = useAppStore((s) => s.pendingVehicle);
+  const { active } = useActiveVehicle();
   const [picking, setPicking] = useState(false);
 
   const isDone = (name: string) => damageParts.some((p) => p.part === name);
@@ -147,7 +151,11 @@ export function CarDiagramScreen() {
   const onSave = () => {
     if (!canSave) return;
     commitDraftPart();
-    navigation.navigate('ConfirmSubmit');
+    // Car details come right after selecting the damaged part — but only once.
+    // Guests (and signed-in users with no car on file) fill them here; once
+    // captured (or for signed-in users with a car), go straight to review.
+    const needsCarDetails = (!isAuthenticated || !active) && !pendingVehicle;
+    navigation.navigate(needsCarDetails ? 'EstimateIntake' : 'ConfirmSubmit');
   };
 
   /** Render one side profile (front at top) with two wheels on the ground edge. */

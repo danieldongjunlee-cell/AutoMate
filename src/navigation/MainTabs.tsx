@@ -15,6 +15,7 @@ import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
 import { EstimateIntakeScreen } from '../screens/home/EstimateIntakeScreen';
+import { EstimateStartScreen } from '../screens/home/EstimateStartScreen';
 import { DealerMapScreen } from '../screens/home/DealerMapScreen';
 import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
 import { HomeLauncherScreen } from '../screens/home/HomeLauncherScreen';
@@ -42,6 +43,7 @@ import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
 import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
 import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
+import { MaintServiceTypeScreen } from '../screens/maint/MaintServiceTypeScreen';
 import { CompCashBookScreen } from '../screens/compare/CompCashBookScreen';
 import { CompCashInsScreen } from '../screens/compare/CompCashInsScreen';
 import { CompDeepDiveScreen } from '../screens/compare/CompDeepDiveScreen';
@@ -108,6 +110,7 @@ const HomeNative = createNativeStackNavigator<HomeStackParamList>();
 const homeScreens = buildScreens(
   [
     'HomeLauncher',
+    'EstimateStart',
     'CarDiagram',
     'Camera',
     'EstimateIntake',
@@ -144,6 +147,7 @@ const homeScreens = buildScreens(
     'DiyMatch',
     'DiyTools',
     'DiyFuture',
+    'MaintServiceType',
     'MaintSchedule',
     'MaintScheduleBook',
     'MaintPayment',
@@ -156,6 +160,7 @@ const homeScreens = buildScreens(
   ] as const,
   {
     HomeLauncher: HomeLauncherScreen,
+    EstimateStart: EstimateStartScreen,
     CarDiagram: CarDiagramScreen,
     Camera: CameraScreen,
     EstimateIntake: EstimateIntakeScreen,
@@ -192,6 +197,7 @@ const homeScreens = buildScreens(
     DiyMatch: DiyMatchScreen,
     DiyTools: DiyToolsScreen,
     DiyFuture: DiyFutureScreen,
+    MaintServiceType: MaintServiceTypeScreen,
     MaintSchedule: MaintScheduleScreen,
     MaintScheduleBook: MaintScheduleBookScreen,
     MaintPayment: MaintPaymentScreen,

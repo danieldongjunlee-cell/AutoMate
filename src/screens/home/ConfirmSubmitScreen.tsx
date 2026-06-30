@@ -1,6 +1,7 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -8,17 +9,17 @@ import { Tappable } from '../../components/Tappable';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, SectionLabel, Screen } from '../../components/ui';
 import { SubmitProgress } from '../../components/SubmitProgress';
+import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
-import { quoteService } from '../../services';
+import { quoteService, vehiclesService } from '../../services';
 import { saveDamageEstimate } from '../../lib/damageEstimates';
 import { damageEstimator } from '../../lib/damageEstimator';
-import { modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { brandOf, modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
-type Route = RouteProp<HomeStackParamList, 'ConfirmSubmit'>;
 
 /** Per-card action chip (✎ Edit / 📷 + Photos / ✕ Remove). */
 function ActionChip({
@@ -202,7 +203,6 @@ function AnalyzingState({ partCount }: { partCount: number }) {
 /** Wireframe s-confirm-submit: multi-part list built by looping the single-select flow. */
 export function ConfirmSubmitScreen() {
   const navigation = useNavigation<Nav>();
-  const route = useRoute<Route>();
   const { colors } = useTheme();
   const damageParts = useAppStore((s) => s.damageParts);
   const pickPart = useAppStore((s) => s.pickPart);
@@ -213,27 +213,40 @@ export function ConfirmSubmitScreen() {
   const setQuotesViewed = useAppStore((s) => s.setQuotesViewed);
   const setIsNewUser = useAppStore((s) => s.setIsNewUser);
   const setDamageRequestId = useAppStore((s) => s.setDamageRequestId);
+  const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
+  const setPendingVehicle = useAppStore((s) => s.setPendingVehicle);
   const { active, brand } = useActiveVehicle();
+  const queryClient = useQueryClient();
+  const requireAuth = useRequireAuth();
   const [submitting, setSubmitting] = useState(false);
   // YOLO safety guard: a non-null message means the photos were rejected.
   const [rejected, setRejected] = useState<string | null>(null);
 
-  const onSubmit = async () => {
-    // Gate: shops need a registered car (+ location/insurance context) to quote.
-    // First-time users with no car on file go through the intake screen, which
-    // registers the car and returns here with autoSubmit to continue.
-    if (!active) {
-      navigation.navigate('EstimateIntake');
-      return;
-    }
+  const runSubmit = async () => {
     setSubmitting(true);
     setRejected(null);
     try {
+      // A new user just signed up — persist the car they entered during intake
+      // (held as pendingVehicle until sign-up). Fire-and-forget into the garage.
+      const pending = useAppStore.getState().pendingVehicle;
+      if (pending) {
+        vehiclesService
+          .addVehicle({ name: pending.name, colorName: pending.colorName })
+          .then((r) => {
+            setActiveVehicle(r.vehicle.id);
+            void queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+          })
+          .catch(() => {});
+        setPendingVehicle(null);
+      }
+
       // The AI estimate comes from the swappable DamageEstimator adapter
       // (services/damage-ai when EXPO_PUBLIC_DAMAGE_AI_URL is set, deterministic
       // mock otherwise). Pad to ~2s so the analyzing stages read.
-      const vehicle = active
-        ? { make: brand, model: modelOf(active.name, brand), year: (active.name.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
+      const vehicleName = active?.name ?? pending?.name;
+      const vBrand = vehicleName ? brandOf(vehicleName) : brand;
+      const vehicle = vehicleName
+        ? { make: vBrand, model: modelOf(vehicleName, vBrand), year: (vehicleName.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
         : undefined;
       const [estimate] = await Promise.all([
         damageEstimator.estimate({ parts: damageParts, vehicle }),
@@ -268,16 +281,15 @@ export function ConfirmSubmitScreen() {
     }
   };
 
-  // Returning from the intake screen with a freshly-registered car: auto-run the
-  // submit once the vehicle query resolves (active becomes defined). Fire once.
-  const autoFired = useRef(false);
-  useEffect(() => {
-    if (route.params?.autoSubmit && active && !autoFired.current && damageParts.length > 0) {
-      autoFired.current = true;
-      void onSubmit();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params?.autoSubmit, active, damageParts.length]);
+  // Guest-first: at submit we ask the user to sign in/up "to receive results".
+  // Signed-in users run immediately; guests are gated, then resumed post-auth.
+  const onSubmit = () => {
+    if (!requireAuth('submitEstimate')) return;
+    void runSubmit();
+  };
+  useResumeAfterAuth('submitEstimate', () => {
+    void runSubmit();
+  });
 
   // In-screen analyzing state while the AI service call runs.
   if (submitting) {

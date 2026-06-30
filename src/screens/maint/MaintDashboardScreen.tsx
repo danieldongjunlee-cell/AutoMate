@@ -188,7 +188,7 @@ export function MaintDashboardScreen() {
           </Text>
         </Tappable>
 
-        <Tappable onPress={() => navigation.navigate('MaintSchedule')} style={{ flex: 1 }}>
+        <Tappable onPress={() => navigation.navigate('MaintServiceType')} style={{ flex: 1 }}>
           {({ pressed }) => (
             <LinearGradient
               colors={[palette.primary, palette.primaryDark]}

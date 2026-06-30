@@ -31,6 +31,8 @@ export function HomeLauncherScreen() {
   // Compare only works once there's an estimate to compare; the AI estimate
   // populates it.
   const aiEstimate = useAppStore((s) => s.aiEstimate);
+  // Guests see the returning/new chooser first; signed-in users go straight in.
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
 
   // All home actions share one white card surface; a soft outer drop shadow
   // lifts each button off the background.
@@ -181,7 +183,7 @@ export function HomeLauncherScreen() {
         phrase: 'Free quote in under 5 minutes',
         icon: '🚗',
         accent: palette.accent,
-        onPress: () => navigation.navigate('CarDiagram'),
+        onPress: () => navigation.navigate(isAuthenticated ? 'CarDiagram' : 'EstimateStart'),
       })}
 
       {/* Two smaller actions. Compare unlocks once an AI estimate exists. */}
@@ -191,7 +193,7 @@ export function HomeLauncherScreen() {
           phrase: 'Book service fast',
           icon: '🔧',
           accent: colors.success,
-          onPress: () => navigation.navigate('MaintDashboard'),
+          onPress: () => navigation.navigate('MaintServiceType'),
         })}
         {aiEstimate
           ? miniCard({

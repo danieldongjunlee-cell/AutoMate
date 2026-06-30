@@ -3,6 +3,7 @@ import {
   DefaultTheme as NavLightTheme,
   NavigationContainer,
 } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
 
@@ -12,8 +13,11 @@ import { isSupabaseConfigured } from '../lib/supabase';
 import { getSupabaseSessionUser } from '../lib/supabaseAuth';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
-import { AuthStack } from './AuthStack';
+import { AuthModal } from './AuthStack';
 import { MainTabs } from './MainTabs';
+import { RootStackParamList } from './types';
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
@@ -23,7 +27,7 @@ export function RootNavigator() {
   const setPoints = useAppStore((s) => s.setPoints);
   const theme = useTheme();
 
-  // Returning users: if Supabase still has a valid session, skip the auth stack.
+  // Returning users: if Supabase still has a valid session, restore it.
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     getSupabaseSessionUser().then((u) => {
@@ -56,9 +60,13 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer theme={navTheme}>
-      {/* Auth screens sit on navy → always light status content there. */}
-      <StatusBar style={!isAuthenticated || theme.dark ? 'light' : 'dark'} />
-      {isAuthenticated ? <MainTabs /> : <AuthStack />}
+      <StatusBar style={theme.dark ? 'light' : 'dark'} />
+      {/* Guest-first: the tabs are always mounted; auth is a modal presented
+          over them at value-action gates (useRequireAuth → navigate('Auth')). */}
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        <RootStack.Screen name="Main" component={MainTabs} />
+        <RootStack.Screen name="Auth" component={AuthModal} options={{ presentation: 'modal' }} />
+      </RootStack.Navigator>
     </NavigationContainer>
   );
 }
