@@ -14,6 +14,7 @@ import { BundleDealsScreen } from '../screens/home/BundleDealsScreen';
 import { CameraScreen } from '../screens/home/CameraScreen';
 import { CarDiagramScreen } from '../screens/home/CarDiagramScreen';
 import { ConfirmSubmitScreen } from '../screens/home/ConfirmSubmitScreen';
+import { EstimateIntakeScreen } from '../screens/home/EstimateIntakeScreen';
 import { DealerMapScreen } from '../screens/home/DealerMapScreen';
 import { DealerQuotesScreen } from '../screens/home/DealerQuotesScreen';
 import { HomeLauncherScreen } from '../screens/home/HomeLauncherScreen';
@@ -109,6 +110,7 @@ const homeScreens = buildScreens(
     'HomeLauncher',
     'CarDiagram',
     'Camera',
+    'EstimateIntake',
     'ConfirmSubmit',
     'Submitted',
     'AfterHours',
@@ -156,6 +158,7 @@ const homeScreens = buildScreens(
     HomeLauncher: HomeLauncherScreen,
     CarDiagram: CarDiagramScreen,
     Camera: CameraScreen,
+    EstimateIntake: EstimateIntakeScreen,
     ConfirmSubmit: ConfirmSubmitScreen,
     Submitted: SubmittedScreen,
     AfterHours: AfterHoursScreen,

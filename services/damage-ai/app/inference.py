@@ -34,14 +34,13 @@ from .pricing import (
 
 logger = logging.getLogger("damage-ai")
 
-# CarDD class index → our damage_type (must match train/dataset.yaml order).
+# Detector class index → our damage_type (must match train/dataset.yaml order).
+# The 4 production labels the app collects and prices: Dent · Scratch · Crack · Paint.
 CARDD_CLASSES = {
     0: "dent",
     1: "scratch",
     2: "crack",
-    3: "glass shatter",
-    4: "lamp broken",
-    5: "tire flat",
+    3: "paint",
 }
 
 

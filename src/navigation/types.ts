@@ -27,7 +27,8 @@ type HomeFlowParamList = {
   HomeLauncher: undefined;
   CarDiagram: undefined;
   Camera: undefined;
-  ConfirmSubmit: undefined;
+  EstimateIntake: undefined;
+  ConfirmSubmit: { autoSubmit?: boolean } | undefined;
   Submitted: undefined;
   AfterHours: undefined;
   DealerQuotes: undefined;

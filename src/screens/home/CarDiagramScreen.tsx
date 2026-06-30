@@ -139,7 +139,13 @@ export function CarDiagramScreen() {
     }
   };
 
+  // Both are required: at least one damage label AND at least one photo.
+  const hasType = draftTypes.length >= 1;
+  const hasPhoto = photoUris.length >= 1;
+  const canSave = hasType && hasPhoto;
+
   const onSave = () => {
+    if (!canSave) return;
     commitDraftPart();
     navigation.navigate('ConfirmSubmit');
   };
@@ -285,15 +291,16 @@ export function CarDiagramScreen() {
       {/* Inline expansion: upload photos for the selected part */}
       {draftPart ? (
         <Card style={{ padding: spacing.md }}>
+          {/* Section 1 — damage type (its own section, separate from photos) */}
           <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
-            Damage photos · {draftPart}{' '}
+            Damage type · {draftPart}{' '}
             <Text style={{ color: colors.danger, fontSize: 13 }}>(required)</Text>
           </Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>
-            More photos = a more accurate estimate.
+            What kind of damage is it? Select all that apply.
           </Text>
 
-          {/* Damage type — multi-select */}
+          {/* Damage type — multi-select (Dent · Scratch · Crack · Paint) */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md }}>
             {DAMAGE_TYPES.map((tp) => {
               const on = draftTypes.includes(tp);
@@ -322,7 +329,14 @@ export function CarDiagramScreen() {
             })}
           </View>
 
-          {/* Photos */}
+          {/* Section 2 — photos (separate section, also required) */}
+          <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: colors.divider, marginBottom: spacing.md }} />
+          <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
+            Photos <Text style={{ color: colors.danger, fontSize: 13 }}>(required)</Text>
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>
+            Add at least one. More photos = a more accurate estimate.
+          </Text>
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textTertiary, marginBottom: spacing.xs }}>
             Photos {photoUris.length}/{MAX_PHOTOS}
           </Text>
@@ -378,8 +392,8 @@ export function CarDiagramScreen() {
           <TextInputArea note={note} setNote={setNote} />
 
           <PrimaryButton
-            label={photoUris.length >= 1 ? 'Save →' : 'Add at least one photo'}
-            disabled={photoUris.length < 1}
+            label={canSave ? 'Save →' : !hasType ? 'Select a damage type' : 'Add at least one photo'}
+            disabled={!canSave}
             onPress={onSave}
             style={{ marginTop: spacing.md }}
           />

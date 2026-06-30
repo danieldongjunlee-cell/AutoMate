@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
@@ -18,6 +18,7 @@ import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
+type Route = RouteProp<HomeStackParamList, 'ConfirmSubmit'>;
 
 /** Per-card action chip (✎ Edit / 📷 + Photos / ✕ Remove). */
 function ActionChip({
@@ -201,6 +202,7 @@ function AnalyzingState({ partCount }: { partCount: number }) {
 /** Wireframe s-confirm-submit: multi-part list built by looping the single-select flow. */
 export function ConfirmSubmitScreen() {
   const navigation = useNavigation<Nav>();
+  const route = useRoute<Route>();
   const { colors } = useTheme();
   const damageParts = useAppStore((s) => s.damageParts);
   const pickPart = useAppStore((s) => s.pickPart);
@@ -217,6 +219,13 @@ export function ConfirmSubmitScreen() {
   const [rejected, setRejected] = useState<string | null>(null);
 
   const onSubmit = async () => {
+    // Gate: shops need a registered car (+ location/insurance context) to quote.
+    // First-time users with no car on file go through the intake screen, which
+    // registers the car and returns here with autoSubmit to continue.
+    if (!active) {
+      navigation.navigate('EstimateIntake');
+      return;
+    }
     setSubmitting(true);
     setRejected(null);
     try {
@@ -258,6 +267,17 @@ export function ConfirmSubmitScreen() {
       setSubmitting(false);
     }
   };
+
+  // Returning from the intake screen with a freshly-registered car: auto-run the
+  // submit once the vehicle query resolves (active becomes defined). Fire once.
+  const autoFired = useRef(false);
+  useEffect(() => {
+    if (route.params?.autoSubmit && active && !autoFired.current && damageParts.length > 0) {
+      autoFired.current = true;
+      void onSubmit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route.params?.autoSubmit, active, damageParts.length]);
 
   // In-screen analyzing state while the AI service call runs.
   if (submitting) {

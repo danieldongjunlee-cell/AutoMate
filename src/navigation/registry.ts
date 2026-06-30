@@ -14,6 +14,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   Quotes: 'Quotes', // ➕ Quotes tab main (quotes received)
   CarDiagram: 'Select damaged part', // s-car-diagram
   Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
+  EstimateIntake: 'Your car details', // s-estimate-intake (first estimate, no car on file)
   ConfirmSubmit: 'Confirm damage', // s-confirm-submit
   Submitted: 'Request submitted', // s-submitted
   AfterHours: 'Request submitted (after hours)', // s-after-hours

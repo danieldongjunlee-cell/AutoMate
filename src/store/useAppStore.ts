@@ -313,6 +313,16 @@ interface AppState {
   locationPermission: 'unasked' | 'granted' | 'denied';
   setLocationPermission: (p: 'granted' | 'denied') => void;
 
+  /** Estimate context captured on the first-estimate intake (no car on file):
+   *  service location + insurance/rental/pick-up flags, carried into the quote. */
+  estimateContext: {
+    location: string;
+    hasInsurance: boolean | null;
+    isRental: boolean;
+    needsPickup: boolean;
+  };
+  setEstimateContext: (patch: Partial<AppState['estimateContext']>) => void;
+
   // Damage flow: committed parts + the in-progress draft (one part per pass)
   damageParts: DamagePart[];
   draftPart: string | null;
@@ -520,6 +530,10 @@ export const useAppStore = create<AppState>((set) => ({
   locationPermission: 'unasked',
   setLocationPermission: (locationPermission) => set({ locationPermission }),
 
+  estimateContext: { location: '', hasInsurance: null, isRental: false, needsPickup: false },
+  setEstimateContext: (patch) =>
+    set((s) => ({ estimateContext: { ...s.estimateContext, ...patch } })),
+
   damageParts: [],
   ...emptyDraft,
   pickPart: (part) =>
@@ -541,10 +555,11 @@ export const useAppStore = create<AppState>((set) => ({
   removeDraftPhoto: (index) => set((s) => ({ draftPhotos: s.draftPhotos.filter((_, i) => i !== index) })),
   commitDraftPart: () =>
     set((s) => {
-      if (!s.draftPart || s.draftPhotos.length < 1) return {};
+      // Require a part, at least one damage label, and at least one photo.
+      if (!s.draftPart || s.draftTypes.length < 1 || s.draftPhotos.length < 1) return {};
       const next: DamagePart = {
         part: s.draftPart,
-        type: s.draftTypes.join(', ') || 'Damage',
+        type: s.draftTypes.join(', '),
         photos: s.draftPhotos.length,
         photoUris: [...s.draftPhotos],
         note: s.draftNote.trim() || undefined,

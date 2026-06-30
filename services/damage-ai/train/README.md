@@ -22,18 +22,37 @@ copyrights. **It must NOT ship in a commercial build of AutoMate.** So:
   YOLO-seg). The pipeline is identical; only the data source changes.
 - Cite the paper if you publish results derived from it.
 
-## Steps
+## Classes (production = 4)
+
+The serving path, `config/pricing.yaml`, and the app all use **4 labels**:
+`dent · scratch · crack · paint` (indices in `dataset.yaml` and
+`app/inference.py CARDD_CLASSES`). Train on these. CarDD (below) is a 6-class
+research set — use only to benchmark; map/drop its extra classes if you do.
+
+## Steps (your own labels — the production path)
+
+Annotate your photos in Label Studio / CVAT / Roboflow and export **"YOLOv8
+segmentation"** (one `<name>.txt` of normalized polygons per image, class ids
+`0 dent · 1 scratch · 2 crack · 3 paint`). Then:
 
 ```bash
 pip install ultralytics pycocotools          # training extras (not in core reqs)
 
-# 1. Download CarDD manually from the page above; unzip it.
-# 2. Convert COCO masks → YOLO-seg under data/cardd/:
-python train/prepare_cardd.py --cardd-root /path/to/CarDD_release
-# 3. Fine-tune (≈20 min on a Colab T4 with the nano base):
+# 1. Split your labeled folder into data/cardd/{images,labels}/{train,val}:
+python train/prepare_dataset.py --src /path/to/your_labeled_folder --val-frac 0.15
+#    (validates class ids/polygons + prints per-class counts so you catch imbalance)
+# 2. Fine-tune (≈20 min on a Colab T4 with the nano base):
 python train/train_yolov8_seg.py            # base yolo11n-seg, 100 epochs, imgsz 640
-# 4. (optional) export for fast serving:
+#    higher accuracy on thin scratches/cracks: --imgsz 1024 --batch 8  (and yolo11s/m-seg)
+# 3. (optional) export for fast serving:
 python train/export_model.py --format onnx
+```
+
+### Benchmarking on CarDD (optional, research-only)
+
+```bash
+# Download CarDD manually (license form), then convert COCO masks → YOLO-seg:
+python train/prepare_cardd.py --cardd-root /path/to/CarDD_release
 ```
 
 `train_yolov8_seg.py` copies the best checkpoint to `models/damage-seg.pt`,
@@ -45,7 +64,7 @@ which the service loads when `MODEL_MODE=live`.
 data/cardd/
   images/{train,val}/*.jpg
   labels/{train,val}/*.txt     one row/instance: `cls x1 y1 ... xn yn` (normalized polygon)
-train/dataset.yaml             6-class seg config (class order = app/inference.py CARDD_CLASSES)
+train/dataset.yaml             4-class seg config (dent/scratch/crack/paint = app/inference.py CARDD_CLASSES)
 train/runs/                    ultralytics output (gitignored)
 models/damage-seg.pt           best checkpoint (copied by the trainer)
 ```

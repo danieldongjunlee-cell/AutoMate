@@ -1,12 +1,16 @@
-# YOLO-seg dataset config for the CarDD-fine-tuned damage model.
+# YOLO-seg dataset config for the AutoMate damage model.
 #
-# `path` points at the YOLO-seg dataset produced by prepare_cardd.py:
+# Production classes are the 4 the app collects and prices:
+#   Dent · Scratch · Crack · Paint   (config/pricing.yaml + app DAMAGE_TYPES)
+#
+# `path` points at the YOLO-seg dataset produced by prepare_dataset.py
+# (your own annotated images) — or prepare_cardd.py if you benchmark on CarDD:
 #   data/cardd/
 #     images/{train,val}/   *.jpg
 #     labels/{train,val}/   *.txt  (one row/instance: `cls x1 y1 x2 y2 ... xn yn`
 #                                    normalized polygon — segmentation, not boxes)
 #
-# Class order MUST match app/inference.py CARDD_CLASSES.
+# Class order MUST match app/inference.py CARDD_CLASSES (indices below).
 
 path: ../data/cardd       # dataset root (relative to this file)
 train: images/train
@@ -16,6 +20,4 @@ names:
   0: dent
   1: scratch
   2: crack
-  3: glass shatter
-  4: lamp broken
-  5: tire flat
+  3: paint
