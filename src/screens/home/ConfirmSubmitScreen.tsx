@@ -14,7 +14,8 @@ import { HomeStackParamList } from '../../navigation/types';
 import { DAMAGE_TYPE_SEVERITY, QUOTE_REQUEST } from '../../services/mock/data';
 import { quoteService, vehiclesService } from '../../services';
 import { saveDamageEstimate } from '../../lib/damageEstimates';
-import { damageEstimator } from '../../lib/damageEstimator';
+import { damageEstimator, DamageEstimateResult } from '../../lib/damageEstimator';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { brandOf, modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { DamagePart, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -218,16 +219,37 @@ export function ConfirmSubmitScreen() {
   const { active, brand } = useActiveVehicle();
   const queryClient = useQueryClient();
   const requireAuth = useRequireAuth();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const [submitting, setSubmitting] = useState(false);
   // YOLO safety guard: a non-null message means the photos were rejected.
   const [rejected, setRejected] = useState<string | null>(null);
+  // The AI result held after analysis, until a guest signs in / up to unlock it.
+  const [pendingEstimate, setPendingEstimate] = useState<DamageEstimateResult | null>(null);
+  // Returning user logged in to find they already have a quote for this car.
+  const [existingPrompt, setExistingPrompt] = useState(false);
 
-  const runSubmit = async () => {
+  /** Run the AI analysis only (no quote request yet). ~2s so the stages read. */
+  const analyze = async (): Promise<DamageEstimateResult> => {
+    const pending = useAppStore.getState().pendingVehicle;
+    const vehicleName = active?.name ?? pending?.name;
+    const vBrand = vehicleName ? brandOf(vehicleName) : brand;
+    const vehicle = vehicleName
+      ? { make: vBrand, model: modelOf(vehicleName, vBrand), year: (vehicleName.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
+      : undefined;
+    const [estimate] = await Promise.all([
+      damageEstimator.estimate({ parts: damageParts, vehicle }),
+      new Promise((r) => setTimeout(r, 2000)),
+    ]);
+    return estimate;
+  };
+
+  /** Persist the car + submit the quote request, then open the result screen
+   *  (AI estimate range + "View available quotes"). */
+  const finalize = async (estimate: DamageEstimateResult) => {
+    setExistingPrompt(false);
     setSubmitting(true);
-    setRejected(null);
     try {
-      // A new user just signed up — persist the car they entered during intake
-      // (held as pendingVehicle until sign-up). Fire-and-forget into the garage.
+      // A new user just signed up — persist the car they entered during intake.
       const pending = useAppStore.getState().pendingVehicle;
       if (pending) {
         vehiclesService
@@ -239,56 +261,60 @@ export function ConfirmSubmitScreen() {
           .catch(() => {});
         setPendingVehicle(null);
       }
-
-      // The AI estimate comes from the swappable DamageEstimator adapter
-      // (services/damage-ai when EXPO_PUBLIC_DAMAGE_AI_URL is set, deterministic
-      // mock otherwise). Pad to ~2s so the analyzing stages read.
-      const vehicleName = active?.name ?? pending?.name;
-      const vBrand = vehicleName ? brandOf(vehicleName) : brand;
-      const vehicle = vehicleName
-        ? { make: vBrand, model: modelOf(vehicleName, vBrand), year: (vehicleName.match(/\b(19|20)\d{2}\b/) ?? [])[0] }
-        : undefined;
-      const [estimate] = await Promise.all([
-        damageEstimator.estimate({ parts: damageParts, vehicle }),
-        new Promise((r) => setTimeout(r, 2000)),
-      ]);
-
-      // Safety guard: if YOLO isn't confident the photos show car damage, stop
-      // here — no range, no quote request, no points.
-      if (estimate.rejected) {
-        setRejected(
-          estimate.rejectReason ??
-            "We couldn't confidently detect car damage in these photos.",
-        );
-        return;
-      }
-
       const { afterHours, pointsEarned } = await quoteService.submitDamageRequest(damageParts);
       addPoints(pointsEarned, 'Submitted damage photos');
-      // Carry the AI analysis (range + confidence) to Submitted/DealerQuotes.
       setAiEstimate(estimate.aiEstimate);
-      setQuotesViewed(false); // new quotes → show the unread badge on the Quotes tab
-      setIsNewUser(false); // first estimate submitted → drop the "New here?" hint
-      // Persist the estimate (full model JSON + versions) + photos (no-op if
-      // unconfigured), then remember the request id so the accepted repair
-      // booking links back to it for calibration.
+      setQuotesViewed(false); // new quotes → unread badge on the Quotes tab
+      setIsNewUser(false);
       saveDamageEstimate(damageParts, estimate)
         .then((id) => id && setDamageRequestId(id))
         .catch(() => {});
+      setPendingEstimate(null);
       navigation.navigate(afterHours ? 'AfterHours' : 'Submitted');
     } finally {
       setSubmitting(false);
     }
   };
 
-  // Guest-first: at submit we ask the user to sign in/up "to receive results".
-  // Signed-in users run immediately; guests are gated, then resumed post-auth.
-  const onSubmit = () => {
-    if (!requireAuth('submitEstimate')) return;
-    void runSubmit();
+  // Submit → analyze FIRST (so the range exists), then gate. Signed-in users go
+  // straight to results; guests are asked to log in / sign up to unlock the AI
+  // range + real quotes, and resumed after auth.
+  const onSubmit = async () => {
+    setSubmitting(true);
+    setRejected(null);
+    let estimate: DamageEstimateResult;
+    try {
+      estimate = await analyze();
+    } catch {
+      setSubmitting(false);
+      return;
+    }
+    if (estimate.rejected) {
+      setRejected(estimate.rejectReason ?? "We couldn't confidently detect car damage in these photos.");
+      setSubmitting(false);
+      return;
+    }
+    if (isAuthenticated) {
+      await finalize(estimate);
+      return;
+    }
+    setSubmitting(false);
+    setPendingEstimate(estimate);
+    requireAuth('unlockEstimate');
   };
-  useResumeAfterAuth('submitEstimate', () => {
-    void runSubmit();
+
+  // After the guest authenticates: a returning user (logged in, not a fresh
+  // sign-up) who already has a quote for this car gets the revise/cancel prompt;
+  // otherwise we save everything and show the result.
+  useResumeAfterAuth('unlockEstimate', () => {
+    const est = pendingEstimate;
+    if (!est) return;
+    const returning = !useAppStore.getState().isNewUser;
+    if (returning && active) {
+      setExistingPrompt(true);
+    } else {
+      void finalize(est);
+    }
   });
 
   // In-screen analyzing state while the AI service call runs.
@@ -296,6 +322,50 @@ export function ConfirmSubmitScreen() {
     return (
       <Screen>
         <AnalyzingState partCount={damageParts.length} />
+      </Screen>
+    );
+  }
+
+  // Returning user signed in to an account that already has a quote for this
+  // car — recommend revising or cancelling it before re-submitting.
+  if (existingPrompt) {
+    return (
+      <Screen>
+        <View style={{ alignItems: 'center', paddingTop: spacing.xl, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>📋</Text>
+          <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: 6, textAlign: 'center' }}>
+            You already have a quote request
+          </Text>
+          <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 21 }}>
+            There&apos;s an active quote request for your{' '}
+            <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{active?.name}</Text>. We recommend
+            revising it, or cancelling it and submitting this new request.
+          </Text>
+        </View>
+        <PrimaryButton
+          label="Revise existing request"
+          onPress={() => {
+            setExistingPrompt(false);
+            setPendingEstimate(null);
+            navigateCrossTab(navigation, 'QuotesTab', 'Quotes');
+          }}
+          style={{ marginBottom: spacing.sm }}
+        />
+        <PrimaryButton
+          variant="outline"
+          label="Cancel existing & submit this →"
+          onPress={() => pendingEstimate && finalize(pendingEstimate)}
+          style={{ marginBottom: spacing.sm }}
+        />
+        <Tappable
+          onPress={() => {
+            setExistingPrompt(false);
+            setPendingEstimate(null);
+          }}
+          style={{ alignItems: 'center', paddingVertical: spacing.sm }}
+        >
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to my parts</Text>
+        </Tappable>
       </Screen>
     );
   }

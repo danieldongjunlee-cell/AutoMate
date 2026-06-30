@@ -401,7 +401,7 @@ window.pickPart = function(el, name){
 </div>
 <!-- YOLO safety guard -->
 <div style="background:var(--c2a2212);border:0.5px solid var(--c6e5526);border-radius:9px;padding:7px 9px;margin-bottom:8px;display:flex;align-items:flex-start;gap:6px"><span style="font-size:11px;flex-shrink:0">🛡️</span><span style="font-size:7px;color:var(--ce6b85c);line-height:1.6">Safety check: if our YOLOv8 model isn't confident your photos show car damage, it won't return a price range — it'll ask you to retake clearer photos of the damaged part.</span></div>
-<div style="background:linear-gradient(135deg,#16a34a,#138a3f);border-radius:11px;padding:13px;text-align:center;cursor:pointer" onclick="nav('login')">
+<div style="background:linear-gradient(135deg,#16a34a,#138a3f);border-radius:11px;padding:13px;text-align:center;cursor:pointer" onclick="nav('estimate-start')">
   <span style="font-size:10px;font-weight:700;color:#fff">Submit for quotes →</span>
 </div></div>
 <!-- s-estimate-intake: shown on the first estimate when no car is on file -->
@@ -680,15 +680,27 @@ window.pickPart = function(el, name){
 <div id="s-estimate-start" class="screen" data-tab="home" style="display:none">
 <div style="display:flex;flex-direction:column;justify-content:center;min-height:520px">
   <div style="text-align:center;margin-bottom:22px">
-    <div style="font-size:18px;font-weight:800;color:var(--ce8edf5)">Welcome to AutoMate</div>
-    <div style="font-size:8.5px;color:var(--c8a94a6);margin-top:4px">Log in or create an account to continue.</div>
+    <div style="font-size:18px;font-weight:800;color:var(--ce8edf5)">Almost there</div>
+    <div style="font-size:8.5px;color:var(--c8a94a6);margin-top:4px">Log in or sign up to see your AI estimate range and get real quotes.</div>
   </div>
   <div style="display:flex;gap:10px">
-    <div style="flex:1;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#2e6bff;border-radius:16px;padding:16px;cursor:pointer" onclick="nav('login')"><div style="font-size:11px;font-weight:800;color:#fff;text-align:center">Returning user</div><div style="font-size:8px;color:rgba(255,255,255,.8);text-align:center;margin-top:4px">Log in</div></div>
+    <div style="flex:1;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#2e6bff;border-radius:16px;padding:16px;cursor:pointer" onclick="nav('existing-quote')"><div style="font-size:11px;font-weight:800;color:#fff;text-align:center">Returning user</div><div style="font-size:8px;color:rgba(255,255,255,.8);text-align:center;margin-top:4px">Log in</div></div>
     <div style="flex:1;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:16px;padding:16px;cursor:pointer" onclick="nav('signup')"><div style="font-size:11px;font-weight:800;color:var(--ce8edf5);text-align:center">New user</div><div style="font-size:8px;color:var(--c8a94a6);text-align:center;margin-top:4px">Create an account</div></div>
   </div>
   <div style="text-align:center;padding:14px;cursor:pointer" data-back="1"><span style="font-size:8.5px;color:var(--c8a94a6)">Not now</span></div>
 </div>
+</div>
+<!-- s-existing-quote: returning user logged in to find an existing quote for the car -->
+<div id="s-existing-quote" class="screen" data-tab="home" style="display:none">
+<div style="display:flex;align-items:center;gap:5px;margin-bottom:10px"><span style="font-size:16px;color:var(--ce8edf5);cursor:pointer" data-back="1">←</span><span style="font-size:10.5px;font-weight:600;flex:1">Existing quote request</span></div>
+<div style="text-align:center;padding:14px 0 12px">
+  <div style="font-size:34px;margin-bottom:7px">📋</div>
+  <div style="font-size:12px;font-weight:800;color:var(--ce8edf5);margin-bottom:4px">You already have a quote request</div>
+  <div style="font-size:8px;color:var(--c8a94a6);line-height:1.6;padding:0 8px">There's an active quote request for your <strong style="color:var(--ce8edf5)">2019 Honda Accord EX-L</strong>. We recommend revising it, or cancelling it and submitting this new request.</div>
+</div>
+<div style="background:#2e6bff;border-radius:11px;padding:12px;text-align:center;cursor:pointer;margin-bottom:8px" onclick="nav('dealer-quotes')"><span style="font-size:9.5px;font-weight:700;color:#fff">Revise existing request</span></div>
+<div style="background:var(--c121a2b);border:1px solid var(--c1f2940);border-radius:11px;padding:12px;text-align:center;cursor:pointer;margin-bottom:8px" onclick="nav('submitted')"><span style="font-size:9.5px;font-weight:700;color:var(--ce8edf5)">Cancel existing &amp; submit this →</span></div>
+<div style="text-align:center;padding:9px;cursor:pointer" data-back="1"><span style="font-size:8px;color:var(--c8a94a6)">Back to my parts</span></div>
 </div>
 <!-- s-maint-service-type: multi-select service types before the shop map -->
 <!-- s-maint-landing: maintenance entry from Home — book a service / dashboard -->

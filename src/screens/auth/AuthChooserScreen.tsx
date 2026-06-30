@@ -14,6 +14,7 @@ type Route = RouteProp<AuthStackParamList, 'AuthChooser'>;
 
 /** Short line explaining why we're asking, by gate intent. */
 const INTENT_COPY: Record<string, string> = {
+  unlockEstimate: 'Log in or sign up to see your AI estimate range and get real quotes.',
   submitEstimate: 'Sign in to receive your repair quotes.',
   selectShop: 'Sign in to book this shop.',
   bookService: 'Sign in to book your service.',
