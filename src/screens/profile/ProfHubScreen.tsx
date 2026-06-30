@@ -29,11 +29,15 @@ export function ProfHubScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const { brand: carBrand } = useActiveVehicle();
-  const points = useAppStore((s) => s.points);
+  const storePoints = useAppStore((s) => s.points);
   const isPro = useAppStore((s) => s.isPro);
-  const checkedIn = useAppStore((s) => s.dailyCheckedIn);
+  const storeCheckedIn = useAppStore((s) => s.dailyCheckedIn);
   const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
   const requireAuth = useRequireAuth();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // Guests have no account yet — points, streak and check-in all read zero.
+  const points = isAuthenticated ? storePoints : 0;
+  const checkedIn = isAuthenticated ? storeCheckedIn : false;
   // Authenticated user context (set after the demo login); falls back to the
   // wireframe USER constant until someone signs in.
   const authedUser = useAppStore((s) => s.user);
@@ -183,7 +187,7 @@ export function ProfHubScreen() {
             {checkedIn ? 'Checked in today' : 'Daily check-in'}
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            🔥 Day {checkedIn ? 6 : 5} streak · +10 pts
+            {isAuthenticated ? `🔥 Day ${checkedIn ? 6 : 5} streak · +10 pts` : '🔥 Day 0 streak · 0 pts'}
           </Text>
         </View>
         <View

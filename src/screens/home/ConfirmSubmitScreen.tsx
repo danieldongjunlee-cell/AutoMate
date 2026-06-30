@@ -227,6 +227,9 @@ export function ConfirmSubmitScreen() {
   const [pendingEstimate, setPendingEstimate] = useState<DamageEstimateResult | null>(null);
   // Returning user logged in to find they already have a quote for this car.
   const [existingPrompt, setExistingPrompt] = useState(false);
+  // Guest preview after analysis: AI range visible, shop quotes blurred behind
+  // a "sign up / log in" gate.
+  const [showPreview, setShowPreview] = useState(false);
 
   /** Run the AI analysis only (no quote request yet). ~2s so the stages read. */
   const analyze = async (): Promise<DamageEstimateResult> => {
@@ -298,17 +301,20 @@ export function ConfirmSubmitScreen() {
       await finalize(estimate);
       return;
     }
+    // Guest: show the estimate + a blurred quotes preview; the CTA opens the
+    // returning/new chooser.
     setSubmitting(false);
     setPendingEstimate(estimate);
-    requireAuth('unlockEstimate');
+    setShowPreview(true);
   };
 
-  // After the guest authenticates: a returning user (logged in, not a fresh
-  // sign-up) who already has a quote for this car gets the revise/cancel prompt;
-  // otherwise we save everything and show the result.
+  // After the guest authenticates from the preview: a returning user (logged in,
+  // not a fresh sign-up) who already has a quote for this car gets the
+  // revise/cancel prompt; otherwise we save everything and show the result.
   useResumeAfterAuth('unlockEstimate', () => {
     const est = pendingEstimate;
     if (!est) return;
+    setShowPreview(false);
     const returning = !useAppStore.getState().isNewUser;
     if (returning && active) {
       setExistingPrompt(true);
@@ -366,6 +372,98 @@ export function ConfirmSubmitScreen() {
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to my parts</Text>
         </Tappable>
+      </Screen>
+    );
+  }
+
+  // Guest, post-analysis: AI estimate visible, shop quotes blurred behind a
+  // sign-up / log-in gate. The CTA opens the returning/new chooser.
+  if (showPreview && pendingEstimate) {
+    const est = pendingEstimate.aiEstimate;
+    return (
+      <Screen>
+        <SubmitProgress step={3} left="Your estimate" right="Sign in to see quotes" />
+        <View
+          style={{
+            backgroundColor: colors.successSurface,
+            borderWidth: 1,
+            borderColor: colors.success,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginBottom: spacing.lg,
+          }}
+        >
+          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 4 }}>
+            🤖 AI estimated repair cost
+          </Text>
+          <Text style={{ fontSize: 30, fontWeight: '800', color: colors.successDeep }}>
+            ${est.priceLow}–${est.priceHigh}
+          </Text>
+          <Text style={{ fontSize: 13, color: colors.successDark, marginTop: 2 }}>
+            {est.confidencePct}% confidence · before shop inspection
+          </Text>
+        </View>
+
+        <SectionLabel>Quotes from nearby shops</SectionLabel>
+        <View style={{ position: 'relative', marginBottom: spacing.lg }}>
+          {/* Obscured (faded) shop rows — the real quotes are hidden until auth. */}
+          {[0, 1, 2].map((i) => (
+            <View
+              key={i}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.sm,
+                backgroundColor: colors.surface,
+                borderWidth: StyleSheet.hairlineWidth,
+                borderColor: colors.border,
+                borderRadius: radii.md,
+                padding: spacing.md,
+                marginBottom: spacing.sm,
+                opacity: 0.45,
+              }}
+            >
+              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.border }} />
+              <View style={{ flex: 1, gap: 7 }}>
+                <View style={{ width: '60%', height: 12, borderRadius: 6, backgroundColor: colors.border }} />
+                <View style={{ width: '40%', height: 10, borderRadius: 5, backgroundColor: colors.divider }} />
+              </View>
+              <View style={{ width: 58, height: 24, borderRadius: 6, backgroundColor: colors.border }} />
+            </View>
+          ))}
+          {/* Lock card centered over the blurred list. */}
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                backgroundColor: colors.surface,
+                borderWidth: 1,
+                borderColor: colors.border,
+                borderRadius: radii.md,
+                paddingVertical: spacing.md,
+                paddingHorizontal: spacing.lg,
+                alignItems: 'center',
+                shadowColor: '#000',
+                shadowOpacity: 0.12,
+                shadowRadius: 10,
+                shadowOffset: { width: 0, height: 4 },
+                elevation: 5,
+              }}
+            >
+              <Text style={{ fontSize: 28, marginBottom: 4 }}>🔒</Text>
+              <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary, textAlign: 'center' }}>
+                Quotes from nearby shops
+              </Text>
+              <Text style={{ fontSize: 13, color: colors.textSecondary, textAlign: 'center', marginTop: 2 }}>
+                Sign up or log in to view these quotes
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        <PrimaryButton
+          label="Sign up or log in to view quotes →"
+          onPress={() => requireAuth('unlockEstimate')}
+        />
       </Screen>
     );
   }

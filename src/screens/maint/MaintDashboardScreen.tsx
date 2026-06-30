@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { useAppStore } from '../../store/useAppStore';
 
 import { Badge, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
@@ -26,14 +27,20 @@ export function MaintDashboardScreen() {
     queryKey: ['upcoming-services'],
     queryFn: maintService.getUpcomingServices,
   });
+  // Guests browse the dashboard with no account data: value reads $0, and the
+  // car-info + upcoming-services blocks are hidden until they sign up.
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   // Car info follows the car the user entered/selected in More → My cars.
   const { active } = useActiveVehicle();
   const carName = active?.name ?? VEHICLE.name;
   const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
   const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0]; // "5W-30"
   const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
-  // Market value tracks the selected car.
-  const mv = marketValueFor(carName);
+  // Market value tracks the selected car (zeroed out for guests).
+  const realMv = marketValueFor(carName);
+  const mv = isAuthenticated
+    ? realMv
+    : { value: 0, aboveAvg: 0, barPct: 0, low: 0, high: 0 };
 
   return (
     <Screen>
@@ -84,7 +91,8 @@ export function MaintDashboardScreen() {
         </View>
       </LinearGradient>
 
-      {/* Car info */}
+      {/* Car info — hidden for guests (no car on their account yet). */}
+      {isAuthenticated ? (
       <Tappable
         onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintHistory'))}
         style={({ pressed }) => ({
@@ -152,6 +160,7 @@ export function MaintDashboardScreen() {
           </Text>
         </View>
       </Tappable>
+      ) : null}
 
       {/* DIY tips + Book a service (side-by-side) */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
@@ -227,9 +236,9 @@ export function MaintDashboardScreen() {
         </Tappable>
       </View>
 
-      {/* Upcoming services */}
-      <SectionLabel>Upcoming services</SectionLabel>
-      {(upcoming ?? UPCOMING_SERVICES).map((svc) => {
+      {/* Upcoming services — hidden for guests (no account history yet). */}
+      {isAuthenticated ? <SectionLabel>Upcoming services</SectionLabel> : null}
+      {(isAuthenticated ? (upcoming ?? UPCOMING_SERVICES) : []).map((svc) => {
         const badge =
           svc.status === 'Soon'
             ? { bg: colors.warning, fg: '#fff' }

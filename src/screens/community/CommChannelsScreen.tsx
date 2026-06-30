@@ -75,7 +75,6 @@ export function CommChannelsScreen() {
           car's brand, so we prompt the user to register one first. */}
       {!active ? (
         <Card tinted style={{ padding: spacing.lg, alignItems: 'center', marginTop: spacing.sm }}>
-          <Text style={{ fontSize: 30, marginBottom: spacing.sm }}>🚗</Text>
           <Text
             style={{
               fontSize: 16,

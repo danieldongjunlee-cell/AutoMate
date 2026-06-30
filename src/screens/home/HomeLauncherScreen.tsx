@@ -95,14 +95,15 @@ export function HomeLauncherScreen() {
         <View style={{ backgroundColor: unlocked ? colors.surface : colors.surfaceAlt, borderRadius: radii.lg, marginBottom: spacing.md, ...(unlocked ? cardShadow : {}) }}>
           <View
             style={{
-              borderWidth: 1,
-              borderColor: colors.border,
+              borderWidth: unlocked ? 1 : 2,
+              borderColor: unlocked ? colors.border : colors.textTertiary,
+              borderStyle: unlocked ? 'solid' : 'dashed',
               borderRadius: radii.lg,
               padding: spacing.md,
               minHeight: 78,
               justifyContent: 'center',
               overflow: 'hidden',
-              opacity: unlocked ? 1 : 0.7,
+              opacity: unlocked ? 1 : 0.85,
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '800', color: unlocked ? colors.textPrimary : colors.textTertiary }}>
@@ -123,9 +124,8 @@ export function HomeLauncherScreen() {
   };
 
   // Solid, borderless promo banner (filled gradient + white text), like a
-  // store coupon card. The big emoji sits opaque on the right.
+  // store coupon card. No icon — text only.
   const dealItem = (
-    emoji: string,
     badge: string,
     title: string,
     sub: string,
@@ -137,16 +137,13 @@ export function HomeLauncherScreen() {
         colors={gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, minHeight: 84, overflow: 'hidden' }}
+        style={{ borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, minHeight: 84, justifyContent: 'center', overflow: 'hidden' }}
       >
-        <View style={{ flex: 1 }}>
-          <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
-            <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{badge}</Text>
-          </View>
-          <Text style={{ fontSize: 15, fontWeight: '800', color: '#fff' }}>{title}</Text>
-          <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{sub}</Text>
+        <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
+          <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{badge}</Text>
         </View>
-        <Text style={{ fontSize: 40 }}>{emoji}</Text>
+        <Text style={{ fontSize: 15, fontWeight: '800', color: '#fff' }}>{title}</Text>
+        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{sub}</Text>
       </LinearGradient>
     </Tappable>
   );
@@ -231,9 +228,9 @@ export function HomeLauncherScreen() {
       </View>
       <PagedCarousel
         items={[
-          dealItem('🛢️', 'LIMITED · BUNDLE', 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', ['#E0A93E', '#C2871F'], 'honda-fairfax'),
-          dealItem('🔧', '20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', [palette.primary, palette.primaryDark], 'autofix-pro'),
-          dealItem('🛡️', 'SPONSORED', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', ['#1f9e75', '#13795a'], 'vienna-auto'),
+          dealItem('LIMITED · BUNDLE', 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', ['#E0A93E', '#C2871F'], 'honda-fairfax'),
+          dealItem('20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', [palette.primary, palette.primaryDark], 'autofix-pro'),
+          dealItem('SPONSORED', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', ['#1f9e75', '#13795a'], 'vienna-auto'),
         ]}
       />
 
