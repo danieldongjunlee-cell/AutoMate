@@ -6,11 +6,13 @@ import { request } from './client';
 
 export const proService = {
   async unlockPro() {
-    const res = await request<{ ok: boolean; priceCents: number; plan: 'annual' | 'monthly' }>(
-      '/pro/purchase',
-      { body: { plan: 'annual' } },
-    );
-    useAppStore.getState().unlockPro();
+    const res = await request<{
+      ok: boolean;
+      priceCents: number;
+      plan: 'annual' | 'monthly';
+      renewsAt?: string | null;
+    }>('/pro/purchase', { body: { plan: 'annual' } });
+    useAppStore.getState().unlockPro(res?.renewsAt ?? undefined);
     return (
       res ?? {
         ok: true,
@@ -21,11 +23,13 @@ export const proService = {
   },
 
   async subscribe(plan: 'annual' | 'monthly') {
-    const res = await request<{ ok: boolean; plan: 'annual' | 'monthly'; priceCents: number }>(
-      '/pro/subscribe',
-      { body: { plan } },
-    );
-    useAppStore.getState().subscribePro(plan);
+    const res = await request<{
+      ok: boolean;
+      plan: 'annual' | 'monthly';
+      priceCents: number;
+      renewsAt?: string | null;
+    }>('/pro/subscribe', { body: { plan } });
+    useAppStore.getState().subscribePro(plan, res?.renewsAt ?? undefined);
     return res ?? { ok: true, plan, priceCents: PRO_PLANS[plan].priceCents };
   },
 

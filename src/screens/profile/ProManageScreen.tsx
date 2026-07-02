@@ -20,6 +20,7 @@ export function ProManageScreen() {
   const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
   const planKey = useAppStore((s) => s.proPlan) ?? 'annual';
+  const renewsAt = useAppStore((s) => s.proRenewsAt);
   const cancelPro = useAppStore((s) => s.cancelPro);
   const subscribePro = useAppStore((s) => s.subscribePro);
   const plan = PRO_PLANS[planKey];
@@ -69,7 +70,16 @@ export function ProManageScreen() {
             ['Plan', plan.label],
             ['Price', priceLabel],
             ['Status', isPro ? 'Active' : 'Cancelled'],
-            ['Renews', isPro ? (planKey === 'annual' ? 'Jun 15, 2027' : 'Jul 15, 2026') : '—'],
+            [
+              'Renews',
+              isPro && renewsAt
+                ? new Date(renewsAt).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })
+                : '—',
+            ],
           ] as const
         ).map(([k, v]) => (
           <View

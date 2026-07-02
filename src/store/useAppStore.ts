@@ -82,6 +82,16 @@ export const PRO_PLANS = {
 };
 export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
 
+/** Next renewal date for a plan — mirrors server/src/routes/pro.ts renewsAtFor
+ *  (annual → +1 year, monthly → +1 month). Used when the server doesn't supply
+ *  one (mock mode / older responses). */
+const renewsAtFor = (plan: 'annual' | 'monthly'): string => {
+  const d = new Date();
+  if (plan === 'monthly') d.setMonth(d.getMonth() + 1);
+  else d.setFullYear(d.getFullYear() + 1);
+  return d.toISOString();
+};
+
 /**
  * A booking the user has made (v17 Bookings tab). Persisted client-side so a
  * completed repair/maintenance booking actually shows up in the Bookings tab
@@ -298,9 +308,11 @@ interface AppState {
   // waives booking deposits, OR a separate $10 one-time DIY-only unlock.
   isPro: boolean;
   proPlan: 'annual' | 'monthly' | null;
+  /** ISO date the subscription renews (server value in API mode, else computed). */
+  proRenewsAt: string | null;
   diyUnlocked: boolean; // true via Pro OR the $10 DIY-only purchase
-  unlockPro: () => void; // legacy entry — defaults to annual
-  subscribePro: (plan: 'annual' | 'monthly') => void;
+  unlockPro: (renewsAt?: string) => void; // legacy entry — defaults to annual
+  subscribePro: (plan: 'annual' | 'monthly', renewsAt?: string) => void;
   cancelPro: () => void; // cancel membership — effective immediately across the app
   unlockDiyOnly: () => void;
 
@@ -466,6 +478,7 @@ export const useAppStore = create<AppState>()(
       points: SEED_POINTS,
       isPro: false,
       proPlan: null,
+      proRenewsAt: null,
       diyUnlocked: false,
       dailyCheckedIn: false,
       noShowCount: 0,
@@ -497,13 +510,16 @@ export const useAppStore = create<AppState>()(
 
   isPro: false,
   proPlan: null,
+  proRenewsAt: null,
   diyUnlocked: false,
   // Pro includes DIY guides, so unlocking Pro also flips diyUnlocked.
-  unlockPro: () => set({ isPro: true, proPlan: 'annual', diyUnlocked: true }),
-  subscribePro: (plan) => set({ isPro: true, proPlan: plan, diyUnlocked: true }),
+  unlockPro: (renewsAt) =>
+    set({ isPro: true, proPlan: 'annual', proRenewsAt: renewsAt ?? renewsAtFor('annual'), diyUnlocked: true }),
+  subscribePro: (plan, renewsAt) =>
+    set({ isPro: true, proPlan: plan, proRenewsAt: renewsAt ?? renewsAtFor(plan), diyUnlocked: true }),
   // Cancelling takes effect immediately: Pro perks (deposit waiver) and the
   // bundled DIY-guide access are revoked right away across the whole app.
-  cancelPro: () => set({ isPro: false, diyUnlocked: false }),
+  cancelPro: () => set({ isPro: false, proRenewsAt: null, diyUnlocked: false }),
   unlockDiyOnly: () => set({ diyUnlocked: true }),
 
   dailyCheckedIn: false,

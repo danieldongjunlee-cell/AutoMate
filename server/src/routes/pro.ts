@@ -22,15 +22,16 @@ function renewsAtFor(plan: ProPlan): Date {
  */
 async function activatePro(userId: string, plan: ProPlan) {
   const existing = await prisma.proMembership.findFirst({ where: { userId } });
-  if (existing) return { priceCents: existing.priceCents, alreadyPro: true };
+  if (existing)
+    return { priceCents: existing.priceCents, renewsAt: existing.renewsAt, alreadyPro: true };
   const priceCents = PRO_PLANS[plan].priceCents;
-  await prisma.proMembership.create({
+  const membership = await prisma.proMembership.create({
     data: { userId, plan, priceCents, lifetime: false, renewsAt: renewsAtFor(plan) },
   });
   await prisma.payment.create({
     data: { userId, amountCents: priceCents, purpose: 'pro_membership' },
   });
-  return { priceCents, alreadyPro: false };
+  return { priceCents, renewsAt: membership.renewsAt, alreadyPro: false };
 }
 
 // GET /pro — membership status
@@ -42,15 +43,15 @@ proRouter.get('/', async (req, res) => {
 // POST /pro/subscribe { plan: 'annual' | 'monthly' }
 proRouter.post('/subscribe', async (req, res) => {
   const plan = planOf(req.body?.plan);
-  const { priceCents, alreadyPro } = await activatePro(req.user!.id, plan);
-  return res.json({ ok: true, plan, priceCents, alreadyPro });
+  const { priceCents, renewsAt, alreadyPro } = await activatePro(req.user!.id, plan);
+  return res.json({ ok: true, plan, priceCents, renewsAt, alreadyPro });
 });
 
 // POST /pro/purchase { plan? } — legacy unlockPro entry (defaults to annual)
 proRouter.post('/purchase', async (req, res) => {
   const plan = planOf(req.body?.plan);
-  const { priceCents, alreadyPro } = await activatePro(req.user!.id, plan);
-  return res.json({ ok: true, plan, priceCents, lifetime: false, alreadyPro });
+  const { priceCents, renewsAt, alreadyPro } = await activatePro(req.user!.id, plan);
+  return res.json({ ok: true, plan, priceCents, renewsAt, lifetime: false, alreadyPro });
 });
 
 // POST /pro/diy-unlock — $10 one-time DIY-only unlock (records the payment;
