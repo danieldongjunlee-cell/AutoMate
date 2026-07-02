@@ -135,7 +135,7 @@ model Payment {
   bookingId  String?  @unique @map("booking_id")
   amountCents Int     @map("amount_cents")
   method     String   @default("card") // card | apple_pay | points
-  purpose    String   @default("booking") // booking | pro_membership
+  purpose    String   @default("booking") // booking | pro_membership | diy_unlock
   status     String   @default("succeeded")
   createdAt  DateTime @default(now()) @map("created_at")
 

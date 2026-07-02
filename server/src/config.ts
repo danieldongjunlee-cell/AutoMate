@@ -21,6 +21,16 @@ export const DEMO_OTP = '123456';
 /** Points valuation (approved decision): 1 point = $0.01. */
 export const POINT_VALUE_USD = 0.01;
 
+/** Pro pricing — mirrors src/store/useAppStore.ts PRO_PLANS + DIY_ONLY_PRICE_CENTS
+ *  (keep in sync). Pro is a subscription (annual $48 ≈ $4/mo, or monthly $9.99);
+ *  the $10 one-time DIY-only unlock is a separate entitlement. */
+export const PRO_PLANS = {
+  annual: { priceCents: 4800 },
+  monthly: { priceCents: 999 },
+} as const;
+export type ProPlan = keyof typeof PRO_PLANS;
+export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
+
 /** Earn schedule — mirrors src/config/points.ts EARN_RULES (keep in sync). */
 export const EARN_RULES = {
   dailyCheckIn: 10,
