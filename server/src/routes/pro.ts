@@ -7,6 +7,14 @@ export const proRouter = Router();
 
 const planOf = (v: unknown): ProPlan => (v === 'monthly' ? 'monthly' : 'annual');
 
+/** Next renewal date for a plan: annual → +1 year, monthly → +1 month. */
+function renewsAtFor(plan: ProPlan): Date {
+  const d = new Date();
+  if (plan === 'monthly') d.setMonth(d.getMonth() + 1);
+  else d.setFullYear(d.getFullYear() + 1);
+  return d;
+}
+
 /**
  * Create (or return the existing) Pro subscription membership and record the
  * payment. Pro is a subscription, so `lifetime` is false and `priceCents` is
@@ -17,7 +25,7 @@ async function activatePro(userId: string, plan: ProPlan) {
   if (existing) return { priceCents: existing.priceCents, alreadyPro: true };
   const priceCents = PRO_PLANS[plan].priceCents;
   await prisma.proMembership.create({
-    data: { userId, priceCents, lifetime: false },
+    data: { userId, plan, priceCents, lifetime: false, renewsAt: renewsAtFor(plan) },
   });
   await prisma.payment.create({
     data: { userId, amountCents: priceCents, purpose: 'pro_membership' },

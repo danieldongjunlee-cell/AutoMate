@@ -3,6 +3,11 @@
 The serving path (`MODEL_MODE=live`) loads YOLO-seg weights at
 `models/damage-seg.pt`. This folder produces them.
 
+> **Want maximum accuracy?** This README covers the mechanics; see
+> [`HIGH_ACCURACY.md`](./HIGH_ACCURACY.md) for the ranked playbook (data
+> strategy, resolution, model size, augmentation, per-class evaluation, and the
+> downstream price calibration).
+
 ## ⚠ CarDD license — read first
 
 [CarDD](https://cardd-ustc.github.io) (Wang, Li & Wu, *"CarDD: A New Dataset

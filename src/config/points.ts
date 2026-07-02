@@ -20,8 +20,6 @@ export function pointsToUsd(points: number): string {
 export const EARN_RULES = {
   /** Daily check-in — once per calendar day, awarded on Home mount. */
   dailyCheckIn: 10,
-  /** Per-day streak bonus shown on the Home streak banner. */
-  streakDayBonus: 10,
   /** Scan service receipt → history. */
   scanReceipt: 20,
   /** Manual service log → history. */
@@ -45,7 +43,6 @@ export type EarnRule = keyof typeof EARN_RULES;
 /** Human-readable ledger reasons per rule (mirrors the server's reasons). */
 export const EARN_REASONS: Record<EarnRule, string> = {
   dailyCheckIn: 'Daily check-in',
-  streakDayBonus: 'Streak day bonus',
   scanReceipt: 'Scan service receipt',
   manualLog: 'Manual service log',
   bookService: 'Book service via app',

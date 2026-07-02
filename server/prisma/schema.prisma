@@ -207,11 +207,13 @@ model PointsLedgerEntry {
 }
 
 model ProMembership {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  priceCents  Int      @default(1000) @map("price_cents")
-  lifetime    Boolean  @default(true)
-  purchasedAt DateTime @default(now()) @map("purchased_at")
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  plan        String    @default("annual") // annual | monthly
+  priceCents  Int       @default(1000) @map("price_cents")
+  lifetime    Boolean   @default(true)
+  renewsAt    DateTime? @map("renews_at") // null for lifetime; next renewal for subscriptions
+  purchasedAt DateTime  @default(now()) @map("purchased_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

@@ -34,7 +34,6 @@ export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
 /** Earn schedule — mirrors src/config/points.ts EARN_RULES (keep in sync). */
 export const EARN_RULES = {
   dailyCheckIn: 10,
-  streakDayBonus: 10,
   scanReceipt: 20,
   manualLog: 10,
   bookService: 50,
