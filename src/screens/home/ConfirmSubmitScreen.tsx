@@ -17,7 +17,7 @@ import { saveDamageEstimate } from '../../lib/damageEstimates';
 import { damageEstimator, DamageEstimateResult } from '../../lib/damageEstimator';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { brandOf, modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
-import { DamagePart, useAppStore } from '../../store/useAppStore';
+import { DamagePart, submissionKey, useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
@@ -225,8 +225,9 @@ export function ConfirmSubmitScreen() {
   const [rejected, setRejected] = useState<string | null>(null);
   // The AI result held after analysis, until a guest signs in / up to unlock it.
   const [pendingEstimate, setPendingEstimate] = useState<DamageEstimateResult | null>(null);
-  // Returning user logged in to find they already have a quote for this car.
-  const [existingPrompt, setExistingPrompt] = useState(false);
+  // A prior quote request exists: 'replace' warns the old quotes get removed;
+  // 'duplicate' additionally flags that this submission is identical to it.
+  const [existingPrompt, setExistingPrompt] = useState<'replace' | 'duplicate' | null>(null);
   // Guest preview after analysis: AI range visible, shop quotes blurred behind
   // a "sign up / log in" gate.
   const [showPreview, setShowPreview] = useState(false);
@@ -246,14 +247,29 @@ export function ConfirmSubmitScreen() {
     return estimate;
   };
 
+  /** Signature of what's about to be submitted (parts + photos + car). */
+  const newSubmissionKey = () => {
+    const pending = useAppStore.getState().pendingVehicle;
+    return submissionKey(damageParts, active?.name ?? pending?.name);
+  };
+
+  /** Which prior-request prompt to show: identical submission → 'duplicate'. */
+  const promptFor = (): 'replace' | 'duplicate' => {
+    const prev = useAppStore.getState().lastSubmissionKey;
+    return prev && prev === newSubmissionKey() ? 'duplicate' : 'replace';
+  };
+
   /** Persist the car + submit the quote request, then open the result screen
    *  (AI estimate range + "View available quotes"). */
   const finalize = async (estimate: DamageEstimateResult) => {
-    setExistingPrompt(false);
+    setExistingPrompt(null);
     setSubmitting(true);
     try {
       // A new user just signed up — persist the car they entered during intake.
       const pending = useAppStore.getState().pendingVehicle;
+      // Snapshot before pendingVehicle is consumed — this key identifies the
+      // request so an identical resubmission can be flagged as a duplicate.
+      const subKey = submissionKey(damageParts, active?.name ?? pending?.name);
       if (pending) {
         vehiclesService
           .addVehicle({ name: pending.name, colorName: pending.colorName })
@@ -269,6 +285,7 @@ export function ConfirmSubmitScreen() {
       setAiEstimate(estimate.aiEstimate);
       setQuotesViewed(false); // new quotes → unread badge on the Quotes tab
       setIsNewUser(false);
+      useAppStore.getState().setLastSubmissionKey(subKey);
       saveDamageEstimate(damageParts, estimate)
         .then((id) => id && setDamageRequestId(id))
         .catch(() => {});
@@ -298,6 +315,14 @@ export function ConfirmSubmitScreen() {
       return;
     }
     if (isAuthenticated) {
+      // An open request already exists (submitted earlier this session) —
+      // warn before replacing it instead of silently overwriting.
+      if (useAppStore.getState().lastSubmissionKey) {
+        setSubmitting(false);
+        setPendingEstimate(estimate);
+        setExistingPrompt(promptFor());
+        return;
+      }
       await finalize(estimate);
       return;
     }
@@ -311,16 +336,19 @@ export function ConfirmSubmitScreen() {
     setShowPreview(true);
   };
 
-  // After the guest authenticates from the preview: a returning user (logged in,
-  // not a fresh sign-up) who already has a quote for this car gets the
-  // revise/cancel prompt; otherwise we save everything and show the result.
+  // After the guest authenticates from the preview: a fresh sign-up submits
+  // straight away (everything they entered as a guest carries into the new
+  // account — car, parts, estimate, quotes). A returning user who already has
+  // an open quote request gets the replace warning first — or the duplicate
+  // prompt when this submission is identical (same parts, photos and car).
   useResumeAfterAuth('unlockEstimate', () => {
     const est = pendingEstimate;
     if (!est) return;
     setShowPreview(false);
     const returning = !useAppStore.getState().isNewUser;
-    if (returning && active) {
-      setExistingPrompt(true);
+    const hasPriorRequest = Boolean(useAppStore.getState().lastSubmissionKey) || Boolean(active);
+    if (returning && hasPriorRequest) {
+      setExistingPrompt(promptFor());
     } else {
       void finalize(est);
     }
@@ -335,26 +363,61 @@ export function ConfirmSubmitScreen() {
     );
   }
 
-  // Returning user signed in to an account that already has a quote for this
-  // car — recommend revising or cancelling it before re-submitting.
+  // A prior open quote request exists — ask before replacing it. The
+  // 'duplicate' variant additionally flags that this submission is identical
+  // (same parts, photos and car) to the one already out with the shops.
   if (existingPrompt) {
+    const dup = existingPrompt === 'duplicate';
     return (
       <Screen>
         <View style={{ alignItems: 'center', paddingTop: spacing.xl, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>📋</Text>
+          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>{dup ? '🔁' : '📋'}</Text>
           <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: 6, textAlign: 'center' }}>
-            You already have a quote request
+            {dup ? 'Same as your previous request' : 'You already have an open quote request'}
           </Text>
           <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 21 }}>
-            There&apos;s an active quote request for your{' '}
-            <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{active?.name}</Text>. We recommend
-            revising it, or cancelling it and submitting this new request.
+            {dup ? (
+              <>
+                This submission has the{' '}
+                <Text style={{ fontWeight: '700', color: colors.textPrimary }}>
+                  same damaged part, photos and car
+                </Text>{' '}
+                as the request you already submitted. Do you still want to replace it?
+              </>
+            ) : (
+              <>
+                There&apos;s an unresolved quote request
+                {active?.name ? (
+                  <>
+                    {' '}for your{' '}
+                    <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
+                  </>
+                ) : null}{' '}
+                with quotes already received from auto shops. Do you want to replace it with this
+                new submission?
+              </>
+            )}
+          </Text>
+        </View>
+        <View
+          style={{
+            backgroundColor: colors.warningSurface,
+            borderWidth: 1,
+            borderColor: colors.warning,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginBottom: spacing.lg,
+          }}
+        >
+          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
+            ⚠️ Submitting the new request removes your previous quotes, and you&apos;ll wait to
+            receive new quotes until the auto shops respond.
           </Text>
         </View>
         <PrimaryButton
-          label="Revise existing request"
+          label="Keep my existing quotes"
           onPress={() => {
-            setExistingPrompt(false);
+            setExistingPrompt(null);
             setPendingEstimate(null);
             navigateCrossTab(navigation, 'QuotesTab', 'Quotes');
           }}
@@ -362,13 +425,13 @@ export function ConfirmSubmitScreen() {
         />
         <PrimaryButton
           variant="outline"
-          label="Cancel existing & submit this →"
+          label={dup ? 'Replace anyway →' : 'Replace & submit new request →'}
           onPress={() => pendingEstimate && finalize(pendingEstimate)}
           style={{ marginBottom: spacing.sm }}
         />
         <Tappable
           onPress={() => {
-            setExistingPrompt(false);
+            setExistingPrompt(null);
             setPendingEstimate(null);
           }}
           style={{ alignItems: 'center', paddingVertical: spacing.sm }}

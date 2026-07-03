@@ -241,6 +241,15 @@ export interface DamagePart {
   note?: string;
 }
 
+/** Deterministic signature of a quote submission — the same parts (name +
+ *  damage types + photos) on the same car produce the same key. Used to detect
+ *  that a new request is identical to the previously submitted one. */
+export function submissionKey(parts: DamagePart[], vehicleName?: string | null): string {
+  const partKey = (p: DamagePart) =>
+    `${p.part}|${p.type}|${(p.photoUris ?? []).slice().sort().join(',')}`;
+  return `${vehicleName ?? 'no-car'}::${parts.map(partKey).sort().join(';;')}`;
+}
+
 /** Reminder timing options (booking-confirm "Reminder set … Edit" modal). */
 export const REMINDER_OPTIONS = [
   '1 day before',
@@ -375,6 +384,11 @@ interface AppState {
   /** Whether the user has opened the Quotes tab since the latest submit (badge). */
   quotesViewed: boolean;
   setQuotesViewed: (v: boolean) => void;
+  /** submissionKey() of the last submitted quote request — non-null means an
+   *  open request exists; matching a new submission's key flags a duplicate.
+   *  Cleared when the request is cancelled or the session ends. */
+  lastSubmissionKey: string | null;
+  setLastSubmissionKey: (key: string | null) => void;
   /** Tab-badge "seen" flags — cleared when the tab is opened. */
   bookingsViewed: boolean;
   setBookingsViewed: (v: boolean) => void;
@@ -474,6 +488,7 @@ export const useAppStore = create<AppState>()(
       ...emptyDraft,
       aiEstimate: null,
       currentDamageRequestId: null,
+      lastSubmissionKey: null,
       cart: emptyCart,
       points: SEED_POINTS,
       isPro: false,
@@ -613,7 +628,14 @@ export const useAppStore = create<AppState>()(
     set((s) => {
       const byVehicle = { ...s.damageByVehicle };
       if (s.activeVehicleId) delete byVehicle[s.activeVehicleId];
-      return { damageParts: [], ...emptyDraft, aiEstimate: null, currentDamageRequestId: null, damageByVehicle: byVehicle };
+      return {
+        damageParts: [],
+        ...emptyDraft,
+        aiEstimate: null,
+        currentDamageRequestId: null,
+        lastSubmissionKey: null,
+        damageByVehicle: byVehicle,
+      };
     }),
   aiEstimate: null,
   setAiEstimate: (aiEstimate) => set({ aiEstimate }),
@@ -621,6 +643,8 @@ export const useAppStore = create<AppState>()(
   setDamageRequestId: (currentDamageRequestId) => set({ currentDamageRequestId }),
   quotesViewed: true,
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
+  lastSubmissionKey: null,
+  setLastSubmissionKey: (lastSubmissionKey) => set({ lastSubmissionKey }),
   // Starts "viewed" so seeded/returning bookings don't flash a tab badge on
   // login — the badge only appears when the user makes a NEW booking
   // (addBooking flips this to false).
@@ -692,8 +716,11 @@ export const useAppStore = create<AppState>()(
     set((s) => ({
       bookings: [full, ...s.bookings],
       bookingsViewed: false,
-      // Consume the id so it can't attach to an unrelated later booking.
+      // Consume the id so it can't attach to an unrelated later booking. A
+      // repair booking also resolves the open quote request, so a future
+      // submission shouldn't warn about replacing it.
       currentDamageRequestId: damageRequestId ? null : s.currentDamageRequestId,
+      lastSubmissionKey: booking.kind === 'repair' ? null : s.lastSubmissionKey,
     }));
   },
   removeBooking: (id) => {
