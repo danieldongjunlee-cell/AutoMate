@@ -247,10 +247,12 @@ export function ConfirmSubmitScreen() {
     return estimate;
   };
 
-  /** Signature of what's about to be submitted (parts + photos + car). */
+  /** Signature of what's about to be submitted (parts + photos + car).
+   *  pendingVehicle wins over the active car: it's the car this submission was
+   *  captured for (the active car can be a different, auto-pinned one). */
   const newSubmissionKey = () => {
     const pending = useAppStore.getState().pendingVehicle;
-    return submissionKey(damageParts, active?.name ?? pending?.name);
+    return submissionKey(damageParts, pending?.name ?? active?.name);
   };
 
   /** Which prior-request prompt to show: identical submission → 'duplicate'. */
@@ -269,12 +271,15 @@ export function ConfirmSubmitScreen() {
       const pending = useAppStore.getState().pendingVehicle;
       // Snapshot before pendingVehicle is consumed — this key identifies the
       // request so an identical resubmission can be flagged as a duplicate.
-      const subKey = submissionKey(damageParts, active?.name ?? pending?.name);
+      // pending wins: it's the car this submission was captured for.
+      const subKey = submissionKey(damageParts, pending?.name ?? active?.name);
       if (pending) {
         vehiclesService
           .addVehicle({ name: pending.name, colorName: pending.colorName })
           .then((r) => {
-            setActiveVehicle(r.vehicle.id);
+            // carrySubmission: this submission was captured for the car that
+            // was just persisted — keep it attached when the car activates.
+            setActiveVehicle(r.vehicle.id, { carrySubmission: true });
             void queryClient.invalidateQueries({ queryKey: ['vehicles'] });
           })
           .catch(() => {});

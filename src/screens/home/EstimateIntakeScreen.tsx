@@ -286,7 +286,8 @@ export function EstimateIntakeScreen() {
       try {
         const { vehicle } = await vehiclesService.addVehicle({ name, colorName: color });
         await queryClient.invalidateQueries({ queryKey: ['vehicles'] });
-        setActiveVehicle(vehicle.id);
+        // The parts being drafted belong to this just-added car.
+        setActiveVehicle(vehicle.id, { carrySubmission: true });
         setPendingVehicle(null);
       } finally {
         setSaving(false);

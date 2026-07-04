@@ -336,7 +336,10 @@ interface AppState {
   // Active vehicle (v17 car switcher — shown when >2 cars registered).
   // Switching cars swaps the per-car damage/quotes flow (see damageByVehicle).
   activeVehicleId: string | null;
-  setActiveVehicle: (id: string) => void;
+  /** Activate a car (swaps the per-car damage/quotes slice). Pass
+   *  `carrySubmission` when the current in-flight submission was captured for
+   *  the car being activated (e.g. it was just persisted from intake). */
+  setActiveVehicle: (id: string, opts?: { carrySubmission?: boolean }) => void;
   /** Per-car snapshots of the damage/quotes flow, keyed by vehicle id. */
   damageByVehicle: Record<string, DamageSlice>;
 
@@ -553,17 +556,28 @@ export const useAppStore = create<AppState>()(
   // Switching cars saves the current car's quotes/estimate and loads the target
   // car's, so bookings/quotes/estimate reflect the selected car (none if it has
   // never had an estimate).
-  setActiveVehicle: (id) =>
+  setActiveVehicle: (id, opts) =>
     set((s) => {
       if (s.activeVehicleId === id) return {};
       const byVehicle = { ...s.damageByVehicle };
-      if (s.activeVehicleId) {
-        byVehicle[s.activeVehicleId] = {
-          damageParts: s.damageParts,
-          aiEstimate: s.aiEstimate,
-          currentDamageRequestId: s.currentDamageRequestId,
-          quotesViewed: s.quotesViewed,
-        };
+      const current = {
+        damageParts: s.damageParts,
+        aiEstimate: s.aiEstimate,
+        currentDamageRequestId: s.currentDamageRequestId,
+        quotesViewed: s.quotesViewed,
+      };
+      if (opts?.carrySubmission) {
+        // The in-flight submission belongs to the car being activated (it was
+        // captured during this car's intake) — move it instead of stranding it
+        // under whichever car happened to be active while it was drafted.
+        byVehicle[id] = current;
+        if (s.activeVehicleId) delete byVehicle[s.activeVehicleId];
+      } else if (s.activeVehicleId) {
+        byVehicle[s.activeVehicleId] = current;
+      } else if (!byVehicle[id] && (s.damageParts.length > 0 || s.aiEstimate)) {
+        // No car was active (guest flow): first activation keeps the guest's
+        // in-flight submission rather than loading an empty slice.
+        byVehicle[id] = current;
       }
       const slice = byVehicle[id] ?? emptySlice;
       return {
