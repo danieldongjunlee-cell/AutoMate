@@ -1,0 +1,23 @@
+# AutoMate local infrastructure (phase 2): PostgreSQL for server/.
+# Run: docker compose up -d db
+services:
+  db:
+    image: postgres:16
+    container_name: automate-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: automate
+      POSTGRES_PASSWORD: automate
+      POSTGRES_DB: automate
+    ports:
+      - '5432:5432'
+    volumes:
+      - automate-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U automate -d automate']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  automate-pgdata:

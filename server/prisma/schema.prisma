@@ -1,0 +1,278 @@
+// AutoMate backend schema — phase 2 (DB + auth).
+// PostgreSQL via a pg driver adapter (Prisma 7). Connection URLs live in
+// ../prisma.config.ts (migrations) and ../src/prismaAdapter.ts (runtime),
+// both read from DATABASE_URL / DIRECT_URL — see ../.env.example.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Prisma 7: the datasource block carries only the provider; the connection URL
+// is supplied by the driver adapter at runtime and by prisma.config.ts for the
+// migrate/CLI commands.
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Auth + profile ─────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  name          String
+  username      String?
+  phone         String?
+  initial       String   @default("U")
+  completionPct Int      @default(0) @map("completion_pct")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  vehicles       Vehicle[]
+  damageRequests DamageRequest[]
+  bookings       Booking[]
+  payments       Payment[]
+  serviceHistory ServiceHistoryRecord[]
+  policies       InsurancePolicy[]
+  pointsLedger   PointsLedgerEntry[]
+  proMemberships ProMembership[]
+  notifications  Notification[]
+  posts          CommunityPost[]
+
+  @@map("users")
+}
+
+model Vehicle {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  name        String // "2019 Honda Accord EX-L"
+  colorName   String?  @map("color_name")
+  vin         String?
+  odometerMi  Int      @default(0) @map("odometer_mi")
+  oilSpec     String?  @map("oil_spec")
+  lastService String?  @map("last_service")
+  healthPct   Int      @default(100) @map("health_pct")
+  healthLabel String   @default("Good") @map("health_label")
+  oilDueInMi  Int?     @map("oil_due_in_mi")
+  marketValue Json?    @map("market_value") // { value, aboveAvg, low, high, barPct }
+  isPrimary   Boolean  @default(false) @map("is_primary")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user           User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceHistory ServiceHistoryRecord[]
+
+  @@map("vehicles")
+}
+
+// ── Damage → quotes → bookings ────────────────────────────────────────
+
+model DamageRequest {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  title         String
+  city          String?
+  parts         Json // [{ part, type, photos }]
+  photoRefs     String[] @map("photo_refs") // StorageProvider refs
+  // AI estimate result (phase 3 fills these for real; seeded for the demo)
+  aiType        String?  @map("ai_type")
+  aiPart        String?  @map("ai_part")
+  aiSeverity    String?  @map("ai_severity")
+  aiPriceLow    Int?     @map("ai_price_low")
+  aiPriceHigh   Int?     @map("ai_price_high")
+  aiConfidence  Float?   @map("ai_confidence") // 0..1
+  shopsNotified Int      @default(0) @map("shops_notified")
+  afterHours    Boolean  @default(false) @map("after_hours")
+  status        String   @default("open") // open | quoted | booked | closed
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quotes Quote[]
+
+  @@map("damage_requests")
+}
+
+model Quote {
+  id              String   @id @default(cuid())
+  damageRequestId String   @map("damage_request_id")
+  dealerId        String   @map("dealer_id")
+  dealerName      String   @map("dealer_name")
+  price           Int // USD
+  priceHigh       Int?     @map("price_high")
+  note            String
+  parts           String // OEM | Aftermarket
+  pinTop          Float    @default(50) @map("pin_top") // stylized-map pin (%)
+  pinLeft         Float    @default(50) @map("pin_left")
+  tier            String   @default("other") // best | recommended | other
+  status          String   @default("new") // new | accepted | declined
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  damageRequest DamageRequest @relation(fields: [damageRequestId], references: [id], onDelete: Cascade)
+
+  @@map("quotes")
+}
+
+model Booking {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  dealerId   String   @map("dealer_id")
+  dealerName String   @map("dealer_name")
+  kind       String   @default("maintenance") // maintenance | repair
+  services   Json // [{ id?, name, price, priceHigh?, durationMin? }]
+  date       String? // ISO date "2027-04-07"
+  time       String? // "8:00 AM"
+  totalCents Int      @default(0) @map("total_cents")
+  status     String   @default("confirmed") // confirmed | paid | completed | cancelled
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Payment?
+
+  @@map("bookings")
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  bookingId  String?  @unique @map("booking_id")
+  amountCents Int     @map("amount_cents")
+  method     String   @default("card") // card | apple_pay | points
+  purpose    String   @default("booking") // booking | pro_membership | diy_unlock
+  status     String   @default("succeeded")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking Booking? @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+// ── Maintenance history ────────────────────────────────────────────────
+
+model ServiceHistoryRecord {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  vehicleId String?  @map("vehicle_id")
+  type      String // "Oil change"
+  shop      String
+  dateLabel String   @map("date_label") // "Mar 12"
+  year      Int
+  mileage   String // "44,500 mi"
+  cost      Int // USD
+  icon      String   @default("🛢️")
+  source    String   @default("manual") // scan | manual | booking | seed
+  imageRef  String?  @map("image_ref") // receipt image (StorageProvider ref)
+  extracted Json? // OCR-extracted fields { serviceType, shop, date, mileage, amount }
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id])
+
+  @@map("service_history")
+}
+
+// ── Insurance ──────────────────────────────────────────────────────────
+
+model InsurancePolicy {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  carrier        String // "State Farm"
+  coverage       String // "Comprehensive + Collision"
+  policyNumber   String   @map("policy_number")
+  accountNumber  String?  @map("account_number")
+  deductible     Int      @default(500)
+  premiumPerYear Int      @map("premium_per_year")
+  covers         String? // "2019 Honda Accord"
+  renewal        String? // "Aug 15, 2027"
+  claimsPhone    String?  @map("claims_phone")
+  status         String   @default("Active")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("insurance_policies")
+}
+
+// ── Points + Pro ───────────────────────────────────────────────────────
+
+model PointsLedgerEntry {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  delta        Int // + earn / - redeem
+  reason       String
+  balanceAfter Int      @map("balance_after")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("points_ledger")
+}
+
+model ProMembership {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  plan        String    @default("annual") // annual | monthly
+  priceCents  Int       @default(1000) @map("price_cents")
+  lifetime    Boolean   @default(true)
+  renewsAt    DateTime? @map("renews_at") // null for lifetime; next renewal for subscriptions
+  purchasedAt DateTime  @default(now()) @map("purchased_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("pro_memberships")
+}
+
+// ── Notifications + community ──────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  icon      String   @default("🔔")
+  title     String
+  body      String
+  agoLabel  String?  @map("ago_label") // seeded wireframe copy ("2 hours ago")
+  unread    Boolean  @default(true)
+  tint      String   @default("neutral") // primary | success | gold | neutral
+  target    Json? // { screen, tab?, params? } deep link
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model CommunityPost {
+  id         String   @id @default(cuid())
+  channelId  String   @default("honda") @map("channel_id")
+  authorId   String?  @map("author_id") // null for seeded wireframe authors
+  authorName String   @map("author_name")
+  initial    String
+  color      String   @default("#7F77DD")
+  car        String
+  category   String // Tip | Review | Question | Warning | Quotes | DIY
+  body       String
+  replies    Int      @default(0)
+  likes      Int      @default(0)
+  hasPhoto   Boolean  @default(false) @map("has_photo")
+  agoLabel   String?  @map("ago_label")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  author   User?              @relation(fields: [authorId], references: [id])
+  comments CommunityComment[]
+
+  @@map("community_posts")
+}
+
+model CommunityComment {
+  id         String   @id @default(cuid())
+  postId     String   @map("post_id")
+  authorName String   @map("author_name")
+  initial    String
+  color      String   @default("#7F77DD")
+  car        String
+  likes      Int      @default(0)
+  body       String
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@map("community_comments")
+}

@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+train/runs/
+models/*.pt
+models/*.onnx
+models/*.engine
+models/*.torchscript
+# CarDD-derived data is research-only — never commit it.
+data/cardd/images/
+data/cardd/labels/
+!data/cardd/.gitkeep
+# legacy class-sorted inbox (kept for the old detector scaffold)
+data/damage/*/*
+!data/damage/*/.gitkeep
+data/damage-yolo/

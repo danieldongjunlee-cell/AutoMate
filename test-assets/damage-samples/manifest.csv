@@ -1,0 +1,4 @@
+filename,expected,part,types,notes
+front-bumper-scratch-dent.jpg,damage,Front bumper,"Scratch, Dent",silver sedan; scuffs + dent below right headlight (user-provided sample)
+clean-door-panel.jpg,reject,,,synthetic clean panel — must hit rejection path
+not-a-car.jpg,reject,,,synthetic non-car object — must hit rejection path

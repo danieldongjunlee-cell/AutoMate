@@ -1,0 +1,50 @@
+import {
+  ClaimType,
+  predictPremiumImpact,
+  PremiumImpactInput,
+  PremiumImpactResult,
+} from '../actuarial/predict';
+import { acceptedQuoteById } from './data';
+import { delay } from './delay';
+import { primaryPolicy } from './insuranceService';
+
+export interface ComparisonRequest {
+  /** Accepted quote whose low estimate is the repair (claim) amount. */
+  quoteId?: string | null;
+  /** Overrides the quote's price (e.g. the AI-estimate-adjusted amount). */
+  claimAmount?: number;
+  claimType?: ClaimType;
+}
+
+export interface Comparison {
+  /** Fully-resolved model input (claim + policy numbers actually used). */
+  input: PremiumImpactInput;
+  result: PremiumImpactResult;
+}
+
+/**
+ * Mock twin of the server's /compare/estimate route. Runs the SAME pure
+ * actuarial module (src/services/actuarial ↔ server/src/actuarial are
+ * byte-identical twins) against the wireframe accepted quote + State Farm
+ * policy, so the Compare tab shows the exact s-comp-deep-dive numbers:
+ * $320 cash vs $1,040 insurance, break-even month 1, verdict cash.
+ */
+export const compareService = {
+  async getComparison(req: ComparisonRequest = {}): Promise<Comparison> {
+    await delay(300);
+    const quote = acceptedQuoteById(req.quoteId);
+    // Live policy state (mock insuranceService) rather than the static
+    // INSURANCE_POLICY constant — editing the deductible/premium on
+    // prof-ins-edit changes the deep-dive math in mock mode too, exactly
+    // like the server resolving the stored policy on /compare/estimate.
+    const policy = primaryPolicy();
+    const input: PremiumImpactInput = {
+      claimType: req.claimType ?? 'collision',
+      claimAmount: req.claimAmount ?? quote.priceLow,
+      premiumPerYear: policy.premiumPerYear,
+      deductible: policy.deductible,
+      state: 'VA',
+    };
+    return { input, result: predictPremiumImpact(input) };
+  },
+};

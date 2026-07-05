@@ -1,0 +1,41 @@
+name: damage-ai
+
+# Mock tests gate every push that touches the service (CPU, no model). The live
+# job is manual and expects a GPU self-hosted runner with weights present.
+on:
+  push:
+    paths: ["services/damage-ai/**", ".github/workflows/damage-ai.yml"]
+  pull_request:
+    paths: ["services/damage-ai/**", ".github/workflows/damage-ai.yml"]
+  workflow_dispatch: {}
+
+defaults:
+  run:
+    working-directory: services/damage-ai
+
+jobs:
+  mock-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: pytest -q
+        env:
+          MODEL_MODE: mock
+
+  # Opt-in: needs a self-hosted NVIDIA runner with models/damage-seg.pt in place.
+  # Fails if the service silently degrades to mock (missing weights/deps).
+  live-tests:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: [self-hosted, gpu]
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install -r requirements.txt -r requirements-live.txt -r requirements-dev.txt
+      - run: pytest -q tests/test_estimate.py::test_estimate_live_loads_real_model
+        env:
+          MODEL_MODE: live
+          RUN_LIVE_TESTS: "1"
+          WEIGHTS_PATH: models/damage-seg.pt

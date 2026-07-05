@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "AutoMate",
+    "slug": "automate",
+    "version": "1.0.0",
+    "scheme": "automate",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.automate"
+    },
+    "android": {
+      "package": "com.automate.consumer",
+      "adaptiveIcon": {
+        "backgroundColor": "#0B1E3D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "AutoMate uses the camera to photograph vehicle damage and scan service receipts."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "096e2303-7881-4e6c-8f92-6bb81895c6cb"
+      }
+    }
+  }
+}

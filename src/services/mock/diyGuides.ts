@@ -1,0 +1,293 @@
+/**
+ * Real, readable DIY car-maintenance guides. Unlike the marketing-style
+ * teasers in `data.ts` (PRO_GUIDES / DIY_GUIDES), each entry here has full,
+ * follow-along instructions so the user can actually do the job.
+ */
+/** A material to buy for a DIY repair: photo + cheapest place to get it. */
+export interface DiyMaterial {
+  name: string;
+  emoji: string;
+  /** Real product photo (web). */
+  photo: string;
+  /** Typical cheapest price. */
+  price: string;
+  /** Cheapest retailer. */
+  store: string;
+  /** Where to buy (retailer listing/search). */
+  url: string;
+}
+
+export interface DiyGuide {
+  id: string;
+  title: string;
+  emoji: string;
+  minutes: number;
+  difficulty: 'Easy' | 'Medium';
+  tools: string[];
+  steps: string[];
+  tip?: string;
+  /** Shopping list with photos + cheapest buy links. */
+  materials?: DiyMaterial[];
+  /** A how-to video walkthrough. */
+  videoUrl?: string;
+  videoTitle?: string;
+}
+
+let _mLock = 1;
+/** Build a material with a stable web product photo + retailer link. */
+const mat = (name: string, emoji: string, photoKw: string, price: string, store: string, url: string): DiyMaterial => ({
+  name,
+  emoji,
+  photo: `https://loremflickr.com/120/120/${photoKw}?lock=${_mLock++}`,
+  price,
+  store,
+  url,
+});
+/** YouTube search link for a how-to video (always resolves). */
+const vid = (query: string) => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+
+export const DIY_GUIDES: DiyGuide[] = [
+  {
+    id: 'wiper-blades',
+    title: 'Replace wiper blades',
+    emoji: '🌧️',
+    minutes: 10,
+    difficulty: 'Easy',
+    tools: ['New wiper blades (check your size)', 'A towel'],
+    steps: [
+      'Find your blade size in the owner’s manual or measure the old blades — the driver and passenger sides are often different lengths.',
+      'Lift the wiper arm away from the windshield until it locks in the upright position. Lay a folded towel on the glass in case an arm snaps back.',
+      'Locate the small plastic tab or clip where the blade meets the arm. Press it in to release the lock.',
+      'Slide the old blade down the arm and off the hook, keeping the bare metal arm from hitting the windshield.',
+      'Line up the new blade’s connector with the hook and slide it on until you hear or feel it click into place.',
+      'Gently lower the arm back onto the glass and give the blade a light tug to confirm it’s locked.',
+      'Repeat on the other side, then run the wipers with washer fluid to check for streaks.',
+    ],
+    tip: 'Replace blades every 6–12 months. If they chatter or streak even when new, wipe the rubber edge with a little glass cleaner — road film is often the culprit.',
+    materials: [
+      mat('Wiper blades (pair)', '🌧️', 'windshield,wiper', '$12.99', 'AutoZone', 'https://www.autozone.com/search?searchText=wiper+blades'),
+      mat('Glass cleaner', '🧴', 'glass,cleaner,spray', '$3.48', 'Walmart', 'https://www.walmart.com/search?q=auto+glass+cleaner'),
+    ],
+    videoUrl: vid('how to replace windshield wiper blades'),
+    videoTitle: 'Replace wiper blades in 2 minutes',
+  },
+  {
+    id: 'engine-air-filter',
+    title: 'Change engine air filter',
+    emoji: '🍃',
+    minutes: 15,
+    difficulty: 'Easy',
+    tools: ['New engine air filter', 'Flat screwdriver (sometimes)', 'Shop towel'],
+    steps: [
+      'With the engine off and cool, open the hood and locate the air filter box — usually a large black plastic box near the front, connected to a wide duct.',
+      'Release the housing clips or unscrew the fasteners holding the lid. Some boxes use spring clips you flip up by hand.',
+      'Lift the lid and note exactly how the old filter sits (which side faces the engine) before removing it.',
+      'Pull out the old filter and wipe any leaves or dirt from inside the empty box with a shop towel.',
+      'Seat the new filter in the same orientation, making sure the rubber sealing edge sits flush all around.',
+      'Close the lid and re-secure every clip or screw — a loose lid lets in unfiltered air.',
+      'Close the hood and you’re done.',
+    ],
+    tip: 'Hold the old filter up to a light. If light barely passes through, it was overdue. Most cars want a new one every 15,000–30,000 miles, sooner in dusty areas.',
+  },
+  {
+    id: 'cabin-air-filter',
+    title: 'Replace cabin air filter',
+    emoji: '😮‍💨',
+    minutes: 15,
+    difficulty: 'Easy',
+    tools: ['New cabin air filter', 'Owner’s manual (for location)'],
+    steps: [
+      'Check your manual for the cabin filter location — most sit behind the glovebox; some are under the hood near the windshield.',
+      'For a glovebox filter, empty the glovebox, then squeeze its sides or release the stop arms so it drops down fully.',
+      'Behind it you’ll see a rectangular plastic cover. Unclip or slide it off to expose the filter.',
+      'Slide the old filter out, watching for an airflow arrow printed on its frame.',
+      'Insert the new filter so its airflow arrow points the same direction the old one did (usually downward).',
+      'Refit the cover and snap the glovebox back into its normal position.',
+      'Run the fan on high for a minute to confirm strong, odor-free airflow.',
+    ],
+    tip: 'A clogged cabin filter causes weak A/C airflow and musty smells. Replace it about once a year or every 15,000 miles.',
+    materials: [
+      mat('Cabin air filter', '😮‍💨', 'car,air,filter', '$8.99', 'Amazon', 'https://www.amazon.com/s?k=cabin+air+filter'),
+    ],
+    videoUrl: vid('how to replace cabin air filter behind glovebox'),
+    videoTitle: 'Replace a cabin air filter (glovebox)',
+  },
+  {
+    id: 'tire-pressure',
+    title: 'Check & top up tire pressure',
+    emoji: '🛞',
+    minutes: 15,
+    difficulty: 'Easy',
+    tools: ['Tire pressure gauge', 'Air pump or gas-station air machine'],
+    steps: [
+      'Check pressures when tires are cold (driven less than a mile). Find the recommended PSI on the sticker inside the driver’s door jamb — not the number on the tire sidewall.',
+      'Unscrew the valve cap on the first tire and keep it somewhere safe.',
+      'Press the gauge firmly onto the valve stem until the hissing stops and read the PSI.',
+      'If it’s low, attach the air hose and add air in short bursts, re-checking with the gauge as you go.',
+      'If it’s over the target, press the small pin inside the valve to let a little air out, then re-check.',
+      'Set all four tires to the recommended PSI and reinstall every valve cap.',
+      'Don’t forget the spare if your car has one — check it a few PSI above normal since it sits unused.',
+    ],
+    tip: 'Tires lose about 1 PSI per month and 1 PSI for every 10°F temperature drop. Properly inflated tires last longer and improve fuel economy.',
+  },
+  {
+    id: 'washer-fluid',
+    title: 'Top up windshield washer fluid',
+    emoji: '💦',
+    minutes: 5,
+    difficulty: 'Easy',
+    tools: ['Washer fluid (not plain water)', 'Funnel (optional)'],
+    steps: [
+      'Open the hood and find the washer reservoir cap — it’s marked with a windshield/water symbol and usually has a blue or white cap.',
+      'Pop the cap off. Most reservoirs are translucent so you can see the current fluid level.',
+      'Place a funnel in the opening if you have one, to avoid spills onto hot engine parts.',
+      'Pour in washer fluid until it reaches the “full” line or nears the top of the neck.',
+      'In freezing climates, use a winter-rated fluid so it won’t freeze and crack the reservoir.',
+      'Press the cap back on firmly until it clicks, then test the sprayers and wipers.',
+    ],
+    tip: 'Avoid plain water — it freezes, grows algae, and doesn’t cut through bug splatter. Dedicated washer fluid is cheap and works in all seasons.',
+  },
+  {
+    id: 'oil-level',
+    title: 'Check engine oil level',
+    emoji: '🛢️',
+    minutes: 10,
+    difficulty: 'Easy',
+    tools: ['Clean paper towel or rag', 'Engine oil (only if topping up)'],
+    steps: [
+      'Park on level ground and turn the engine off. Wait 5–10 minutes so the oil drains back into the pan for an accurate reading.',
+      'Open the hood and pull out the dipstick — it usually has a brightly colored loop handle.',
+      'Wipe the dipstick clean with a paper towel, then fully reinsert it and pull it out again.',
+      'Read where the oil film ends. It should sit between the two marks (MIN and MAX, or hatched area).',
+      'Check the color too — amber is healthy; very dark or gritty oil suggests it’s due for a change.',
+      'If the level is at or below MIN, add a small amount of the correct oil through the filler cap, then re-check. Add gradually — overfilling is harmful.',
+      'Reinsert the dipstick fully and close the hood.',
+    ],
+    tip: 'Check your oil once a month and before long road trips. Never add more than needed to reach MAX — too much oil can foam and damage seals.',
+  },
+  {
+    id: 'key-fob-battery',
+    title: 'Replace key fob battery',
+    emoji: '🔑',
+    minutes: 10,
+    difficulty: 'Easy',
+    tools: ['New coin battery (often CR2032)', 'Small flat screwdriver', 'Tape (optional)'],
+    steps: [
+      'If your fob hides a metal emergency key, slide it out — many fobs split open using that key as a lever.',
+      'Find the seam around the fob’s edge and gently pry it apart with a small flat screwdriver wrapped in tape to avoid scratches.',
+      'Note the battery model printed on the old cell (commonly CR2032) and which side faces up (+ symbol).',
+      'Pop out the old battery without bending the metal contacts.',
+      'Drop in the new battery the same way up — positive (+) side matching the old one — and avoid touching both faces with your fingers.',
+      'Press the two halves back together until the seam clicks shut, then reinsert the emergency key if applicable.',
+      'Test lock, unlock, and panic buttons from a few feet away.',
+    ],
+    tip: 'If the fob still feels weak after a fresh battery, the button contacts may be worn — but a dying battery is by far the most common cause of short range.',
+  },
+  {
+    id: 'jump-start',
+    title: 'Jump-start a dead battery',
+    emoji: '🔋',
+    minutes: 20,
+    difficulty: 'Medium',
+    tools: ['Jumper cables or a portable jump pack', 'A working donor vehicle (for cables)', 'Gloves & eye protection'],
+    steps: [
+      'Park the working car nose-to-nose with the dead one, close but not touching. Turn both engines off and set both parking brakes.',
+      'Identify the battery terminals: red/“+” is positive, black/“–” is negative.',
+      'Clamp one RED cable to the dead battery’s positive (+) terminal, then the other RED end to the good battery’s positive (+) terminal.',
+      'Clamp one BLACK cable to the good battery’s negative (–) terminal. Connect the final BLACK clamp to a bare metal bolt or bracket on the dead car’s engine — NOT to its battery — to avoid sparks near the battery.',
+      'Start the working car and let it run for 2–3 minutes to feed charge into the dead battery.',
+      'Try starting the dead car. If it cranks slowly, wait another few minutes and try again.',
+      'Once it starts, remove the clamps in reverse order: black from the engine ground, black from the good battery, red from the good battery, red from the revived battery.',
+      'Drive the revived car for at least 20–30 minutes so the alternator can recharge the battery.',
+    ],
+    tip: 'If the battery dies again soon after, it likely needs replacing or you left something on. Never let the two cars’ bodies touch, and never connect the final black clamp directly to the dead battery’s negative post.',
+  },
+  {
+    id: 'boiling-water-dent',
+    title: 'Boiling water dent method',
+    emoji: '♨️',
+    minutes: 15,
+    difficulty: 'Easy',
+    tools: ['Kettle or pot of boiling water', 'Rubber gloves', 'Cup-style plunger', 'A towel'],
+    steps: [
+      'Confirm the dent is on a flexible plastic panel (most bumpers) with intact paint — this method is for plastic, not creased steel.',
+      'Boil a kettle or pot of water and put on rubber gloves to protect your hands from the heat.',
+      'Pour the boiling water slowly over the dented area so the plastic warms and becomes pliable.',
+      'Working quickly while it is still hot, reach behind the panel and push the dent outward with your hand.',
+      'If you can’t reach behind it, press a clean cup-style plunger over the dent and pull firmly to draw it out.',
+      'Pour a little cold water over the area to set the plastic in its restored shape.',
+      'Repeat once or twice if a shallow dent remains. Deep creases may still need a body shop.',
+    ],
+    tip: 'Works best on warm days and on bumpers where the plastic flexes. It will not fix dents with cracked or chipped paint.',
+    materials: [
+      mat('Rubber dish gloves', '🧤', 'rubber,gloves', '$5.98', 'Walmart', 'https://www.walmart.com/search?q=rubber+gloves'),
+      mat('Cup-style plunger', '🪠', 'plunger,rubber', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Electric kettle', '♨️', 'electric,kettle', '$14.99', 'Amazon', 'https://www.amazon.com/s?k=electric+kettle'),
+    ],
+    videoUrl: vid('how to fix car bumper dent with boiling water'),
+    videoTitle: 'How to pop a bumper dent with boiling water',
+  },
+  {
+    id: 'plunger-dent',
+    title: 'Plunger pull method',
+    emoji: '🪠',
+    minutes: 12,
+    difficulty: 'Medium',
+    tools: ['Clean cup-style plunger (not a flanged toilet plunger)', 'Water', 'A towel'],
+    steps: [
+      'Pick a clean cup-style sink plunger. The dent should be wider than the cup but inside a smooth, flat area.',
+      'Lightly wet both the dent and the rim of the plunger cup so it can form a tight seal.',
+      'Center the plunger over the dent and press in firmly to push out the air and create suction.',
+      'Pull straight outward with steady force — you should feel or hear the panel pop back.',
+      'Repeat, re-wetting the seal as needed, until the surface is level.',
+      'Dry the area and inspect in good light; small high spots can be tapped gently from behind.',
+    ],
+    tip: 'Keep the pull straight, not at an angle, or the seal breaks. A sharp crease likely needs paintless dent repair by a pro.',
+    materials: [
+      mat('Cup-style sink plunger', '🪠', 'plunger,cup', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Microfiber towel', '🧽', 'microfiber,cloth', '$1.97', 'Walmart', 'https://www.walmart.com/search?q=microfiber+towel'),
+    ],
+    videoUrl: vid('how to remove car dent with plunger'),
+    videoTitle: 'Pull a door/panel dent with a plunger',
+  },
+  {
+    id: 'scratch-buff',
+    title: 'Buff out a light scratch',
+    emoji: '✨',
+    minutes: 20,
+    difficulty: 'Easy',
+    tools: ['Car wash soap & water', 'Microfiber cloths', 'Scratch-removal compound or polish', 'Optional: car wax'],
+    steps: [
+      'Wash and dry the scratched area so grit doesn’t grind into the paint while you work.',
+      'Run a fingernail across the scratch. If it doesn’t catch, it’s in the clear coat and can usually be buffed out.',
+      'Apply a small amount of scratch-removal compound to a clean, damp microfiber cloth.',
+      'Rub the compound over the scratch with firm, even strokes for 30–60 seconds, following the scratch direction.',
+      'Wipe away the residue with a clean cloth and check progress in good light.',
+      'Repeat two or three times for stubborn marks; finish with a coat of wax to seal and protect the area.',
+    ],
+    tip: 'If your nail catches the scratch, it has gone through the clear coat and needs touch-up paint or a shop — buffing alone won’t fill it.',
+    materials: [
+      mat('Scratch & swirl remover', '🧴', 'car,polish,bottle', '$7.97', 'AutoZone', 'https://www.autozone.com/search?searchText=scratch+remover'),
+      mat('Microfiber cloths (6pk)', '🧽', 'microfiber,cloths', '$6.99', 'Amazon', 'https://www.amazon.com/s?k=microfiber+cloth'),
+      mat('Car wax', '✨', 'car,wax', '$8.47', 'Walmart', 'https://www.walmart.com/search?q=car+wax'),
+    ],
+    videoUrl: vid('how to buff out car scratch clear coat'),
+    videoTitle: 'Buff a light clear-coat scratch by hand',
+  },
+];
+
+/**
+ * Pick the readable guide that best matches a recommended-repair label
+ * (e.g. "Rear bumper dent" → boiling-water/plunger dent guide). Matches on
+ * keywords in the guide title/id; falls back to the first guide.
+ */
+export function matchGuide(label: string): DiyGuide {
+  const q = label.toLowerCase();
+  const found = DIY_GUIDES.find((g) =>
+    `${g.id} ${g.title}`
+      .toLowerCase()
+      .split(/[\s-]+/)
+      .some((word) => word.length > 2 && q.includes(word)),
+  );
+  return found ?? DIY_GUIDES[0];
+}
