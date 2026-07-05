@@ -243,4 +243,18 @@ export const communityService: typeof mockCommunityService = {
       return mockCommunityService.toggleCommentLike(commentId);
     }
   },
+
+  /** Flag a post for moderation (App Store 1.2) — best-effort insert into
+   *  post_reports; falls back to an accepted no-op for seeded/non-uuid posts. */
+  async reportPost(postId: string, reason?: string): Promise<{ ok: boolean }> {
+    try {
+      const { error } = await client()
+        .from('post_reports')
+        .insert({ post_id: postId, reason: reason ?? 'inappropriate' });
+      if (error) throw error;
+      return { ok: true };
+    } catch {
+      return mockCommunityService.reportPost(postId, reason);
+    }
+  },
 };

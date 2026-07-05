@@ -11,7 +11,9 @@ import { UsePointsRow } from '../../components/UsePointsRow';
 import { POINTS_PER_USD, POINT_VALUE_USD, pointsToUsd } from '../../config/points';
 import { MaintStackParamList } from '../../navigation/types';
 import { PAYMENT_CARD } from '../../services/mock/data';
-import { pointsService, proService } from '../../services';
+import { pointsService } from '../../services';
+import { purchases } from '../../services/purchases';
+import { showAlert } from '../../utils/alerts';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
@@ -42,7 +44,13 @@ export function DiyPaymentScreen() {
       if (applied > 0) {
         await pointsService.redeem(applied, 'Redeemed for AutoMate Pro');
       }
-      await proService.unlockPro(); // flips store.isPro
+      // Digital unlock → StoreKit on App Store builds (guideline 3.1.1),
+      // direct charge elsewhere. Points redemption above stays on either rail.
+      const res = await purchases.purchaseDiyUnlock();
+      if (!res.ok) {
+        if (!res.cancelled && res.error) showAlert('Purchase unavailable', res.error);
+        return;
+      }
       navigation.navigate('DiyConfirm');
     } finally {
       setPaying(false);

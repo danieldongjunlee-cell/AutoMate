@@ -398,6 +398,11 @@ interface AppState {
   /** Community post ids the user has opened/seen → drives the unread-posts badge. */
   readPostIds: Record<string, boolean>;
   markPostsRead: (ids: string[]) => void;
+  /** Authors this user has blocked (App Store 1.2) — their posts/comments are
+   *  hidden everywhere. Keyed by display name (the client post shape's id). */
+  blockedAuthors: string[];
+  blockAuthor: (author: string) => void;
+  unblockAuthor: (author: string) => void;
   /** Communities the user has explicitly joined. Empty for new users — a
    *  registered car makes its brand's communities *appear*, but none are joined
    *  (and no notifications) until the user joins one. */
@@ -502,6 +507,7 @@ export const useAppStore = create<AppState>()(
       noShowCount: 0,
       activeVehicleId: null,
       damageByVehicle: {},
+      blockedAuthors: [],
       joinedCommunityIds: [],
       bookings: SEED_BOOKINGS,
       bookingsViewed: true,
@@ -673,6 +679,13 @@ export const useAppStore = create<AppState>()(
       for (const id of missing) next[id] = true;
       return { readPostIds: next };
     }),
+  blockedAuthors: [],
+  blockAuthor: (author) =>
+    set((s) =>
+      s.blockedAuthors.includes(author) ? {} : { blockedAuthors: [...s.blockedAuthors, author] },
+    ),
+  unblockAuthor: (author) =>
+    set((s) => ({ blockedAuthors: s.blockedAuthors.filter((a) => a !== author) })),
   joinedCommunityIds: [],
   joinCommunity: (id) =>
     set((s) => (s.joinedCommunityIds.includes(id) ? {} : { joinedCommunityIds: [...s.joinedCommunityIds, id] })),
@@ -790,6 +803,8 @@ export const useAppStore = create<AppState>()(
         user: s.user,
         isNewUser: s.isNewUser,
         darkMode: s.darkMode,
+        // Moderation must survive restarts (App Store 1.2).
+        blockedAuthors: s.blockedAuthors,
       }),
     },
   ),

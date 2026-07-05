@@ -306,6 +306,46 @@ async function main() {
   const bPoints = await req('GET', '/points', undefined, tokenB);
   check("user B's points independent", bPoints.json?.balance === 0 || bPoints.json?.balance === undefined ? bPoints.json?.balance === 0 : true);
 
+  // ── 8. UGC moderation: report a post ─────────────────────────────────
+  console.log('\n[8] UGC moderation');
+  const newPost = await req(
+    'POST',
+    '/community/posts',
+    { body: 'QA post for report flow', category: 'Question', photoCount: 0 },
+    tokenA,
+  );
+  check('create post ok (+points)', newPost.status === 200 && newPost.json?.pointsEarned > 0);
+  const postRow = await prisma.communityPost.findFirst({
+    where: { authorId: userA!.id },
+    orderBy: { createdAt: 'desc' },
+  });
+  check('post row created', !!postRow);
+  const report = await req('POST', `/community/posts/${postRow!.id}/report`, { reason: 'spam' }, tokenB);
+  check('report accepted', report.status === 200 && report.json?.ok === true);
+  const reportRow = await prisma.communityReport.findFirst({
+    where: { postId: postRow!.id, userId: userB!.id },
+  });
+  check('report row: reason + open status', reportRow?.reason === 'spam' && reportRow?.status === 'open');
+  await req('POST', `/community/posts/${postRow!.id}/report`, { reason: 'spam again' }, tokenB);
+  const reportCount = await prisma.communityReport.count({ where: { postId: postRow!.id, userId: userB!.id } });
+  check('repeat report is idempotent (1 row)', reportCount === 1);
+  const reportMissing = await req('POST', '/community/posts/nope-123/report', {}, tokenB);
+  check('report on unknown post → 404', reportMissing.status === 404);
+
+  // ── 9. Account deletion (App Store 5.1.1(v)) ─────────────────────────
+  console.log('\n[9] Account deletion');
+  const del = await req('DELETE', '/profile', undefined, tokenB);
+  check('DELETE /profile ok', del.status === 200 && del.json?.ok === true);
+  const userBGone = await prisma.user.findUnique({ where: { email: emailB } });
+  check('user row removed', userBGone === null);
+  const bMemGone = await prisma.proMembership.count({ where: { userId: userB!.id } });
+  const bLedgerGone = await prisma.pointsLedgerEntry.count({ where: { userId: userB!.id } });
+  check('cascade removed membership + ledger', bMemGone === 0 && bLedgerGone === 0);
+  const reportDetached = await prisma.communityReport.findFirst({ where: { postId: postRow!.id } });
+  check('their report survives, detached (user_id null)', !!reportDetached && reportDetached.userId === null);
+  const staleToken = await req('GET', '/points', undefined, tokenB);
+  check('deleted user token → 401', staleToken.status === 401);
+
   // ── Summary ──────────────────────────────────────────────────────────
   console.log(`\n=== Phase 3: ${passed} passed, ${failed} failed ===`);
   if (failures.length) {

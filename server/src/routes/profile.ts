@@ -32,6 +32,17 @@ profileRouter.put('/', async (req, res) => {
   return res.json({ ok: true, user: { name: user.name, email: user.email } });
 });
 
+// DELETE /profile — permanently delete the account and all owned data
+// (App Store guideline 5.1.1(v) requires in-app account deletion). Prisma
+// cascades remove vehicles, damage requests + quotes, bookings, payments,
+// service history, policies, points ledger, memberships and notifications;
+// community posts survive but are detached (author_id → null), matching the
+// seeded-author display path.
+profileRouter.delete('/', async (req, res) => {
+  await prisma.user.delete({ where: { id: req.user!.id } });
+  return res.json({ ok: true });
+});
+
 // ── Vehicles CRUD (prof-cars) ──────────────────────────────────────────
 
 profileRouter.get('/vehicles', async (req, res) => {

@@ -37,6 +37,7 @@ model User {
   proMemberships ProMembership[]
   notifications  Notification[]
   posts          CommunityPost[]
+  reports        CommunityReport[]
 
   @@map("users")
 }
@@ -257,6 +258,7 @@ model CommunityPost {
 
   author   User?              @relation(fields: [authorId], references: [id])
   comments CommunityComment[]
+  reports  CommunityReport[]
 
   @@map("community_posts")
 }
@@ -275,4 +277,20 @@ model CommunityComment {
   post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@map("community_comments")
+}
+
+// User-generated-content report (App Store guideline 1.2: objectionable
+// content must be flaggable and reviewed). status: open | reviewed | actioned.
+model CommunityReport {
+  id        String   @id @default(cuid())
+  postId    String   @map("post_id")
+  userId    String?  @map("user_id") // reporter; null once their account is deleted
+  reason    String   @default("inappropriate")
+  status    String   @default("open")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("community_reports")
 }

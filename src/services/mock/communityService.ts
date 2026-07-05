@@ -110,4 +110,10 @@ export const communityService = {
         (photoCount > 0 ? EARN_RULES.communityPhotoBonus : 0)) as number,
     };
   },
+
+  /** Flag a post for moderation (App Store 1.2). Mock: always accepted. */
+  async reportPost(_postId: string, _reason?: string): Promise<{ ok: boolean }> {
+    await delay(350);
+    return { ok: true };
+  },
 };
