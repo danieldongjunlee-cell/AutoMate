@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Image, Modal, Text, View } from 'react-native';
 
+import { AiInspectLogo } from '../../components/AiInspectLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { GuestBanner } from '../../components/GuestBanner';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
@@ -312,6 +313,7 @@ export function HomeLauncherScreen() {
         {actionCard({
           title: t('AI Repair Estimate'),
           phrase: 'Free quote in 5 min',
+          iconNode: <AiInspectLogo size={108} />,
           onPress: () => navigation.navigate('CarDiagram'),
         })}
         {actionCard({
