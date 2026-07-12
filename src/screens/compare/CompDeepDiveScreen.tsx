@@ -346,10 +346,19 @@ export function CompDeepDiveScreen() {
         ) : null}
       </View>
 
-      <PrimaryButton
-        label={`Book ${dealer.name} · Pay cash →`}
-        onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
-      />
+      {/* CTA follows the verdict: cash wins → book & pay cash; insurance wins
+          → start the claim with the insurer instead of offering a cash path. */}
+      {cashWins ? (
+        <PrimaryButton
+          label={`Book ${dealer.name} · Pay cash →`}
+          onPress={() => navigation.navigate('CompCashBook', { quoteId: aq.id })}
+        />
+      ) : (
+        <PrimaryButton
+          label={`Call ${INSURANCE_POLICY.carrier} · Start your claim →`}
+          onPress={() => navigation.navigate('CompInsurance', { quoteId: aq.id })}
+        />
+      )}
     </Screen>
   );
 }

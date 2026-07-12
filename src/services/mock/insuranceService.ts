@@ -44,12 +44,12 @@ export interface ConnectResult {
 }
 
 /**
- * Module-state policy list seeded with the State Farm policy, so edits and
- * additions survive navigation. Renewal follows the DB seed / prof-ins-edit
- * value (Aug 15, 2027) — the wireframe's prof-insurance row said Dec 15, 2025,
- * but with one live policy record a single date has to win.
+ * Module-state policy list. Starts EMPTY: a fresh account has no insurance on
+ * file and must add a policy (More → Insurance policy) before cash-vs-insurance
+ * unlocks. The returning demo account is seeded at login via
+ * `seedDemoPolicies()`, so it behaves like an established user.
  */
-let policies: Policy[] = [
+const DEMO_POLICIES: Policy[] = [
   {
     id: 'pol-statefarm',
     carrier: INSURANCE_POLICY.carrier,
@@ -73,15 +73,28 @@ let policies: Policy[] = [
     status: 'Active',
   },
 ];
+let policies: Policy[] = [];
 let nextId = 1;
+
+/** Returning demo user logs in with policies already on file. */
+export const seedDemoPolicies = () => {
+  if (policies.length === 0) policies = DEMO_POLICIES.map((p) => ({ ...p }));
+};
+/** A brand-new sign-up starts with no insurance on file. */
+export const clearPolicies = () => {
+  policies = [];
+};
+/** Compare-Costs gate: has the user put any insurance on file? */
+export const hasPolicies = () => policies.length > 0;
 
 /**
  * Synchronous snapshot of the user's primary policy for the mock
  * compareService — deductible/premium edits flow straight into the
  * cash-vs-insurance math, mirroring how the server resolves the stored
- * policy on /compare/estimate.
+ * policy on /compare/estimate. Falls back to the wireframe State Farm
+ * numbers if compare is somehow reached with no policy on file.
  */
-export const primaryPolicy = (): Policy => policies[0];
+export const primaryPolicy = (): Policy => policies[0] ?? DEMO_POLICIES[0];
 
 /** Demo card — same fields as the damage-ai mock (app/mock_engine.py). */
 const SCANNED_CARD: ScannedInsuranceCard = {

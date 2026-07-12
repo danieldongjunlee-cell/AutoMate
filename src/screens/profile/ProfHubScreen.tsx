@@ -61,7 +61,9 @@ export function ProfHubScreen() {
   const policy = policies?.[0];
   const insuranceSub = policy
     ? `${policy.carrier} · $${policy.deductible} deductible`
-    : `${INSURANCE_POLICY.carrier} · $${INSURANCE_POLICY.deductible} deductible`;
+    : policies
+      ? 'Add your policy to unlock cash vs insurance'
+      : `${INSURANCE_POLICY.carrier} · $${INSURANCE_POLICY.deductible} deductible`;
 
   // Live cars for the "My cars" row — drives the same "Check" prompt logic.
   const { data: vehicles } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });

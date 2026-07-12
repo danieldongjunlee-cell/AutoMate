@@ -381,8 +381,13 @@ export function MainTabs() {
   // Bookings badge = how many upcoming services the ACTIVE car has (confirmed or
   // prepaid). Scoping to the active car matches the Bookings list (which filters
   // by car), so an empty list never shows a stray count.
+  // Seeded demo bookings (bk-seed-*) never count: the badge only appears once
+  // the user actually books an appointment in this session.
   const upcoming = bookings.filter(
-    (b) => b.brand === brand && (b.status === 'confirmed' || b.status === 'paid'),
+    (b) =>
+      b.brand === brand &&
+      !b.id.startsWith('bk-seed-') &&
+      (b.status === 'confirmed' || b.status === 'paid'),
   ).length;
   // Community = unread posts in the communities the user has JOINED (no joins →
   // no badge). Cleared as the posts are read.
