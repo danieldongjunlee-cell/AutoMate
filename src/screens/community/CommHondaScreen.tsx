@@ -42,7 +42,9 @@ export function CommHondaScreen() {
   );
   const markPostsRead = useAppStore((s) => s.markPostsRead);
   // Browsing a community marks its posts read (drives the unread-posts badge).
-  useEffect(() => markPostsRead(posts.map((p) => p.id)), [posts, markPostsRead]);
+  useEffect(() => {
+    markPostsRead(posts.map((p) => p.id));
+  }, [posts, markPostsRead]);
 
   useEffect(() => {
     navigation.setOptions({

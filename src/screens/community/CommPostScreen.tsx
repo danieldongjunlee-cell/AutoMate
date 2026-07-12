@@ -44,7 +44,9 @@ export function CommPostScreen() {
   const post = route.params?.post ?? data?.post;
   const comments = data?.comments ?? [];
   const markPostsRead = useAppStore((s) => s.markPostsRead);
-  useEffect(() => markPostsRead([postId]), [postId, markPostsRead]);
+  useEffect(() => {
+    markPostsRead([postId]);
+  }, [postId, markPostsRead]);
 
   // Sync the like button with the post (real likedByMe + count).
   useEffect(() => {
