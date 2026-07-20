@@ -8,6 +8,7 @@
  * The `typeof mock*` annotations pin the api twins to the exact mock
  * signatures, so the two sets can never drift apart.
  */
+import { accountService as apiAccountService } from './api/accountService';
 import { authService as apiAuthService } from './api/authService';
 import { apiEnabled } from './api/client';
 import { communityService as apiCommunityService } from './api/communityService';
@@ -20,6 +21,7 @@ import { pointsService as apiPointsService } from './api/pointsService';
 import { proService as apiProService } from './api/proService';
 import { quoteService as apiQuoteService } from './api/quoteService';
 import { vehiclesService as apiVehiclesService } from './api/vehiclesService';
+import { accountService as mockAccountService } from './mock/accountService';
 import { authService as mockAuthService } from './mock/authService';
 import { communityService as mockCommunityService } from './mock/communityService';
 import { compareService as mockCompareService } from './mock/compareService';
@@ -48,6 +50,9 @@ export const USE_API = apiEnabled;
 export const USE_SUPABASE = isSupabaseConfigured;
 
 export const authService: typeof mockAuthService = USE_API ? apiAuthService : mockAuthService;
+export const accountService: typeof mockAccountService = USE_API
+  ? apiAccountService
+  : mockAccountService;
 export const quoteService: typeof mockQuoteService = USE_API ? apiQuoteService : mockQuoteService;
 export const maintService: typeof mockMaintService = USE_API ? apiMaintService : mockMaintService;
 export const notificationService: typeof mockNotificationService = USE_API

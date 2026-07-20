@@ -11,7 +11,9 @@ import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
-import { PaymentCard, paymentMethodsService, proService } from '../../services';
+import { PaymentCard, paymentMethodsService } from '../../services';
+import { purchases } from '../../services/purchases';
+import { showAlert } from '../../utils/alerts';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSubscribe'>;
@@ -39,14 +41,18 @@ export function ProSubscribeScreen() {
   const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
 
   // v17: the plan-pick screen is the commit point — subscribe → success (no
-  // separate payment screen). Tapping the priced button is the confirmation,
-  // so the charge goes through directly for either plan (annual or monthly).
-  // Real IAP billing is wired at store launch.
+  // separate payment screen). Tapping the priced button is the confirmation.
+  // Pro is a digital subscription, so on App Store builds the purchases layer
+  // routes it through StoreKit (guideline 3.1.1); elsewhere it charges direct.
   const startPro = async () => {
     if (busy) return;
     setBusy(true);
     try {
-      await proService.subscribe(plan);
+      const res = await purchases.purchasePro(plan);
+      if (!res.ok) {
+        if (!res.cancelled && res.error) showAlert('Purchase unavailable', res.error);
+        return;
+      }
       navigation.navigate('ProSuccess', returnTo ? { returnTo } : undefined);
     } finally {
       setBusy(false);

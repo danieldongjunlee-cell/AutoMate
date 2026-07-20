@@ -43,7 +43,9 @@ export function QuotesReceivedScreen() {
   const quotes = useMemo(() => quotesInEstimateRange(rawQuotes ?? [], aiEstimate), [rawQuotes, aiEstimate]);
 
   // Opening this tab clears the unread-quotes badge.
-  useEffect(() => setQuotesViewed(true), [setQuotesViewed]);
+  useEffect(() => {
+    setQuotesViewed(true);
+  }, [setQuotesViewed]);
 
   const [distance, setDistance] = useState(DISTANCE_FILTERS[0]);
   const [sort, setSort] = useState(SORT_OPTS[0]);

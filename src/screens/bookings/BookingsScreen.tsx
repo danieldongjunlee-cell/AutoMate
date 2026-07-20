@@ -38,7 +38,9 @@ export function BookingsScreen() {
   const setBookingsViewed = useAppStore((s) => s.setBookingsViewed);
   const markBookingCompleted = useAppStore((s) => s.markBookingCompleted);
   // Opening the Bookings tab clears its badge.
-  useEffect(() => setBookingsViewed(true), [setBookingsViewed]);
+  useEffect(() => {
+    setBookingsViewed(true);
+  }, [setBookingsViewed]);
   // Only the active car's bookings (switching cars shows a different list).
   const bookings = allBookings.filter((b) => b.brand === brand);
 

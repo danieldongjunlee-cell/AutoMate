@@ -1,13 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Modal, Text, View } from 'react-native';
 
 import { AiInspectLogo } from '../../components/AiInspectLogo';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { GuestBanner } from '../../components/GuestBanner';
-import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { Tappable } from '../../components/Tappable';
@@ -16,6 +17,7 @@ import { useT } from '../../i18n';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { HOME_REVIEWS, HomeReview } from '../../services/mock/data';
+import { insuranceService } from '../../services';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { STAR_YELLOW } from '../../components/RatingLink';
@@ -39,6 +41,19 @@ export function HomeLauncherScreen() {
   const user = useAppStore((s) => s.user);
   const firstName = isAuthenticated ? (user?.name ?? '').trim().split(/\s+/)[0] : '';
   const requireAuth = useRequireAuth();
+  // Compare Costs is gated on BOTH an AI estimate and an insurance policy on
+  // file — the cash-vs-insurance math needs a real deductible/premium to be
+  // honest. Shares the ['policies'] cache with the More-tab insurance screens.
+  const { data: policies } = useQuery({
+    queryKey: ['policies'],
+    queryFn: () => insuranceService.listPolicies(),
+    enabled: isAuthenticated,
+  });
+  const hasInsurance = (policies ?? []).length > 0;
+  const [compareLockOpen, setCompareLockOpen] = React.useState(false);
+  // Guest tapped Compare → signed in → pick up where they left off: show the
+  // remaining unlock steps (or go straight in if nothing is missing).
+  useResumeAfterAuth('compare', () => setCompareLockOpen(true));
 
   // All home actions share one white card surface; a soft outer drop shadow
   // lifts each button off the background.
@@ -79,19 +94,38 @@ export function HomeLauncherScreen() {
           <Text style={{ fontSize: 13, fontWeight: '600', color: subColor, marginTop: 3 }}>{opts.phrase}</Text>
           {opts.iconNode ? (
             <View style={{ position: 'absolute', right: 0, bottom: 0, opacity: 0.95 }}>{opts.iconNode}</View>
-          ) : (
+          ) : opts.icon ? (
             <Text style={{ position: 'absolute', right: 6, bottom: 2, fontSize: 46 }}>{opts.icon}</Text>
-          )}
+          ) : null}
         </View>
       </View>
     </Tappable>
   );
 
-  /** Full-width Compare Costs button — greyed out until an AI estimate exists. */
+  /** Full-width Compare Costs button — locked until the user is signed in,
+      has run an AI estimate AND has an insurance policy on file (the
+      cash-vs-insurance math needs a real deductible). Tapping while locked
+      explains exactly what's missing and where to fix it. */
+  const compareUnlocked = isAuthenticated && !!aiEstimate && hasInsurance;
+  const compareLockHint = !isAuthenticated
+    ? 'Sign in, run an AI estimate & add insurance to unlock'
+    : !aiEstimate && !hasInsurance
+      ? 'Run AI repair estimate & add your insurance policy to unlock'
+      : !aiEstimate
+        ? 'Run AI repair estimate first to unlock'
+        : 'Add your insurance policy to unlock';
+  const onComparePress = () => {
+    if (compareUnlocked) {
+      navigation.navigate('CompSelect');
+      return;
+    }
+    if (!requireAuth('compare')) return; // guest → auth sheet first
+    setCompareLockOpen(true);
+  };
   const compareCard = () => {
-    const unlocked = !!aiEstimate;
+    const unlocked = compareUnlocked;
     return (
-      <Tappable onPress={() => navigation.navigate(unlocked ? 'CompSelect' : 'CarDiagram')}>
+      <Tappable onPress={onComparePress}>
         <View style={{ backgroundColor: unlocked ? colors.surface : colors.surfaceAlt, borderRadius: radii.lg, marginBottom: spacing.md, ...(unlocked ? cardShadow : {}) }}>
           <View
             style={{
@@ -112,7 +146,7 @@ export function HomeLauncherScreen() {
             <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textTertiary, marginTop: 3 }}>
               {unlocked
                 ? `$${aiEstimate?.priceLow}–$${aiEstimate?.priceHigh} · cash vs insurance`
-                : 'Run AI repair estimate first to unlock'}
+                : compareLockHint}
             </Text>
             <Text style={{ position: 'absolute', right: 10, bottom: 4, fontSize: 40, opacity: unlocked ? 1 : 0.5 }}>
               {unlocked ? '⚖️' : '🔒'}
@@ -120,6 +154,80 @@ export function HomeLauncherScreen() {
           </View>
         </View>
       </Tappable>
+    );
+  };
+
+  /** Explains what's still needed for Compare Costs and jumps the user there. */
+  const compareLockSheet = () => {
+    const needsEstimate = !aiEstimate;
+    const needsInsurance = !hasInsurance;
+    const stepRow = (done: boolean, title: string, hint: string) => (
+      <View key={title} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start', marginBottom: spacing.sm }}>
+        <Text style={{ fontSize: 17 }}>{done ? '✅' : '⬜'}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
+          {done ? null : (
+            <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 1, lineHeight: 18 }}>{hint}</Text>
+          )}
+        </View>
+      </View>
+    );
+    return (
+      <Modal
+        visible={compareLockOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setCompareLockOpen(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.55)', justifyContent: 'center', padding: spacing.xl }}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, padding: spacing.lg }}>
+            <Text style={{ fontSize: 34, textAlign: 'center', marginBottom: spacing.sm }}>⚖️</Text>
+            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, textAlign: 'center', marginBottom: 6 }}>
+              {needsEstimate && needsInsurance ? 'Two quick steps to unlock' : 'One more step to unlock'}
+            </Text>
+            <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: spacing.lg }}>
+              Cash vs insurance compares a real repair estimate against your actual policy, so we need both first.
+            </Text>
+            {stepRow(!needsEstimate, 'AI repair estimate', 'Snap photos of the damage — free, takes about 5 minutes.')}
+            {stepRow(!needsInsurance, 'Insurance policy on file', 'Add it under More tab → Insurance policy (scan your card or type it in).')}
+            {needsInsurance ? (
+              <Tappable
+                onPress={() => {
+                  setCompareLockOpen(false);
+                  navigateCrossTab(navigation, 'MoreTab', 'ProfInsurance');
+                }}
+                style={{ backgroundColor: colors.primary, borderRadius: radii.md, paddingVertical: 13, alignItems: 'center', marginTop: spacing.sm }}
+              >
+                <Text style={{ fontSize: 15, fontWeight: '700', color: colors.onPrimary }}>Add insurance policy →</Text>
+              </Tappable>
+            ) : null}
+            {needsEstimate ? (
+              <Tappable
+                onPress={() => {
+                  setCompareLockOpen(false);
+                  navigation.navigate('CarDiagram');
+                }}
+                style={{
+                  backgroundColor: needsInsurance ? colors.surface : colors.primary,
+                  borderWidth: needsInsurance ? 1 : 0,
+                  borderColor: colors.border,
+                  borderRadius: radii.md,
+                  paddingVertical: 13,
+                  alignItems: 'center',
+                  marginTop: spacing.sm,
+                }}
+              >
+                <Text style={{ fontSize: 15, fontWeight: '700', color: needsInsurance ? colors.textPrimary : colors.onPrimary }}>
+                  Run AI repair estimate →
+                </Text>
+              </Tappable>
+            ) : null}
+            <Tappable onPress={() => setCompareLockOpen(false)} style={{ paddingVertical: 11, alignItems: 'center', marginTop: spacing.xs }}>
+              <Text style={{ fontSize: 14, color: colors.textTertiary }}>Not now</Text>
+            </Tappable>
+          </View>
+        </View>
+      </Modal>
     );
   };
 
@@ -216,8 +324,9 @@ export function HomeLauncherScreen() {
         })}
       </View>
 
-      {/* Compare Costs — full width, greyed out until an AI estimate exists. */}
+      {/* Compare Costs — full width; locked until estimate + insurance exist. */}
       {compareCard()}
+      {compareLockSheet()}
 
       {/* Deals & offers — compact section below the actions */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xl, marginBottom: spacing.sm }}>

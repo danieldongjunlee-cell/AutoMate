@@ -207,6 +207,8 @@ export function MaintDashboardScreen() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
+                // Fill the stretched row height so both action cards match.
+                flex: 1,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 opacity: pressed ? 0.85 : 1,

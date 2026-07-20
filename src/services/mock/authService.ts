@@ -7,6 +7,7 @@
  */
 import { useAppStore } from '../../store/useAppStore';
 import { delay } from './delay';
+import { clearPolicies, seedDemoPolicies } from './insuranceService';
 
 export const MOCK_PHONE = '+1 (703) 555-0198';
 
@@ -33,6 +34,8 @@ export const authService = {
   async signUp(input: SignUpInput): Promise<{ otpSentTo: string }> {
     await delay(600);
     pendingUser = { name: input.fullName.trim() || DEMO_USER.name, email: input.email.trim() };
+    // Fresh account: no insurance on file until the user adds a policy.
+    clearPolicies();
     return { otpSentTo: MOCK_PHONE };
   },
 
@@ -43,6 +46,9 @@ export const authService = {
       throw new Error('Invalid email or password.\nDemo account: demo@automate.app / Demo1234!');
     }
     pendingUser = DEMO_USER;
+    // Returning demo account behaves like an established user with insurance
+    // already on file.
+    seedDemoPolicies();
     return { otpSentTo: MOCK_PHONE };
   },
 
@@ -67,6 +73,7 @@ export const authService = {
 
   async socialSignIn(_provider: 'apple' | 'google'): Promise<{ ok: boolean }> {
     await delay(700);
+    seedDemoPolicies(); // social sign-in resolves to the established demo account
     useAppStore.getState().setAuth('mock-session-token', DEMO_USER);
     return { ok: true };
   },

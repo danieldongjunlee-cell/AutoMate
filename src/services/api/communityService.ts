@@ -45,4 +45,10 @@ export const communityService = {
       { method: 'POST' },
     );
   },
+
+  async reportPost(postId: string, reason?: string) {
+    return request<{ ok: boolean }>(`/community/posts/${encodeURIComponent(postId)}/report`, {
+      body: { reason },
+    });
+  },
 };

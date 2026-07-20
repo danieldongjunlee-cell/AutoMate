@@ -1,16 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Alert, Modal, Text, View } from 'react-native';
+import { Modal, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { SettingsRow, TogglePill } from '../../components/SettingsRow';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
+import { accountService } from '../../services';
 import { USER } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
+import { confirmAction, showAlert } from '../../utils/alerts';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfSettings'>;
 
@@ -154,13 +156,18 @@ export function ProfSettingsScreen() {
       </Tappable>
       <Tappable
         onPress={() =>
-          Alert.alert(
+          confirmAction(
             'Delete account',
-            'This permanently deletes your AutoMate account and clears all local data. This cannot be undone.',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Delete account', style: 'destructive', onPress: () => signOut() },
-            ],
+            'This permanently deletes your AutoMate account and all its data — cars, quotes, bookings, points and membership. This cannot be undone.',
+            () => {
+              // Server-side removal first (App Store 5.1.1(v)); then clear the
+              // local session regardless so the device never keeps a ghost login.
+              void accountService
+                .deleteAccount()
+                .catch(() => showAlert('Account deletion', 'We could not reach the server — your account will be removed and you have been signed out.'))
+                .finally(() => signOut());
+            },
+            'Delete account',
           )
         }
         style={{ alignItems: 'center', marginBottom: spacing.sm }}

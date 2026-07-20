@@ -69,6 +69,27 @@ communityRouter.get('/posts/:id', async (req, res) => {
   });
 });
 
+// POST /community/posts/:id/report { reason? } — flag UGC for moderation
+// (App Store guideline 1.2). Reports land in community_reports (status: open)
+// for review; repeat reports from the same user just succeed idempotently.
+communityRouter.post('/posts/:id/report', async (req, res) => {
+  const post = await prisma.communityPost.findUnique({ where: { id: req.params.id } });
+  if (!post) return res.status(404).json({ error: 'Post not found' });
+  const existing = await prisma.communityReport.findFirst({
+    where: { postId: post.id, userId: req.user!.id },
+  });
+  if (!existing) {
+    await prisma.communityReport.create({
+      data: {
+        postId: post.id,
+        userId: req.user!.id,
+        reason: String(req.body?.reason ?? 'inappropriate'),
+      },
+    });
+  }
+  return res.json({ ok: true });
+});
+
 // POST /community/posts { body, category, photoCount, channelId? } (+50 pts, +10 with photo)
 communityRouter.post('/posts', async (req, res) => {
   const { body, category, photoCount, channelId } = req.body ?? {};

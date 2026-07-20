@@ -1,4 +1,4 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
@@ -14,12 +14,16 @@ import { communityService } from '../../services';
 import { USER } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
+import { confirmAction, showAlert } from '../../utils/alerts';
 
 /** Wireframe s-comm-post: post detail + comments + composer. */
 export function CommPostScreen() {
   const route = useRoute<RouteProp<CommunityStackParamList, 'CommPost'>>();
+  const navigation = useNavigation();
   const { colors } = useTheme();
   const queryClient = useQueryClient();
+  const blockedAuthors = useAppStore((s) => s.blockedAuthors);
+  const blockAuthor = useAppStore((s) => s.blockAuthor);
   const postId = route.params?.postId ?? 'post-james';
   const { data } = useQuery({
     queryKey: ['post', postId],
@@ -40,7 +44,9 @@ export function CommPostScreen() {
   const post = route.params?.post ?? data?.post;
   const comments = data?.comments ?? [];
   const markPostsRead = useAppStore((s) => s.markPostsRead);
-  useEffect(() => markPostsRead([postId]), [postId, markPostsRead]);
+  useEffect(() => {
+    markPostsRead([postId]);
+  }, [postId, markPostsRead]);
 
   // Sync the like button with the post (real likedByMe + count).
   useEffect(() => {
@@ -59,8 +65,9 @@ export function CommPostScreen() {
       </Screen>
     );
   }
-  const allComments = comments;
-  const replyCount = comments.length;
+  // Hide content from blocked authors (App Store 1.2 moderation).
+  const allComments = comments.filter((c) => !blockedAuthors.includes(c.author));
+  const replyCount = allComments.length;
 
   const toggleCommentLike = async (c: { id: string; likes: number; likedByMe?: boolean }) => {
     const cur = commentLikes[c.id] ?? { liked: !!c.likedByMe, count: c.likes };
@@ -114,6 +121,29 @@ export function CommPostScreen() {
 
   const sharePost = () =>
     Share.share({ message: `${post.author} on AutoMate: "${post.body}"` }).catch(() => {});
+
+  // Moderation (App Store 1.2): flag the post for review / hide this author.
+  const isOwnPost = post.author === (useAppStore.getState().user?.name ?? USER.name);
+  const onReport = () =>
+    confirmAction(
+      'Report this post?',
+      'Report content that breaks the community rules. Our team reviews reports within 24 hours and removes content that violates them.',
+      () => {
+        void communityService.reportPost(post.id).catch(() => {});
+        showAlert('Report received', 'Thanks — our team will review this post within 24 hours.');
+      },
+      'Report',
+    );
+  const onBlock = () =>
+    confirmAction(
+      `Block ${post.author}?`,
+      "You won't see their posts or comments anymore.",
+      () => {
+        blockAuthor(post.author);
+        navigation.goBack();
+      },
+      'Block',
+    );
 
   return (
     <Screen>
@@ -182,6 +212,16 @@ export function CommPostScreen() {
             💬 {replyCount} replies
           </Text>
           <View style={{ flex: 1 }} />
+          {!isOwnPost ? (
+            <>
+              <Tappable onPress={onReport} hitSlop={6}>
+                <Text style={{ fontSize: 14, color: colors.textTertiary }}>🚩 Report</Text>
+              </Tappable>
+              <Tappable onPress={onBlock} hitSlop={6}>
+                <Text style={{ fontSize: 14, color: colors.textTertiary }}>Block</Text>
+              </Tappable>
+            </>
+          ) : null}
           <Tappable onPress={sharePost} hitSlop={6}>
             <Text style={{ fontSize: 14, color: colors.textTertiary }}>Share</Text>
           </Tappable>
