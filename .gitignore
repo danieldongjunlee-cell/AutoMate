@@ -40,3 +40,11 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local datasets & training artifacts (never commit)
+Data/
+services/damage-ai/data/raw/
+services/damage-ai/data/cardd/
+runs/
+qa_preview/
+*.zip
