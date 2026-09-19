@@ -136,15 +136,15 @@ export function QuotesSheet({
       >
         {/* AI estimate strip + add / cancel */}
         <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
-          <View style={{ backgroundColor: colors.successSurface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.successLight, padding: spacing.md, marginBottom: spacing.md }}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 2 }}>AI estimated repair cost</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.mint }}>
+          <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.primaryLight, padding: spacing.md, marginBottom: spacing.md }}>
+            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep, marginBottom: 2 }}>AI estimated repair cost</Text>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: colors.primaryDark }}>
               ${priceLow} – ${priceHigh}
             </Text>
             {damageParts.length > 0 ? (
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: spacing.sm }}>
                 {damageParts.map((p) => (
-                  <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+                  <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.primaryLight, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
                     <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>{p.part}</Text>
                     <Text style={{ fontSize: 12, color: colors.textSecondary }}>
                       {p.type} · {p.photos} photo{p.photos !== 1 ? 's' : ''}
