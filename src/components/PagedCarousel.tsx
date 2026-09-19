@@ -9,7 +9,7 @@ import { spacing, useTheme } from '../theme';
  * you scroll left/right. Small circular ‹ › arrow buttons step between pages and
  * dot indicators below track the current page (wireframe ad/review pattern).
  */
-export function PagedCarousel({ items }: { items: React.ReactNode[] }) {
+export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode[]; /** Show the ‹ › step buttons (off for the Home banners: dots only). */ arrows?: boolean }) {
   const { colors } = useTheme();
   const ref = useRef<ScrollView>(null);
   const [w, setW] = useState(0);
@@ -74,7 +74,7 @@ export function PagedCarousel({ items }: { items: React.ReactNode[] }) {
             </View>
           ))}
         </ScrollView>
-        {items.length > 1 && w > 0 ? (
+        {arrows && items.length > 1 && w > 0 ? (
           <>
             {arrow('left', () => go(idx - 1), idx === 0)}
             {arrow('right', () => go(idx + 1), idx === items.length - 1)}

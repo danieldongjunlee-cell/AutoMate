@@ -16,7 +16,7 @@ const LANG_CODE: Record<string, 'en' | 'ko' | 'es' | 'zh'> = {
 const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
   ko: {
     Home: '홈', Bookings: '예약', Community: '커뮤니티', More: '더보기',
-    Maintenance: '정비', 'Compare Costs': '비용 비교', Settings: '설정', Profile: '프로필',
+    Maintenance: '정비', Settings: '설정', Profile: '프로필',
     Language: '언어', 'Distance units': '거리 단위', Reviews: '리뷰', 'Quotes received': '받은 견적',
     'Pay it yourself': '직접 결제', 'Use insurance': '보험 이용', 'How AutoMate works': 'AutoMate 이용 방법',
     'Why choose AutoMate?': 'AutoMate를 선택하는 이유', 'Real customer reviews': '실제 고객 리뷰',
@@ -32,7 +32,7 @@ const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
   },
   es: {
     Home: 'Inicio', Bookings: 'Reservas', Community: 'Comunidad', More: 'Más',
-    Maintenance: 'Mantenimiento', 'Compare Costs': 'Comparar costos', Settings: 'Ajustes', Profile: 'Perfil',
+    Maintenance: 'Mantenimiento', Settings: 'Ajustes', Profile: 'Perfil',
     Language: 'Idioma', 'Distance units': 'Unidades de distancia', Reviews: 'Reseñas', 'Quotes received': 'Cotizaciones recibidas',
     'Pay it yourself': 'Pagar tú mismo', 'Use insurance': 'Usar seguro', 'How AutoMate works': 'Cómo funciona AutoMate',
     'Why choose AutoMate?': '¿Por qué elegir AutoMate?', 'Real customer reviews': 'Reseñas reales',
@@ -48,7 +48,7 @@ const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
   },
   zh: {
     Home: '首页', Bookings: '预约', Community: '社区', More: '更多',
-    Maintenance: '保养', 'Compare Costs': '费用对比', Settings: '设置', Profile: '个人资料',
+    Maintenance: '保养', Settings: '设置', Profile: '个人资料',
     Language: '语言', 'Distance units': '距离单位', Reviews: '评价', 'Quotes received': '收到的报价',
     'Pay it yourself': '自付', 'Use insurance': '使用保险', 'How AutoMate works': 'AutoMate 如何运作',
     'Why choose AutoMate?': '为什么选择 AutoMate？', 'Real customer reviews': '真实用户评价',

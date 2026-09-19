@@ -9,8 +9,12 @@ export const spacing = {
   xl: 20,
   xxl: 24,
   xxxl: 32,
-  /** Horizontal screen padding (wireframe 14px). */
+  /** Horizontal screen padding. */
   screenH: 16,
+  /** Top padding under the status bar on header-less tab roots. */
+  screenTop: 56,
+  /** Bottom padding so content scrolls clear of the floating dock. */
+  screenBottom: 104,
 } as const;
 
 export const radii = {
@@ -19,6 +23,8 @@ export const radii = {
   lg: 16,
   xl: 20,
   sheet: 24,
+  tile: 24,
+  actionSheet: 28,
   pill: 999,
 } as const;
 

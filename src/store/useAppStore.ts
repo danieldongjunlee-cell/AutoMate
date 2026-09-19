@@ -294,10 +294,6 @@ interface AppState {
   pendingVehicle: { name: string; colorName: string } | null;
   setPendingVehicle: (v: { name: string; colorName: string } | null) => void;
 
-  // Dark mode (Settings → App preferences)
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-
   // App preferences (Settings → Language / Distance units). Stored here so the
   // selection persists across navigation (device-level prefs — survive sign-out).
   language: string;
@@ -516,8 +512,6 @@ export const useAppStore = create<AppState>()(
   },
 
   // Dark mode — v17 defaults to its dark-navy theme (toggle to light in Settings).
-  darkMode: false,
-  toggleDarkMode: () => set((s) => ({ darkMode: !s.darkMode })),
 
   language: 'English',
   setLanguage: (language) => set({ language }),
@@ -802,7 +796,6 @@ export const useAppStore = create<AppState>()(
         authToken: s.authToken,
         user: s.user,
         isNewUser: s.isNewUser,
-        darkMode: s.darkMode,
         // Moderation must survive restarts (App Store 1.2).
         blockedAuthors: s.blockedAuthors,
       }),

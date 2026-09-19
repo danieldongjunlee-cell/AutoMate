@@ -35,8 +35,11 @@ export function Screen({
       contentContainerStyle={[
         {
           padding: spacing.screenH,
-          paddingTop: spacing.screenH + (safeTop ? insets.top : 0),
-          paddingBottom: spacing.xxxl,
+          // Header-less tab roots: 56px clears the status bar; stacked screens
+          // sit under a native header so keep the regular 16px.
+          paddingTop: safeTop ? Math.max(spacing.screenTop, insets.top + spacing.lg) : spacing.screenH,
+          // Content must scroll clear of the floating dock.
+          paddingBottom: spacing.screenBottom,
         },
         style,
       ]}

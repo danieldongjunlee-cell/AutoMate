@@ -93,23 +93,12 @@ export type MaintStackParamList = {
   MaintScheduleConfirm: undefined;
 };
 
-export type CompareStackParamList = {
-  CompSelect: undefined;
-  CompCashIns: { quoteId?: string } | undefined;
-  CompDeepDive: { quoteId?: string } | undefined;
-  CompCashBook: { quoteId?: string } | undefined;
-  CompInsurance: { quoteId?: string } | undefined;
-};
-
 /**
- * v17 Home tab: a launcher hub whose stack hosts the repair flow, the new
- * booking/Pro/reviews flows, and (now that they're no longer tabs) the full
- * Maintenance and Compare flows. Composed by intersection so the existing
- * Maint/Compare screens keep their param-list types.
+ * Home tab: a launcher hub whose stack hosts the repair flow, the
+ * booking/Pro/reviews flows and the full Maintenance flow. Composed by
+ * intersection so the Maint screens keep their param-list type.
  */
-export type HomeStackParamList = HomeFlowParamList &
-  MaintStackParamList &
-  CompareStackParamList;
+export type HomeStackParamList = HomeFlowParamList & MaintStackParamList;
 
 /** v17 Bookings tab (calendar + scheduled services + pending quotes). */
 export type QuotesStackParamList = {

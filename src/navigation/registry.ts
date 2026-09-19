@@ -56,11 +56,6 @@ export const SCREEN_TITLES: Record<string, string> = {
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book
   MaintPayment: 'Payment', // s-maint-payment
   MaintScheduleConfirm: 'Booking confirmed', // s-maint-schedule-confirm
-  CompSelect: 'Compare options', // s-comp-select
-  CompCashIns: 'Cash vs insurance', // s-comp-cash-ins
-  CompDeepDive: 'Cost deep dive', // s-comp-deep-dive
-  CompCashBook: 'Book · Cash payment', // s-comp-cash-book
-  CompInsurance: 'File a claim', // s-comp-insurance
   CommChannels: 'Community', // s-comm-channels
   CommHonda: 'Honda Owners', // s-comm-honda
   CommPost: 'Post detail', // s-comm-post

@@ -330,7 +330,7 @@ export function DiyMatchScreen() {
       <SectionLabel>Matched from your requests</SectionLabel>
       <View
         style={{
-          backgroundColor: '#E8F5EF',
+          backgroundColor: colors.successSurface,
           borderRadius: radii.md,
           borderWidth: 1,
           borderColor: colors.success,

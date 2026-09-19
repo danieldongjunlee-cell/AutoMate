@@ -62,15 +62,15 @@ export function SocialAuthButtons({ onDark = false }: { onDark?: boolean }) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: spacing.sm,
-              backgroundColor: '#fff',
+              backgroundColor: colors.inputBg,
               borderWidth: 1,
-              borderColor: onDark ? '#fff' : colors.border,
-              borderRadius: radii.md,
+              borderColor: colors.border,
+              borderRadius: radii.pill,
               paddingVertical: 13,
             }}
           >
-            {provider === 'apple' ? <AppleLogo size={18} color={palette.textPrimary} /> : <GoogleLogo size={18} />}
-            <Text style={{ fontSize: 14, color: palette.textPrimary }}>{label}</Text>
+            {provider === 'apple' ? <AppleLogo size={18} color={colors.textPrimary} /> : <GoogleLogo size={18} />}
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{label}</Text>
           </Tappable>
         ))}
       </View>
