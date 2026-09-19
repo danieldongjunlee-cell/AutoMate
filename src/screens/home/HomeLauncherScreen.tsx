@@ -1,12 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Icon } from '../../components/Icon';
-import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { EstimateGateSheet } from '../../components/EstimateGateSheet';
+import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { PhotoTile } from '../../components/Tile';
@@ -39,6 +40,11 @@ export function HomeLauncherScreen() {
   const user = useAppStore((s) => s.user);
   const firstName = isAuthenticated ? (user?.name ?? '').trim().split(/\s+/)[0] : '';
   const requireAuth = useRequireAuth();
+  // Guest gate for the AI estimate: sheet → picker as guest, or Join first
+  // (the picker opens once they're signed in).
+  const [gateOpen, setGateOpen] = useState(false);
+  useResumeAfterAuth('newEstimate', () => navigation.navigate('CarDiagram'));
+  const startEstimate = () => (isAuthenticated ? navigation.navigate('CarDiagram') : setGateOpen(true));
 
   // Solid, borderless promo banner (filled gradient + white text), like a
   // store coupon card. No icon — text only.
@@ -141,7 +147,7 @@ export function HomeLauncherScreen() {
           source={TILE_AI}
           height={168}
           style={{ flex: 1 }}
-          onPress={() => navigation.navigate('CarDiagram')}
+          onPress={startEstimate}
         />
         <PhotoTile
           title="Maintenance dashboard"
@@ -205,6 +211,12 @@ export function HomeLauncherScreen() {
         </Text>
       </View>
 
+      <EstimateGateSheet
+        visible={gateOpen}
+        onClose={() => setGateOpen(false)}
+        onGuest={() => navigation.navigate('CarDiagram')}
+        onSignUp={() => requireAuth('newEstimate', () => navigation.navigate('CarDiagram'), 'join')}
+      />
       <LocationPermissionSheet />
     </Screen>
   );

@@ -6,7 +6,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useAppStore } from '../store/useAppStore';
 
 /**
- * Guest-first auth gate. Returns `requireAuth(intent, onReady?)`:
+ * Guest-first auth gate. Returns `requireAuth(intent, onReady?, tab?)`:
  * - already signed in → runs `onReady()` immediately and returns true.
  * - guest → records the pending intent, opens the Auth modal, returns false.
  *
@@ -19,13 +19,13 @@ export function useRequireAuth() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return useCallback(
-    (intent: string, onReady?: () => void): boolean => {
+    (intent: string, onReady?: () => void, tab?: 'signin' | 'join'): boolean => {
       if (isAuthenticated) {
         onReady?.();
         return true;
       }
       setPendingAuth(intent);
-      navigation.navigate('Auth', { intent });
+      navigation.navigate('Auth', { intent, tab });
       return false;
     },
     [isAuthenticated, navigation, setPendingAuth],

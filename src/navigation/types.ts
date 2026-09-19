@@ -15,10 +15,8 @@ export type BookingConfirmParams = {
 
 export type AuthStackParamList = {
   Splash: undefined;
-  /** Guest-first entry to the auth modal: returning vs new chooser. */
-  AuthChooser: { intent?: string } | undefined;
-  SignUp: undefined;
-  LogIn: undefined;
+  /** Sign In / Join screen — the single entry to the auth modal. */
+  AuthMain: { intent?: string; tab?: 'signin' | 'join' } | undefined;
   /** Pick how to receive the code — shows the actual sign-up email/phone. */
   VerifyMethod: { email: string; phone: string };
   VerifyOtp: { method: 'email' | 'sms'; destination: string } | undefined;
@@ -28,7 +26,7 @@ export type AuthStackParamList = {
  *  presented over them at value-action gates. */
 export type RootStackParamList = {
   Main: undefined;
-  Auth: { intent?: string } | undefined;
+  Auth: { intent?: string; tab?: 'signin' | 'join' } | undefined;
 };
 
 /** Repair-estimate flow + the new v17 booking/Pro/reviews flows. */

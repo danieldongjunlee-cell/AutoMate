@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 
 import { ActionSheet } from '../components/ActionSheet';
+import { EstimateGateSheet } from '../components/EstimateGateSheet';
 import { Icon } from '../components/Icon';
 import { Tappable } from '../components/Tappable';
+import { useAppStore } from '../store/useAppStore';
 import { palette } from '../theme';
 import { TabIcon } from './TabIcons';
 import { MainTabParamList } from './types';
@@ -25,6 +27,9 @@ export const DOCK_INSET = 16;
  */
 export function Dock({ state, descriptors, navigation, insets }: BottomTabBarProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [gateOpen, setGateOpen] = useState(false);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const setPendingAuth = useAppStore((s) => s.setPendingAuth);
   const activeName = state.routes[state.index]?.name;
 
   const go = (name: keyof MainTabParamList) => {
@@ -167,7 +172,9 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
             sub: 'Photos of the damage → quotes from local shops',
             icon: 'camera',
             color: palette.teal,
-            onPress: () => openInHome('CarDiagram'),
+            // Guests get the guest / join gate first; Home resumes the
+            // picker after Join via the 'newEstimate' intent.
+            onPress: () => (isAuthenticated ? openInHome('CarDiagram') : setGateOpen(true)),
           },
           {
             key: 'maintenance',
@@ -187,6 +194,15 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
             onPress: () => go('BookingsTab'),
           },
         ]}
+      />
+      <EstimateGateSheet
+        visible={gateOpen}
+        onClose={() => setGateOpen(false)}
+        onGuest={() => openInHome('CarDiagram')}
+        onSignUp={() => {
+          setPendingAuth('newEstimate');
+          navigation.dispatch(CommonActions.navigate('Auth', { intent: 'newEstimate', tab: 'join' }));
+        }}
       />
     </>
   );

@@ -2,6 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, TextInput, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { AuthStackParamList } from '../../navigation/types';
@@ -85,7 +86,7 @@ export function VerifyOtpScreen() {
             marginTop: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>✓</Text>
+          <Icon name="check" size={16} color={palette.mint} />
           <Text style={{ flex: 1, fontSize: 14, color: colors.successDeep }}>
             Verification code sent via {channelLabel}
           </Text>
@@ -93,10 +94,7 @@ export function VerifyOtpScreen() {
       ) : null}
 
       <View style={{ alignItems: 'center', marginVertical: spacing.xxl }}>
-        <Text style={{ fontSize: 52, marginBottom: spacing.md }}>
-          {params?.method === 'email' ? '📧' : '📱'}
-        </Text>
-        <Text style={{ fontSize: 16, fontWeight: '500', color: colors.textPrimary, marginBottom: spacing.xs }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.xs, textAlign: 'center' }}>
           Code sent to {destination}
         </Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>
@@ -124,7 +122,7 @@ export function VerifyOtpScreen() {
                 height: 58,
                 borderRadius: radii.md,
                 borderWidth: active ? 1.5 : 1,
-                borderColor: active ? palette.authAction : colors.border,
+                borderColor: active ? colors.primary : colors.border,
                 backgroundColor: active ? colors.primarySurface : colors.inputBg,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -149,7 +147,6 @@ export function VerifyOtpScreen() {
 
       <PrimaryButton
         label="Verify →"
-        variant="auth"
         disabled={code.length !== OTP_LENGTH}
         loading={loading}
         onPress={onVerify}
