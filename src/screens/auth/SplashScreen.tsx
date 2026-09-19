@@ -128,8 +128,10 @@ export function SplashScreen() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: spacing.sm,
-              backgroundColor: '#fff',
-              borderRadius: radii.md,
+              backgroundColor: palette.inputBg,
+              borderWidth: 1,
+              borderColor: palette.border,
+              borderRadius: radii.pill,
               paddingVertical: 13,
             }}
           >

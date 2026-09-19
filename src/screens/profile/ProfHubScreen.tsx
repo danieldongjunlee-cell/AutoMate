@@ -7,6 +7,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';
+import { Icon } from '../../components/Icon';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
@@ -345,10 +346,35 @@ export function ProfHubScreen() {
       </Tappable>
 
       <SectionLabel>Account details</SectionLabel>
+      {/* Bookings has no dock slot — it is reached from here, Home and the + sheet. */}
+      <Tappable
+        onPress={() => navigateCrossTab(navigation, 'BookingsTab', 'Bookings')}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          backgroundColor: colors.surface,
+          borderRadius: radii.sm,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          padding: spacing.sm,
+          marginBottom: spacing.sm,
+          opacity: pressed ? 0.7 : 1,
+        })}
+      >
+        <View style={{ width: 34, height: 34, borderRadius: radii.sm, backgroundColor: colors.warningSurface, alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name="calendar" size={20} color={colors.warning} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>My bookings</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>Upcoming appointments & pending quotes</Text>
+        </View>
+        <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text>
+      </Tappable>
       {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : '🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge, 'myCars')}
       {accountRow(
         '🛡️',
-        '#FAECE7',
+        colors.dangerSurface,
         'Insurance policy',
         insuranceSub,
         'ProfInsurance',

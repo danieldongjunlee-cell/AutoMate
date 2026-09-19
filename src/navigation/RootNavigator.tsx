@@ -1,8 +1,4 @@
-import {
-  DarkTheme as NavDarkTheme,
-  DefaultTheme as NavLightTheme,
-  NavigationContainer,
-} from '@react-navigation/native';
+import { DarkTheme as NavDarkTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
@@ -45,7 +41,7 @@ export function RootNavigator() {
     fetchPointsBalance().then(setPoints).catch(() => {});
   }, [isAuthenticated, setBookings, setPoints]);
 
-  const base = theme.dark ? NavDarkTheme : NavLightTheme;
+  const base = NavDarkTheme;
   const navTheme = {
     ...base,
     colors: {
@@ -60,7 +56,7 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer theme={navTheme}>
-      <StatusBar style={theme.dark ? 'light' : 'dark'} />
+      <StatusBar style="light" />
       {/* Guest-first: the tabs are always mounted; auth is a modal presented
           over them at value-action gates (useRequireAuth → navigate('Auth')). */}
       <RootStack.Navigator screenOptions={{ headerShown: false }}>

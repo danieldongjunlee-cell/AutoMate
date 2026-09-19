@@ -70,7 +70,7 @@ export function TogglePill({ value, onToggle }: { value: boolean; onToggle: () =
           width: 20,
           height: 20,
           borderRadius: 10,
-          backgroundColor: '#fff',
+          backgroundColor: colors.textPrimary,
         }}
       />
     </Tappable>

@@ -22,8 +22,6 @@ type NotifKey = 'quotes' | 'service' | 'community' | 'streak';
 export function ProfSettingsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const darkMode = useAppStore((s) => s.darkMode);
-  const toggleDarkMode = useAppStore((s) => s.toggleDarkMode);
   const language = useAppStore((s) => s.language);
   const distanceUnit = useAppStore((s) => s.distanceUnit);
   const signOut = useAppStore((s) => s.signOut);
@@ -100,11 +98,6 @@ export function ProfSettingsScreen() {
 
       <SectionLabel>App preferences</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <SettingsRow
-          icon="🌙"
-          label="Dark mode"
-          right={<TogglePill value={darkMode} onToggle={toggleDarkMode} />}
-        />
         <SettingsRow
           icon="🌐"
           label="Language"

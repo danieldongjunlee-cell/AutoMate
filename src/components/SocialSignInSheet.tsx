@@ -65,7 +65,7 @@ export function SocialSignInSheet({
   );
 }
 
-/** White rounded Google account-chooser card. */
+/** Google account-chooser card, on the app surface (no white surfaces in the redesign). */
 function GoogleChooser({
   loading,
   onPick,
@@ -80,7 +80,9 @@ function GoogleChooser({
       // Swallow taps so the backdrop close doesn't fire.
       onStartShouldSetResponder={() => true}
       style={{
-        backgroundColor: '#fff',
+        backgroundColor: palette.surface,
+        borderWidth: 1,
+        borderColor: palette.border,
         borderRadius: radii.lg,
         paddingVertical: spacing.xl,
         overflow: 'hidden',
@@ -91,10 +93,10 @@ function GoogleChooser({
         <View style={{ marginBottom: spacing.sm }}>
           <GoogleLogo size={30} />
         </View>
-        <Text style={{ fontSize: 17, fontWeight: '500', color: '#202124' }}>
+        <Text style={{ fontSize: 17, fontWeight: '500', color: palette.textPrimary }}>
           Sign in with Google
         </Text>
-        <Text style={{ fontSize: 14, color: '#5F6368', marginTop: 3 }}>
+        <Text style={{ fontSize: 14, color: palette.textSecondary, marginTop: 3 }}>
           to continue to AutoMate
         </Text>
       </View>
@@ -110,7 +112,7 @@ function GoogleChooser({
           paddingVertical: 13,
           borderTopWidth: StyleSheet.hairlineWidth,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderColor: '#DADCE0',
+          borderColor: palette.border,
         }}
       >
         <View
@@ -126,10 +128,10 @@ function GoogleChooser({
           <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>D</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '600', color: '#202124' }}>
+          <Text style={{ fontSize: 14, fontWeight: '600', color: palette.textPrimary }}>
             {DEMO_ACCOUNT.name}
           </Text>
-          <Text style={{ fontSize: 13, color: '#5F6368' }}>{DEMO_ACCOUNT.email}</Text>
+          <Text style={{ fontSize: 13, color: palette.textSecondary }}>{DEMO_ACCOUNT.email}</Text>
         </View>
         {loading ? <ActivityIndicator size="small" color="#4285F4" /> : null}
       </Tappable>
@@ -143,7 +145,7 @@ function GoogleChooser({
           paddingHorizontal: spacing.xl,
           paddingVertical: 13,
           borderBottomWidth: StyleSheet.hairlineWidth,
-          borderColor: '#DADCE0',
+          borderColor: palette.border,
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: '500', color: '#1A73E8' }}>
@@ -152,7 +154,7 @@ function GoogleChooser({
       </Tappable>
 
       <Tappable onPress={onClose} disabled={loading} style={{ paddingTop: spacing.md, alignItems: 'center' }}>
-        <Text style={{ fontSize: 14, color: '#5F6368' }}>Cancel</Text>
+        <Text style={{ fontSize: 14, color: palette.textSecondary }}>Cancel</Text>
       </Tappable>
 
       {/* ToS / Privacy disclaimer near the confirm action. */}
@@ -160,7 +162,7 @@ function GoogleChooser({
         style={{
           fontSize: 12,
           lineHeight: 16,
-          color: '#5F6368',
+          color: palette.textSecondary,
           textAlign: 'center',
           marginTop: spacing.md,
           paddingHorizontal: spacing.xl,

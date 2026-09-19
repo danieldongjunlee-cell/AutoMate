@@ -1,8 +1,7 @@
-import { useAppStore } from '../store/useAppStore';
-import { darkColors, lightColors, palette, ThemeColors } from './colors';
+import { darkColors, palette, ThemeColors } from './colors';
 import { radii, spacing, typography } from './tokens';
 
-export { palette, lightColors, darkColors, spacing, radii, typography };
+export { palette, darkColors, spacing, radii, typography };
 export type { ThemeColors };
 
 export interface Theme {
@@ -13,11 +12,9 @@ export interface Theme {
   typography: typeof typography;
 }
 
-const lightTheme: Theme = { dark: false, colors: lightColors, spacing, radii, typography };
 const darkTheme: Theme = { dark: true, colors: darkColors, spacing, radii, typography };
 
-/** App theme, driven by the dark-mode toggle in Settings (Zustand). */
+/** App theme. The redesign is dark-only, so this is a constant. */
 export function useTheme(): Theme {
-  const darkMode = useAppStore((s) => s.darkMode);
-  return darkMode ? darkTheme : lightTheme;
+  return darkTheme;
 }

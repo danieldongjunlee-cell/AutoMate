@@ -1,12 +1,11 @@
 /**
- * Color tokens ported 1:1 from AutoMate_Interactive_Wireframe_v17.html.
+ * Color tokens for the AutoMate redesign (Claude Design canvas v34).
  *
- * v17's design system is a themeable dark/light palette: the wireframe encodes
- * each token as a CSS var whose dark value is its name (e.g. `--c0a0f19` = the
- * dark hex) and remaps them in `.light{…}`. Those two maps are reproduced below
- * as `darkColors` / `lightColors`. **v17 defaults to DARK** (navy `#0a0f19`),
- * with primary action blue `#2e6bff`, success `#16a34a`, gold `#f0b44e`, and a
- * purple `#7F77DD` brand accent.
+ * The app has ONE dark ground everywhere: background `#0a0f19`, surface
+ * `#121a2b`, primary blue `#2e6bff`, teal accent `#4FE3C1`, amber `#F0B44E`.
+ * There is no light theme any more — `darkColors` is the only `ThemeColors`
+ * map and `useTheme()` always returns it. The only white element in the app is
+ * the dock's centre `+` button.
  */
 export const palette = {
   // Brand / primary action (v17 blue — 180 uses across the wireframe)
@@ -27,20 +26,41 @@ export const palette = {
   navyBright: '#122F60',
   authAction: '#1B4E8F',
 
-  // Neutrals (light base — theme-aware surfaces live in light/darkColors)
-  background: '#eef1f6',
-  surface: '#ffffff',
-  surfaceAlt: '#f0f2f6',
-  inputBg: '#f0f2f6',
-  border: '#e3e7ef',
-  divider: '#e3e7ef',
-  disabled: '#d7dce5',
+  // Neutrals (dark ground — identical to darkColors, kept for static styles)
+  background: '#0a0f19',
+  surface: '#121a2b',
+  surfaceAlt: '#1a2333',
+  inputBg: '#1a2333',
+  border: '#1f2940',
+  divider: '#1f2940',
+  disabled: '#39435a',
   white: '#FFFFFF',
 
-  textPrimary: '#1a1f2b',
-  textSecondary: '#4a5260',
-  textTertiary: '#6b7686',
-  textPlaceholder: '#828c9b',
+  textPrimary: '#e8edf5',
+  textSecondary: '#b8c3d3',
+  textTertiary: '#8a94a6',
+  textPlaceholder: '#6e7a8c',
+
+  // Redesign accents
+  teal: '#4FE3C1',
+  mint: '#2EE87E',
+  amber: '#F0B44E',
+  lavender: '#B7B1F2',
+  /** Text colour on amber (money / Pro) buttons. */
+  onAmber: '#0B1E3D',
+
+  // Tiles: navy-blend surfaces (Tile component variants)
+  tileNavy: '#16233d',
+  tileNavyBorder: '#23335a',
+  tileSteel: '#1b273d',
+  tileSteelBorder: '#2b3a57',
+  tileTeal: '#0f2a3d',
+  tileTealBorder: '#1d4459',
+
+  // Chrome: floating dock, action sheet, icon chips
+  dock: 'rgba(18,26,43,0.96)',
+  sheet: '#0f1626',
+  chip: 'rgba(255,255,255,0.06)',
 
   // Semantic — success (v17 green)
   success: '#16a34a',
@@ -114,48 +134,7 @@ export interface ThemeColors {
   onPrimary: string;
 }
 
-// v17 light-mode (.light{…}) remap.
-export const lightColors: ThemeColors = {
-  background: '#eef1f6',
-  surface: '#ffffff',
-  surfaceAlt: '#f0f2f6',
-  inputBg: '#f0f2f6',
-  border: '#e3e7ef',
-  divider: '#e3e7ef',
-  disabled: '#d7dce5',
-  textPrimary: '#1a1f2b',
-  textSecondary: '#4a5260',
-  textTertiary: '#6b7686',
-  textPlaceholder: '#828c9b',
-  tabBarBackground: '#ffffff',
-  tabBarBorder: '#e3e7ef',
-  tabInactive: '#6b7686',
-  tabActive: '#2e6bff',
-  card: '#ffffff',
-  primary: '#2e6bff',
-  primaryDark: '#2e6bff',
-  primaryDeep: '#1842b0',
-  primaryLight: '#c5d7f5',
-  primarySurface: '#e9f0ff',
-  success: '#16a34a',
-  successDark: '#0f8a43',
-  successDeep: '#085041',
-  successSurface: '#e6f6ee',
-  successLight: '#bce3cc',
-  warning: '#f0b44e',
-  warningSurface: '#fcf3e1',
-  warningDeep: '#8a5a12',
-  danger: '#e24b4a',
-  dangerSurface: '#fcecec',
-  dangerBorder: '#f3caca',
-  dangerDeep: '#c0322f',
-  info: '#2e6bff',
-  infoSurface: '#eef4ff',
-  infoDeep: '#0c447c',
-  onPrimary: '#ffffff',
-};
-
-// v17 default dark-mode (.sf{…}) palette — near-black navy chrome.
+// The one and only theme: near-black navy chrome.
 export const darkColors: ThemeColors = {
   background: '#0a0f19',
   surface: '#121a2b',
@@ -168,7 +147,7 @@ export const darkColors: ThemeColors = {
   textSecondary: '#b8c3d3',
   textTertiary: '#8a94a6',
   textPlaceholder: '#6e7a8c',
-  tabBarBackground: '#0a0f19',
+  tabBarBackground: 'rgba(18,26,43,0.96)',
   tabBarBorder: '#1f2940',
   tabInactive: '#8a94a6',
   tabActive: '#2e6bff',

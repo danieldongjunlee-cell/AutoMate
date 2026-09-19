@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
-import { TabIcon } from './TabIcons';
+import { Dock } from './Dock';
 
 import { AcceptBookingScreen } from '../screens/home/AcceptBookingScreen';
 import { AfterHoursScreen } from '../screens/home/AfterHoursScreen';
@@ -44,11 +44,6 @@ import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfir
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
 import { MaintLandingScreen } from '../screens/maint/MaintLandingScreen';
 import { MaintServiceTypeScreen } from '../screens/maint/MaintServiceTypeScreen';
-import { CompCashBookScreen } from '../screens/compare/CompCashBookScreen';
-import { CompCashInsScreen } from '../screens/compare/CompCashInsScreen';
-import { CompDeepDiveScreen } from '../screens/compare/CompDeepDiveScreen';
-import { CompInsuranceScreen } from '../screens/compare/CompInsuranceScreen';
-import { CompSelectScreen } from '../screens/compare/CompSelectScreen';
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
 import { CommCreateScreen } from '../screens/community/CommCreateScreen';
@@ -105,7 +100,7 @@ import {
 } from './types';
 import { QuotesReceivedScreen } from '../screens/quotes/QuotesReceivedScreen';
 
-// ── Home tab: launcher hub + repair flow + new flows + Maintenance + Compare ──
+// ── Home tab: launcher hub + repair flow + new flows + Maintenance ──
 const HomeNative = createNativeStackNavigator<HomeStackParamList>();
 const homeScreens = buildScreens(
   [
@@ -152,11 +147,6 @@ const homeScreens = buildScreens(
     'MaintScheduleBook',
     'MaintPayment',
     'MaintScheduleConfirm',
-    'CompSelect',
-    'CompCashIns',
-    'CompDeepDive',
-    'CompCashBook',
-    'CompInsurance',
   ] as const,
   {
     HomeLauncher: HomeLauncherScreen,
@@ -202,11 +192,6 @@ const homeScreens = buildScreens(
     MaintScheduleBook: MaintScheduleBookScreen,
     MaintPayment: MaintPaymentScreen,
     MaintScheduleConfirm: MaintScheduleConfirmScreen,
-    CompSelect: CompSelectScreen,
-    CompCashIns: CompCashInsScreen,
-    CompDeepDive: CompDeepDiveScreen,
-    CompCashBook: CompCashBookScreen,
-    CompInsurance: CompInsuranceScreen,
   },
 );
 
@@ -348,7 +333,7 @@ function MoreStack() {
   );
 }
 
-// ── Tab bar (v17: Home · Bookings · Community · More) ──────────────────
+// ── Floating dock (Home · Quotes · + · Community · More; Bookings has no slot) ──
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const TABS: { name: keyof MainTabParamList; label: string }[] = [
@@ -400,20 +385,15 @@ export function MainTabs() {
 
   return (
     <Tab.Navigator
+      tabBar={(props) => <Dock {...props} />}
       screenOptions={{
         headerShown: false,
         popToTopOnBlur: true,
+        // The dock floats over the content (screens pad 104px at the bottom),
+        // so the navigator must not reserve space for a bar.
+        sceneStyle: { backgroundColor: theme.colors.background },
         tabBarActiveTintColor: theme.colors.tabActive,
         tabBarInactiveTintColor: theme.colors.tabInactive,
-        tabBarStyle: {
-          backgroundColor: theme.colors.tabBarBackground,
-          borderTopColor: theme.colors.tabBarBorder,
-          height: 64,
-          paddingTop: 6,
-          paddingBottom: 8,
-        },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
-        tabBarBadgeStyle: { backgroundColor: '#E24B4A', color: '#fff', fontSize: 12, fontWeight: '700' },
       }}
     >
       {TABS.map(({ name, label }) => (
@@ -423,7 +403,6 @@ export function MainTabs() {
           component={TAB_COMPONENTS[name]}
           options={{
             tabBarLabel: t(label),
-            tabBarIcon: ({ color }) => <TabIcon tab={name} color={color} />,
             tabBarBadge: badges[name],
           }}
         />
