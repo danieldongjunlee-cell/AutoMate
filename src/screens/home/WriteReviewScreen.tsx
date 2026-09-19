@@ -65,7 +65,7 @@ export function WriteReviewScreen() {
         onChangeText={setBody}
         multiline
         placeholder="Was the price what you were quoted? How was the work and the wait?"
-        placeholderTextColor={palette.textPlaceholder}
+        placeholderTextColor={colors.textPlaceholder}
         style={{
           borderWidth: 1,
           borderColor: colors.border,

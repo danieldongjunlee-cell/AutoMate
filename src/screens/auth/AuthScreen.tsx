@@ -78,7 +78,7 @@ export function AuthScreen() {
       {/* Logo + close × */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xl }}>
         <LogoRow markSize={28} textSize={16} />
-        <Tappable onPress={close} hitSlop={10} accessibilityLabel="Close" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+        <Tappable onPress={close} hitSlop={10} accessibilityLabel="Close" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name="close" size={22} color={colors.textPrimary} />
         </Tappable>
       </View>

@@ -1,7 +1,8 @@
-import { DarkTheme as NavDarkTheme, NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import { DarkTheme as NavDarkTheme, DefaultTheme as NavLightTheme, NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef } from 'react';
+import { Platform } from 'react-native';
 
 import { fetchBookings } from '../lib/bookings';
 import { fetchPointsBalance } from '../lib/points';
@@ -52,7 +53,16 @@ export function RootNavigator() {
     fetchPointsBalance().then(setPoints).catch(() => {});
   }, [isAuthenticated, setBookings, setPoints]);
 
-  const base = NavDarkTheme;
+  // Web: the page body shows through during navigation transitions and past
+  // the app root — keep it on the theme ground.
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.body.style.backgroundColor = theme.colors.background;
+      document.documentElement.style.colorScheme = theme.dark ? 'dark' : 'light';
+    }
+  }, [theme]);
+
+  const base = theme.dark ? NavDarkTheme : NavLightTheme;
   const navTheme = {
     ...base,
     colors: {
@@ -67,7 +77,7 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer ref={navRef} theme={navTheme}>
-      <StatusBar style="light" />
+      <StatusBar style={theme.dark ? 'light' : 'dark'} />
       {/* Guest-first: the tabs are always mounted; auth is a modal presented
           over them at value-action gates (useRequireAuth → navigate('Auth')). */}
       <RootStack.Navigator screenOptions={{ headerShown: false }}>

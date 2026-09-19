@@ -1,7 +1,10 @@
-import { darkColors, palette, ThemeColors } from './colors';
+import { useColorScheme } from 'react-native';
+
+import { useAppStore } from '../store/useAppStore';
+import { darkColors, lightColors, palette, ThemeColors } from './colors';
 import { radii, spacing, typography } from './tokens';
 
-export { palette, darkColors, spacing, radii, typography };
+export { palette, darkColors, lightColors, spacing, radii, typography };
 export type { ThemeColors };
 
 export interface Theme {
@@ -13,8 +16,12 @@ export interface Theme {
 }
 
 const darkTheme: Theme = { dark: true, colors: darkColors, spacing, radii, typography };
+const lightTheme: Theme = { dark: false, colors: lightColors, spacing, radii, typography };
 
-/** App theme. The redesign is dark-only, so this is a constant. */
+/** App theme: Settings → Appearance (dark by default, light, or follow the device). */
 export function useTheme(): Theme {
-  return darkTheme;
+  const mode = useAppStore((s) => s.themeMode);
+  const scheme = useColorScheme();
+  const dark = mode === 'system' ? scheme !== 'light' : mode === 'dark';
+  return dark ? darkTheme : lightTheme;
 }

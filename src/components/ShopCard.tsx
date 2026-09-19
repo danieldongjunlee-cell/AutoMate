@@ -61,8 +61,8 @@ export function ShopCard({
         elevation: 8,
       }}
     >
-      <Tappable onPress={onPress} disabled={!onPress} noFeedback>
-        <View onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))} style={{ height: PHOTO_H, backgroundColor: palette.tileNavy }}>
+      <Tappable onPress={onPress} disabled={!onPress} noFeedback accessibilityRole={onPress ? 'button' : undefined} accessibilityLabel={onPress ? dealer.name : undefined}>
+        <View onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))} style={{ height: PHOTO_H, backgroundColor: colors.tileNavy }}>
           {w > 0 ? (
             <Image source={dealer.photoUrl ? { uri: dealer.photoUrl } : SHOP_PHOTOS[index % SHOP_PHOTOS.length]} style={{ width: w, height: PHOTO_H }} resizeMode="cover" />
           ) : null}

@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
+import { Glyph, Icon } from '../../components/Icon';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { Card, Screen, SectionLabel } from '../../components/ui';
@@ -20,7 +21,7 @@ import {
   MaintSubService,
 } from '../../services/mock/data';
 import { cartTotals, dateBadgeParts, discountedPrice, useAppStore } from '../../store/useAppStore';
-import { radii, spacing, useTheme } from '../../theme';
+import { palette, radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
@@ -187,34 +188,61 @@ export function MaintScheduleBookScreen() {
     <Screen>
       {pickMode ? (
         <>
-          <SectionLabel style={{ marginTop: spacing.xs }}>Select date & time</SectionLabel>
-      <View style={{ marginBottom: spacing.sm }}>
+          {/* Your services — the booking's centrepiece: what this shop will do and charge. */}
+          <LinearGradient
+            colors={[colors.primary, palette.teal]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ borderRadius: radii.tile, padding: 2, marginBottom: spacing.section, shadowColor: colors.primary, shadowOpacity: 0.35, shadowRadius: 20, shadowOffset: { width: 0, height: 10 }, elevation: 8 }}
+          >
+            <View style={{ backgroundColor: colors.surface, borderRadius: radii.tile - 2, overflow: 'hidden' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg, paddingBottom: spacing.md }}>
+                <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon name="calcheck" size={26} color={colors.onPrimary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '800', letterSpacing: 0.8, textTransform: 'uppercase', color: colors.primaryDark }}>Your services</Text>
+                  <Text style={{ fontSize: 17, fontWeight: '800', color: colors.textPrimary, marginTop: 1 }} numberOfLines={1}>
+                    {count} service{count !== 1 ? 's' : ''} at {dealer.name}
+                  </Text>
+                </View>
+                <Tappable onPress={() => navigation.navigate('MaintServiceType')} hitSlop={8} accessibilityLabel="Edit services">
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>Edit</Text>
+                </Tappable>
+              </View>
+              {cart.services.map((s) => (
+                <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: 10, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
+                  <Icon name="check" size={20} color={palette.mint} strokeWidth={2.2} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{s.name}</Text>
+                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{s.durationMin} min</Text>
+                  </View>
+                  <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>${s.price}</Text>
+                </View>
+              ))}
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.primarySurface, paddingHorizontal: spacing.lg, paddingVertical: 12 }}>
+                <View>
+                  <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.primaryDark }}>Total · pay at shop</Text>
+                  <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>~{totalMin} min · {dealer.name}&apos;s prices</Text>
+                </View>
+                <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>
+              </View>
+            </View>
+          </LinearGradient>
+
+          <SectionLabel style={{ marginTop: 0 }}>Select date & time</SectionLabel>
+          <View style={{ marginBottom: spacing.sm }}>
             <CalendarMonth
               selectedDay={selectedDay}
               onSelectDay={(day) => setCartSlot(bookingISO(day), cart.time ?? '8:00 AM')}
             />
           </View>
-          <View style={{ marginBottom: spacing.lg }}>
+          <View style={{ marginBottom: spacing.section }}>
             <TimeSlots
               slots={MAINT_TIME_SLOTS}
               selected={cart.time}
               onSelect={(time) => setCartSlot(cart.date ?? defaultBookingISO(), time)}
             />
-          </View>
-
-
-          {/* Services were confirmed on the previous step — a one-line summary is enough here. */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, padding: spacing.md, marginTop: spacing.lg, marginBottom: spacing.md }}>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: 2 }}>Your services</Text>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }} numberOfLines={2}>
-                {cart.services.map((s) => s.name).join(' · ')}
-              </Text>
-            </View>
-            <View style={{ alignItems: 'flex-end', marginLeft: spacing.md }}>
-              <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>
-              <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{totalMin} min</Text>
-            </View>
           </View>
         </>
       ) : (

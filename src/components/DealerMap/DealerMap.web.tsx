@@ -1,9 +1,21 @@
 import L from 'leaflet';
+// Leaflet's stylesheet ships with the bundle (Metro CSS) — no CDN request.
+import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 
 import { useAppStore } from '../../store/useAppStore';
+import { useTheme } from '../../theme';
 import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
+
+/** Tile sets per appearance: OSM's standard tiles in light, CARTO's dark basemap (OSM data) in dark. */
+const TILES = {
+  light: { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
+  dark: {
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+};
 
 /**
  * Web map: real Leaflet + OpenStreetMap tiles (user-feedback pass 2).
@@ -12,30 +24,13 @@ import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
  * price pills (incl. BEST PRICE / RECOMMENDED captions + selected enlarge).
  */
 
-const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-
-/** Inject the Leaflet stylesheet + divIcon reset exactly once. */
-function injectLeafletCss(onReady: () => void) {
-  if (typeof document === 'undefined') return;
-  let link = document.querySelector<HTMLLinkElement>(`link[href="${LEAFLET_CSS}"]`);
-  if (!link) {
-    link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = LEAFLET_CSS;
-    document.head.appendChild(link);
-
-    // Neutralize Leaflet's default divIcon chrome (white box + border).
-    const style = document.createElement('style');
-    style.textContent = '.am-divicon{background:transparent;border:none;}';
-    document.head.appendChild(style);
-  }
-  // Tiles mis-position until the CSS applies — re-measure once it loads.
-  if ((link as any)._amLoaded || link.sheet) onReady();
-  else
-    link.addEventListener('load', () => {
-      (link as any)._amLoaded = true;
-      onReady();
-    });
+/** Neutralize Leaflet's default divIcon chrome (white box + border) — once per page. */
+function injectPinCss() {
+  if (typeof document === 'undefined' || document.getElementById('am-divicon-css')) return;
+  const style = document.createElement('style');
+  style.id = 'am-divicon-css';
+  style.textContent = '.am-divicon{background:transparent;border:none;}';
+  document.head.appendChild(style);
 }
 
 /** HTML for a price-pill pin (mirrors the pass-1 stylized pins). */
@@ -78,10 +73,12 @@ export function DealerMap({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const pinLayerRef = useRef<L.LayerGroup | null>(null);
+  const tileRef = useRef<L.TileLayer | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
   // The "you are here" dot only shows once the user grants location access.
   const showUser = useAppStore((s) => s.locationPermission === 'granted');
+  const { dark } = useTheme();
 
   // Init once the container div exists.
   useEffect(() => {
@@ -93,21 +90,34 @@ export function DealerMap({
       scrollWheelZoom: false,
       attributionControl: true,
     }).setView([center.lat, center.lng], zoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map);
     pinLayerRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
-    injectLeafletCss(() => map.invalidateSize());
+    injectPinCss();
+    map.invalidateSize();
+
+    // Full-bleed maps get their size after mount — re-measure when the box changes.
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => map.invalidateSize()) : null;
+    ro?.observe(el);
 
     return () => {
+      ro?.disconnect();
       map.remove();
       mapRef.current = null;
       pinLayerRef.current = null;
+      tileRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Tiles follow the appearance setting (dark basemap in dark mode).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    tileRef.current?.remove();
+    const t = dark ? TILES.dark : TILES.light;
+    tileRef.current = L.tileLayer(t.url, { maxZoom: 19, attribution: t.attribution }).addTo(map);
+    tileRef.current.bringToBack();
+  }, [dark]);
 
   // Pan when the focus changes (e.g. a card/pin gets selected).
   useEffect(() => {

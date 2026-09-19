@@ -47,7 +47,7 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
           secureTextEntry={hidden}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          placeholderTextColor={palette.textPlaceholder}
+          placeholderTextColor={colors.textPlaceholder}
           style={{
             flex: 1,
             paddingVertical: 13,

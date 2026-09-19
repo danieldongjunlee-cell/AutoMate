@@ -191,9 +191,9 @@ export function CarDiagramScreen() {
         <View
           style={{
             marginTop: spacing.md,
-            backgroundColor: palette.tileTeal,
+            backgroundColor: colors.tileTeal,
             borderWidth: 1,
-            borderColor: palette.tileTealBorder,
+            borderColor: colors.tileTealBorder,
             borderRadius: radii.tile,
             padding: spacing.lg,
             gap: 12,

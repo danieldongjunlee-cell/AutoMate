@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Modal, Text, View } from 'react-native';
+import { Modal, StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
 import { Tappable } from '../../components/Tappable';
 
 import { SettingsRow, TogglePill } from '../../components/SettingsRow';
@@ -10,7 +11,7 @@ import { Card, Screen, SectionLabel } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { accountService } from '../../services';
 import { USER } from '../../services/mock/data';
-import { useAppStore } from '../../store/useAppStore';
+import { ThemeMode, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction, showAlert } from '../../utils/alerts';
 
@@ -18,12 +19,20 @@ type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfSettings'>;
 
 type NotifKey = 'quotes' | 'service' | 'community' | 'streak';
 
+const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+  { value: 'system', label: 'Auto' },
+];
+
 /** Wireframe s-prof-settings: account, notifications, preferences, legal, sign out. */
 export function ProfSettingsScreen() {
   const navigation = useNavigation<Nav>();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const language = useAppStore((s) => s.language);
   const distanceUnit = useAppStore((s) => s.distanceUnit);
+  const themeMode = useAppStore((s) => s.themeMode);
+  const setThemeMode = useAppStore((s) => s.setThemeMode);
   const signOut = useAppStore((s) => s.signOut);
   const authedUser = useAppStore((s) => s.user);
   const email = authedUser?.email ?? USER.email;
@@ -98,6 +107,34 @@ export function ProfSettingsScreen() {
 
       <SectionLabel>App preferences</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
+        {/* Appearance: dark (default) / light / follow the device. */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.divider }}>
+          <View style={{ width: 28, marginRight: spacing.sm, alignItems: 'center' }}>
+            <Icon name={dark ? 'moon' : 'sun'} size={20} color={colors.textSecondary} />
+          </View>
+          <Text style={{ flex: 1, fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>Appearance</Text>
+          <View
+            accessibilityRole="radiogroup"
+            style={{ flexDirection: 'row', backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, padding: 3 }}
+          >
+            {THEME_OPTIONS.map((opt) => {
+              const on = themeMode === opt.value;
+              return (
+                <Tappable
+                  key={opt.value}
+                  onPress={() => setThemeMode(opt.value)}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: on }}
+                  accessibilityLabel={`${opt.label} appearance`}
+                  noFeedback
+                  style={{ paddingHorizontal: 11, paddingVertical: 5, borderRadius: radii.pill, backgroundColor: on ? colors.primary : 'transparent' }}
+                >
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: on ? colors.onPrimary : colors.textSecondary }}>{opt.label}</Text>
+                </Tappable>
+              );
+            })}
+          </View>
+        </View>
         <SettingsRow
           icon="globe"
           label="Language"

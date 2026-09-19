@@ -67,7 +67,7 @@ export function Dropdown({
           style={{
             flex: 1,
             fontSize: 15,
-            color: hasValue ? colors.textPrimary : palette.textPlaceholder,
+            color: hasValue ? colors.textPrimary : colors.textPlaceholder,
           }}
         >
           {hasValue ? value : placeholder || `Select ${label.toLowerCase()}`}

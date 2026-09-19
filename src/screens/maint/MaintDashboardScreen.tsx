@@ -41,7 +41,7 @@ function serviceIcon(id: string, name: string): { icon: IconName; color: string 
   if (n.includes('filter')) return { icon: 'filter', color: palette.teal };
   if (n.includes('fluid') || n.includes('coolant')) return { icon: 'droplet', color: '#5BD1F5' };
   if (n.includes('inspect')) return { icon: 'search', color: palette.lavender };
-  return { icon: 'wrench', color: palette.textSecondary };
+  return { icon: 'wrench', color: '#8a94a6' };
 }
 
 /**
@@ -51,7 +51,7 @@ function serviceIcon(id: string, name: string): { icon: IconName; color: string 
  */
 export function MaintDashboardScreen() {
   const navigation = useNavigation<Nav>();
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const requireAuth = useRequireAuth();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
@@ -114,8 +114,9 @@ export function MaintDashboardScreen() {
             style={{
               width: heroW || 300,
               height: HERO_H,
+              // Web draws this as a box shadow; on the light ground it would show as a grey rectangle.
               shadowColor: '#000',
-              shadowOpacity: 0.55,
+              shadowOpacity: dark ? 0.55 : 0,
               shadowRadius: 22,
               shadowOffset: { width: 0, height: 18 },
             }}
@@ -128,8 +129,9 @@ export function MaintDashboardScreen() {
             style={{
               width: heroW || 300,
               height: HERO_H,
+              // Web draws this as a box shadow; on the light ground it would show as a grey rectangle.
               shadowColor: '#000',
-              shadowOpacity: 0.55,
+              shadowOpacity: dark ? 0.55 : 0,
               shadowRadius: 22,
               shadowOffset: { width: 0, height: 18 },
             }}

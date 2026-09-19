@@ -66,7 +66,7 @@ export function LiveCamera({
   if (!permission.granted) {
     return frame(
       <View style={{ alignItems: 'center', padding: spacing.lg }}>
-        <Icon name="camera" size={40} color={palette.textSecondary} />
+        <Icon name="camera" size={40} color="rgba(255,255,255,.7)" />
         <Text style={{ color: 'rgba(255,255,255,.8)', fontSize: 14, textAlign: 'center', marginBottom: spacing.sm }}>
           Allow camera access to take photos
         </Text>

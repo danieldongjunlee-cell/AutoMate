@@ -8,7 +8,7 @@ import { EstimateGateSheet } from '../components/EstimateGateSheet';
 import { Icon } from '../components/Icon';
 import { Tappable } from '../components/Tappable';
 import { useAppStore } from '../store/useAppStore';
-import { palette } from '../theme';
+import { palette, useTheme } from '../theme';
 import { TabIcon } from './TabIcons';
 import { MainTabParamList } from './types';
 
@@ -32,6 +32,7 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
   const setPendingAuth = useAppStore((s) => s.setPendingAuth);
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const activeName = state.routes[state.index]?.name;
+  const { colors } = useTheme();
 
   const go = (name: keyof MainTabParamList) => {
     const route = state.routes.find((r) => r.name === name);
@@ -63,9 +64,9 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
           style={{
             height: DOCK_HEIGHT,
             borderRadius: DOCK_HEIGHT / 2,
-            backgroundColor: palette.dock,
+            backgroundColor: colors.dock,
             borderWidth: 1,
-            borderColor: palette.border,
+            borderColor: colors.border,
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: 6,
@@ -128,7 +129,7 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
                 style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: DOCK_HEIGHT }}
               >
                 <View>
-                  <TabIcon tab={name} color={active ? '#ffffff' : palette.textTertiary} size={31} />
+                  <TabIcon tab={name} color={active ? colors.textPrimary : colors.textTertiary} size={31} />
                   {badge ? (
                     <View
                       style={{

@@ -872,16 +872,63 @@ export interface MaintCategory {
   blurb: string;
   /** When true the row matching the car's vehicle type is auto-selected. */
   byVehicleType?: boolean;
+  /** Pick exactly one option (oil type, brake size) rather than any number. */
+  exclusive?: boolean;
   services: MaintSubService[];
 }
 
-/** The 5 maintenance services, each with its detailed sub-options. */
+/** MAINT_CATEGORIES id → the price-chip key used by DEALER_SERVICE_CHIPS. */
+export const CATEGORY_CHIP_KEY: Record<string, string> = { oil: 'Oil', tires: 'Tires', filters: 'Filters', fluids: 'Fluids', brakes: 'Brakes' };
+
+/** "Oil $49" → 49 */
+export const chipPrice = (chip: string) => Number(chip.replace(/[^0-9.]/g, '')) || 0;
+
+/** A shop's headline price for a category ("Oil $49" → 49), or null when it lists none. */
+export function dealerCategoryPrice(dealerId: string | null | undefined, categoryId: string): number | null {
+  const key = CATEGORY_CHIP_KEY[categoryId];
+  const chip = key ? DEALER_SERVICE_CHIPS[dealerId ?? '']?.find((c) => c.startsWith(key)) : undefined;
+  return chip ? chipPrice(chip) : null;
+}
+
+/** Average headline price for a category across all partner shops. */
+function averageCategoryPrice(categoryId: string): number | null {
+  const key = CATEGORY_CHIP_KEY[categoryId];
+  if (!key) return null;
+  const prices = Object.values(DEALER_SERVICE_CHIPS)
+    .map((chips) => chips.find((c) => c.startsWith(key)))
+    .filter((c): c is string => !!c)
+    .map(chipPrice);
+  return prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : null;
+}
+
+/**
+ * What a given shop charges for a sub-service. Prices vary by shop: the
+ * catalog price is scaled by how the shop's headline price for that category
+ * compares with the partner average (e.g. a shop listing oil at $39 against a
+ * $49 average charges ~20% under catalog on every oil option).
+ */
+export function shopServicePrice(dealerId: string | null | undefined, category: MaintCategory, sub: MaintSubService): number {
+  const shop = dealerCategoryPrice(dealerId, category.id);
+  const avg = averageCategoryPrice(category.id);
+  if (shop == null || avg == null || avg === 0) return sub.price;
+  return Math.max(10, Math.round(sub.price * (shop / avg)));
+}
+
+/** Does this shop offer the category? Categories without a price chip (inspection) are offered everywhere. */
+export function dealerOffersCategory(dealerId: string, categoryId: string): boolean {
+  const key = CATEGORY_CHIP_KEY[categoryId];
+  if (!key) return true;
+  return (DEALER_SERVICE_CHIPS[dealerId] ?? []).some((c) => c.startsWith(key));
+}
+
+/** The 6 maintenance services, each with its detailed sub-options. */
 export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'oil',
     name: 'Oil change',
     icon: 'oil',
     blurb: 'Pick your oil type',
+    exclusive: true,
     services: [
       { id: 'oil-conv', name: 'Conventional', price: 39, durationMin: 40 },
       { id: 'oil-blend', name: 'Synthetic blend', price: 49, durationMin: 45 },
@@ -933,8 +980,9 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
     id: 'brakes',
     name: 'Brakes',
     icon: 'brake',
-    blurb: 'Pads & rotors — priced by vehicle',
+    blurb: 'Pads & rotors — sized to your vehicle',
     byVehicleType: true,
+    exclusive: true,
     services: [
       { id: 'brk-small', name: 'Small Car', price: 199, durationMin: 90, vehicleType: 'Small Car' },
       { id: 'brk-sedan', name: 'Sedan', price: 229, durationMin: 90, vehicleType: 'Sedan' },

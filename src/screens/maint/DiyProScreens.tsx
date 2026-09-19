@@ -103,7 +103,7 @@ export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () =
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: colors.chip, alignItems: 'center', justifyContent: 'center' }}>
         <Glyph glyph={guide.emoji} size={28} color={subjectColor(guide.emoji)} />
       </View>
       <View style={{ flex: 1 }}>

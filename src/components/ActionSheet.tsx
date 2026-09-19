@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconChip } from './IconChip';
 import { IconName } from './Icon';
 import { Tappable } from './Tappable';
-import { palette, radii, spacing } from '../theme';
+import { radii, spacing, useTheme } from '../theme';
 
 export interface ActionSheetRow {
   key: string;
@@ -35,23 +35,24 @@ export function ActionSheet({
   rows: ActionSheetRow[];
 }) {
   const insets = useSafeAreaInsets();
+  const { colors } = useTheme();
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Tappable
         noFeedback
         onPress={onClose}
-        style={{ flex: 1, backgroundColor: 'rgba(3,6,12,0.66)', justifyContent: 'flex-end' }}
+        style={{ flex: 1, backgroundColor: colors.backdrop, justifyContent: 'flex-end' }}
       >
         <View
           // Swallow taps so the backdrop close doesn't fire.
           onStartShouldSetResponder={() => true}
           style={{
-            backgroundColor: palette.sheet,
+            backgroundColor: colors.sheet,
             borderTopLeftRadius: radii.actionSheet,
             borderTopRightRadius: radii.actionSheet,
             borderWidth: 1,
             borderBottomWidth: 0,
-            borderColor: palette.border,
+            borderColor: colors.border,
             paddingHorizontal: spacing.lg,
             paddingTop: spacing.md,
             paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.sm,
@@ -62,7 +63,7 @@ export function ActionSheet({
               width: 44,
               height: 5,
               borderRadius: 3,
-              backgroundColor: palette.border,
+              backgroundColor: colors.border,
               alignSelf: 'center',
               marginBottom: spacing.lg,
             }}
@@ -102,16 +103,16 @@ export function ActionSheet({
                     backgroundColor: r.color,
                   }}
                 />
-                <IconChip name={r.icon} size={64} glyph={34} bg={r.color} color={r.glyphColor ?? palette.background} radius={20} />
+                <IconChip name={r.icon} size={64} glyph={34} bg={r.color} color={r.glyphColor ?? colors.sheet} radius={20} />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 18, fontWeight: '800', color: palette.textPrimary }}>{r.title}</Text>
-                  <Text style={{ fontSize: 13, color: palette.textSecondary, marginTop: 2 }}>{r.sub}</Text>
+                  <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>{r.title}</Text>
+                  <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 2 }}>{r.sub}</Text>
                 </View>
               </LinearGradient>
             </Tappable>
           ))}
           <Tappable onPress={onClose} style={{ alignItems: 'center', paddingVertical: 10 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: palette.textTertiary }}>Cancel</Text>
+            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textTertiary }}>Cancel</Text>
           </Tappable>
         </View>
       </Tappable>

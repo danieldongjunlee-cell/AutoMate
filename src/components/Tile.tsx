@@ -4,18 +4,20 @@ import { ImageBackground, ImageSourcePropType, StyleProp, Text, View, ViewStyle 
 
 import { Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
-import { palette, radii } from '../theme';
+import { radii, ThemeColors, useTheme } from '../theme';
 
 export type TileVariant = 'navy' | 'steel' | 'teal';
 
-const VARIANTS: Record<TileVariant, { bg: string; border: string }> = {
-  navy: { bg: palette.tileNavy, border: palette.tileNavyBorder },
-  steel: { bg: palette.tileSteel, border: palette.tileSteelBorder },
-  teal: { bg: palette.tileTeal, border: palette.tileTealBorder },
-};
+const variantColors = (c: ThemeColors): Record<TileVariant, { bg: string; border: string }> => ({
+  navy: { bg: c.tileNavy, border: c.tileNavyBorder },
+  steel: { bg: c.tileSteel, border: c.tileSteelBorder },
+  teal: { bg: c.tileTeal, border: c.tileTealBorder },
+});
 
 /** Tile title: 21/800, kept to two lines so tiles stay 150–168px tall. */
-function TileTitle({ children, color = palette.textPrimary }: { children: string; color?: string }) {
+function TileTitle({ children, color }: { children: string; color?: string }) {
+  const { colors } = useTheme();
+  color = color ?? colors.textPrimary;
   return (
     <Text
       numberOfLines={2}
@@ -35,7 +37,7 @@ export function Tile({
   title,
   variant = 'navy',
   icon,
-  iconColor = palette.textPrimary,
+  iconColor,
   onPress,
   height = 156,
   style,
@@ -50,7 +52,8 @@ export function Tile({
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
 }) {
-  const v = VARIANTS[variant];
+  const { colors } = useTheme();
+  const v = variantColors(colors)[variant];
   return (
     <Tappable
       onPress={onPress}
@@ -79,12 +82,12 @@ export function Tile({
             width: 50,
             height: 50,
             borderRadius: 14,
-            backgroundColor: palette.chip,
+            backgroundColor: colors.chip,
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Icon name={icon} size={28} color={iconColor} />
+          <Icon name={icon} size={28} color={iconColor ?? colors.textPrimary} />
         </View>
       ) : null}
     </Tappable>
@@ -108,6 +111,7 @@ export function PhotoTile({
   height?: number;
   style?: StyleProp<ViewStyle>;
 }) {
+  const { colors } = useTheme();
   return (
     <Tappable
       onPress={onPress}
@@ -116,9 +120,9 @@ export function PhotoTile({
         {
           height,
           borderRadius: radii.tile,
-          backgroundColor: palette.tileNavy,
+          backgroundColor: colors.tileNavy,
           borderWidth: 1,
-          borderColor: palette.tileNavyBorder,
+          borderColor: colors.tileNavyBorder,
           overflow: 'hidden',
         },
         style,
@@ -132,7 +136,7 @@ export function PhotoTile({
           end={{ x: 0.5, y: 1 }}
           style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
         >
-          <TileTitle>{title}</TileTitle>
+          <TileTitle color="#e8edf5">{title}</TileTitle>
         </LinearGradient>
       </ImageBackground>
     </Tappable>
