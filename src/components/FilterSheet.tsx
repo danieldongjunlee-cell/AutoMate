@@ -96,12 +96,12 @@ export function FilterSheet({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Tappable noFeedback onPress={onClose} style={{ flex: 1, backgroundColor: 'rgba(3,6,12,0.66)', justifyContent: 'flex-end' }}>
+      <Tappable noFeedback onPress={onClose} style={{ flex: 1, backgroundColor: colors.backdrop, justifyContent: 'flex-end' }}>
         <Tappable
           noFeedback
           onPress={() => undefined}
           style={{
-            backgroundColor: palette.sheet,
+            backgroundColor: colors.sheet,
             borderTopLeftRadius: radii.actionSheet,
             borderTopRightRadius: radii.actionSheet,
             borderWidth: 1,
@@ -113,7 +113,7 @@ export function FilterSheet({
             gap: spacing.xxl,
           }}
         >
-          <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#39435a', alignSelf: 'center', marginBottom: 2 }} />
+          <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: colors.disabled, alignSelf: 'center', marginBottom: 2 }} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary }}>{title}</Text>
             <Tappable onPress={reset} hitSlop={8}>
@@ -242,7 +242,9 @@ function DistanceSlider({ value, min, max, onChange }: { value: number; min: num
               width: 24,
               height: 24,
               borderRadius: 12,
-              backgroundColor: '#e8edf5',
+              backgroundColor: colors.surface,
+              borderWidth: 2,
+              borderColor: colors.primary,
               shadowColor: '#000',
               shadowOpacity: 0.5,
               shadowRadius: 12,

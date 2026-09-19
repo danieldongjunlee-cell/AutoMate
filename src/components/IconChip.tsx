@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { Icon, IconName } from './Icon';
-import { palette } from '../theme';
+import { useTheme } from '../theme';
 
 /**
  * Rounded-square icon chip (`rgba(255,255,255,.06)`, no border) that holds an
@@ -13,8 +13,8 @@ export function IconChip({
   name,
   size = 50,
   glyph,
-  color = palette.textPrimary,
-  bg = palette.chip,
+  color,
+  bg,
   radius,
 }: {
   name: IconName;
@@ -25,6 +25,7 @@ export function IconChip({
   bg?: string;
   radius?: number;
 }) {
+  const { colors } = useTheme();
   const g = glyph ?? (size >= 60 ? 34 : Math.round(size * 0.56));
   return (
     <View
@@ -32,13 +33,13 @@ export function IconChip({
         width: size,
         height: size,
         borderRadius: radius ?? Math.round(size * 0.3),
-        backgroundColor: bg,
+        backgroundColor: bg ?? colors.chip,
         alignItems: 'center',
         justifyContent: 'center',
         flexShrink: 0,
       }}
     >
-      <Icon name={name} size={g} color={color} />
+      <Icon name={name} size={g} color={color ?? colors.textPrimary} />
     </View>
   );
 }

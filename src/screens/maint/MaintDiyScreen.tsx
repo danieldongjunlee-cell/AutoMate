@@ -85,7 +85,7 @@ export function MaintDiyScreen() {
     <Screen>
       {/* Header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md }}>
-        <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: colors.chip, alignItems: 'center', justifyContent: 'center' }}>
           <Icon name="wrench" size={28} color={palette.amber} />
         </View>
         <View style={{ flex: 1 }}>

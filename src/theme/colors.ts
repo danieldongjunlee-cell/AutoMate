@@ -1,11 +1,11 @@
 /**
  * Color tokens for the AutoMate redesign (Claude Design canvas v34).
  *
- * The app has ONE dark ground everywhere: background `#0a0f19`, surface
- * `#121a2b`, primary blue `#2e6bff`, teal accent `#4FE3C1`, amber `#F0B44E`.
- * There is no light theme any more — `darkColors` is the only `ThemeColors`
- * map and `useTheme()` always returns it. The only white element in the app is
- * the dock's centre `+` button.
+ * The default ground is dark: background `#0a0f19`, surface `#121a2b`,
+ * primary blue `#2e6bff`, teal accent `#4FE3C1`, amber `#F0B44E`. Settings →
+ * Appearance switches to `lightColors` (or follows the device). `palette` holds
+ * the static brand accents; anything that sits on a neutral surface must read
+ * from `useTheme().colors` so it flips with the mode.
  */
 export const palette = {
   // Brand / primary action (v17 blue — 180 uses across the wireframe)
@@ -132,9 +132,24 @@ export interface ThemeColors {
   infoSurface: string;
   infoDeep: string;
   onPrimary: string;
+  /** Floating dock pill. */
+  dock: string;
+  /** Bottom sheets (action sheet, filters, gates). */
+  sheet: string;
+  /** Translucent icon-chip fill. */
+  chip: string;
+  /** Tile surfaces (navy / steel / teal blends on dark; soft tints on light). */
+  tileNavy: string;
+  tileNavyBorder: string;
+  tileSteel: string;
+  tileSteelBorder: string;
+  tileTeal: string;
+  tileTealBorder: string;
+  /** Modal backdrop. */
+  backdrop: string;
 }
 
-// The one and only theme: near-black navy chrome.
+// Default theme: near-black navy chrome.
 export const darkColors: ThemeColors = {
   background: '#0a0f19',
   surface: '#121a2b',
@@ -173,4 +188,67 @@ export const darkColors: ThemeColors = {
   infoSurface: '#16233e',
   infoDeep: '#9cc4ec',
   onPrimary: '#ffffff',
+  dock: 'rgba(18,26,43,0.96)',
+  sheet: '#0f1626',
+  chip: 'rgba(255,255,255,0.06)',
+  tileNavy: '#16233d',
+  tileNavyBorder: '#23335a',
+  tileSteel: '#1b273d',
+  tileSteelBorder: '#2b3a57',
+  tileTeal: '#0f2a3d',
+  tileTealBorder: '#1d4459',
+  backdrop: 'rgba(3,6,12,0.66)',
+};
+
+// Light theme (Settings → Appearance): the same blue/teal/amber accents on a
+// cool off-white ground. Text-on-tint tokens (primaryDark, successDeep …) are
+// remapped so the same component code stays readable.
+export const lightColors: ThemeColors = {
+  background: '#eef1f6',
+  surface: '#ffffff',
+  surfaceAlt: '#f0f2f6',
+  inputBg: '#f3f5f9',
+  border: '#dfe4ec',
+  divider: '#e6eaf0',
+  disabled: '#aab3c2',
+  textPrimary: '#151a26',
+  textSecondary: '#454d5c',
+  textTertiary: '#687385',
+  textPlaceholder: '#8a94a6',
+  tabBarBackground: 'rgba(255,255,255,0.96)',
+  tabBarBorder: '#dfe4ec',
+  tabInactive: '#687385',
+  tabActive: '#2e6bff',
+  card: '#ffffff',
+  primary: '#2e6bff',
+  primaryDark: '#1e4fcc',
+  primaryDeep: '#15307a',
+  primaryLight: '#c5d7f5',
+  primarySurface: '#e9f0ff',
+  success: '#16a34a',
+  successDark: '#0f8a43',
+  successDeep: '#085041',
+  successSurface: '#e6f6ee',
+  successLight: '#bce3cc',
+  warning: '#d99a2b',
+  warningSurface: '#fcf3e1',
+  warningDeep: '#8a5a12',
+  danger: '#e24b4a',
+  dangerSurface: '#fcecec',
+  dangerBorder: '#f3caca',
+  dangerDeep: '#c0322f',
+  info: '#2e6bff',
+  infoSurface: '#eef4ff',
+  infoDeep: '#0c447c',
+  onPrimary: '#ffffff',
+  dock: 'rgba(255,255,255,0.96)',
+  sheet: '#ffffff',
+  chip: 'rgba(21,26,38,0.06)',
+  tileNavy: '#e6edfb',
+  tileNavyBorder: '#cfdcf4',
+  tileSteel: '#e9edf4',
+  tileSteelBorder: '#d3dae6',
+  tileTeal: '#dff6f0',
+  tileTealBorder: '#b9e7db',
+  backdrop: 'rgba(15,22,38,0.45)',
 };

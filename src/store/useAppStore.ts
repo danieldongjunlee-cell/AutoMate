@@ -12,6 +12,9 @@ import { signOutSupabase } from '../lib/supabaseAuth';
 import { AiEstimateSummary, BOOKABLE_SERVICES, defaultBookingISO, MAINT_CATEGORIES } from '../services/mock/data';
 
 /** A service row in the multi-service booking cart (maint-schedule-book). */
+/** Settings → Appearance. */
+export type ThemeMode = 'dark' | 'light' | 'system';
+
 export interface CartService {
   id: string;
   name: string;
@@ -300,6 +303,9 @@ interface AppState {
   setLanguage: (language: string) => void;
   distanceUnit: 'mi' | 'km';
   setDistanceUnit: (distanceUnit: 'mi' | 'km') => void;
+  /** Settings → Appearance: dark (default), light, or follow the device. Persisted. */
+  themeMode: ThemeMode;
+  setThemeMode: (themeMode: ThemeMode) => void;
 
   // Reward points (420 pts seed; earned by scans/logs/posts).
   // Single client cache — the points services (mock + api) keep it current.
@@ -420,9 +426,9 @@ interface AppState {
    *  when the booking started from the dashboard's "Book a service". */
   serviceTypePick: string[];
   setServiceTypePick: (ids: string[]) => void;
-  /** Option chosen per picked category (MAINT_CATEGORIES id → sub-service id). */
-  serviceSubPick: Record<string, string>;
-  setServiceSubPick: (picks: Record<string, string>) => void;
+  /** Options chosen per picked category (MAINT_CATEGORIES id → sub-service ids). */
+  serviceSubPick: Record<string, string[]>;
+  setServiceSubPick: (picks: Record<string, string[]>) => void;
   /** Replace the cart's services wholesale (seeding from the pick). */
   setCartServices: (services: CartService[]) => void;
   /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
@@ -524,12 +530,13 @@ export const useAppStore = create<AppState>()(
     });
   },
 
-  // Dark mode — v17 defaults to its dark-navy theme (toggle to light in Settings).
-
   language: 'English',
   setLanguage: (language) => set({ language }),
   distanceUnit: 'mi',
   setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
+  // Appearance — dark by default; Settings can switch to light or the device setting.
+  themeMode: 'dark',
+  setThemeMode: (themeMode) => set({ themeMode }),
 
   points: SEED_POINTS,
   addPoints: (n, reason) => {
@@ -823,6 +830,8 @@ export const useAppStore = create<AppState>()(
         isNewUser: s.isNewUser,
         // Moderation must survive restarts (App Store 1.2).
         blockedAuthors: s.blockedAuthors,
+        // Device preference — survives restarts and sign-out.
+        themeMode: s.themeMode,
       }),
     },
   ),
