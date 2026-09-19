@@ -420,6 +420,9 @@ interface AppState {
    *  when the booking started from the dashboard's "Book a service". */
   serviceTypePick: string[];
   setServiceTypePick: (ids: string[]) => void;
+  /** Option chosen per picked category (MAINT_CATEGORIES id → sub-service id). */
+  serviceSubPick: Record<string, string>;
+  setServiceSubPick: (picks: Record<string, string>) => void;
   /** Replace the cart's services wholesale (seeding from the pick). */
   setCartServices: (services: CartService[]) => void;
   /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
@@ -709,6 +712,8 @@ export const useAppStore = create<AppState>()(
   cart: emptyCart,
   serviceTypePick: [],
   setServiceTypePick: (serviceTypePick) => set({ serviceTypePick }),
+  serviceSubPick: {},
+  setServiceSubPick: (serviceSubPick) => set({ serviceSubPick }),
   setCartServices: (services) => set((s) => ({ cart: { ...s.cart, services } })),
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),
   claimDeal: (dealerId, promo) => {

@@ -7,9 +7,9 @@ import { spacing, useTheme } from '../theme';
 
 /**
  * Horizontal paged carousel: each item fills the width and snaps one-per-view.
- * Swipe on touch, or on web drag with the mouse (a horizontal drag of 40px+
- * turns the page) or use the ‹ › arrows at the edges. Dot indicators below
- * track the current page and are tappable.
+ * Touch swipes on native; on web the cards follow the mouse while the button
+ * is down and snap to the nearest card on release. ‹ › buttons flank the
+ * tappable dot indicators.
  */
 export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode[]; /** Show the ‹ › step buttons. */ arrows?: boolean }) {
   const { colors } = useTheme();
@@ -21,29 +21,37 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
   const wRef = useRef(0);
   wRef.current = w;
 
-  const go = (next: number) => {
+  const go = (next: number, animated = true) => {
     const clamped = Math.max(0, Math.min(items.length - 1, next));
     setIdx(clamped);
-    ref.current?.scrollTo({ x: clamped * wRef.current, animated: true });
+    ref.current?.scrollTo({ x: clamped * wRef.current, animated });
   };
   const onEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (w > 0) setIdx(Math.round(e.nativeEvent.contentOffset.x / w));
   };
 
-  // Web: the ScrollView doesn't follow mouse drags, so a horizontal mouse drag
-  // on the wrapper turns the page. While a drag is in progress an overlay sits
-  // over the cards so the release doesn't count as a tap on the card. Native
-  // keeps the ScrollView's own touch scrolling (this is a no-op there).
+  // Web: the ScrollView doesn't follow mouse drags, so window mouse listeners
+  // move the content with the cursor and snap on release. While a drag is in
+  // progress an overlay covers the cards so the release isn't a tap on one.
   const [dragging, setDragging] = useState(false);
-  const drag = useRef<{ startX: number; moved: boolean } | null>(null);
+  const drag = useRef<{ startX: number; startOffset: number; moved: boolean } | null>(null);
   const onMouseDown = (e: { pageX: number }) => {
     if (Platform.OS !== 'web' || typeof window === 'undefined') return;
-    drag.current = { startX: e.pageX, moved: false };
+    drag.current = { startX: e.pageX, startOffset: idxRef.current * wRef.current, moved: false };
     const onMove = (ev: MouseEvent) => {
-      if (!drag.current) return;
-      if (!drag.current.moved && Math.abs(ev.pageX - drag.current.startX) > 8) {
-        drag.current.moved = true;
+      const d = drag.current;
+      if (!d) return;
+      const dx = ev.pageX - d.startX;
+      if (!d.moved && Math.abs(dx) > 6) {
+        d.moved = true;
         setDragging(true);
+      }
+      if (d.moved) {
+        const max = (items.length - 1) * wRef.current;
+        // Follow the cursor, with a little resistance past the ends.
+        const raw = d.startOffset - dx;
+        const x = raw < 0 ? raw * 0.35 : raw > max ? max + (raw - max) * 0.35 : raw;
+        ref.current?.scrollTo({ x, animated: false });
       }
     };
     const onUp = (ev: MouseEvent) => {
@@ -51,13 +59,13 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
       window.removeEventListener('mouseup', onUp);
       const d = drag.current;
       drag.current = null;
-      if (d?.moved) {
-        const dx = ev.pageX - d.startX;
-        if (dx <= -40) go(idxRef.current + 1);
-        else if (dx >= 40) go(idxRef.current - 1);
-        // Keep the overlay for the click that follows mouseup, then drop it.
-        setTimeout(() => setDragging(false), 50);
-      }
+      if (!d?.moved) return;
+      const dx = ev.pageX - d.startX;
+      // Snap: a drag past a third of the width (or a quick flick) turns the page.
+      const from = idxRef.current;
+      const next = dx <= -wRef.current / 3 || dx <= -60 ? from + 1 : dx >= wRef.current / 3 || dx >= 60 ? from - 1 : from;
+      go(next);
+      setTimeout(() => setDragging(false), 50);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
@@ -89,11 +97,17 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
 
   return (
     <View>
-      <View onLayout={(e) => setW(e.nativeEvent.layout.width)} {...webMouse} style={Platform.OS === 'web' ? ({ cursor: 'grab', userSelect: 'none' } as object) : undefined}>
+      <View
+        onLayout={(e) => setW(e.nativeEvent.layout.width)}
+        {...webMouse}
+        style={Platform.OS === 'web' ? ({ cursor: dragging ? 'grabbing' : 'grab', userSelect: 'none' } as object) : undefined}
+      >
         <ScrollView
           ref={ref}
           horizontal
-          pagingEnabled
+          // Web snaps by hand on release; CSS scroll-snap (pagingEnabled) would fight the drag.
+          pagingEnabled={Platform.OS !== 'web'}
+          scrollEnabled={Platform.OS !== 'web'}
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={onEnd}
           scrollEventThrottle={16}

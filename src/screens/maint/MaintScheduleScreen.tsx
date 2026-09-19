@@ -37,6 +37,7 @@ export function MaintScheduleScreen() {
   const startBooking = useAppStore((s) => s.startBooking);
   const setCartServices = useAppStore((s) => s.setCartServices);
   const pick = useAppStore((s) => s.serviceTypePick);
+  const subPick = useAppStore((s) => s.serviceSubPick);
   const requireAuth = useRequireAuth();
   const [pendingDealer, setPendingDealer] = useState<string | null>(null);
   const { brand, active } = useActiveVehicle();
@@ -49,7 +50,10 @@ export function MaintScheduleScreen() {
       // the car where a category prices by vehicle type, else the first).
       const recoType = active ? vehicleTypeOf(active.name) : null;
       const services: CartService[] = pickedCategories.map((cat) => {
-        const sub = (cat.byVehicleType && cat.services.find((s) => s.vehicleType === recoType)) || cat.services[0];
+        const sub =
+          cat.services.find((s) => s.id === subPick[cat.id]) ||
+          (cat.byVehicleType && cat.services.find((s) => s.vehicleType === recoType)) ||
+          cat.services[0];
         return { id: sub.id, name: `${cat.name} — ${sub.name}`, price: sub.price, durationMin: sub.durationMin };
       });
       setCartServices(services);

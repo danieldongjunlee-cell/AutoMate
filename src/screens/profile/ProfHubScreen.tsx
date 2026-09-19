@@ -10,7 +10,6 @@ import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { Icon, IconName } from '../../components/Icon';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { AvatarCircle, Screen } from '../../components/ui';
-import { pointsToUsd } from '../../config/points';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { MainTabParamList, ProfileStackParamList } from '../../navigation/types';
@@ -22,8 +21,6 @@ import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfHub'>;
-
-const NEXT_REWARD_PTS = 6000;
 
 interface HubRow {
   icon: IconName | React.ReactNode;
@@ -38,8 +35,8 @@ interface HubRow {
 }
 
 /**
- * More hub: identity, check-in, points, Pro banner, then the account rows
- * grouped into captioned cards (icon + label rows, no subtitles).
+ * More hub: identity, then the account rows grouped into captioned cards
+ * (icon + label rows, no subtitles). Check-in and points live on Rewards.
  */
 export function ProfHubScreen() {
   const navigation = useNavigation<Nav>();
@@ -47,13 +44,10 @@ export function ProfHubScreen() {
   const { brand: carBrand } = useActiveVehicle();
   const storePoints = useAppStore((s) => s.points);
   const isPro = useAppStore((s) => s.isPro);
-  const storeCheckedIn = useAppStore((s) => s.dailyCheckedIn);
-  const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
   const requireAuth = useRequireAuth();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  // Guests have no account yet — points, streak and check-in all read zero.
+  // Guests have no account yet — points read zero.
   const points = isAuthenticated ? storePoints : 0;
-  const checkedIn = isAuthenticated ? storeCheckedIn : false;
   const authedUser = useAppStore((s) => s.user);
   const displayName = authedUser?.name ?? USER.name;
   const handleFromName = displayName.trim().toLowerCase().replace(/\s+/g, '');
@@ -141,63 +135,6 @@ export function ProfHubScreen() {
         </View>
       </View>
 
-      {/* Daily check-in */}
-      <Tappable
-        onPress={checkedIn ? undefined : () => requireAuth('checkIn', claimCheckIn)}
-        disabled={checkedIn}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radii.lg,
-          padding: spacing.md,
-          marginBottom: spacing.lg,
-        }}
-      >
-        <Icon name={checkedIn ? 'sparkle' : 'check'} size={22} color={checkedIn ? palette.amber : palette.mint} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{checkedIn ? 'Checked in today' : 'Daily check-in'}</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            {isAuthenticated ? `Day ${checkedIn ? 6 : 5} streak · +10 pts` : 'Day 0 streak · 0 pts'}
-          </Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: checkedIn ? 'transparent' : colors.success,
-            borderWidth: checkedIn ? 1.5 : 0,
-            borderColor: colors.success,
-            borderRadius: radii.pill,
-            paddingHorizontal: 14,
-            paddingVertical: 6,
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>{checkedIn ? 'Claimed' : 'Claim'}</Text>
-        </View>
-      </Tappable>
-
-      {/* Points card */}
-      <View style={{ backgroundColor: colors.warningSurface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.warning, padding: spacing.md, marginBottom: spacing.lg }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xs }}>
-          <View>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep }}>YOUR POINTS</Text>
-            <Text style={{ fontSize: 26, fontWeight: '800', color: colors.warningDeep }}>
-              {points.toLocaleString()} pts{' '}
-              <Text style={{ fontSize: 14, fontWeight: '700', color: palette.mint }}>= {pointsToUsd(points)}</Text>
-            </Text>
-          </View>
-          <View style={{ backgroundColor: colors.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.warning, borderRadius: radii.sm, paddingHorizontal: 12, paddingVertical: 8, alignItems: 'center' }}>
-            <Text style={{ fontSize: 13, color: colors.warningDeep }}>Next reward</Text>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.warningDeep }}>{NEXT_REWARD_PTS.toLocaleString()} pts</Text>
-          </View>
-        </View>
-        <View style={{ height: 6, backgroundColor: 'rgba(240,180,78,.25)', borderRadius: 3, overflow: 'hidden' }}>
-          <View style={{ width: `${Math.min(100, (points / NEXT_REWARD_PTS) * 100)}%`, height: '100%', backgroundColor: colors.warning }} />
-        </View>
-      </View>
-
       {/* User settings */}
       {section('User settings', [
         { icon: hasCar ? <CarBrandLogo brand={carBrand} size={24} /> : 'car', label: 'My cars', to: 'ProfCars', gate: 'myCars', check: !hasCar },
@@ -224,9 +161,9 @@ export function ProfHubScreen() {
       </Tappable>
 
       {/* Benefits & alerts */}
-      {section('Benefits & alerts', [
+      {section('Rewards & alerts', [
+        { icon: 'trophy', label: `Rewards · ${points.toLocaleString()} pts`, to: 'ProfMiles', gate: 'milestones' },
         { icon: 'tag', label: 'Deals & offers', cross: { tab: 'HomeTab', screen: 'BundleDeals' }, gate: 'deals' },
-        { icon: 'trophy', label: 'Reward milestones', to: 'ProfMiles', gate: 'milestones' },
         { icon: 'chart', label: 'Points history', to: 'ProfPointsHistory', gate: 'pointsHistory' },
         { icon: 'bell', label: 'Notifications', cross: { tab: 'HomeTab', screen: 'Notifications' } },
         { icon: 'shield', label: 'Insurance policy', to: 'ProfInsurance', gate: 'insurance', check: !hasPolicy },
