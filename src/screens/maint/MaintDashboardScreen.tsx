@@ -160,12 +160,12 @@ export function MaintDashboardScreen() {
         </View>
       </View>
 
-      {/* Book a service — the dashboard's primary action → partner shops */}
+      {/* Book a service — the dashboard's primary action → pick services, then shops */}
       <Tappable
         onPress={() =>
           requireAuth('bookService', () => {
             setServiceTypePick([]);
-            navigation.navigate('MaintSchedule');
+            navigation.navigate('MaintServiceType');
           })
         }
         accessibilityLabel="Book a service"

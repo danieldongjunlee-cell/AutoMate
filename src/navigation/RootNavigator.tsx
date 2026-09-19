@@ -8,6 +8,7 @@ import { fetchBookings } from '../lib/bookings';
 import { fetchPointsBalance } from '../lib/points';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { getSupabaseSessionUser } from '../lib/supabaseAuth';
+import { seedDemoPolicies } from '../services/mock/insuranceService';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
 import { AuthModal } from './AuthStack';
@@ -30,8 +31,9 @@ export function RootNavigator() {
   const navRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
   useEffect(() => {
     if (process.env.EXPO_PUBLIC_E2E === '1') {
-      (globalThis as { __nav?: unknown; __store?: unknown }).__nav = navRef;
-      (globalThis as { __nav?: unknown; __store?: unknown }).__store = useAppStore;
+      (globalThis as { __nav?: unknown; __store?: unknown; __seedDemo?: unknown }).__nav = navRef;
+      (globalThis as { __nav?: unknown; __store?: unknown; __seedDemo?: unknown }).__store = useAppStore;
+      (globalThis as { __nav?: unknown; __store?: unknown; __seedDemo?: unknown }).__seedDemo = seedDemoPolicies;
     }
   }, []);
 

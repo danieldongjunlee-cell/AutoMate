@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -49,6 +49,22 @@ export function CarDiagramScreen() {
   const pendingVehicle = useAppStore((s) => s.pendingVehicle);
   const { active } = useActiveVehicle();
   const [picking, setPicking] = useState(false);
+
+  // The capture section slides open right under the diagram when a part is
+  // picked, and the page scrolls so it's in view.
+  const reveal = useRef(new Animated.Value(0)).current;
+  const scrollRef = useRef<ScrollView>(null);
+  const sectionY = useRef(0);
+  useEffect(() => {
+    if (!draftPart) {
+      reveal.setValue(0);
+      return;
+    }
+    reveal.setValue(0);
+    Animated.spring(reveal, { toValue: 1, useNativeDriver: false, speed: 16, bounciness: 4 }).start();
+    const t = setTimeout(() => scrollRef.current?.scrollTo({ y: Math.max(0, sectionY.current - 80), animated: true }), 60);
+    return () => clearTimeout(t);
+  }, [draftPart, reveal]);
 
   const selectedKey: PartKey | null = draftPart ? (KEY_BY_NAME[draftPart] ?? null) : null;
   const doneKeys = useMemo(
@@ -160,7 +176,7 @@ export function CarDiagramScreen() {
   };
 
   return (
-    <Screen>
+    <Screen scrollRef={scrollRef}>
       <SubmitProgress step={1} left="Avg 2 min" right="Let's go" />
 
       {/* Selected part — centred blue pill with a teal dot */}
@@ -185,18 +201,22 @@ export function CarDiagramScreen() {
         </View>
       </View>
 
-      <BlueprintPicker selected={selectedKey} done={doneKeys} onPick={(k) => pickPart(PART_NAMES[k])} />
+      {/* A part that already has photos can't be picked again — remove it on the review step instead. */}
+      <BlueprintPicker selected={selectedKey} done={doneKeys} onPick={(k) => (doneKeys.has(k) ? undefined : pickPart(PART_NAMES[k]))} />
 
       {draftPart ? (
-        <View
+        <Animated.View
+          onLayout={(e) => (sectionY.current = e.nativeEvent.layout.y)}
           style={{
             marginTop: spacing.md,
-            backgroundColor: colors.tileTeal,
+            backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: colors.tileTealBorder,
+            borderColor: colors.border,
             borderRadius: radii.tile,
             padding: spacing.lg,
             gap: 12,
+            opacity: reveal,
+            transform: [{ translateY: reveal.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] }) }, { scaleY: reveal.interpolate({ inputRange: [0, 1], outputRange: [0.92, 1] }) }],
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -232,7 +252,7 @@ export function CarDiagramScreen() {
             <PrimaryButton label="Add another part" variant="outline" disabled={!canSave} onPress={onAddAnother} style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 6 }} textStyle={{ fontSize: 14 }} />
             <PrimaryButton label="Continue" disabled={!canSave} onPress={onContinue} style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 6 }} textStyle={{ fontSize: 15 }} />
           </View>
-        </View>
+        </Animated.View>
       ) : damageParts.length > 0 ? (
         <PrimaryButton
           label={`Continue with ${damageParts.length} ${damageParts.length === 1 ? 'part' : 'parts'}`}

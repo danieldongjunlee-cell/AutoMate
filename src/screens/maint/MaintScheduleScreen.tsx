@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MapMarker } from '../../components/DealerMap';
 import { FilterSheet } from '../../components/FilterSheet';
@@ -176,12 +176,34 @@ export function MaintScheduleScreen() {
                 selected={dealer.id === selectedId}
                 onPress={() => selectShop(dealer.id)}
                 callout={
-                  total != null
-                    ? { title: `$${total} for ${pickedLabel}`, body: `${dealer.name}'s prices · pay at the shop after service`, button: 'Book', onPress: () => selectShop(dealer.id) }
-                    : { title: Number.isFinite(from) ? `Services from $${from}` : 'Quote on request', body: `${chips.join(' · ')}`, button: 'Book', onPress: () => selectShop(dealer.id) }
+                  total == null
+                    ? { title: Number.isFinite(from) ? `Services from $${from}` : 'Quote on request', body: `${chips.join(' · ')}`, button: 'Book', onPress: () => selectShop(dealer.id) }
+                    : undefined
                 }
                 actions={[{ label: 'Book', icon: 'calcheck', primary: true, onPress: () => selectShop(dealer.id) }]}
-              />
+              >
+                {total != null ? (
+                  // Your services at this shop: each line priced, total on the right.
+                  <View style={{ backgroundColor: colors.surfaceAlt, borderRadius: 16, padding: spacing.md }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md, marginBottom: 6 }}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Your services here</Text>
+                        <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>{dealer.name}&apos;s prices · pay at the shop</Text>
+                      </View>
+                      <View style={{ alignItems: 'flex-end' }}>
+                        <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, lineHeight: 26 }}>${total}</Text>
+                        <Text style={{ fontSize: 11, color: colors.textTertiary }}>total</Text>
+                      </View>
+                    </View>
+                    {servicesAt(dealer.id).map((svc) => (
+                      <View key={svc.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }}>
+                        <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary }} numberOfLines={1}>{svc.name}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>${svc.price}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : null}
+              </ShopListRow>
             </View>
           );
         })}

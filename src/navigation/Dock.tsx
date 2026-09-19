@@ -1,38 +1,52 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { Platform, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Modal, Platform, Text, useWindowDimensions, View } from 'react-native';
 
-import { ActionSheet } from '../components/ActionSheet';
 import { EstimateGateSheet } from '../components/EstimateGateSheet';
-import { Icon } from '../components/Icon';
+import { Icon, IconName } from '../components/Icon';
+import { IconChip } from '../components/IconChip';
 import { Tappable } from '../components/Tappable';
 import { useAppStore } from '../store/useAppStore';
-import { palette, useTheme } from '../theme';
+import { palette, radii, spacing, useTheme } from '../theme';
 import { TabIcon } from './TabIcons';
 import { MainTabParamList } from './types';
 
 /** Dock slots left→right; `null` is the centre `+`. Bookings has no slot — it
- *  is reached from the action sheet, Home and More. */
+ *  is reached from the + menu, Home and More. */
 const SLOTS: (keyof MainTabParamList | null)[] = ['HomeTab', 'QuotesTab', null, 'CommunityTab', 'MoreTab'];
 
 export const DOCK_HEIGHT = 66;
 export const DOCK_INSET = 16;
+const PLUS_SIZE = 62;
+/** The + button sits 16px above the pill's top edge. */
+const PLUS_LIFT = (DOCK_HEIGHT - PLUS_SIZE) / 2 + 16;
+
+interface DockAction {
+  key: string;
+  title: string;
+  sub: string;
+  icon: IconName;
+  color: string;
+  glyphColor?: string;
+  onPress: () => void;
+}
 
 /**
  * Floating pill dock (canvas "Tabs & system"): 66px tall, 16px inset from the
- * screen edges, `rgba(18,26,43,.96)` on a `#1f2940` border. Active tab = white
- * glyph + blue dot. The centre `+` is the only white element in the app: 62px,
- * raised 16px above the pill, with a blue glow. It opens the action sheet.
+ * screen edges. Active tab = highlighted glyph + blue dot. The centre `+` fans
+ * its three actions out above itself (no bottom sheet): the + turns into an ×
+ * while they're open, and × (or a tap anywhere else) folds them back.
  */
 export function Dock({ state, descriptors, navigation, insets }: BottomTabBarProps) {
-  const [sheetOpen, setSheetOpen] = useState(false);
+  const { colors, dark } = useTheme();
+  const { width: screenW } = useWindowDimensions();
+  const [open, setOpen] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setPendingAuth = useAppStore((s) => s.setPendingAuth);
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const activeName = state.routes[state.index]?.name;
-  const { colors } = useTheme();
 
   const go = (name: keyof MainTabParamList) => {
     const route = state.routes.find((r) => r.name === name);
@@ -46,6 +60,73 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
     navigation.dispatch(CommonActions.navigate('HomeTab', { screen, params, initial: false }));
 
   const bottom = Math.max(insets.bottom, 0) + DOCK_INSET;
+
+  // Fan-out animation: 0 = folded (plus), 1 = open (× + three rows).
+  const fan = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (open) {
+      fan.setValue(0);
+      Animated.spring(fan, { toValue: 1, useNativeDriver: Platform.OS !== 'web', speed: 22, bounciness: 7 }).start();
+    }
+  }, [open, fan]);
+  const close = () => setOpen(false);
+
+  const actions: DockAction[] = [
+    {
+      key: 'estimate',
+      title: 'New AI estimate',
+      sub: 'Photos of the damage → quotes from local shops',
+      icon: 'camera',
+      color: palette.teal,
+      // Guests get the guest / join gate first; Home resumes the picker after Join.
+      onPress: () => (isAuthenticated ? openInHome('CarDiagram') : setGateOpen(true)),
+    },
+    {
+      key: 'maintenance',
+      title: 'Book maintenance',
+      sub: 'Oil, tires, brakes, inspection at a partner shop',
+      icon: 'calcheck',
+      color: palette.primary,
+      glyphColor: '#ffffff',
+      onPress: () => {
+        setServiceTypePick([]);
+        openInHome('MaintServiceType');
+      },
+    },
+    {
+      key: 'bookings',
+      title: 'My bookings',
+      sub: 'Upcoming appointments & pending quotes',
+      icon: 'calendar',
+      color: palette.amber,
+      onPress: () => go('BookingsTab'),
+    },
+  ];
+
+  const plusButton = (onPress: () => void, label: string, rotate: Animated.AnimatedInterpolation<string> | '0deg') => (
+    <Tappable
+      onPress={onPress}
+      accessibilityLabel={label}
+      accessibilityRole="button"
+      style={{
+        width: PLUS_SIZE,
+        height: PLUS_SIZE,
+        borderRadius: PLUS_SIZE / 2,
+        backgroundColor: '#ffffff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: palette.primary,
+        shadowOpacity: 0.55,
+        shadowRadius: 18,
+        shadowOffset: { width: 0, height: 6 },
+        elevation: 14,
+      }}
+    >
+      <Animated.View style={{ transform: [{ rotate }] }}>
+        <Icon name="plus" size={34} color={palette.primary} strokeWidth={2.4} />
+      </Animated.View>
+    </Tappable>
+  );
 
   return (
     <>
@@ -78,39 +159,11 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
             ...(Platform.OS === 'web' ? ({ backdropFilter: 'blur(14px)' } as object) : null),
           }}
         >
-          {SLOTS.map((name, i) => {
+          {SLOTS.map((name) => {
             if (!name) {
               return (
-                <View
-                  key="plus"
-                  style={{
-                    flex: 1,
-                    alignItems: 'center',
-                    justifyContent: 'flex-end',
-                    height: DOCK_HEIGHT,
-                    // 62px button sits 16px above the pill's top edge.
-                    paddingBottom: (DOCK_HEIGHT - 62) / 2 + 16,
-                  }}
-                >
-                  <Tappable
-                    onPress={() => setSheetOpen(true)}
-                    accessibilityLabel="Open actions"
-                    style={{
-                      width: 62,
-                      height: 62,
-                      borderRadius: 31,
-                      backgroundColor: '#ffffff',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      shadowColor: palette.primary,
-                      shadowOpacity: 0.55,
-                      shadowRadius: 18,
-                      shadowOffset: { width: 0, height: 6 },
-                      elevation: 14,
-                    }}
-                  >
-                    <Icon name="plus" size={34} color={palette.primary} strokeWidth={2.4} />
-                  </Tappable>
+                <View key="plus" style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: DOCK_HEIGHT, paddingBottom: PLUS_LIFT }}>
+                  {plusButton(() => setOpen(true), 'Open actions', '0deg')}
                 </View>
               );
             }
@@ -149,57 +202,73 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
                     </View>
                   ) : null}
                 </View>
-                <View
-                  style={{
-                    width: 5,
-                    height: 5,
-                    borderRadius: 3,
-                    marginTop: 5,
-                    backgroundColor: active ? palette.primary : 'transparent',
-                  }}
-                />
+                <View style={{ width: 5, height: 5, borderRadius: 3, marginTop: 5, backgroundColor: active ? palette.primary : 'transparent' }} />
               </Tappable>
             );
           })}
         </View>
       </View>
 
-      <ActionSheet
-        visible={sheetOpen}
-        onClose={() => setSheetOpen(false)}
-        rows={[
-          {
-            key: 'estimate',
-            title: 'New AI estimate',
-            sub: 'Photos of the damage → quotes from local shops',
-            icon: 'camera',
-            color: palette.teal,
-            // Guests get the guest / join gate first; Home resumes the
-            // picker after Join via the 'newEstimate' intent.
-            onPress: () => (isAuthenticated ? openInHome('CarDiagram') : setGateOpen(true)),
-          },
-          {
-            key: 'maintenance',
-            title: 'Book maintenance',
-            sub: 'Oil, tires, brakes, inspection at a partner shop',
-            icon: 'calcheck',
-            color: palette.primary,
-            glyphColor: '#ffffff',
-            onPress: () => {
-              setServiceTypePick([]);
-              openInHome('MaintServiceType');
-            },
-          },
-          {
-            key: 'bookings',
-            title: 'My bookings',
-            sub: 'Upcoming appointments & pending quotes',
-            icon: 'calendar',
-            color: palette.amber,
-            onPress: () => go('BookingsTab'),
-          },
-        ]}
-      />
+      {/* Fan-out menu: dims the screen, shows the × in the +'s place and the three actions above it. */}
+      <Modal visible={open} transparent animationType="fade" onRequestClose={close}>
+        <Tappable noFeedback onPress={close} accessibilityLabel="Close actions" style={{ flex: 1, backgroundColor: colors.backdrop }}>
+          <View pointerEvents="box-none" style={{ position: 'absolute', left: 0, right: 0, bottom: bottom + PLUS_LIFT, alignItems: 'center' }}>
+            <View style={{ width: Math.min(340, screenW - 2 * DOCK_INSET - 8), gap: 10, marginBottom: 18 }}>
+              {actions.map((a, i) => {
+                // Rows nearest the button appear first.
+                const order = actions.length - 1 - i;
+                return (
+                  <Animated.View
+                    key={a.key}
+                    style={{
+                      opacity: fan,
+                      transform: [
+                        { translateY: fan.interpolate({ inputRange: [0, 1], outputRange: [28 + order * 22, 0] }) },
+                        { scale: fan.interpolate({ inputRange: [0, 1], outputRange: [0.85, 1] }) },
+                      ],
+                    }}
+                  >
+                    <Tappable
+                      onPress={() => {
+                        close();
+                        a.onPress();
+                      }}
+                      accessibilityRole="button"
+                      accessibilityLabel={a.title}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: spacing.md,
+                        backgroundColor: colors.sheet,
+                        borderWidth: 1,
+                        borderColor: `${a.color}66`,
+                        borderRadius: radii.xl,
+                        paddingVertical: 12,
+                        paddingHorizontal: 14,
+                        shadowColor: '#000',
+                        shadowOpacity: dark ? 0.5 : 0.18,
+                        shadowRadius: 16,
+                        shadowOffset: { width: 0, height: 8 },
+                        elevation: 8,
+                      }}
+                    >
+                      <IconChip name={a.icon} size={48} glyph={26} bg={a.color} color={a.glyphColor ?? colors.sheet} radius={14} />
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{a.title}</Text>
+                        <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 1 }} numberOfLines={1}>
+                          {a.sub}
+                        </Text>
+                      </View>
+                    </Tappable>
+                  </Animated.View>
+                );
+              })}
+            </View>
+            {plusButton(close, 'Close actions', fan.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '45deg'] }))}
+          </View>
+        </Tappable>
+      </Modal>
+
       <EstimateGateSheet
         visible={gateOpen}
         onClose={() => setGateOpen(false)}

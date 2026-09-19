@@ -64,7 +64,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfEarn: 'How you earn', // s-prof-earn
   ProfCars: 'My cars', // s-prof-cars
   ProfCarAdd: 'Add a car', // s-prof-car-add
-  ProfInsurance: 'Insurance policy', // s-prof-insurance
+  ProfInsurance: 'My insurance', // s-prof-insurance
   ProfInsEdit: 'Edit policy details', // s-prof-ins-edit
   ProfInsAdd: 'Add new policy', // s-prof-ins-add
   ProfPayment: 'Payment method', // s-prof-payment
