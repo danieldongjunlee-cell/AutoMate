@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 
+import { Icon } from './Icon';
 import { Tappable } from './Tappable';
 
 import { palette, radii, spacing, useTheme } from '../theme';
@@ -35,9 +36,9 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
           flexDirection: 'row',
           alignItems: 'center',
           borderWidth: focused ? 1.5 : 1,
-          borderColor: focused ? palette.authAction : colors.border,
+          borderColor: focused ? colors.primary : colors.border,
           borderRadius: radii.md,
-          backgroundColor: onDark ? '#FAFAF8' : colors.inputBg,
+          backgroundColor: colors.inputBg,
           paddingHorizontal: spacing.md,
         }}
       >
@@ -51,14 +52,12 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
             flex: 1,
             paddingVertical: 13,
             fontSize: 15,
-            color: onDark ? palette.textPrimary : colors.textPrimary,
+            color: colors.textPrimary,
           }}
         />
         {secure ? (
-          <Tappable onPress={() => setHidden((h) => !h)} hitSlop={8}>
-            <Text style={{ color: palette.authAction, fontSize: 14, fontWeight: '500' }}>
-              {hidden ? 'Show' : 'Hide'}
-            </Text>
+          <Tappable onPress={() => setHidden((h) => !h)} hitSlop={8} accessibilityLabel={hidden ? 'Show password' : 'Hide password'}>
+            <Icon name={hidden ? 'eye' : 'eyeoff'} size={22} color={colors.textTertiary} />
           </Tappable>
         ) : null}
       </View>

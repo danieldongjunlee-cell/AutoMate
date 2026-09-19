@@ -78,11 +78,11 @@ export function SplashScreen() {
       <PrimaryButton
         label="Get started — it's free"
         variant="auth"
-        onPress={() => navigation.navigate('SignUp')}
+        onPress={() => navigation.navigate('AuthMain', { tab: 'join' })}
         style={{ marginBottom: spacing.sm }}
       />
       <Tappable
-        onPress={() => navigation.navigate('LogIn')}
+        onPress={() => navigation.navigate('AuthMain', { tab: 'signin' })}
         style={{
           borderWidth: 1,
           borderColor: 'rgba(255,255,255,.3)',
