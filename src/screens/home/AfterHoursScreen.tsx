@@ -4,13 +4,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Icon, IconName } from '../../components/Icon';
+import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
-import { YOLO_CONFIDENCE_PCT } from '../../services/mock/data';
+import { QUOTE_REQUEST } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
@@ -23,7 +25,7 @@ function TimelineNode({
   label,
   state,
 }: {
-  icon: string;
+  icon: IconName;
   label: string;
   state: 'done' | 'next' | 'later';
 }) {
@@ -50,7 +52,7 @@ function TimelineNode({
           ...ring,
         }}
       >
-        <Text style={{ fontSize: 14, color: '#fff' }}>{icon}</Text>
+        <Icon name={icon} size={16} color="#fff" strokeWidth={2} />
       </View>
       <Text
         style={{
@@ -72,7 +74,10 @@ export function AfterHoursScreen() {
   const { colors } = useTheme();
   const damageParts = useAppStore((s) => s.damageParts);
   const isPro = useAppStore((s) => s.isPro);
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
   const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
+  const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
+  const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
 
   return (
     <Screen>
@@ -88,7 +93,6 @@ export function AfterHoursScreen() {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 30 }}>🌙</Text>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '600', color: '#fff' }}>
               Submitted at 11:48 PM
@@ -110,100 +114,6 @@ export function AfterHoursScreen() {
             <Text style={{ fontSize: 13, color: palette.warning }}>After hours</Text>
           </View>
         </View>
-
-        {/* AI rec (Pro) on dark */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <View
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: radii.sm,
-              backgroundColor: palette.primary,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 14 }}>🤖</Text>
-          </View>
-          <Text style={{ flex: 1, fontSize: 14, fontWeight: '700', color: '#fff' }}>
-            AI Repair Recommendation
-          </Text>
-          <View
-            style={{
-              backgroundColor: 'rgba(127,119,221,.35)',
-              borderWidth: 0.5,
-              borderColor: 'rgba(127,119,221,.6)',
-              borderRadius: radii.pill,
-              paddingHorizontal: 10,
-              paddingVertical: 2,
-            }}
-          >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: palette.primaryLight }}>Pro</Text>
-          </View>
-        </View>
-
-        <View
-          style={{
-            backgroundColor: 'rgba(127,119,221,.18)',
-            borderRadius: radii.sm,
-            borderWidth: 0.5,
-            borderColor: 'rgba(127,119,221,.4)',
-            padding: spacing.md,
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 12,
-              color: 'rgba(175,169,236,.9)',
-              fontWeight: '700',
-              textTransform: 'uppercase',
-              letterSpacing: 0.7,
-              marginBottom: 4,
-            }}
-          >
-            AI analysis result
-          </Text>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
-            {primaryPart} dent — DIY feasible ✔
-          </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)' }}>
-              Shallow dent · Paint intact ·
-            </Text>
-            <View
-              style={{
-                backgroundColor: 'rgba(29,158,117,.3)',
-                borderWidth: 0.5,
-                borderColor: 'rgba(29,158,117,.4)',
-                borderRadius: radii.pill,
-                paddingHorizontal: 8,
-                paddingVertical: 1,
-              }}
-            >
-              <Text style={{ fontSize: 12, color: palette.successLight }}>
-                {YOLO_CONFIDENCE_PCT}% confidence
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {isPro ? (
-          // Pro members see the matched DIY methods unlocked.
-          <View>
-            <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
-            <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
-          </View>
-        ) : (
-          <ProLockOverlay
-            onDark
-            subtitle="Unlock AI-matched DIY guides based on your damage photos"
-            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
-          >
-            <DiyGuideRow onDark level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
-            <DiyGuideRow onDark level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
-          </ProLockOverlay>
-        )}
 
         {/* Quote timeline */}
         <View
@@ -228,18 +138,47 @@ export function AfterHoursScreen() {
             Quote timeline
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-            <TimelineNode icon="✓" label={'11:48 PM\nSent'} state="done" />
+            <TimelineNode icon="check" label={'11:48 PM\nSent'} state="done" />
             <View style={{ flex: 1, height: 2, backgroundColor: 'rgba(255,255,255,.1)', marginTop: 16, marginHorizontal: 6 }} />
-            <TimelineNode icon="🔔" label={'8:00 AM\nOpens'} state="next" />
+            <TimelineNode icon="bell" label={'8:00 AM\nOpens'} state="next" />
             <View style={{ flex: 1, height: 2, backgroundColor: 'rgba(255,255,255,.1)', marginTop: 16, marginHorizontal: 6 }} />
-            <TimelineNode icon="💬" label={'~10 AM\nQuotes'} state="later" />
+            <TimelineNode icon="chat" label={'~10 AM\nQuotes'} state="later" />
           </View>
         </View>
 
         <Text style={{ fontSize: 14, color: palette.warning, lineHeight: 19 }}>
-          📋 Your photos are queued. Dealers review when they open.
+          Your photos are queued. Dealers review when they open.
         </Text>
       </LinearGradient>
+
+      {/* AI Repair Recommendation — its own card below the submitted card. */}
+      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md, marginBottom: spacing.md }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
+          <IconChip name="sparkle" size={36} glyph={22} color={colors.primaryDark} />
+          <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>AI Repair Recommendation</Text>
+          <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 2 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>Pro</Text>
+          </View>
+        </View>
+        <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart} — DIY feasible</Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Est. ${priceLow}–${priceHigh}</Text>
+        </View>
+        {isPro ? (
+          <View>
+            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </View>
+        ) : (
+          <ProLockOverlay
+            subtitle="Unlock AI-matched DIY guides based on your damage photos"
+            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
+          >
+            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </ProLockOverlay>
+        )}
+      </View>
 
       <PrimaryButton
         label="View available quotes →"

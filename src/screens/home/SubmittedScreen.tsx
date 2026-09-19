@@ -3,6 +3,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../../components/Icon';
+import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -33,16 +35,14 @@ export function SubmittedScreen() {
   // Live AI analysis from the submit response; wireframe demo values otherwise.
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
   const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
-  const confidencePct = aiEstimate?.confidencePct ?? QUOTE_REQUEST.aiConfidencePct;
 
   return (
     <Screen>
-      <SubmitProgress step={3} left="Submitted" right="Done 🎉" />
+      <SubmitProgress step={3} left="Submitted" right="Done" />
       {/* Success header — the key facts (free · response time) live here as a
           single subtitle, so the old three-box stat row is no longer needed. */}
       <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-        <Text style={{ fontSize: 40, marginBottom: 4 }}>🎉</Text>
-        <Text style={{ fontSize: 19, fontWeight: '700', color: colors.successDeep, marginBottom: 3 }}>
+        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 3, textAlign: 'center' }}>
           Photos sent to {QUOTE_REQUEST.shopsNotified} shops
         </Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
@@ -68,12 +68,12 @@ export function SubmittedScreen() {
           opacity: pressed ? 0.85 : 1,
         })}
       >
-        <Text style={{ fontSize: 18 }}>🔔</Text>
+        <Icon name="bell" size={22} color={colors.warning} />
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
           {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
         </Text>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? colors.success : colors.warningDeep }}>
-          {notifyEnabled ? 'Enabled ✓' : 'Enable'}
+        <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? palette.mint : colors.warningDeep }}>
+          {notifyEnabled ? 'Enabled' : 'Enable'}
         </Text>
       </Tappable>
 
@@ -82,26 +82,15 @@ export function SubmittedScreen() {
       <View
         style={{
           backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radii.lg,
+          borderWidth: 1,
           borderColor: colors.border,
           padding: spacing.md,
           marginBottom: spacing.lg,
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <View
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: radii.sm,
-              backgroundColor: colors.primary,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 15 }}>🤖</Text>
-          </View>
+          <IconChip name="sparkle" size={36} glyph={22} color={colors.primaryDark} />
           <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
             AI Repair Recommendation
           </Text>
@@ -116,15 +105,12 @@ export function SubmittedScreen() {
             marginBottom: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep, marginBottom: 6 }}>
-            {primaryPart} dent — DIY feasible ✔
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
+            {primaryPart} — DIY feasible
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-              Paint intact · Est. ${priceLow}–${priceHigh} ·{' '}
-            </Text>
-            <Badge label={`${confidencePct}% confidence`} variant="success" />
-          </View>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>
+            Est. ${priceLow}–${priceHigh}
+          </Text>
         </View>
 
         {isPro ? (

@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useRef, useState } from 'react';
-import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 
-import { DealerCard } from '../../components/DealerCard';
 import { DealerMap, MapMarker } from '../../components/DealerMap';
-import { FilterChips } from '../../components/FilterChips';
-import { Tappable } from '../../components/Tappable';
-import { Screen, SectionLabel } from '../../components/ui';
+import { FilterButton, FilterSheet } from '../../components/FilterSheet';
+import { ShopCard } from '../../components/ShopCard';
+import { Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { MaintStackParamList } from '../../navigation/types';
@@ -15,7 +14,6 @@ import {
   DEALER_SERVICE_CHIPS,
   DEALERS,
   dealerServicesBrand,
-  DISTANCE_CAP,
   SCHEDULE_SERVICE_FILTERS,
   SERVICE_FILTER_KEY,
   USER_LOCATION,
@@ -25,10 +23,10 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintSchedule'>;
 
-/** Distance options for the partner-dealership radius (caps at 30 mi). */
-const RADIUS_OPTIONS = ['Within 5 mi', 'Within 10 mi', 'Within 30 mi'];
+/** "Oil $49" → 49 */
+const chipPrice = (chip: string) => Number(chip.replace(/[^0-9.]/g, '')) || 0;
 
-/** Wireframe s-maint-schedule: service-type filter + partner dealer cards. */
+/** Partner shops (canvas "Book a service"): one Filter pill, shop photo cards sorted by distance. */
 export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -56,29 +54,31 @@ export function MaintScheduleScreen() {
       goBook(id);
     }
   });
-  const [filter, setFilter] = useState(SCHEDULE_SERVICE_FILTERS[0]);
-  const [radius, setRadius] = useState('Within 30 mi');
-  const [pickerOpen, setPickerOpen] = useState(false);
-  // Pin ↔ shop-card selection sync (same pattern as the AI-estimate quotes map).
+
+  const [service, setService] = useState(SCHEDULE_SERVICE_FILTERS[0]);
+  const [radius, setRadius] = useState(30);
+  const [filterOpen, setFilterOpen] = useState(false);
+  // Pin ↔ shop-card selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const cardY = useRef<Record<string, number>>({});
 
-  const cap = DISTANCE_CAP[radius] ?? 30;
+  // Only shops that service the user's brand, within the radius, filtered by
+  // service type, nearest first.
+  const dealers = useMemo(
+    () =>
+      DEALERS.filter((d) => {
+        const chips = DEALER_SERVICE_CHIPS[d.id];
+        if (!chips || d.distanceMi > radius) return false;
+        if (!dealerServicesBrand(d.id, brand)) return false;
+        if (service === 'All') return true;
+        const key = SERVICE_FILTER_KEY[service] ?? service;
+        return chips.some((c) => c.startsWith(key));
+      }).sort((a, b) => a.distanceMi - b.distanceMi),
+    [brand, radius, service],
+  );
 
-  // Every partner offers all 5 service types; narrow by service type and by the
-  // chosen distance radius (up to 30 mi), nearest first.
-  const dealers = DEALERS.filter((d) => {
-    const chips = DEALER_SERVICE_CHIPS[d.id];
-    if (!chips) return false;
-    if (d.distanceMi > cap) return false;
-    // Only shops that service the user's registered brand (brand-exclusive
-    // dealerships for other makes are filtered out; independents always show).
-    if (!dealerServicesBrand(d.id, brand)) return false;
-    if (filter === 'All') return true;
-    const key = SERVICE_FILTER_KEY[filter] ?? filter;
-    return chips.some((c) => c.startsWith(key));
-  }).sort((a, b) => a.distanceMi - b.distanceMi);
+  const filterBits = [service !== 'All' ? service : null, radius < 30 ? `Within ${radius} mi` : null].filter(Boolean) as string[];
 
   const markers: MapMarker[] = dealers.map((d) => ({
     id: d.id,
@@ -88,8 +88,6 @@ export function MaintScheduleScreen() {
     color: d.id === selectedId ? palette.primaryDark : palette.primary,
     selected: d.id === selectedId,
   }));
-
-  /** Pin tap: select + scroll the matching shop card into view. */
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
     const y = cardY.current[dealerId];
@@ -98,164 +96,53 @@ export function MaintScheduleScreen() {
 
   return (
     <Screen scrollRef={scrollRef}>
-      <FilterChips options={SCHEDULE_SERVICE_FILTERS} selected={filter} onSelect={setFilter} />
+      <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
+        Partner shops that service your {brand} · sorted by distance
+      </Text>
 
-      {/* Shops are scoped to the user's registered car brand. */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          paddingVertical: spacing.sm,
-          paddingHorizontal: spacing.md,
-          marginTop: spacing.sm,
+      <FilterButton label={filterBits.length ? `Filter · ${filterBits[0]}` : 'Filter'} count={filterBits.length} onPress={() => setFilterOpen(true)} />
+      <FilterSheet
+        visible={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        distance={{ value: radius }}
+        groups={[{ key: 'service', title: 'Service', options: SCHEDULE_SERVICE_FILTERS, value: service }]}
+        onApply={(v, d) => {
+          setService(v.service ?? 'All');
+          if (d != null) setRadius(d);
         }}
-      >
-        <Text style={{ fontSize: 14 }}>🔧</Text>
-        <Text style={{ flex: 1, fontSize: 13, color: colors.primaryDeep }}>
-          Showing shops that service your <Text style={{ fontWeight: '800' }}>{brand}</Text>.
-        </Text>
-      </View>
-      <View
-        style={{
-          marginTop: spacing.xs,
-          flexDirection: 'row',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
-        <SectionLabel style={{ marginBottom: 0 }}>Partner dealerships </SectionLabel>
-        <Tappable
-          onPress={() => setPickerOpen(true)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 3,
-            backgroundColor: colors.primarySurface,
-            borderRadius: radii.pill,
-            paddingHorizontal: 10,
-            paddingVertical: 3,
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>📍 {radius}</Text>
-          <Text style={{ fontSize: 12, color: colors.primaryDark }}>▾</Text>
-        </Tappable>
-      </View>
+      />
 
-      {/* Shops near you — same map + pin selection as the AI-estimate quotes. */}
       {dealers.length > 0 ? (
-        <View style={{ marginTop: spacing.md, marginBottom: spacing.md }}>
-          <SectionLabel>Shops near you · tap a pin to select</SectionLabel>
-          <DealerMap
-            markers={markers}
-            center={USER_LOCATION}
-            userLocation={USER_LOCATION}
-            onSelect={onPinSelect}
-            style={{ height: 200, borderRadius: radii.md, overflow: 'hidden', marginTop: spacing.xs }}
-          />
-        </View>
+        <DealerMap
+          markers={markers}
+          center={USER_LOCATION}
+          userLocation={USER_LOCATION}
+          onSelect={onPinSelect}
+          style={{ height: 170, borderRadius: radii.lg, overflow: 'hidden', marginBottom: spacing.md }}
+        />
       ) : (
-        <View style={{ marginTop: spacing.md }} />
-      )}
-
-      {dealers.length === 0 ? (
         <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
           No partner shops within this radius — widen the distance.
         </Text>
-      ) : null}
-      {dealers.map((dealer) => (
-        <View
-          key={dealer.id}
-          onLayout={(e) => {
-            cardY.current[dealer.id] = e.nativeEvent.layout.y;
-          }}
-          style={
-            dealer.id === selectedId
-              ? { borderWidth: 2, borderColor: colors.primary, borderRadius: radii.md }
-              : undefined
-          }
-        >
-          <DealerCard
-            dealer={dealer}
-            serviceChips={DEALER_SERVICE_CHIPS[dealer.id]}
-            onPress={() => selectShop(dealer.id)}
-          />
-        </View>
-      ))}
+      )}
 
-      {/* Distance radius picker */}
-      <Modal
-        visible={pickerOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setPickerOpen(false)}
-      >
-        <Tappable
-          noFeedback
-          onPress={() => setPickerOpen(false)}
-          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'center', padding: spacing.xl }}
-        >
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: radii.md,
-              overflow: 'hidden',
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.border,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: '700',
-                letterSpacing: 0.6,
-                textTransform: 'uppercase',
-                color: colors.textTertiary,
-                paddingHorizontal: spacing.md,
-                paddingTop: spacing.md,
-                paddingBottom: spacing.xs,
-              }}
-            >
-              Search radius
-            </Text>
-            {RADIUS_OPTIONS.map((opt, i) => {
-              const on = opt === radius;
-              return (
-                <Tappable
-                  key={opt}
-                  onPress={() => {
-                    setRadius(opt);
-                    setPickerOpen(false);
-                  }}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: 13,
-                    backgroundColor: on ? colors.primarySurface : 'transparent',
-                    borderBottomWidth: i < RADIUS_OPTIONS.length - 1 ? StyleSheet.hairlineWidth : 0,
-                    borderBottomColor: colors.divider,
-                  }}
-                >
-                  <Text
-                    style={{
-                      flex: 1,
-                      fontSize: 15,
-                      fontWeight: on ? '600' : '400',
-                      color: on ? colors.primaryDeep : colors.textPrimary,
-                    }}
-                  >
-                    📍 {opt}
-                  </Text>
-                  {on ? <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text> : null}
-                </Tappable>
-              );
-            })}
+      {dealers.map((dealer, i) => {
+        const chips = DEALER_SERVICE_CHIPS[dealer.id] ?? [];
+        const from = Math.min(...chips.map(chipPrice));
+        const services = chips.map((c) => c.split(' ')[0]).slice(0, 3).join(' · ');
+        return (
+          <View key={dealer.id} onLayout={(e) => (cardY.current[dealer.id] = e.nativeEvent.layout.y)}>
+            <ShopCard
+              dealer={dealer}
+              index={i}
+              price={Number.isFinite(from) ? `from $${from}` : 'Quote'}
+              meta={`${dealer.distanceMi} mi · ★ ${dealer.rating.toFixed(1)} (${dealer.reviews}) · ${services}`}
+              selected={dealer.id === selectedId}
+              onPress={() => selectShop(dealer.id)}
+            />
           </View>
-        </Tappable>
-      </Modal>
+        );
+      })}
     </Screen>
   );
 }
