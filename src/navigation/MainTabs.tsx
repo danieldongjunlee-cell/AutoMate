@@ -42,7 +42,6 @@ import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
 import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
 import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
-import { MaintLandingScreen } from '../screens/maint/MaintLandingScreen';
 import { MaintServiceTypeScreen } from '../screens/maint/MaintServiceTypeScreen';
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
@@ -141,7 +140,6 @@ const homeScreens = buildScreens(
     'DiyMatch',
     'DiyTools',
     'DiyFuture',
-    'MaintLanding',
     'MaintServiceType',
     'MaintSchedule',
     'MaintScheduleBook',
@@ -186,7 +184,6 @@ const homeScreens = buildScreens(
     DiyMatch: DiyMatchScreen,
     DiyTools: DiyToolsScreen,
     DiyFuture: DiyFutureScreen,
-    MaintLanding: MaintLandingScreen,
     MaintServiceType: MaintServiceTypeScreen,
     MaintSchedule: MaintScheduleScreen,
     MaintScheduleBook: MaintScheduleBookScreen,

@@ -183,7 +183,7 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
             icon: 'calcheck',
             color: palette.primary,
             glyphColor: '#ffffff',
-            onPress: () => openInHome('MaintServiceType'),
+            onPress: () => openInHome('MaintSchedule'),
           },
           {
             key: 'bookings',

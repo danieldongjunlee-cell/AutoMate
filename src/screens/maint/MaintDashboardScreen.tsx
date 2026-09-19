@@ -2,299 +2,244 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { Image, Text, View } from 'react-native';
 
+import { CarSilhouette } from '../../components/CarSilhouette';
+import { Icon, IconName } from '../../components/Icon';
+import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
-import { useRequireAuth } from '../../hooks/useRequireAuth';
-import { useAppStore } from '../../store/useAppStore';
-
-import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
-import { marketValueFor, UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
 import { maintService } from '../../services';
+import { useCarImage } from '../../services/carImage';
+import { marketValueFor, UPCOMING_SERVICES, VEHICLE } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDashboard'>;
 
+const HERO_H = 176;
+
+/** Upcoming-service row icons in their own colours (canvas "Maintenance dashboard"). */
+const SERVICE_ICON: Record<string, { icon: IconName; color: string }> = {
+  'up-oil': { icon: 'oil', color: palette.amber },
+  'up-tires': { icon: 'tire', color: palette.primaryLight },
+  'up-insp': { icon: 'search', color: palette.lavender },
+};
+function serviceIcon(id: string, name: string): { icon: IconName; color: string } {
+  if (SERVICE_ICON[id]) return SERVICE_ICON[id];
+  const n = name.toLowerCase();
+  if (n.includes('oil')) return { icon: 'oil', color: palette.amber };
+  if (n.includes('tire') || n.includes('wheel')) return { icon: 'tire', color: palette.primaryLight };
+  if (n.includes('brake')) return { icon: 'brake', color: palette.danger };
+  if (n.includes('filter')) return { icon: 'filter', color: palette.teal };
+  if (n.includes('fluid') || n.includes('coolant')) return { icon: 'droplet', color: '#5BD1F5' };
+  if (n.includes('inspect')) return { icon: 'search', color: palette.lavender };
+  return { icon: 'wrench', color: palette.textSecondary };
+}
+
+/**
+ * Maintenance dashboard (canvas): hero car photo, one market-value card with
+ * a gradient gauge, a full-width blue "Book a service", three coloured quick
+ * actions, upcoming services and the vehicle row.
+ */
 export function MaintDashboardScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  // Guests can view the dashboard, but acting on any button asks them to sign up.
   const requireAuth = useRequireAuth();
-  const { data: upcoming } = useQuery({
-    queryKey: ['upcoming-services'],
-    queryFn: maintService.getUpcomingServices,
-  });
-  // Guests browse the dashboard with no account data: value reads $0, and the
-  // car-info + upcoming-services blocks are hidden until they sign up.
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  // Car info follows the car the user entered/selected in More → My cars.
+  const { data: upcoming } = useQuery({ queryKey: ['upcoming-services'], queryFn: maintService.getUpcomingServices });
   const { active } = useActiveVehicle();
   const carName = active?.name ?? VEHICLE.name;
   const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
-  const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0]; // "5W-30"
+  const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0];
   const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
-  // Market value tracks the selected car (zeroed out for guests).
-  const realMv = marketValueFor(carName);
-  const mv = isAuthenticated
-    ? realMv
-    : { value: 0, aboveAvg: 0, barPct: 0, low: 0, high: 0 };
+  const mv = marketValueFor(carName);
+  const { data: photoUrl } = useCarImage(carName);
+  const [heroW, setHeroW] = useState(0);
+  const [photoFailed, setPhotoFailed] = useState(false);
+
+  // Header: back chevron (native), car name centred, bell on the right.
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: carName,
+      headerRight: () => (
+        <Tappable onPress={() => navigation.navigate('Notifications' as never)} hitSlop={8} accessibilityLabel="Notifications">
+          <Icon name="bell" size={24} color={colors.textPrimary} />
+        </Tappable>
+      ),
+    });
+  }, [navigation, carName, colors.textPrimary]);
+
+  const quick = (label: string, icon: IconName, color: string, onPress: () => void) => (
+    <Tappable
+      key={label}
+      onPress={() => requireAuth('maintAction', onPress)}
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        gap: 8,
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 18,
+        paddingVertical: 14,
+      }}
+    >
+      <IconChip name={icon} size={50} glyph={26} color={color} bg={`${color}14`} radius={14} />
+      <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{label}</Text>
+    </Tappable>
+  );
 
   return (
     <Screen>
-      {/* Market value */}
-      <LinearGradient
-        colors={[palette.dark, palette.darkAlt]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }}
+      {/* Hero: the car photo (Car Images API via our server) or the drawn silhouette. */}
+      <View
+        onLayout={(e) => setHeroW(Math.round(e.nativeEvent.layout.width))}
+        style={{ height: HERO_H, alignItems: 'center', justifyContent: 'center', marginTop: -spacing.sm, marginBottom: spacing.xs }}
       >
-        <Text
-          style={{
-            fontSize: 13,
-            fontWeight: '600',
-            color: 'rgba(255,255,255,.45)',
-            textTransform: 'uppercase',
-            letterSpacing: 0.6,
-            marginBottom: 4,
-          }}
-        >
-          Estimated market value
-        </Text>
-        <Text style={{ fontSize: 36, fontWeight: '700', color: '#fff', marginBottom: 4 }}>
-          ${mv.value.toLocaleString()}
-        </Text>
-        <Text style={{ fontSize: 14, color: palette.success, marginBottom: spacing.sm }}>
-          ↑ ${mv.aboveAvg} above market avg
-        </Text>
-        <View
-          style={{
-            height: 6,
-            backgroundColor: 'rgba(255,255,255,.15)',
-            borderRadius: 3,
-            overflow: 'hidden',
-            marginBottom: 5,
-          }}
-        >
-          <LinearGradient
-            colors={[palette.primary, palette.warning]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={{ width: `${mv.barPct}%`, height: '100%', borderRadius: 3 }}
-          />
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 12, color: '#888' }}>Low ${mv.low.toLocaleString()}</Text>
-          <Text style={{ fontSize: 12, color: '#888' }}>High ${mv.high.toLocaleString()}</Text>
-        </View>
-      </LinearGradient>
-
-      {/* Car info — hidden for guests (no car on their account yet). */}
-      {isAuthenticated ? (
-      <Tappable
-        onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintHistory'))}
-        style={({ pressed }) => ({
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderColor: colors.primary,
-          padding: spacing.md,
-          marginBottom: spacing.sm,
-          opacity: pressed ? 0.8 : 1,
-        })}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <View
+        {photoUrl && !photoFailed ? (
+          <Image
+            source={{ uri: photoUrl }}
+            onError={() => setPhotoFailed(true)}
+            accessibilityLabel={`${carName} photo`}
+            resizeMode="contain"
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: radii.sm,
-              backgroundColor: colors.primary,
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: heroW || 300,
+              height: HERO_H,
+              shadowColor: '#000',
+              shadowOpacity: 0.55,
+              shadowRadius: 22,
+              shadowOffset: { width: 0, height: 18 },
             }}
-          >
-            <Text style={{ fontSize: 22 }}>🚗</Text>
+          />
+        ) : (
+          <View accessibilityLabel="Car silhouette" style={{ opacity: 0.9 }}>
+            <CarSilhouette width={Math.min(320, heroW || 300)} />
           </View>
+        )}
+      </View>
+
+      {/* Estimated market value */}
+      <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.tile, padding: spacing.lg, marginBottom: spacing.md }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textPrimary }}>
-              {carName}
-            </Text>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-              {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
-            </Text>
+            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>Estimated market value</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>Checked today · VIN-decoded ✓</Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <Text style={{ fontSize: 13, color: colors.textTertiary }}>Health</Text>
-            <View
-              style={{
-                width: 52,
-                height: 7,
-                backgroundColor: colors.border,
-                borderRadius: 4,
-                overflow: 'hidden',
-                marginVertical: 3,
-              }}
-            >
-              <View
-                style={{
-                  width: `${VEHICLE.healthPct}%`,
-                  height: '100%',
-                  backgroundColor: colors.success,
-                }}
-              />
-            </View>
-            <Text style={{ fontSize: 13, fontWeight: '500', color: colors.successDark }}>
-              {VEHICLE.healthLabel} {VEHICLE.healthPct}%
-            </Text>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, lineHeight: 26 }}>${mv.value.toLocaleString()}</Text>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: palette.mint }}>↑ ${mv.aboveAvg}</Text>
           </View>
-          <Text style={{ fontSize: 22, color: colors.primary }}>›</Text>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <Badge label="✓ VIN-decoded" variant="primarySoft" />
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>·</Text>
-          <Text style={{ fontSize: 13, color: colors.successDark }}>
-            Oil due ~{VEHICLE.oilDueInMi} mi
-          </Text>
+        <View style={{ height: 9, borderRadius: 5, backgroundColor: colors.border, overflow: 'hidden', marginTop: spacing.md }}>
+          <LinearGradient colors={[palette.mint, colors.primary]} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ width: `${Math.max(4, Math.min(100, mv.barPct))}%`, height: 9, borderRadius: 5 }} />
         </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>${mv.low.toLocaleString()}</Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textTertiary }}>${mv.high.toLocaleString()}</Text>
+        </View>
+      </View>
+
+      {/* Book a service — the dashboard's primary action → partner shops */}
+      <Tappable
+        onPress={() => requireAuth('bookService', () => navigation.navigate('MaintSchedule'))}
+        accessibilityLabel="Book a service"
+        style={{
+          height: 58,
+          borderRadius: 18,
+          backgroundColor: colors.primary,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 12,
+          marginBottom: spacing.md,
+          shadowColor: colors.primary,
+          shadowOpacity: 0.35,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: 8 },
+        }}
+      >
+        <Icon name="calcheck" size={30} color="#fff" />
+        <Text style={{ fontSize: 17, fontWeight: '800', color: '#fff' }}>Book a service</Text>
       </Tappable>
-      ) : null}
 
-      {/* DIY tips + Book a service (side-by-side) */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Tappable
-          onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintDiy'))}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            padding: spacing.md,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <View
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: radii.sm,
-              backgroundColor: colors.success,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: spacing.sm,
-            }}
-          >
-            <Text style={{ fontSize: 18 }}>🔧</Text>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 2 }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
-              DIY Repair Tips
-            </Text>
-            <Badge label="PRO" variant="primarySoft" />
-          </View>
-          <Text style={{ fontSize: 13, color: colors.successDeep }}>
-            Step-by-step guides & videos
-          </Text>
-        </Tappable>
-
-        <Tappable onPress={() => requireAuth('maintAction', () => navigation.navigate('MaintServiceType'))} style={{ flex: 1 }}>
-          {({ pressed }) => (
-            <LinearGradient
-              colors={[palette.primary, palette.primaryDark]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                // Fill the stretched row height so both action cards match.
-                flex: 1,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                opacity: pressed ? 0.85 : 1,
-              }}
-            >
-              <View
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: radii.sm,
-                  backgroundColor: 'rgba(255,255,255,.2)',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: spacing.sm,
-                }}
-              >
-                <Text style={{ fontSize: 18 }}>📅</Text>
-              </View>
-              <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff', marginBottom: 2 }}>
-                Book a Service
-              </Text>
-              <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.72)' }}>
-                Oil · Tires · Filters · Fluids · Brakes
-              </Text>
-            </LinearGradient>
-          )}
-        </Tappable>
+      {/* Quick actions */}
+      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg }}>
+        {quick('DIY tips', 'star', palette.amber, () => navigation.navigate('MaintDiy'))}
+        {quick('Receipt', 'camera', palette.teal, () => navigation.navigate('MaintScanCam'))}
+        {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>
 
       {/* Upcoming services — hidden for guests (no account history yet). */}
-      {isAuthenticated ? <SectionLabel>Upcoming services</SectionLabel> : null}
-      {(isAuthenticated ? (upcoming ?? UPCOMING_SERVICES) : []).map((svc) => {
-        const badge =
-          svc.status === 'Soon'
-            ? { bg: colors.warning, fg: '#fff' }
-            : svc.status === 'Upcoming'
-              ? { bg: colors.infoSurface, fg: colors.infoDeep }
-              : { bg: colors.surface, fg: colors.textTertiary };
-        return (
-          <View
-            key={svc.id}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
-              paddingVertical: spacing.sm,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: colors.divider,
-            }}
-          >
-            <View
-              style={{
-                width: 34,
-                height: 34,
-                borderRadius: radii.sm,
-                backgroundColor:
-                  svc.status === 'Soon'
-                    ? colors.warning
-                    : svc.status === 'Upcoming'
-                      ? colors.info
-                      : colors.successSurface,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 16 }}>{svc.icon}</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
-                {svc.name}
-              </Text>
-              <Text style={{ fontSize: 14, color: colors.textTertiary }}>{svc.due}</Text>
-            </View>
-            <View
-              style={{
-                backgroundColor: badge.bg,
-                borderRadius: radii.pill,
-                paddingHorizontal: 11,
-                paddingVertical: 3,
-              }}
-            >
-              <Text style={{ fontSize: 13, color: badge.fg }}>{svc.status}</Text>
-            </View>
-          </View>
-        );
-      })}
+      {isAuthenticated ? (
+        <>
+          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>Upcoming services</Text>
+          {(upcoming ?? UPCOMING_SERVICES).map((svc) => {
+            const { icon, color } = serviceIcon(svc.id, svc.name);
+            const badge =
+              svc.status === 'Soon'
+                ? { bg: colors.warningSurface, fg: colors.warning }
+                : svc.status === 'Upcoming'
+                  ? { bg: colors.primarySurface, fg: colors.primaryDark }
+                  : { bg: colors.surfaceAlt, fg: colors.textSecondary };
+            return (
+              <View
+                key={svc.id}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing.md,
+                  backgroundColor: colors.surface,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderRadius: radii.lg,
+                  padding: spacing.md,
+                  marginBottom: spacing.sm,
+                }}
+              >
+                <IconChip name={icon} size={44} glyph={24} color={color} bg={`${color}14`} radius={12} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{svc.name}</Text>
+                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>{svc.due}</Text>
+                </View>
+                <View style={{ backgroundColor: badge.bg, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: badge.fg }}>{svc.status}</Text>
+                </View>
+              </View>
+            );
+          })}
+        </>
+      ) : null}
+
+      {/* Vehicle row → My cars */}
+      <Tappable
+        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfCars')}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.md,
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.border,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          marginTop: isAuthenticated ? spacing.xs : 0,
+        }}
+      >
+        <IconChip name="car" size={44} glyph={24} color={palette.teal} bg={`${palette.teal}14`} radius={12} />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{carName}</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
+          </Text>
+        </View>
+        <Icon name="chevron" size={22} color={colors.textTertiary} />
+      </Tappable>
     </Screen>
   );
 }

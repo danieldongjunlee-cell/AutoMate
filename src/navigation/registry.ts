@@ -36,7 +36,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   DealerMap: 'Honda Fairfax', // s-dealer-map
   BundleDeals: 'Bundle deals', // s-home-bundle-deals
   Notifications: 'Notifications', // s-notifications
-  MaintDashboard: 'Maintenance', // s-maint-dashboard
+  MaintDashboard: 'Maintenance', // canvas dashboard (title is replaced by the car name at runtime)
   MaintHistory: 'Service history', // s-maint-history
   MaintScanCam: 'Scan receipt', // s-maint-scan-cam
   MaintScanRev: 'Review receipt', // s-maint-scan-rev
@@ -49,7 +49,6 @@ export const SCREEN_TITLES: Record<string, string> = {
   DiyMatch: 'AI guide matching', // s-diy-match
   DiyTools: 'Shopping lists', // s-diy-tools
   DiyFuture: 'Coming soon', // s-diy-future
-  MaintLanding: 'Maintenance', // s-maint-landing (book a service / dashboard)
   MaintServiceType: 'Book a service', // s-maint-service-type (multi-select)
   MaintSchedule: 'Book a service', // canvas "Book a service" (partner shops)
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book

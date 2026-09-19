@@ -5,6 +5,7 @@ import { PORT } from './config';
 import { requireAuth } from './middleware/auth';
 import { authRouter } from './routes/auth';
 import { bookingsRouter } from './routes/bookings';
+import { carImageRouter } from './routes/carImage';
 import { communityRouter } from './routes/community';
 import { compareRouter } from './routes/compare';
 import { insuranceRouter } from './routes/insurance';
@@ -26,6 +27,8 @@ app.get('/health', (_req, res) => res.json({ ok: true, service: 'automate-server
 
 // Public
 app.use('/auth', authRouter);
+// Car photo lookup for the maintenance dashboard (key stays server-side).
+app.use('/api/car-image', carImageRouter);
 // GET /uploads/* serves stored files; non-GET falls through to the
 // authenticated upload router below.
 app.use('/uploads', express.static(uploadsRoot));
