@@ -5,7 +5,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useLayoutEffect, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
-import { CarSilhouette } from '../../components/CarSilhouette';
 import { Icon, IconName } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
@@ -23,6 +22,9 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDashboard'>;
 
 const HERO_H = 176;
+
+/** Bundled car photo shown until the Car Images API returns one for the active car. */
+const PLACEHOLDER_CAR = require('../../../assets/cars/accord-2019.png');
 
 /** Upcoming-service row icons in their own colours (canvas "Maintenance dashboard"). */
 const SERVICE_ICON: Record<string, { icon: IconName; color: string }> = {
@@ -98,7 +100,7 @@ export function MaintDashboardScreen() {
 
   return (
     <Screen>
-      {/* Hero: the car photo (Car Images API via our server) or the drawn silhouette. */}
+      {/* Hero: the car photo (Car Images API via our server), else the bundled placeholder car. */}
       <View
         onLayout={(e) => setHeroW(Math.round(e.nativeEvent.layout.width))}
         style={{ height: HERO_H, alignItems: 'center', justifyContent: 'center', marginTop: -spacing.sm, marginBottom: spacing.xs }}
@@ -119,9 +121,19 @@ export function MaintDashboardScreen() {
             }}
           />
         ) : (
-          <View accessibilityLabel="Car silhouette" style={{ opacity: 0.9 }}>
-            <CarSilhouette width={Math.min(320, heroW || 300)} />
-          </View>
+          <Image
+            source={PLACEHOLDER_CAR}
+            accessibilityLabel="Car placeholder photo"
+            resizeMode="contain"
+            style={{
+              width: heroW || 300,
+              height: HERO_H,
+              shadowColor: '#000',
+              shadowOpacity: 0.55,
+              shadowRadius: 22,
+              shadowOffset: { width: 0, height: 18 },
+            }}
+          />
         )}
       </View>
 
