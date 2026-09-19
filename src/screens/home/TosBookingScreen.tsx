@@ -65,7 +65,7 @@ export function TosBookingScreen() {
         Last updated Jun 2026 · v1.2 · This summary is part of your booking agreement.
       </Text>
       <View style={{ marginTop: spacing.sm }}>
-        <PrimaryButton variant="success" label="Got it — back to booking" onPress={() => navigation.goBack()} />
+        <PrimaryButton label="Got it — back to booking" onPress={() => navigation.goBack()} />
       </View>
     </Screen>
   );

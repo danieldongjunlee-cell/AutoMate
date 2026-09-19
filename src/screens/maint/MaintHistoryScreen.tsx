@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -7,8 +8,8 @@ import { Image, Modal, StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 import Svg, { Circle } from 'react-native-svg';
 
-import { PointsBadge } from '../../components/FilterChips';
-import { Select } from '../../components/Select';
+import { PointsBadge } from '../../components/PointsBadge';
+import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { SkeletonList } from '../../components/Skeleton';
 import { Screen, SectionLabel } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
@@ -55,6 +56,7 @@ export function MaintHistoryScreen() {
   const { colors } = useTheme();
   const [timeFilter, setTimeFilter] = useState(HISTORY_TIME_FILTERS[0]);
   const [typeFilter, setTypeFilter] = useState(HISTORY_TYPE_FILTERS[0]);
+  const [filterOpen, setFilterOpen] = useState(false);
   // Tapped receipt image shown full-size.
   const [preview, setPreview] = useState<string | null>(null);
   const { data: records, isLoading } = useQuery({
@@ -121,7 +123,7 @@ export function MaintHistoryScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 26 }}>📷</Text>
+          <Icon name="camera" size={26} color={colors.textSecondary} />
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
             Scan receipt
           </Text>
@@ -141,7 +143,7 @@ export function MaintHistoryScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 26 }}>✏️</Text>
+          <Icon name="pencil" size={26} color={colors.textSecondary} />
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
             Manual input
           </Text>
@@ -149,24 +151,24 @@ export function MaintHistoryScreen() {
         </Tappable>
       </View>
 
-      {/* User-feedback pass 1: the two chip rows became two side-by-side dropdowns. */}
       <SectionLabel>Past services</SectionLabel>
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm }}>
-        <Select
-          label="Type"
-          value={typeFilter}
-          options={HISTORY_TYPE_FILTERS}
-          onChange={setTypeFilter}
-          style={{ flex: 1 }}
-        />
-        <Select
-          label="Time"
-          value={timeFilter}
-          options={HISTORY_TIME_FILTERS}
-          onChange={setTimeFilter}
-          style={{ flex: 1 }}
-        />
-      </View>
+      <FilterButton
+        label={typeFilter !== HISTORY_TYPE_FILTERS[0] ? `Filter · ${typeFilter}` : timeFilter !== HISTORY_TIME_FILTERS[0] ? `Filter · ${timeFilter}` : 'Filter'}
+        count={(typeFilter !== HISTORY_TYPE_FILTERS[0] ? 1 : 0) + (timeFilter !== HISTORY_TIME_FILTERS[0] ? 1 : 0)}
+        onPress={() => setFilterOpen(true)}
+      />
+      <FilterSheet
+        visible={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        groups={[
+          { key: 'type', title: 'Service', options: HISTORY_TYPE_FILTERS, value: typeFilter },
+          { key: 'time', title: 'Time', options: HISTORY_TIME_FILTERS, value: timeFilter },
+        ]}
+        onApply={(v) => {
+          setTypeFilter(v.type ?? HISTORY_TYPE_FILTERS[0]);
+          setTimeFilter(v.time ?? HISTORY_TIME_FILTERS[0]);
+        }}
+      />
       {isLoading ? (
         <SkeletonList variant="row" count={5} />
       ) : visible.length === 0 ? (
@@ -191,12 +193,12 @@ export function MaintHistoryScreen() {
                 width: 34,
                 height: 34,
                 borderRadius: radii.sm,
-                backgroundColor: rec.icon === '↺' ? colors.infoSurface : colors.successSurface,
+                backgroundColor: rec.icon === 'tire' ? colors.infoSurface : colors.successSurface,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 16 }}>{rec.icon}</Text>
+              <Glyph glyph={rec.icon} size={16} color={colors.textSecondary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
@@ -226,7 +228,7 @@ export function MaintHistoryScreen() {
               >
                 <Image source={{ uri: rec.receiptUri }} style={{ width: 36, height: 36 }} resizeMode="cover" />
                 <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'rgba(0,0,0,.55)', paddingHorizontal: 2 }}>
-                  <Text style={{ fontSize: 9 }}>🧾</Text>
+                  <Icon name="file" size={9} color={colors.textSecondary} />
                 </View>
               </Tappable>
             ) : null}

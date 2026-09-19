@@ -46,7 +46,7 @@ export const maintService = {
       {
         ...record,
         id: `rec-new-${nextId++}`,
-        icon: record.type.toLowerCase().includes('tire') ? '↺' : '🛢️',
+        icon: record.type.toLowerCase().includes('tire') ? 'tire' : 'oil',
       },
       ...history,
     ];

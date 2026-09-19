@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Icon } from '../../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -133,7 +134,7 @@ function CardFormModal({
           }}
         >
           {setPrimary ? (
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>✓</Text>
+            <Icon name="check" size={14} color={colors.onPrimary} strokeWidth={2.4} />
           ) : null}
         </View>
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
@@ -235,7 +236,7 @@ export function ProfPaymentScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text style={{ fontSize: 28, marginBottom: 6 }}>💳</Text>
+          <Icon name="wallet" size={28} color={colors.textSecondary} />
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             No payment methods yet
           </Text>
@@ -366,7 +367,7 @@ export function ProfPaymentScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 28, marginBottom: 6 }}>➕</Text>
+        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
           Add payment method
         </Text>
@@ -384,7 +385,7 @@ export function ProfPaymentScreen() {
           gap: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 15 }}>🔒</Text>
+        <Icon name="lock" size={15} color={colors.textSecondary} />
         <Text style={{ flex: 1, fontSize: 13, color: colors.textTertiary, lineHeight: 18 }}>
           256-bit encrypted · PCI DSS compliant · AutoMate never stores full card numbers.
         </Text>

@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -51,7 +52,7 @@ export function BookDepositScreen() {
       kind: 'repair',
       brand,
       dealerId: params?.dealerId,
-      icon: '🚗',
+      icon: 'car',
       title: 'Rear bumper repair',
       dealerName: dealerById(params?.dealerId).name,
       dateLabel,
@@ -78,7 +79,6 @@ export function BookDepositScreen() {
   return (
     <Screen>
       <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 30 }}>🤝</Text>
         <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>
           Book now, pay the shop later
         </Text>
@@ -140,7 +140,7 @@ export function BookDepositScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text>🎉</Text>
+          <Icon name="sparkle" size={18} color={colors.textSecondary} />
           <Text style={{ fontWeight: '700', color: colors.successDeep, fontSize: 14 }}>
             Deposit waived — Pro member
           </Text>
@@ -159,7 +159,7 @@ export function BookDepositScreen() {
               marginBottom: spacing.md,
             }}
           >
-            <Text style={{ fontSize: 18 }}>⭐</Text>
+            <Icon name="star" size={18} color={colors.textSecondary} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
                 Skip the deposit with Pro
@@ -176,7 +176,7 @@ export function BookDepositScreen() {
             <SectionLabel>Payment method</SectionLabel>
           </View>
           <Card style={{ padding: spacing.sm, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Text>💳</Text>
+            <Icon name="wallet" size={18} color={colors.textSecondary} />
             <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }}>
               {cardLabel} <Text style={{ color: colors.textTertiary, fontSize: 12 }}>· hold only</Text>
             </Text>
@@ -188,7 +188,7 @@ export function BookDepositScreen() {
       )}
 
       <PrimaryButton
-        variant="success"
+        variant="warning"
         label={waived ? 'Confirm booking — no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
         loading={booking}
         onPress={confirm}

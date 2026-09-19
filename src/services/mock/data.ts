@@ -20,7 +20,7 @@ export interface Dealer {
   photoUrl?: string;
 }
 
-/** The demo user's location — Fairfax, VA (s-all-quotes-map "📍 Fairfax, VA"). */
+/** The demo user's location — Fairfax, VA (s-all-quotes-map "Fairfax, VA"). */
 export const USER_LOCATION = { lat: 38.846, lng: -77.306 };
 
 /** Distance filter options used app-wide (quotes, map, schedule). Caps at 30 mi. */
@@ -394,13 +394,13 @@ export const DAMAGE_TYPE_SEVERITY: Record<string, string> = {
 
 export const PHOTO_TIPS = [
   {
-    icon: '☀️',
+    icon: 'bulb',
     bold: 'Good lighting',
     rest: ' — daylight or bright shade, avoid flash or direct sun',
   },
-  { icon: '📏', bold: '3–5 ft away', rest: ' — close enough for detail, far enough for context' },
+  { icon: 'gauge', bold: '3–5 ft away', rest: ' — close enough for detail, far enough for context' },
   {
-    icon: '📷',
+    icon: 'camera',
     bold: '3+ angles',
     rest: ' — straight-on, left-side, right-side for accurate AI estimate',
   },
@@ -577,13 +577,13 @@ export interface UpcomingService {
 }
 
 export const UPCOMING_SERVICES: UpcomingService[] = [
-  { id: 'up-oil', name: 'Oil change', due: 'Due ~800 mi', icon: '🛢️', status: 'Soon' },
-  { id: 'up-tires', name: 'Tire rotation', due: 'Due ~2,500 mi', icon: '↺', status: 'Upcoming' },
+  { id: 'up-oil', name: 'Oil change', due: 'Due ~800 mi', icon: 'oil', status: 'Soon' },
+  { id: 'up-tires', name: 'Tire rotation', due: 'Due ~2,500 mi', icon: 'tire', status: 'Upcoming' },
   {
     id: 'up-insp',
     name: 'Multi-point inspection',
     due: 'Due Nov 2025',
-    icon: '🔍',
+    icon: 'search',
     status: 'Scheduled',
   },
 ];
@@ -611,7 +611,7 @@ export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
     year: 2025,
     mileage: '44,500 mi',
     cost: 49,
-    icon: '🛢️',
+    icon: 'oil',
   },
   {
     id: 'rec-tires',
@@ -621,7 +621,7 @@ export const SERVICE_HISTORY_SEED: ServiceRecord[] = [
     year: 2024,
     mileage: '42,100 mi',
     cost: 39,
-    icon: '↺',
+    icon: 'tire',
   },
 ];
 
@@ -707,18 +707,18 @@ export interface ProGuide {
 
 /** The full unlocked Pro library (s-diy-guides — 12 guides). */
 export const PRO_GUIDES: ProGuide[] = [
-  { id: 'pg-1', icon: '🚗', title: 'Bumper dent removal', sub: 'PDR with hot water & plunger', time: '25 min', difficulty: 'Easy' },
-  { id: 'pg-2', icon: '🖌️', title: 'Paint chip touch-up', sub: 'Color-match & layer like a pro', time: '20 min', difficulty: 'Easy' },
-  { id: 'pg-3', icon: '✨', title: 'Scratch buffing', sub: 'Compound & polish deep scratches', time: '30 min', difficulty: 'Easy' },
-  { id: 'pg-4', icon: '💡', title: 'Headlight restoration', sub: 'De-fog & UV-seal yellowed lenses', time: '40 min', difficulty: 'Easy' },
-  { id: 'pg-5', icon: '🪟', title: 'Windshield chip fix', sub: 'Resin kit before it spreads', time: '35 min', difficulty: 'Medium' },
-  { id: 'pg-6', icon: '🛞', title: 'Wheel scuff repair', sub: 'Curb rash sand & refinish', time: '45 min', difficulty: 'Medium' },
-  { id: 'pg-7', icon: '🌫️', title: 'Foggy trim restore', sub: 'Plastic trim back to black', time: '15 min', difficulty: 'Easy' },
-  { id: 'pg-8', icon: '🧲', title: 'Door ding pop-out', sub: 'Magnet & glue-tab technique', time: '30 min', difficulty: 'Medium' },
-  { id: 'pg-9', icon: '🎨', title: 'Clear coat repair', sub: 'Stop peeling before it grows', time: '50 min', difficulty: 'Medium' },
-  { id: 'pg-10', icon: '🔋', title: 'Battery terminal clean', sub: 'Stop corrosion & slow starts', time: '15 min', difficulty: 'Easy' },
-  { id: 'pg-11', icon: '💧', title: 'Wiper streak fix', sub: 'Refill blades vs replace', time: '10 min', difficulty: 'Easy' },
-  { id: 'pg-12', icon: '🔒', title: 'Interior scuff removal', sub: 'Leather & plastic restore', time: '25 min', difficulty: 'Easy' },
+  { id: 'pg-1', icon: 'car', title: 'Bumper dent removal', sub: 'PDR with hot water & plunger', time: '25 min', difficulty: 'Easy' },
+  { id: 'pg-2', icon: 'brush', title: 'Paint chip touch-up', sub: 'Color-match & layer like a pro', time: '20 min', difficulty: 'Easy' },
+  { id: 'pg-3', icon: 'sparkle', title: 'Scratch buffing', sub: 'Compound & polish deep scratches', time: '30 min', difficulty: 'Easy' },
+  { id: 'pg-4', icon: 'bulb', title: 'Headlight restoration', sub: 'De-fog & UV-seal yellowed lenses', time: '40 min', difficulty: 'Easy' },
+  { id: 'pg-5', icon: 'glass', title: 'Windshield chip fix', sub: 'Resin kit before it spreads', time: '35 min', difficulty: 'Medium' },
+  { id: 'pg-6', icon: 'tire', title: 'Wheel scuff repair', sub: 'Curb rash sand & refinish', time: '45 min', difficulty: 'Medium' },
+  { id: 'pg-7', icon: 'fog', title: 'Foggy trim restore', sub: 'Plastic trim back to black', time: '15 min', difficulty: 'Easy' },
+  { id: 'pg-8', icon: 'magnet', title: 'Door ding pop-out', sub: 'Magnet & glue-tab technique', time: '30 min', difficulty: 'Medium' },
+  { id: 'pg-9', icon: 'palette', title: 'Clear coat repair', sub: 'Stop peeling before it grows', time: '50 min', difficulty: 'Medium' },
+  { id: 'pg-10', icon: 'battery', title: 'Battery terminal clean', sub: 'Stop corrosion & slow starts', time: '15 min', difficulty: 'Easy' },
+  { id: 'pg-11', icon: 'droplet', title: 'Wiper streak fix', sub: 'Refill blades vs replace', time: '10 min', difficulty: 'Easy' },
+  { id: 'pg-12', icon: 'lock', title: 'Interior scuff removal', sub: 'Leather & plastic restore', time: '25 min', difficulty: 'Easy' },
 ];
 
 /** The 5 maintenance service types — single source of truth (mirrors
@@ -768,7 +768,7 @@ export const BOOKABLE_SERVICES: BookableService[] = [
     detail: 'Full synthetic 5W-30 · ~45 min',
     price: 49,
     durationMin: 45,
-    icon: '🛢️',
+    icon: 'oil',
   },
   {
     id: 'svc-tires',
@@ -776,7 +776,7 @@ export const BOOKABLE_SERVICES: BookableService[] = [
     detail: '4-wheel balance · ~30 min',
     price: 29,
     durationMin: 30,
-    icon: '🛞',
+    icon: 'tire',
   },
   {
     id: 'svc-insp',
@@ -784,7 +784,7 @@ export const BOOKABLE_SERVICES: BookableService[] = [
     detail: '27-point check · ~60 min',
     price: 39,
     durationMin: 60,
-    icon: '🔧',
+    icon: 'wrench',
   },
   {
     id: 'svc-brakes',
@@ -792,7 +792,7 @@ export const BOOKABLE_SERVICES: BookableService[] = [
     detail: 'Pads & rotors check · ~45 min',
     price: 149,
     durationMin: 45,
-    icon: '🛑',
+    icon: 'brake',
   },
 ];
 
@@ -880,7 +880,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'oil',
     name: 'Oil change',
-    icon: '🛢️',
+    icon: 'oil',
     blurb: 'Pick your oil type',
     services: [
       { id: 'oil-conv', name: 'Conventional', price: 39, durationMin: 40 },
@@ -892,7 +892,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'tires',
     name: 'Tire service',
-    icon: '🛞',
+    icon: 'tire',
     blurb: 'Rotation, alignment & repair',
     services: [
       { id: 'tire-rot', name: 'Tire Rotation', price: 29, durationMin: 30 },
@@ -907,7 +907,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'filters',
     name: 'Filters',
-    icon: '🌬️',
+    icon: 'filter',
     blurb: 'Air, cabin, fuel & PCV',
     services: [
       { id: 'flt-cabin', name: 'Cabin Air Filter', price: 45, durationMin: 20 },
@@ -919,7 +919,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'fluids',
     name: 'Fluids',
-    icon: '💧',
+    icon: 'droplet',
     blurb: 'Flushes & top-ups',
     services: [
       { id: 'fl-trans', name: 'Transmission Fluid Flush (Auto)', price: 159, durationMin: 60 },
@@ -932,7 +932,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'brakes',
     name: 'Brakes',
-    icon: '🛑',
+    icon: 'brake',
     blurb: 'Pads & rotors — priced by vehicle',
     byVehicleType: true,
     services: [
@@ -946,7 +946,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
   {
     id: 'inspection',
     name: 'Inspection',
-    icon: '🔎',
+    icon: 'search',
     blurb: 'Multi-point & safety checks',
     services: [
       { id: 'insp-multi', name: 'Multi-point Inspection', price: 49, durationMin: 45 },
@@ -1073,7 +1073,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '2h ago',
     category: 'Tip',
     body:
-      'Used AutoMate for a rear bumper dent — submitted photos at midnight and woke up to 6 quotes from local shops. Honda Fairfax was $285, lowest by $60. Booked same day 👌',
+      'Used AutoMate for a rear bumper dent — submitted photos at midnight and woke up to 6 quotes from local shops. Honda Fairfax was $285, lowest by $60. Booked same day ',
     replies: 14,
     likes: 28,
     hasPhoto: true,
@@ -1087,7 +1087,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '5h ago',
     category: 'Review',
     body:
-      'The Pro DIY guide for nail polish paint chip fix actually worked on my hood scratch. Saved $400 in labor. Paint match was perfect ✨',
+      'The Pro DIY guide for nail polish paint chip fix actually worked on my hood scratch. Saved $400 in labor. Paint match was perfect ',
     replies: 7,
     likes: 41,
   },
@@ -1100,7 +1100,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '8h ago',
     category: 'Question',
     body:
-      "Insurance filed a claim for my door ding and my premium went up $180/yr. AutoMate's compare tool literally showed me it would cost more to insure than pay cash 🤦. Always check first!",
+      "Insurance filed a claim for my door ding and my premium went up $180/yr. AutoMate's compare tool literally showed me it would cost more to insure than pay cash . Always check first!",
     replies: 22,
     likes: 67,
   },
@@ -1113,7 +1113,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '12h ago',
     category: 'Warning',
     body:
-      'Heads up Fairfax Honda owners — some shops are quoting 2-3x market rate for bumper repairs right now. AutoMate showed me the range so I knew what was fair 👍',
+      'Heads up Fairfax Honda owners — some shops are quoting 2-3x market rate for bumper repairs right now. AutoMate showed me the range so I knew what was fair ',
     replies: 11,
     likes: 54,
   },
@@ -1195,19 +1195,19 @@ export interface Milestone {
 }
 
 export const MILESTONES: Milestone[] = [
-  { id: 'mile-oil', icon: '🛢️', title: 'Free oil change', sub: 'Standard synthetic oil & filter', costPts: 6000 },
-  { id: 'mile-tires', icon: '🚗', title: 'Free tire rotation', sub: 'All 4 tires rotated & balanced', costPts: 10000 },
+  { id: 'mile-oil', icon: 'oil', title: 'Free oil change', sub: 'Standard synthetic oil & filter', costPts: 6000 },
+  { id: 'mile-tires', icon: 'car', title: 'Free tire rotation', sub: 'All 4 tires rotated & balanced', costPts: 10000 },
 ];
 
 // Point values come from the central earn schedule (src/config/points.ts).
 export const EARN_ACTIONS = [
-  { icon: '📅', title: 'Daily check-in', sub: 'Log in every day', pts: EARN_RULES.dailyCheckIn },
-  { icon: '📷', title: 'Scan service receipt', sub: 'Add to service history', pts: EARN_RULES.scanReceipt },
-  { icon: '✒️', title: 'Manual service log', sub: 'Enter service details', pts: EARN_RULES.manualLog },
-  { icon: '🛢️', title: 'Book service via app', sub: 'Schedule at a dealer', pts: EARN_RULES.bookService },
-  { icon: '📸', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: EARN_RULES.submitPhotos },
-  { icon: '🛡️', title: 'Add insurance policy', sub: 'Link your coverage', pts: EARN_RULES.addInsurance },
-  { icon: '👥', title: 'Refer a friend', sub: 'They join AutoMate', pts: EARN_RULES.referFriend },
+  { icon: 'calendar', title: 'Daily check-in', sub: 'Log in every day', pts: EARN_RULES.dailyCheckIn },
+  { icon: 'camera', title: 'Scan service receipt', sub: 'Add to service history', pts: EARN_RULES.scanReceipt },
+  { icon: 'pencil', title: 'Manual service log', sub: 'Enter service details', pts: EARN_RULES.manualLog },
+  { icon: 'oil', title: 'Book service via app', sub: 'Schedule at a dealer', pts: EARN_RULES.bookService },
+  { icon: 'camera', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: EARN_RULES.submitPhotos },
+  { icon: 'shield', title: 'Add insurance policy', sub: 'Link your coverage', pts: EARN_RULES.addInsurance },
+  { icon: 'user', title: 'Refer a friend', sub: 'They join AutoMate', pts: EARN_RULES.referFriend },
 ];
 
 export const PAYMENT_CARD = {
@@ -1218,18 +1218,18 @@ export const PAYMENT_CARD = {
 };
 
 export const LANGUAGES = [
-  { flag: '🇺🇸', name: 'English', selected: true },
-  { flag: '🇰🇷', name: '한국어', selected: false },
-  { flag: '🇪🇸', name: 'Español', selected: false },
-  { flag: '🇨🇳', name: '中文', selected: false },
+  { flag: 'EN', name: 'English', selected: true },
+  { flag: 'KO', name: '한국어', selected: false },
+  { flag: 'ES', name: 'Español', selected: false },
+  { flag: 'ZH', name: '中文', selected: false },
 ];
 
 /** Help-center topics → their article routes (s-prof-help-center → s-help-*). */
 export const HELP_TOPICS = [
-  { icon: '📷', title: 'How to submit damage photos', route: 'HelpPhotos' },
-  { icon: '💰', title: 'Understanding quotes & pricing', route: 'HelpQuotes' },
-  { icon: '📅', title: 'Managing bookings', route: 'HelpBookings' },
-  { icon: '📞', title: 'Contact support', route: 'HelpContact' },
+  { icon: 'camera', title: 'How to submit damage photos', route: 'HelpPhotos' },
+  { icon: 'dollar', title: 'Understanding quotes & pricing', route: 'HelpQuotes' },
+  { icon: 'calendar', title: 'Managing bookings', route: 'HelpBookings' },
+  { icon: 'phone', title: 'Contact support', route: 'HelpContact' },
 ] as const;
 
 export const TERMS_SECTIONS = [

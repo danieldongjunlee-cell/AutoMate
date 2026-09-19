@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -61,10 +62,10 @@ export function MaintServiceTypeScreen() {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 30 }}>{cat.icon}</Text>
+                <Glyph glyph={cat.icon} size={30} color={colors.textSecondary} />
                 {on ? (
                   <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ color: colors.onPrimary, fontSize: 13, fontWeight: '800' }}>✓</Text>
+                    <Icon name="check" size={13} color={colors.onPrimary} strokeWidth={2.4} />
                   </View>
                 ) : null}
               </View>

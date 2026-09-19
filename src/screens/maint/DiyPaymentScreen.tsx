@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -71,7 +72,7 @@ export function DiyPaymentScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textSecondary }}>⭐ AutoMate Pro · 1 year</Text>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>AutoMate Pro · 1 year</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>$48.00</Text>
         </View>
         <View
@@ -140,14 +141,14 @@ export function DiyPaymentScreen() {
             borderLeftColor: colors.primary,
           }}
         >
-          <Text style={{ fontSize: 20, marginRight: spacing.sm }}>💳</Text>
+          <Icon name="wallet" size={20} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDeep }}>
               Visa ending {PAYMENT_CARD.last4}
             </Text>
             <Text style={{ fontSize: 13, color: colors.primaryDark }}>Default card</Text>
           </View>
-          <Text style={{ fontSize: 17, color: colors.primary }}>✔</Text>
+          <Icon name="check" size={17} color={colors.primary} strokeWidth={2.4} />
         </View>
       </Card>
 

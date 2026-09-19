@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -42,7 +43,7 @@ export function CommCreateScreen() {
   const onPublish = async () => {
     setPublishing(true);
     const { pointsEarned } = await communityService.createPost(
-      body.trim() || 'Shared from the AutoMate app 🚗',
+      body.trim() || 'Shared from the AutoMate app ',
       category,
       photos.length,
     );
@@ -69,7 +70,7 @@ export function CommCreateScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 16 }}>💬</Text>
+        <Icon name="chat" size={16} color={colors.textSecondary} />
         <Text style={{ flex: 1, fontSize: 14, color: colors.primaryDark }}>
           Keep it helpful and on-topic — no spam or self-promotion.
         </Text>
@@ -195,7 +196,7 @@ export function CommCreateScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 11, color: '#fff' }}>✕</Text>
+              <Icon name="close" size={11} color={'#fff'} strokeWidth={2.4} />
             </Tappable>
           </View>
         ))}
@@ -217,7 +218,7 @@ export function CommCreateScreen() {
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Text style={{ fontSize: 20 }}>📷</Text>
+              <Icon name="camera" size={20} color={colors.textSecondary} />
               <Text style={{ fontSize: 9, fontWeight: '500', color: colors.primaryDark }}>Camera</Text>
             </Tappable>
             <Tappable
@@ -236,7 +237,7 @@ export function CommCreateScreen() {
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Text style={{ fontSize: 20 }}>🖼️</Text>
+              <Icon name="camera" size={20} color={colors.textSecondary} />
               <Text style={{ fontSize: 9, fontWeight: '500', color: colors.textTertiary }}>Gallery</Text>
             </Tappable>
           </>

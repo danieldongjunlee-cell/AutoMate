@@ -228,7 +228,7 @@ export function ProfInsEditScreen() {
           <FormField label="Covered vehicle" value={active?.name || policy.covers || VEHICLE.name} picker />
         </View>
         <View style={{ padding: spacing.md }}>
-          <FormField label="Renewal date" value={renewal} onChangeText={setRenewal} trailing="📅" />
+          <FormField label="Renewal date" value={renewal} onChangeText={setRenewal} trailing="" />
         </View>
       </Card>
 
@@ -411,7 +411,7 @@ export function ProfInsAddScreen() {
           />
         </View>
         <View style={fieldRowStyle(colors.divider)}>
-          <FormField label="Renewal date *" value={renewal} onChangeText={setRenewal} placeholder="Aug 15, 2027" trailing="📅" />
+          <FormField label="Renewal date *" value={renewal} onChangeText={setRenewal} placeholder="Aug 15, 2027" trailing="" />
         </View>
         <View style={{ ...fieldRowStyle(colors.divider), flexDirection: 'row', gap: spacing.lg }}>
           <FormField label="Deductible" value={deductible} onChangeText={setDeductible} placeholder="$" keyboardType="numeric" />
@@ -429,7 +429,7 @@ export function ProfInsAddScreen() {
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <View style={fieldRowStyle(colors.divider)}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-            🔗 Connect my insurer
+            Connect my insurer
           </Text>
           <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
             Log in once — your policies import automatically

@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
 import { PanResponder, StyleSheet, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
-import { FilterChips } from '../../components/FilterChips';
+import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { Tappable } from '../../components/Tappable';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { GuestBanner } from '../../components/GuestBanner';
@@ -46,6 +47,7 @@ export function BookingsScreen() {
 
   // Status filter for the scheduled-services list (completed shown separately).
   const [statusFilter, setStatusFilter] = useState('All');
+  const [filterOpen, setFilterOpen] = useState(false);
   const matchesStatus = (b: AppBooking) => {
     switch (statusFilter) {
       case 'Confirmed':
@@ -238,7 +240,7 @@ export function BookingsScreen() {
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: '700', color: completed ? colors.primary : colors.textSecondary }}>
-              {completed ? '★ Leave a review' : '✓ Mark service completed'}
+              {completed ? '★ Leave a review' : 'Mark service completed'}
             </Text>
             <Text style={{ fontSize: 14, color: completed ? colors.primary : colors.textTertiary }}>›</Text>
           </Tappable>
@@ -370,11 +372,16 @@ export function BookingsScreen() {
       </Card>
 
       <SectionLabel>{t('Scheduled services')}</SectionLabel>
-      <FilterChips options={STATUS_FILTERS} selected={statusFilter} onSelect={setStatusFilter} />
-      <View style={{ marginTop: spacing.sm }} />
+      <FilterButton label={statusFilter === 'All' ? 'Filter' : `Filter · ${statusFilter}`} count={statusFilter === 'All' ? 0 : 1} onPress={() => setFilterOpen(true)} />
+      <FilterSheet
+        visible={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        groups={[{ key: 'status', title: 'Status', options: STATUS_FILTERS, value: statusFilter }]}
+        onApply={(v) => setStatusFilter(v.status ?? 'All')}
+      />
       {bookings.length === 0 ? (
         <Card style={{ padding: spacing.xl, alignItems: 'center', marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 28, marginBottom: 6 }}>📅</Text>
+          <Icon name="calendar" size={28} color={colors.textSecondary} />
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             {t('No bookings yet')}
           </Text>

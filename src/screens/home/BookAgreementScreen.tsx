@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -49,7 +50,7 @@ export function BookAgreementScreen() {
         kind: 'repair',
         brand,
         dealerId: params?.dealerId,
-        icon: '🚗',
+        icon: 'car',
         title: 'Rear bumper repair',
         dealerName: dealerById(params?.dealerId).name,
         dateLabel,
@@ -68,7 +69,7 @@ export function BookAgreementScreen() {
         kind: 'maintenance',
         brand,
         dealerId: cart.dealerId ?? undefined,
-        icon: '🛢️',
+        icon: 'oil',
         title: cart.services.map((s) => s.name).join(' + ') || 'Service',
         dealerName: dealerById(cart.dealerId).name,
         dateLabel,
@@ -84,7 +85,7 @@ export function BookAgreementScreen() {
   return (
     <Screen>
       <Card tinted style={{ padding: spacing.md, marginBottom: spacing.md, flexDirection: 'row', gap: spacing.sm }}>
-        <Text style={{ fontSize: 20 }}>✅</Text>
+        <Icon name="check" size={20} color={colors.textSecondary} strokeWidth={2.4} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDeep }}>
             No payment today
@@ -128,7 +129,7 @@ export function BookAgreementScreen() {
             justifyContent: 'center',
           }}
         >
-          {agreed && <Text style={{ color: '#fff', fontSize: 14 }}>✓</Text>}
+          {agreed && <Icon name="check" size={14} color={'#fff'} strokeWidth={2.4} />}
         </View>
         <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary, lineHeight: 19 }}>
           I have read and agree to AutoMate's{' '}

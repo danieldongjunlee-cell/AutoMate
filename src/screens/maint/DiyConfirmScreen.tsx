@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -19,10 +20,10 @@ const BENEFIT_LINKS: {
   sub: string;
   route: 'DiyGuides' | 'DiyMatch' | 'DiyTools' | 'DiyFuture';
 }[] = [
-  { icon: '📚', title: 'All 12 DIY repair guides', sub: 'Browse the full unlocked library', route: 'DiyGuides' },
-  { icon: '🤖', title: 'AI damage-to-guide matching', sub: 'Your photos → the right guide instantly', route: 'DiyMatch' },
-  { icon: '🛠️', title: 'Tool & parts shopping lists', sub: 'Exact products with price comparisons', route: 'DiyTools' },
-  { icon: '♾️', title: 'All future guides included', sub: "What's coming next · vote on topics", route: 'DiyFuture' },
+  { icon: 'file', title: 'All 12 DIY repair guides', sub: 'Browse the full unlocked library', route: 'DiyGuides' },
+  { icon: 'sparkle', title: 'AI damage-to-guide matching', sub: 'Your photos → the right guide instantly', route: 'DiyMatch' },
+  { icon: 'wrench', title: 'Tool & parts shopping lists', sub: 'Exact products with price comparisons', route: 'DiyTools' },
+  { icon: 'sparkle', title: 'All future guides included', sub: "What's coming next · vote on topics", route: 'DiyFuture' },
 ];
 
 /** Wireframe s-diy-confirm: "You're a Pro member!" + 4 benefit links. */
@@ -51,7 +52,6 @@ export function DiyConfirmScreen() {
             elevation: 6,
           }}
         >
-          <Text style={{ fontSize: 38 }}>🔓</Text>
         </LinearGradient>
         <Text style={{ fontSize: 23, fontWeight: '800', color: colors.textPrimary, marginBottom: 3 }}>
           DIY guides unlocked!
@@ -79,7 +79,7 @@ export function DiyConfirmScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 24 }}>{b.icon}</Text>
+          <Glyph glyph={b.icon} size={24} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
               {b.title}

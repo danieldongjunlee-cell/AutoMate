@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -12,10 +13,10 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'HowItWorks'>;
 
 const STEPS = [
-  { emoji: '📷', title: 'Take damage photos', sub: 'Tap the part, snap a few angles', tint: '#2e6bff' },
-  { emoji: '💬', title: 'Get quotes from many shops', sub: 'Real prices in 1–3 hours', tint: '#16a34a' },
-  { emoji: '⚖️', title: 'Compare cash vs insurance', sub: 'See the cheaper way, side by side', tint: '#E2A33B' },
-  { emoji: '📅', title: 'Book & pay the shop later', sub: 'No upfront payment', tint: '#7F77DD' },
+  { emoji: 'camera', title: 'Take damage photos', sub: 'Tap the part, snap a few angles', tint: '#2e6bff' },
+  { emoji: 'chat', title: 'Get quotes from many shops', sub: 'Real prices in 1–3 hours', tint: '#16a34a' },
+  { emoji: 'dollar', title: 'Compare cash vs insurance', sub: 'See the cheaper way, side by side', tint: '#E2A33B' },
+  { emoji: 'calendar', title: 'Book & pay the shop later', sub: 'No upfront payment', tint: '#7F77DD' },
 ];
 
 /** Wireframe s-how-it-works: 4-step visual explainer. */
@@ -46,7 +47,7 @@ export function HowItWorksScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 26 }}>{s.emoji}</Text>
+              <Glyph glyph={s.emoji} size={26} color={colors.textSecondary} />
               <View
                 style={{
                   position: 'absolute',
@@ -77,7 +78,7 @@ export function HowItWorksScreen() {
       ))}
 
       <View style={{ marginTop: spacing.lg }}>
-        <PrimaryButton variant="success" label="Get my AI estimate →" onPress={() => navigation.navigate('CarDiagram')} />
+        <PrimaryButton label="Get my AI estimate →" onPress={() => navigation.navigate('CarDiagram')} />
       </View>
     </Screen>
   );

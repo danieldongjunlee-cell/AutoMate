@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Icon } from '../../components/Icon';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
@@ -46,7 +47,7 @@ export function PointsHistoryScreen() {
         </View>
       ) : rows.length === 0 ? (
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
-          <Text style={{ fontSize: 28, marginBottom: 6 }}>✨</Text>
+          <Icon name="sparkle" size={28} color={colors.textSecondary} />
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>No activity yet</Text>
           <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
             Check in, book a service, or post in the community to start earning.

@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -57,7 +58,7 @@ export function MaintPaymentScreen() {
         kind: 'maintenance',
         brand,
         dealerId: cart.dealerId ?? undefined,
-        icon: '🛢️',
+        icon: 'oil',
         title: cart.services.map((s) => s.name).join(' + ') || 'Service',
         dealerName: dealer.name,
         dateLabel,
@@ -79,7 +80,7 @@ export function MaintPaymentScreen() {
         <SectionLabel>Order summary</SectionLabel>
         {cart.promo ? (
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.xs }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>🎉 {cart.promo.label} applied</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>{cart.promo.label} applied</Text>
           </View>
         ) : null}
         {cart.services.map((s) => (
@@ -170,7 +171,7 @@ export function MaintPaymentScreen() {
       <Card style={{ overflow: 'hidden', marginBottom: spacing.sm }}>
         {(
           [
-            { id: 'visa', icon: '💳', name: 'Visa ending 4242', sub: 'Default card' },
+            { id: 'visa', icon: 'wallet', name: 'Visa ending 4242', sub: 'Default card' },
           ] as const
         ).map(({ id, icon, name, sub }) => {
           const on = method === id;
@@ -187,7 +188,7 @@ export function MaintPaymentScreen() {
                 borderLeftColor: on ? colors.primary : 'transparent',
               }}
             >
-              <Text style={{ fontSize: 20, marginRight: spacing.sm }}>{icon}</Text>
+              <Glyph glyph={icon} size={20} color={colors.textSecondary} />
               <View style={{ flex: 1 }}>
                 <Text
                   style={{
@@ -203,7 +204,7 @@ export function MaintPaymentScreen() {
                 </Text>
               </View>
               <Text style={{ fontSize: 18, color: on ? colors.primary : colors.disabled }}>
-                {on ? '✔' : '›'}
+                {on ? '' : '›'}
               </Text>
             </Tappable>
           );
@@ -224,13 +225,14 @@ export function MaintPaymentScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 16 }}>🔒</Text>
+        <Icon name="lock" size={16} color={colors.textSecondary} />
         <Text style={{ flex: 1, fontSize: 14, color: colors.successDeep }}>
           Payment processed securely. Charged after service completion.
         </Text>
       </View>
 
       <PrimaryButton
+        variant="warning"
         label={`Confirm & pay $${totalLabel} →`}
         loading={paying}
         onPress={onPay}

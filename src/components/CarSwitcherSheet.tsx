@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from './Icon';
 import { Modal, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -67,7 +68,7 @@ export function CarSwitcherSheet({
                     {v.odometerMi.toLocaleString()} mi · {brandOf(v.name)}
                   </Text>
                 </View>
-                {on ? <Text style={{ color: colors.primary, fontWeight: '800' }}>✓</Text> : null}
+                {on ? <Icon name="check" size={18} color={colors.primary} strokeWidth={2.4} /> : null}
               </Tappable>
             );
           })}

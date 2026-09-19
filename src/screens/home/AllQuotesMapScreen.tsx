@@ -140,7 +140,7 @@ export function AllQuotesMapScreen() {
           }}
         >
           <Text style={{ fontSize: 12, color: '#555', fontWeight: '600' }}>
-            📍 {QUOTE_REQUEST.city}
+            {QUOTE_REQUEST.city}
           </Text>
         </View>
       </View>

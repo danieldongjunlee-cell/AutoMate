@@ -7,7 +7,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';
-import { Icon } from '../../components/Icon';
+import { Glyph, Icon } from '../../components/Icon';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { pointsToUsd } from '../../config/points';
@@ -127,7 +127,7 @@ export function ProfHubScreen() {
           justifyContent: 'center',
         }}
       >
-        {typeof icon === 'string' ? <Text style={{ fontSize: 17 }}>{icon}</Text> : icon}
+        {typeof icon === 'string' ? <Glyph glyph={icon} size={17} color={colors.textSecondary} /> : icon}
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>{title}</Text>
@@ -184,13 +184,13 @@ export function ProfHubScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 18 }}>{checkedIn ? '🎉' : '✅'}</Text>
+        <Icon name={checkedIn ? 'sparkle' : 'check'} size={22} color={checkedIn ? palette.amber : palette.mint} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             {checkedIn ? 'Checked in today' : 'Daily check-in'}
           </Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-            {isAuthenticated ? `🔥 Day ${checkedIn ? 6 : 5} streak · +10 pts` : '🔥 Day 0 streak · 0 pts'}
+            {isAuthenticated ? `Day ${checkedIn ? 6 : 5} streak · +10 pts` : 'Day 0 streak · 0 pts'}
           </Text>
         </View>
         <View
@@ -204,7 +204,7 @@ export function ProfHubScreen() {
           }}
         >
           <Text style={{ fontSize: 13, fontWeight: '800', color: checkedIn ? colors.successDark : '#fff' }}>
-            {checkedIn ? '✓ Claimed' : 'Claim'}
+            {checkedIn ? 'Claimed' : 'Claim'}
           </Text>
         </View>
       </Tappable>
@@ -277,8 +277,8 @@ export function ProfHubScreen() {
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           {(
             [
-              { label: '🏆 Milestones', to: 'ProfMiles' as const, gate: 'milestones' },
-              { label: '📊 Points history', to: 'ProfPointsHistory' as const, gate: 'pointsHistory' },
+              { label: 'Milestones', to: 'ProfMiles' as const, gate: 'milestones' },
+              { label: 'Points history', to: 'ProfPointsHistory' as const, gate: 'pointsHistory' },
             ]
           ).map(({ label, to, gate }) => (
             <Tappable
@@ -320,7 +320,7 @@ export function ProfHubScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 20 }}>⭐</Text>
+        <Icon name="star" size={20} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
             {isPro ? 'AutoMate Pro — active' : 'Go Pro — skip deposits + DIY guides'}
@@ -371,9 +371,9 @@ export function ProfHubScreen() {
         </View>
         <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text>
       </Tappable>
-      {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : '🚗', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge, 'myCars')}
+      {accountRow(hasCar ? <CarBrandLogo brand={carBrand} size={28} /> : 'car', colors.primarySurface, 'My cars', carSub, 'ProfCars', hasCar ? undefined : checkBadge, 'myCars')}
       {accountRow(
-        '🛡️',
+        'shield',
         colors.dangerSurface,
         'Insurance policy',
         insuranceSub,
@@ -381,9 +381,9 @@ export function ProfHubScreen() {
         policy ? undefined : checkBadge,
         'insurance',
       )}
-      {accountRow('💳', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment', undefined, 'payment')}
-      {accountRow('🔍', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates', undefined, 'estimateHistory')}
-      {accountRow('⚙️', colors.surfaceAlt, 'Settings', 'Notifications · Privacy · Account', 'ProfSettings')}
+      {accountRow('wallet', colors.infoSurface, 'Payment method', `Visa ••••${PAYMENT_CARD.last4}`, 'ProfPayment', undefined, 'payment')}
+      {accountRow('search', colors.primarySurface, 'AI estimate history', 'Past damage estimates & photos', 'ProfEstimates', undefined, 'estimateHistory')}
+      {accountRow('gear', colors.surfaceAlt, 'Settings', 'Notifications · Privacy · Account', 'ProfSettings')}
     </Screen>
   );
 }

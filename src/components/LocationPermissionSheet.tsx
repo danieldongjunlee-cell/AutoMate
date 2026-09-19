@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from './Icon';
 import { Modal, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -23,7 +24,7 @@ export function LocationPermissionSheet() {
     >
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.55)', justifyContent: 'center', padding: spacing.xl }}>
         <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, padding: spacing.lg }}>
-          <Text style={{ fontSize: 34, textAlign: 'center', marginBottom: spacing.sm }}>📍</Text>
+          <Icon name="pin" size={34} color={colors.textSecondary} />
           <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, textAlign: 'center', marginBottom: 6 }}>
             Allow “AutoMate” to use your location?
           </Text>

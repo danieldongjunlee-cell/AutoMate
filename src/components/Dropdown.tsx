@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Icon } from './Icon';
 import { Modal, ScrollView, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { palette, radii, spacing, useTheme } from '../theme';
@@ -139,7 +140,7 @@ export function Dropdown({
                     >
                       {option}
                     </Text>
-                    {on ? <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text> : null}
+                    {on ? <Icon name="check" size={16} color={colors.primary} strokeWidth={2.4} /> : null}
                   </Tappable>
                 );
               })}

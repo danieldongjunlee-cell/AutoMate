@@ -82,7 +82,7 @@ export function RescheduleScreen() {
             {booking ? `${booking.dealerName} · ${booking.title}` : 'Honda Fairfax · Rear bumper'}
           </Text>
           <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.82)' }}>
-            📅 {booking ? `${booking.dateLabel} · ${booking.time}` : 'Thu, Apr 12 · 10:30 AM'}
+            {booking ? `${booking.dateLabel} · ${booking.time}` : 'Thu, Apr 12 · 10:30 AM'}
           </Text>
         </View>
         <View style={{ backgroundColor: 'rgba(255,255,255,.22)', borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3 }}>
@@ -117,13 +117,13 @@ export function RescheduleScreen() {
               <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{booking.reason}</Text>
             </View>
           ) : null}
-          <PrimaryButton variant="success" label={`Accept ${proposedTime} →`} onPress={onAcceptProposed} />
+          <PrimaryButton label={`Accept ${proposedTime} →`} onPress={onAcceptProposed} />
         </Card>
       ) : null}
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.sm }}>
-          🗓️ Reschedule
+          Reschedule
         </Text>
         <SectionLabel>Pick a new day</SectionLabel>
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md }}>
@@ -158,7 +158,7 @@ export function RescheduleScreen() {
         }}
       >
         <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.xs }}>
-          🗑️ Need to cancel?
+          Need to cancel?
         </Text>
         <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18, marginBottom: spacing.sm }}>
           Cancel <Text style={{ color: colors.successDark, fontWeight: '700' }}>12+ hours ahead</Text> and

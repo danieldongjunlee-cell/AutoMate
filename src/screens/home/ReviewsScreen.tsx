@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
@@ -78,7 +79,7 @@ export function ReviewsScreen() {
               padding: spacing.md,
             }}
           >
-            <Text style={{ fontSize: 16 }}>🔒</Text>
+            <Icon name="lock" size={16} color={colors.textSecondary} />
             <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary }}>
               You can write a review once you've completed a service with this shop.
             </Text>
@@ -94,14 +95,14 @@ export function ReviewsScreen() {
               <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>You</Text>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>{r.meta}</Text>
             </View>
-            <Badge label="✓ Verified" variant="success" />
+            <Badge label="Verified" variant="success" />
           </View>
           <Text style={{ color: '#F5B84E', fontSize: 14, marginBottom: 3 }}>
             {'★'.repeat(r.stars)}
             {'☆'.repeat(5 - r.stars)}
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{r.body}</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.xs }}>👍 Helpful (0)</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.xs }}>Helpful (0)</Text>
         </Card>
       ))}
 
@@ -113,14 +114,14 @@ export function ReviewsScreen() {
               <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{r.name}</Text>
               <Text style={{ fontSize: 12, color: colors.textTertiary }}>{r.meta}</Text>
             </View>
-            <Badge label="✓ Verified" variant="success" />
+            <Badge label="Verified" variant="success" />
           </View>
           <Text style={{ color: '#F5B84E', fontSize: 14, marginBottom: 3 }}>
             {'★'.repeat(r.stars)}
             {'☆'.repeat(5 - r.stars)}
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>{r.body}</Text>
-          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.xs }}>👍 Helpful ({r.helpful})</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: spacing.xs }}>Helpful ({r.helpful})</Text>
         </Card>
       ))}
     </Screen>

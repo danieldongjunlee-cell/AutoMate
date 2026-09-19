@@ -1,134 +1,148 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { Text, TextInput, View } from 'react-native';
 
-import { Tappable } from '../../components/Tappable';
-
-import { FilterChips } from '../../components/FilterChips';
-import { DiyGuideRow, ProLockOverlay } from '../../components/ProLockOverlay';
+import { FilterButton, FilterSheet } from '../../components/FilterSheet';
+import { Icon } from '../../components/Icon';
+import { ProLockOverlay } from '../../components/ProLockOverlay';
 import { Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
-import { DIY_CATEGORIES, DIY_GUIDES } from '../../services/mock/data';
-import { DIY_GUIDES as DIY_READABLE_GUIDES, DiyGuide } from '../../services/mock/diyGuides';
+import { DIY_GUIDES, DiyGuide } from '../../services/mock/diyGuides';
 import { useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing } from '../../theme';
-import { DiyGuideRow as ReadableGuideRow, DiyGuideSheet } from './DiyProScreens';
+import { palette, radii, spacing, useTheme } from '../../theme';
+import { DiyGuideRow, DiyGuideSheet } from './DiyProScreens';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintDiy'>;
 
-/** Wireframe s-maint-diy: guide hub — Pro-locked until `isPro` (diy-unlock chain). */
+/** Guides grouped by subject (canvas "DIY guides"). Unlisted guides land in Routine upkeep. */
+const DIY_SECTIONS: [string, string[]][] = [
+  ['Routine upkeep', ['wiper-blades', 'engine-air-filter', 'cabin-air-filter', 'tire-pressure', 'washer-fluid', 'oil-level']],
+  ['Battery & keys', ['key-fob-battery', 'jump-start']],
+  ['Dents & scratches', ['boiling-water-dent', 'plunger-dent', 'scratch-buff', 'paint-touch-up', 'paint-chip']],
+];
+const DIFFICULTIES = ['Any difficulty', 'Easy', 'Medium'];
+const DURATIONS = ['Any length', 'Under 15 min', 'Under 30 min'];
+
+/**
+ * DIY Repair Tips (canvas "DIY guides"): search bar under the header, guides
+ * in sections. Non-Pro users see the header and a locked, blurred preview of
+ * the whole list with one amber unlock button — no free samples.
+ */
 export function MaintDiyScreen() {
   const navigation = useNavigation<Nav>();
-  const [category, setCategory] = useState(DIY_CATEGORIES[0]);
-  const [selected, setSelected] = useState<DiyGuide | null>(null);
+  const { colors } = useTheme();
   const isPro = useAppStore((s) => s.isPro);
-  const free = DIY_GUIDES.filter((g) => g.free);
-  const locked = DIY_GUIDES.filter((g) => !g.free);
+  const [query, setQuery] = useState('');
+  const [difficulty, setDifficulty] = useState(DIFFICULTIES[0]);
+  const [duration, setDuration] = useState(DURATIONS[0]);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selected, setSelected] = useState<DiyGuide | null>(null);
 
-  const stats = [
-    { value: '12', label: 'Guides', tint: 'rgba(29,158,117,.25)', color: palette.successLight },
-    isPro
-      ? { value: 'PRO', label: 'Unlocked', tint: 'rgba(239,159,39,.2)', color: '#F5B947' }
-      : { value: '$48/yr', label: 'with Pro', tint: 'rgba(255,255,255,.07)', color: '#fff' },
-    { value: '5 min', label: 'Avg read', tint: 'rgba(255,255,255,.07)', color: '#fff' },
-  ];
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return DIY_GUIDES.filter((g) => {
+      if (q && !`${g.title} ${g.tools.join(' ')} ${g.steps.join(' ')}`.toLowerCase().includes(q)) return false;
+      if (difficulty !== DIFFICULTIES[0] && g.difficulty !== difficulty) return false;
+      if (duration === 'Under 15 min' && g.minutes > 15) return false;
+      if (duration === 'Under 30 min' && g.minutes > 30) return false;
+      return true;
+    });
+  }, [query, difficulty, duration]);
+
+  const sections = useMemo(() => {
+    const placed = new Set<string>();
+    const out: [string, DiyGuide[]][] = DIY_SECTIONS.map(([title, ids]) => {
+      const rows = ids.map((id) => filtered.find((g) => g.id === id)).filter((g): g is DiyGuide => !!g);
+      rows.forEach((g) => placed.add(g.id));
+      return [title, rows];
+    });
+    const rest = filtered.filter((g) => !placed.has(g.id));
+    if (rest.length) out[0] = [out[0][0], [...out[0][1], ...rest]];
+    return out.filter(([, rows]) => rows.length > 0);
+  }, [filtered]);
+
+  const filterCount = (difficulty !== DIFFICULTIES[0] ? 1 : 0) + (duration !== DURATIONS[0] ? 1 : 0);
+  const filterLabel = difficulty !== DIFFICULTIES[0] ? `Filter · ${difficulty}` : duration !== DURATIONS[0] ? `Filter · ${duration}` : 'Filter';
+
+  const list = (
+    <>
+      {sections.map(([title, rows]) => (
+        <View key={title} style={{ marginBottom: spacing.sm }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm, marginTop: spacing.xs }}>{title}</Text>
+          {rows.map((g) => (
+            <DiyGuideRow key={g.id} guide={g} onPress={() => (isPro ? setSelected(g) : undefined)} />
+          ))}
+        </View>
+      ))}
+      {sections.length === 0 ? (
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>No guides match — try another search.</Text>
+      ) : null}
+    </>
+  );
 
   return (
     <Screen>
-      {/* Header card */}
-      <LinearGradient
-        colors={[palette.navy, palette.navyMid]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <Text style={{ fontSize: 24 }}>📚</Text>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>DIY Repair Guides</Text>
-            <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.5)' }}>
-              {isPro
-                ? '12 expert guides · Pro unlocked'
-                : '12 expert guides · Free samples below · unlock all with AutoMate Pro'}
-            </Text>
+      {/* Header */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md }}>
+        <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name="wrench" size={28} color={palette.amber} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>DIY Repair Guides</Text>
+          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
+            {DIY_GUIDES.length} step-by-step guides · {isPro ? 'Pro unlocked' : 'Pro members only'}
+          </Text>
+        </View>
+        {isPro ? (
+          <View style={{ backgroundColor: colors.warningSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: colors.warning }}>PRO</Text>
           </View>
-        </View>
-        <View style={{ flexDirection: 'row', gap: 6 }}>
-          {stats.map((s, i) => {
-            const isPriceChip = !isPro && i === 1;
-            const inner = (
-              <>
-                <Text style={{ fontSize: 18, fontWeight: '700', color: s.color }}>{s.value}</Text>
-                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>{s.label}</Text>
-              </>
-            );
-            return isPriceChip ? (
-              <Tappable
-                key={s.label}
-                onPress={() => navigation.navigate('DiyUnlock', { returnTo: 'MaintDashboard' })}
-                style={({ pressed }) => ({
-                  flex: 1,
-                  backgroundColor: s.tint,
-                  borderRadius: radii.sm,
-                  borderWidth: 1,
-                  borderColor: palette.warning,
-                  paddingVertical: 8,
-                  alignItems: 'center',
-                  opacity: pressed ? 0.7 : 1,
-                })}
-              >
-                {inner}
-              </Tappable>
-            ) : (
-              <View
-                key={s.label}
-                style={{
-                  flex: 1,
-                  backgroundColor: s.tint,
-                  borderRadius: radii.sm,
-                  paddingVertical: 8,
-                  alignItems: 'center',
-                }}
-              >
-                {inner}
-              </View>
-            );
-          })}
-        </View>
-      </LinearGradient>
+        ) : null}
+      </View>
 
-      <FilterChips options={DIY_CATEGORIES} selected={category} onSelect={setCategory} />
+      {/* Search */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: colors.inputBg, borderRadius: radii.md, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 12, height: 46, marginBottom: spacing.md }}>
+        <Icon name="search" size={20} color={colors.textTertiary} />
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search guides (e.g. brakes, wiper)"
+          placeholderTextColor={colors.textPlaceholder}
+          accessibilityLabel="Search guides"
+          style={{ flex: 1, fontSize: 15, color: colors.textPrimary, paddingVertical: 0 }}
+        />
+      </View>
+
+      <FilterButton label={filterLabel} count={filterCount} onPress={() => setFilterOpen(true)} />
+      <FilterSheet
+        visible={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        groups={[
+          { key: 'difficulty', title: 'Difficulty', options: DIFFICULTIES, value: difficulty },
+          { key: 'duration', title: 'Time', options: DURATIONS, value: duration },
+        ]}
+        onApply={(v) => {
+          setDifficulty(v.difficulty ?? DIFFICULTIES[0]);
+          setDuration(v.duration ?? DURATIONS[0]);
+        }}
+      />
 
       {isPro ? (
-        // Unlocked: the full library of readable, follow-along guides.
         <>
-          {DIY_READABLE_GUIDES.map((g) => (
-            <ReadableGuideRow key={g.id} guide={g} onPress={() => setSelected(g)} />
-          ))}
-          {selected ? (
-            <DiyGuideSheet guide={selected} onClose={() => setSelected(null)} />
-          ) : null}
+          {list}
+          {selected ? <DiyGuideSheet guide={selected} onClose={() => setSelected(null)} /> : null}
         </>
       ) : (
-        <>
-          {free.map((g) => (
-            <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} free showLink />
-          ))}
-          <View style={{ marginTop: spacing.xs }}>
-            <ProLockOverlay
-              title="+10 more guides with Pro"
-              subtitle="All difficulty levels · AI recommendations · New guides weekly"
-              cta="Unlock with Pro · $48/yr →"
-              onUnlock={() => navigation.navigate('DiyUnlock', { returnTo: 'MaintDashboard' })}
-            >
-              {locked.map((g) => (
-                <DiyGuideRow key={g.id} level={g.level} title={g.title} meta={g.meta} />
-              ))}
-            </ProLockOverlay>
-          </View>
-        </>
+        <ProLockOverlay
+          blur
+          title="DIY guides are a Pro feature"
+          subtitle={`${DIY_GUIDES.length} step-by-step guides · AI damage matching · new guides monthly`}
+          cta="Unlock with Pro · $48/yr →"
+          onUnlock={() => navigation.navigate('DiyUnlock', { returnTo: 'MaintDashboard' })}
+        >
+          {list}
+        </ProLockOverlay>
       )}
     </Screen>
   );

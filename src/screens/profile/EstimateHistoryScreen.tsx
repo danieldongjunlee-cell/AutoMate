@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Icon } from '../../components/Icon';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 
@@ -63,7 +64,7 @@ export function EstimateHistoryScreen() {
     return (
       <Screen>
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>
-          <Text style={{ fontSize: 28, marginBottom: 6 }}>🔍</Text>
+          <Icon name="search" size={28} color={colors.textSecondary} />
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>No estimates yet</Text>
           <Text style={{ fontSize: 14, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>
             Submit a damaged part for an AI estimate and it’ll show up here with your photos.

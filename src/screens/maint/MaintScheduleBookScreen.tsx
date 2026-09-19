@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -83,7 +84,7 @@ export function MaintScheduleBookScreen() {
       kind: 'maintenance',
       brand,
       dealerId: cart.dealerId ?? undefined,
-      icon: '🛢️',
+      icon: 'oil',
       title: cart.services.map((s) => s.name).join(' + ') || 'Service',
       dealerName: dealerById(cart.dealerId).name,
       dateLabel,
@@ -150,7 +151,7 @@ export function MaintScheduleBookScreen() {
             justifyContent: 'center',
           }}
         >
-          {selected ? <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text> : null}
+          {selected ? <Icon name="check" size={13} color={'#fff'} strokeWidth={2.4} /> : null}
         </View>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -199,7 +200,7 @@ export function MaintScheduleBookScreen() {
           }}
         >
           <Text style={{ fontSize: 14, fontWeight: '800', color: colors.successDeep, marginBottom: 2 }}>
-            🎉 {cart.promo.label} applied
+            {cart.promo.label} applied
           </Text>
           <Text style={{ fontSize: 12, color: colors.successDark }}>
             {Object.entries(cart.promo.discounts)
@@ -244,7 +245,7 @@ export function MaintScheduleBookScreen() {
               onPress={() => toggleExpand(cat.id)}
               style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md }}
             >
-              <Text style={{ fontSize: 20 }}>{cat.icon}</Text>
+              <Glyph glyph={cat.icon} size={20} color={colors.textSecondary} />
               <View style={{ flex: 1 }}>
                 <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{cat.name}</Text>
                 <Text style={{ fontSize: 12, color: colors.textTertiary }}>
@@ -367,7 +368,7 @@ export function MaintScheduleBookScreen() {
               marginTop: 1,
             }}
           >
-            {agreed ? <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text> : null}
+            {agreed ? <Icon name="check" size={13} color={'#fff'} strokeWidth={2.4} /> : null}
           </View>
           <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
             I agree to AutoMate&apos;s{' '}

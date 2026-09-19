@@ -7,10 +7,10 @@
 export const SCREEN_TITLES: Record<string, string> = {
   Splash: 'Splash', // s-splash
   AuthMain: 'Sign In / Join', // canvas "Auth"
-  VerifyMethod: 'Verify your account', // ➕ app-only (user-feedback pass 1)
+  VerifyMethod: 'Verify your account', // app-only (user-feedback pass 1)
   VerifyOtp: 'Verify your account', // s-verify-otp (was "Verify phone"; code can go to email too)
   HomeLauncher: 'Home', // s-home-launcher (replaces s-home)
-  Quotes: 'Quotes', // ➕ Quotes tab main (quotes received)
+  Quotes: 'Quotes', // Quotes tab main (quotes received)
   CarDiagram: 'Where is the damage?', // canvas "Damage picker"
   Camera: 'Upload photos', // s-camera (upload-only, v17 feedback)
   EstimateIntake: 'Your car details', // s-estimate-intake (first estimate, no car on file)
@@ -84,7 +84,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   ProfPrivacy: 'Privacy policy', // s-prof-privacy
   ProfLanguage: 'Language', // s-prof-language
   ProfDistance: 'Distance units', // s-prof-distance
-  ProfPointsHistory: 'Points history', // ➕ Supabase points ledger
-  ProfEstimates: 'AI estimate history', // ➕ Supabase damage estimates + photos
-  SupabaseDemo: 'Supabase demo', // ➕ direct supabase-js smoke test
+  ProfPointsHistory: 'Points history', // Supabase points ledger
+  ProfEstimates: 'AI estimate history', // Supabase damage estimates + photos
+  SupabaseDemo: 'Supabase demo', // direct supabase-js smoke test
 };

@@ -64,7 +64,7 @@ export function DealerMapScreen() {
               id: dealer.id,
               lat: dealer.lat,
               lng: dealer.lng,
-              label: `🔧 ${dealer.name}`,
+              label: `${dealer.name}`,
               color: palette.danger,
               selected: true,
             },
@@ -93,7 +93,7 @@ export function DealerMapScreen() {
           }}
         >
           <Text style={{ fontSize: 12, color: '#555', fontWeight: '600' }}>
-            🛣️ {dealer.distanceMi} mi · ~{driveMin} min drive
+            {dealer.distanceMi} mi · ~{driveMin} min drive
           </Text>
         </View>
       </View>
@@ -127,7 +127,7 @@ export function DealerMapScreen() {
             paddingVertical: 6,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.textTertiary }}>⭐ Rating</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>Rating</Text>
           <RatingLink
             dealer={dealer}
             label={`${dealer.rating} (${dealer.reviews} reviews)`}
@@ -137,7 +137,7 @@ export function DealerMapScreen() {
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 }}
         >
-          <Text style={{ fontSize: 14, color: colors.textTertiary }}>📅 Your appointment</Text>
+          <Text style={{ fontSize: 14, color: colors.textTertiary }}>Your appointment</Text>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark }}>
             Thu, Apr 12 · 10:30 AM
           </Text>
@@ -157,7 +157,7 @@ export function DealerMapScreen() {
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>🧭 Get directions</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Get directions</Text>
           <Text style={{ fontSize: 9, color: 'rgba(255,255,255,.75)', marginTop: 1 }}>opens Google Maps</Text>
         </Tappable>
         <Tappable

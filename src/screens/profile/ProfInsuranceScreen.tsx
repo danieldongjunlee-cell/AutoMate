@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -320,7 +321,7 @@ export function ProfInsuranceScreen() {
             marginBottom: spacing.md,
           }}
         >
-          <Text style={{ fontSize: 16 }}>🚗</Text>
+          <Icon name="car" size={16} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
             <Text style={{ fontSize: 12, color: linkedPolicy ? colors.successDark : colors.warningDeep }}>
@@ -379,7 +380,7 @@ export function ProfInsuranceScreen() {
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <Text style={{ fontSize: 28, marginBottom: 6 }}>➕</Text>
+        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
           Add another policy
         </Text>

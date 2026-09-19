@@ -58,8 +58,8 @@ export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () =
         {post.body}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>💬 {post.replies} replies</Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>❤️ {post.likes}</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{post.replies} replies</Text>
+        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{post.likes}</Text>
         <Text style={{ fontSize: 13, fontWeight: '500', color: colors.primaryDark }}>Read more</Text>
       </View>
     </Tappable>

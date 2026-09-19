@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -15,10 +16,10 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'DiyUnlock'>;
 type Route = RouteProp<MaintStackParamList, 'DiyUnlock'>;
 
 const BENEFITS = [
-  { icon: '📚', title: 'All 12 DIY repair guides', sub: 'Step-by-step with photos · save $100s in labor' },
-  { icon: '🤖', title: 'AI damage-to-guide matching', sub: 'Your photos auto-match to the right DIY guide' },
-  { icon: '🛠️', title: 'Tool & parts shopping lists', sub: 'Exact products with price comparisons' },
-  { icon: '♾️', title: 'All future guides included', sub: 'New guides added monthly · never pay again' },
+  { icon: 'file', title: 'All 12 DIY repair guides', sub: 'Step-by-step with photos · save $100s in labor' },
+  { icon: 'sparkle', title: 'AI damage-to-guide matching', sub: 'Your photos auto-match to the right DIY guide' },
+  { icon: 'wrench', title: 'Tool & parts shopping lists', sub: 'Exact products with price comparisons' },
+  { icon: 'sparkle', title: 'All future guides included', sub: 'New guides added monthly · never pay again' },
 ];
 
 /** Wireframe s-diy-unlock: DIY guide paywall — included with AutoMate Pro ($48/yr). */
@@ -54,7 +55,6 @@ export function DiyUnlockScreen() {
             opacity: 0.14,
           }}
         />
-        <Text style={{ fontSize: 34, marginBottom: 6 }}>📚</Text>
         <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff', marginBottom: 4 }}>
           DIY Repair Guides
         </Text>
@@ -83,14 +83,14 @@ export function DiyUnlockScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 20 }}>{b.icon}</Text>
+            <Glyph glyph={b.icon} size={20} color={colors.textSecondary} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {b.title}
               </Text>
               <Text style={{ fontSize: 13, color: colors.textTertiary }}>{b.sub}</Text>
             </View>
-            <Text style={{ fontSize: 16, color: colors.success }}>✔</Text>
+            <Icon name="check" size={16} color={colors.success} strokeWidth={2.4} />
           </View>
         ))}
       </Card>
@@ -140,7 +140,7 @@ export function DiyUnlockScreen() {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 20 }}>⭐</Text>
+            <Icon name="star" size={20} color={colors.textSecondary} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
@@ -160,14 +160,14 @@ export function DiyUnlockScreen() {
         <Tappable
           onPress={() => navigateCrossTab(navigation, 'HomeTab', 'ProSubscribe', { returnTo })}
           style={({ pressed }) => ({
-            backgroundColor: colors.primary,
+            backgroundColor: palette.amber,
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
             opacity: pressed ? 0.85 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, fontWeight: '800', color: colors.onPrimary }}>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: palette.onAmber }}>
             Get Pro — includes DIY →
           </Text>
         </Tappable>

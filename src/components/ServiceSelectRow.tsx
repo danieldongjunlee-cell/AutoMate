@@ -1,4 +1,5 @@
 import React from 'react';
+import { Glyph, Icon } from './Icon';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -6,7 +7,7 @@ import { Tappable } from './Tappable';
 import { BookableService } from '../services/mock/data';
 import { spacing, useTheme } from '../theme';
 
-/** Multi-select service row from s-maint-schedule-book (left bar + ✔ when selected). */
+/** Multi-select service row from s-maint-schedule-book (left bar + when selected). */
 export function ServiceSelectRow({
   service,
   selected,
@@ -34,7 +35,9 @@ export function ServiceSelectRow({
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <Text style={{ fontSize: 18, marginRight: spacing.sm }}>{service.icon}</Text>
+      <View style={{ marginRight: spacing.sm }}>
+        <Glyph glyph={service.icon} size={20} color={colors.textSecondary} />
+      </View>
       <View style={{ flex: 1 }}>
         <Text
           style={{
@@ -59,7 +62,7 @@ export function ServiceSelectRow({
         >
           ${service.price}
         </Text>
-        <Text style={{ fontSize: 18, color: selected ? colors.primary : colors.disabled }}>✔</Text>
+        <Icon name="check" size={18} color={selected ? colors.primary : colors.disabled} strokeWidth={2.4} />
       </View>
     </Tappable>
   );

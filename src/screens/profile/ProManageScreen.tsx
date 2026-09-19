@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -41,7 +42,7 @@ export function ProManageScreen() {
         style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Text style={{ fontSize: 26 }}>⭐</Text>
+          <Icon name="star" size={26} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
             <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
@@ -97,7 +98,6 @@ export function ProManageScreen() {
       ) : (
         <>
           <PrimaryButton
-            variant="success"
             label={`Renew Pro — ${priceLabel} →`}
             onPress={() => subscribePro(planKey)}
           />

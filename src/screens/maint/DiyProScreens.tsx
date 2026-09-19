@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon, subjectColor } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
@@ -42,7 +43,7 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
     <Tappable
       onPress={() =>
         Alert.alert(
-          `${guide.icon} ${guide.title}`,
+          guide.title,
           `${guide.sub}\n${guide.time} · ${guide.difficulty}\n\nFull step-by-step guide content ships with the backend.`,
         )
       }
@@ -59,7 +60,7 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <Text style={{ fontSize: 21 }}>{guide.icon}</Text>
+      <Glyph glyph={guide.icon} size={21} color={colors.textSecondary} />
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
           {guide.title}
@@ -102,9 +103,11 @@ export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () =
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <Text style={{ fontSize: 21 }}>{guide.emoji}</Text>
+      <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: palette.chip, alignItems: 'center', justifyContent: 'center' }}>
+        <Glyph glyph={guide.emoji} size={28} color={subjectColor(guide.emoji)} />
+      </View>
       <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
+        <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
           {guide.title}
         </Text>
         <Text style={{ fontSize: 13, color: colors.textTertiary }}>
@@ -133,7 +136,7 @@ export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () =
 export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: () => void }) {
   const { colors } = useTheme();
   return (
-    <FormSheet visible onClose={onClose} title={`${guide.emoji}  ${guide.title}`}>
+    <FormSheet visible onClose={onClose} title={guide.title}>
       <ScrollView style={{ maxHeight: 460 }} showsVerticalScrollIndicator={false}>
         <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
           {guide.minutes} min · {guide.difficulty} · {guide.steps.length} steps
@@ -177,7 +180,7 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
                   })}
                 >
                   <View style={{ width: 44, height: 44, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text style={{ position: 'absolute', fontSize: 22 }}>{m.emoji}</Text>
+                    <Glyph glyph={m.emoji} size={22} color={colors.textSecondary} />
                     <Image source={{ uri: m.photo }} style={{ width: 44, height: 44 }} resizeMode="cover" />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -260,7 +263,7 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
             }}
           >
             <Text style={{ fontSize: 14, color: colors.primaryDeep, lineHeight: 19 }}>
-              💡 {guide.tip}
+              {guide.tip}
             </Text>
           </View>
         ) : null}
@@ -318,7 +321,7 @@ export function DiyMatchScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 34, marginBottom: 6 }}>🤖</Text>
+        <Icon name="sparkle" size={34} color={colors.textSecondary} />
         <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff', marginBottom: 3 }}>
           Your damage photos, auto-matched
         </Text>
@@ -339,7 +342,7 @@ export function DiyMatchScreen() {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <Text style={{ fontSize: 21 }}>🚗</Text>
+          <Icon name="car" size={21} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.successDeep }}>
               Rear bumper dent → Guide #1
@@ -383,7 +386,7 @@ export function DiyMatchScreen() {
 
       <Tappable onPress={() => setSelected(matchGuide('L. Fender scratch'))}>
         <Card style={{ padding: spacing.md, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Text style={{ fontSize: 21 }}>🖌️</Text>
+          <Icon name="brush" size={21} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textTertiary }}>
               L. Fender scratch → Guide #3
@@ -402,10 +405,10 @@ export function DiyMatchScreen() {
 }
 
 const TOOLS = [
-  { icon: '🪠', title: 'Dent puller kit (suction)', sub: 'AutoZone $14.99 · Amazon $12.49 ⭐ best' },
-  { icon: '🔥', title: 'Heat gun (or hair dryer works)', sub: 'Harbor Freight $19.99 · you may already own one' },
-  { icon: '🧤', title: 'Microfiber cloths (6-pack)', sub: 'Walmart $5.97 · Amazon $6.49' },
-  { icon: '🧼', title: 'Isopropyl alcohol 91%', sub: 'CVS $3.29 · prep the surface first' },
+  { icon: 'plunger', title: 'Dent puller kit (suction)', sub: 'AutoZone $14.99 · Amazon $12.49 best' },
+  { icon: 'flame', title: 'Heat gun (or hair dryer works)', sub: 'Harbor Freight $19.99 · you may already own one' },
+  { icon: 'sponge', title: 'Microfiber cloths (6-pack)', sub: 'Walmart $5.97 · Amazon $6.49' },
+  { icon: 'sponge', title: 'Isopropyl alcohol 91%', sub: 'CVS $3.29 · prep the surface first' },
 ];
 
 /** Wireframe s-diy-tools: tool/parts shopping list with price comparisons. */
@@ -433,14 +436,14 @@ export function DiyToolsScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 18 }}>{t.icon}</Text>
+            <Glyph glyph={t.icon} size={18} color={colors.textSecondary} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {t.title}
               </Text>
               <Text style={{ fontSize: 13, color: colors.textTertiary }}>{t.sub}</Text>
             </View>
-            <Text style={{ fontSize: 15, color: colors.success }}>✔</Text>
+            <Icon name="check" size={15} color={colors.success} strokeWidth={2.4} />
           </View>
         ))}
       </Card>
@@ -456,7 +459,7 @@ export function DiyToolsScreen() {
           gap: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 20 }}>💰</Text>
+        <Icon name="dollar" size={20} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDeep }}>
             Total tools: ~$42
@@ -471,10 +474,10 @@ export function DiyToolsScreen() {
 }
 
 const ROADMAP = [
-  { id: 'fg-brakes', icon: '🔊', title: 'Squeaky brake diagnosis', sub: 'In progress · ships May 2027', votes: 78 },
-  { id: 'fg-ac', icon: '❄️', title: 'AC recharge basics', sub: 'Planned · summer 2027', votes: 64 },
-  { id: 'fg-oil', icon: '🛢️', title: 'Home oil change setup', sub: 'Voting open', votes: 51 },
-  { id: 'fg-filter', icon: '🔌', title: 'Replace cabin air filter', sub: 'Voting open', votes: 37 },
+  { id: 'fg-brakes', icon: 'brake', title: 'Squeaky brake diagnosis', sub: 'In progress · ships May 2027', votes: 78 },
+  { id: 'fg-ac', icon: 'snowflake', title: 'AC recharge basics', sub: 'Planned · summer 2027', votes: 64 },
+  { id: 'fg-oil', icon: 'oil', title: 'Home oil change setup', sub: 'Voting open', votes: 51 },
+  { id: 'fg-filter', icon: 'filter', title: 'Replace cabin air filter', sub: 'Voting open', votes: 37 },
 ];
 
 /** Wireframe s-diy-future: roadmap + vote-on-guides. */
@@ -497,7 +500,7 @@ export function DiyFutureScreen() {
         }}
       >
         <Text style={{ fontSize: 14, color: colors.primaryDark, lineHeight: 19 }}>
-          ♾️ New guides ship monthly — all included in your AutoMate Pro membership. Vote below for
+          New guides ship monthly — all included in your AutoMate Pro membership. Vote below for
           what we build next!
         </Text>
       </View>
@@ -514,7 +517,7 @@ export function DiyFutureScreen() {
               gap: spacing.sm,
             }}
           >
-            <Text style={{ fontSize: 20 }}>{g.icon}</Text>
+            <Glyph glyph={g.icon} size={20} color={colors.textSecondary} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
                 {g.title}

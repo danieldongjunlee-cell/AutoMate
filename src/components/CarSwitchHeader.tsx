@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Icon } from './Icon';
 import { Text, View } from 'react-native';
 
 import { CarSwitcherSheet } from './CarSwitcherSheet';
@@ -37,7 +38,7 @@ export function CarSwitchHeader({ align = 'flex-end' }: { align?: 'flex-end' | '
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 14 }}>🚗</Text>
+          <Icon name="car" size={14} color={colors.textSecondary} />
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }} numberOfLines={1}>
             {brand}
           </Text>
