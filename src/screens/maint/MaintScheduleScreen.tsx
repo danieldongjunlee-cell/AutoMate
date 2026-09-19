@@ -1,13 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { DealerMap, MapMarker } from '../../components/DealerMap';
-import { FilterButton, FilterSheet } from '../../components/FilterSheet';
-import { Icon } from '../../components/Icon';
-import { ShopCard } from '../../components/ShopCard';
-import { Tappable } from '../../components/Tappable';
+import { MapMarker } from '../../components/DealerMap';
+import { FilterSheet } from '../../components/FilterSheet';
+import { FilterChip, MapSheet } from '../../components/MapSheet';
+import { ShopListRow } from '../../components/ShopListRow';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { MaintStackParamList } from '../../navigation/types';
@@ -24,27 +23,24 @@ import {
   USER_LOCATION,
 } from '../../services/mock/data';
 import { CartService, useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { palette, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintSchedule'>;
 
-/** Width of the shop list panel: fixed on wide screens, leaves a strip of map on phones. */
-const PANEL_MAX_W = 400;
-const PANEL_PHONE_GAP = 56;
-/** The collapse tab that stays visible when the panel is tucked away. */
-const HANDLE_W = 26;
-const HANDLE_H = 56;
+const SORTS = ['Nearest first', 'Top rated', 'Lowest price'] as const;
+type Sort = (typeof SORTS)[number];
 
 /**
- * Partner shops (canvas "Book a service", now laid out like a maps app): the
- * map fills the screen; the shop list sits in a panel on the left that
- * collapses with the ‹ tab so the map can be explored. Tapping a pin selects
- * the card (and vice versa); tapping a card goes on to date & time.
+ * Partner shops (canvas "Book a service") in a maps-app layout: the map fills
+ * the screen and a draggable sheet lists the shops with filter chips (Sort by
+ * · Open now · Service · Distance). Each row shows the rating (yellow star),
+ * open / closed state, photos, the price of the chosen services at that shop,
+ * and Directions · Call · Website chips. Tapping a row or Book goes to date &
+ * time.
  */
 export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
-  const { colors, dark } = useTheme();
-  const { width: screenW } = useWindowDimensions();
+  const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
   const setCartServices = useAppStore((s) => s.setCartServices);
   const pick = useAppStore((s) => s.serviceTypePick);
@@ -54,17 +50,17 @@ export function MaintScheduleScreen() {
   const { brand } = useActiveVehicle();
   const pickedCategories = useMemo(() => MAINT_CATEGORIES.filter((c) => pick.includes(c.id)), [pick]);
 
+  /** The chosen services priced the way this shop prices them. */
+  const servicesAt = (dealerId: string): CartService[] =>
+    pickedCategories.flatMap((cat) =>
+      cat.services
+        .filter((s) => (subPick[cat.id] ?? []).includes(s.id))
+        .map((sub) => ({ id: sub.id, name: `${cat.name} — ${sub.name}`, price: shopServicePrice(dealerId, cat, sub), durationMin: sub.durationMin })),
+    );
+
   const goBook = (id: string) => {
     startBooking(id);
-    if (pickedCategories.length) {
-      // Seed the cart with every chosen option, priced the way this shop prices it.
-      const services: CartService[] = pickedCategories.flatMap((cat) =>
-        cat.services
-          .filter((s) => (subPick[cat.id] ?? []).includes(s.id))
-          .map((sub) => ({ id: sub.id, name: `${cat.name} — ${sub.name}`, price: shopServicePrice(id, cat, sub), durationMin: sub.durationMin })),
-      );
-      setCartServices(services);
-    }
+    if (pickedCategories.length) setCartServices(servicesAt(id));
     navigation.navigate('MaintScheduleBook');
   };
   /** Picking a shop is a value action — guests sign in first, then resume. */
@@ -83,176 +79,135 @@ export function MaintScheduleScreen() {
     }
   });
 
+  const [sort, setSort] = useState<Sort>(SORTS[0]);
+  const [openNow, setOpenNow] = useState(false);
   const [service, setService] = useState(SCHEDULE_SERVICE_FILTERS[0]);
   const [radius, setRadius] = useState(30);
   const [filterOpen, setFilterOpen] = useState(false);
-  // Pin ↔ shop-card selection sync.
+  // Pin ↔ row selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
-  const cardY = useRef<Record<string, number>>({});
+  const rowY = useRef<Record<string, number>>({});
 
-  // Only shops that service the user's brand, within the radius, filtered by
-  // service type, nearest first.
+  /** Cheapest chip price, for the price sort and the "from $" label. */
+  const fromPrice = (dealerId: string) => Math.min(...(DEALER_SERVICE_CHIPS[dealerId] ?? []).map(chipPrice));
+  const totalAt = (dealerId: string) => servicesAt(dealerId).reduce((sum, s) => sum + s.price, 0);
+
+  // Only shops that service the user's brand, within the radius, offering every
+  // chosen category (and the service filter), optionally open now; then sorted.
   const dealers = useMemo(
     () =>
       DEALERS.filter((d) => {
         const chips = DEALER_SERVICE_CHIPS[d.id];
         if (!chips || d.distanceMi > radius) return false;
         if (!dealerServicesBrand(d.id, brand)) return false;
-        // Shops must offer every category chosen on the previous step.
+        if (openNow && d.openStatus === 'Closed') return false;
         if (pickedCategories.some((cat) => !dealerOffersCategory(d.id, cat.id))) return false;
         if (service === 'All') return true;
         const key = SERVICE_FILTER_KEY[service] ?? service;
         return chips.some((c) => c.startsWith(key));
-      }).sort((a, b) => a.distanceMi - b.distanceMi),
-    [brand, radius, service, pickedCategories],
+      }).sort((a, b) =>
+        sort === 'Top rated'
+          ? b.rating - a.rating || a.distanceMi - b.distanceMi
+          : sort === 'Lowest price'
+            ? (pickedCategories.length ? totalAt(a.id) - totalAt(b.id) : fromPrice(a.id) - fromPrice(b.id)) || a.distanceMi - b.distanceMi
+            : a.distanceMi - b.distanceMi,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [brand, radius, service, pickedCategories, openNow, sort, subPick],
   );
-
-  const filterBits = [service !== 'All' ? service : null, radius < 30 ? `Within ${radius} mi` : null].filter(Boolean) as string[];
 
   const markers: MapMarker[] = dealers.map((d) => ({
     id: d.id,
     lat: d.lat,
     lng: d.lng,
-    label: d.name,
+    label: pickedCategories.length ? `$${totalAt(d.id)}` : d.name,
     color: d.id === selectedId ? palette.primaryDark : palette.primary,
     selected: d.id === selectedId,
   }));
-
-  // ── Collapsible list panel ────────────────────────────────────────────────
-  const panelW = Math.min(PANEL_MAX_W, screenW - PANEL_PHONE_GAP);
-  const [collapsed, setCollapsed] = useState(false);
-  const slide = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.timing(slide, { toValue: collapsed ? -panelW : 0, duration: 260, useNativeDriver: Platform.OS !== 'web' }).start();
-  }, [collapsed, panelW, slide]);
-
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
-    setCollapsed(false);
-    const y = cardY.current[dealerId];
-    if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y - 12), animated: true });
+    const y = rowY.current[dealerId];
+    if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: true });
   };
 
-  const subtitle = pickedCategories.length
-    ? `Shops offering ${pickedCategories.map((c) => c.name).join(' + ')} for your ${brand} · nearest first`
-    : `Partner shops that service your ${brand} · nearest first`;
-
-  /** A shop's "from" price: the cheapest chosen service here, else its cheapest chip. */
-  const fromPrice = (dealerId: string) => {
-    if (pickedCategories.length) {
-      const prices = pickedCategories.flatMap((cat) => cat.services.filter((s) => (subPick[cat.id] ?? []).includes(s.id)).map((s) => shopServicePrice(dealerId, cat, s)));
-      if (prices.length) return `$${prices.reduce((a, b) => a + b, 0)} total`;
-    }
-    const from = Math.min(...(DEALER_SERVICE_CHIPS[dealerId] ?? []).map(chipPrice));
-    return Number.isFinite(from) ? `from $${from}` : 'Quote';
-  };
+  const pickedLabel = pickedCategories.map((c) => c.name).join(' + ');
+  const cycleSort = () => setSort((s) => SORTS[(SORTS.indexOf(s) + 1) % SORTS.length]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      {/* The map is the background. */}
-      <DealerMap markers={markers} center={USER_LOCATION} userLocation={USER_LOCATION} onSelect={onPinSelect} style={StyleSheet.absoluteFill} />
-
-      {/* Shop count chip over the map, shown while the list is tucked away. */}
-      {collapsed ? (
-        <View pointerEvents="none" style={{ position: 'absolute', top: spacing.md, right: spacing.md }}>
-          <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, paddingHorizontal: 12, paddingVertical: 6 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textPrimary }}>
-              {dealers.length} shop{dealers.length !== 1 ? 's' : ''} on the map
-            </Text>
-          </View>
-        </View>
-      ) : null}
-
-      {/* Left panel: subtitle, filter, and the scrollable shop list. */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          top: 0,
-          bottom: 0,
-          left: 0,
-          width: panelW,
-          transform: [{ translateX: slide }],
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: colors.background,
-            borderRightWidth: 1,
-            borderRightColor: colors.border,
-            shadowColor: '#000',
-            shadowOpacity: dark ? 0.6 : 0.18,
-            shadowRadius: 24,
-            shadowOffset: { width: 6, height: 0 },
-            elevation: 10,
-          }}
-        >
-          <ScrollView
-            ref={scrollRef}
-            style={{ flex: 1 }}
-            contentContainerStyle={{ padding: spacing.screenH, paddingBottom: spacing.screenBottom }}
-            keyboardShouldPersistTaps="handled"
-          >
-            <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>{subtitle}</Text>
-
-            <FilterButton label={filterBits.length ? `Filter · ${filterBits[0]}` : 'Filter'} count={filterBits.length} onPress={() => setFilterOpen(true)} />
-
-            {dealers.length === 0 ? (
-              <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>
-                No partner shops within this radius — widen the distance.
-              </Text>
+    <>
+      <MapSheet
+        markers={markers}
+        center={USER_LOCATION}
+        onSelectPin={onPinSelect}
+        title={pickedCategories.length ? pickedLabel : 'Partner shops'}
+        subtitle={`${dealers.length} shop${dealers.length !== 1 ? 's' : ''} for your ${brand} · ${sort.toLowerCase()}`}
+        onClose={() => navigation.goBack()}
+        scrollRef={scrollRef}
+        chips={
+          <>
+            <FilterChip icon="funnel" onPress={() => setFilterOpen(true)} active={radius < 30} />
+            <FilterChip label={sort === SORTS[0] ? 'Sort by' : sort} caret onPress={cycleSort} active={sort !== SORTS[0]} />
+            <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
+            {pickedCategories.length === 0 ? (
+              <FilterChip label={service === 'All' ? 'Service' : service} caret active={service !== 'All'} onPress={() => setFilterOpen(true)} />
             ) : null}
+            <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
+          </>
+        }
+      >
+        {dealers.length === 0 ? (
+          <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', padding: spacing.xl }}>
+            No partner shops match — widen the distance or turn off “Open now”.
+          </Text>
+        ) : null}
 
-            {dealers.map((dealer, i) => {
-              const chips = DEALER_SERVICE_CHIPS[dealer.id] ?? [];
-              const services = chips.map((c) => c.split(' ')[0]).slice(0, 3).join(' · ');
-              return (
-                <View key={dealer.id} onLayout={(e) => (cardY.current[dealer.id] = e.nativeEvent.layout.y)}>
-                  <ShopCard
-                    dealer={dealer}
-                    index={i}
-                    price={fromPrice(dealer.id)}
-                    meta={`${dealer.distanceMi} mi · ★ ${dealer.rating.toFixed(1)} (${dealer.reviews}) · ${services}`}
-                    selected={dealer.id === selectedId}
-                    onPress={() => selectShop(dealer.id)}
-                  />
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-
-        {/* Collapse / expand tab on the panel's right edge (maps-app style). */}
-        <Tappable
-          onPress={() => setCollapsed((c) => !c)}
-          accessibilityRole="button"
-          accessibilityLabel={collapsed ? 'Show shop list' : 'Hide shop list'}
-          style={{
-            position: 'absolute',
-            right: -HANDLE_W,
-            top: '50%',
-            marginTop: -HANDLE_H / 2,
-            width: HANDLE_W,
-            height: HANDLE_H,
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderLeftWidth: 0,
-            borderColor: colors.border,
-            borderTopRightRadius: 10,
-            borderBottomRightRadius: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            shadowColor: '#000',
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            shadowOffset: { width: 2, height: 2 },
-            elevation: 6,
-          }}
-        >
-          <Icon name={collapsed ? 'chevron' : 'back'} size={18} color={colors.textPrimary} strokeWidth={2} />
-        </Tappable>
-      </Animated.View>
+        {dealers.map((dealer, i) => {
+          const chips = DEALER_SERVICE_CHIPS[dealer.id] ?? [];
+          const tags = chips.map((c) => c.split(' ')[0]).slice(0, 3).join(' · ');
+          const from = fromPrice(dealer.id);
+          const total = pickedCategories.length ? totalAt(dealer.id) : null;
+          return (
+            <View key={dealer.id} onLayout={(e) => (rowY.current[dealer.id] = e.nativeEvent.layout.y)}>
+              <ShopListRow
+                dealer={dealer}
+                index={i}
+                tags={tags}
+                selected={dealer.id === selectedId}
+                onPress={() => selectShop(dealer.id)}
+                callout={
+                  total == null
+                    ? { title: Number.isFinite(from) ? `Services from $${from}` : 'Quote on request', body: `${chips.join(' · ')}`, button: 'Book', onPress: () => selectShop(dealer.id) }
+                    : undefined
+                }
+                actions={[{ label: 'Book', icon: 'calcheck', primary: true, onPress: () => selectShop(dealer.id) }]}
+              >
+                {total != null ? (
+                  // Your services at this shop: each line priced, total on the right.
+                  <View style={{ backgroundColor: colors.surfaceAlt, borderRadius: 16, padding: spacing.md }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md, marginBottom: 6 }}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Your services here</Text>
+                        <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>{dealer.name}&apos;s prices · pay at the shop</Text>
+                      </View>
+                      <View style={{ alignItems: 'flex-end' }}>
+                        <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, lineHeight: 26 }}>${total}</Text>
+                        <Text style={{ fontSize: 11, color: colors.textTertiary }}>total</Text>
+                      </View>
+                    </View>
+                    {servicesAt(dealer.id).map((svc) => (
+                      <View key={svc.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }}>
+                        <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary }} numberOfLines={1}>{svc.name}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>${svc.price}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : null}
+              </ShopListRow>
+            </View>
+          );
+        })}
+      </MapSheet>
 
       <FilterSheet
         visible={filterOpen}
@@ -264,6 +219,6 @@ export function MaintScheduleScreen() {
           if (d != null) setRadius(d);
         }}
       />
-    </View>
+    </>
   );
 }

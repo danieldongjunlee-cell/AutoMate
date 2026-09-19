@@ -77,7 +77,6 @@ export function QuoteCard({
             borderRadius: radii.sm,
             paddingVertical: 9,
             alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>

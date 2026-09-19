@@ -1,46 +1,70 @@
 import React from 'react';
-import { Icon } from './Icon';
-import { Modal, Text, View } from 'react-native';
+import { Modal, Platform, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
 import { useAppStore } from '../store/useAppStore';
-import { radii, spacing, useTheme } from '../theme';
+import { useTheme } from '../theme';
 
 /**
- * One-time "Allow location?" prompt (shown on first Home load). Granting lets the
- * maps show the user's position; the choice is remembered in the store.
+ * One-time location prompt on first Home load, styled like the iOS system
+ * alert: centred card, title + explanation, then "Allow While Using App",
+ * "Allow Once" and "Don't Allow" stacked with hairline separators. Granting
+ * lets the maps show the user's position; the choice is remembered.
  */
 export function LocationPermissionSheet() {
-  const { colors } = useTheme();
+  const { dark } = useTheme();
   const permission = useAppStore((s) => s.locationPermission);
   const setPermission = useAppStore((s) => s.setLocationPermission);
 
-  return (
-    <Modal
-      visible={permission === 'unasked'}
-      transparent
-      animationType="fade"
-      onRequestClose={() => setPermission('denied')}
+  // iOS alert colours (system look in both appearances).
+  const card = dark ? '#2c2c2e' : '#f2f2f7';
+  const text = dark ? '#ffffff' : '#000000';
+  const separator = dark ? 'rgba(255,255,255,0.18)' : 'rgba(60,60,67,0.29)';
+  const blue = dark ? '#0a84ff' : '#007aff';
+
+  const button = (label: string, onPress: () => void, bold = false) => (
+    <Tappable
+      key={label}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={({ pressed }) => ({
+        height: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: StyleSheet.hairlineWidth,
+        borderTopColor: separator,
+        backgroundColor: pressed ? (dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)') : 'transparent',
+      })}
     >
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.55)', justifyContent: 'center', padding: spacing.xl }}>
-        <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, padding: spacing.lg }}>
-          <Icon name="pin" size={34} color={colors.textSecondary} />
-          <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, textAlign: 'center', marginBottom: 6 }}>
-            Allow “AutoMate” to use your location?
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: spacing.lg }}>
-            Your location is used to show nearby shops and your position on the map. You can change
-            this anytime in Settings.
-          </Text>
-          <Tappable
-            onPress={() => setPermission('granted')}
-            style={{ backgroundColor: colors.primary, borderRadius: radii.md, paddingVertical: 13, alignItems: 'center', marginBottom: spacing.sm }}
-          >
-            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.onPrimary }}>Allow while using the app</Text>
-          </Tappable>
-          <Tappable onPress={() => setPermission('denied')} style={{ paddingVertical: 11, alignItems: 'center' }}>
-            <Text style={{ fontSize: 14, color: colors.textTertiary }}>Don’t allow</Text>
-          </Tappable>
+      <Text style={{ fontSize: 17, fontWeight: bold ? '600' : '400', color: blue }}>{label}</Text>
+    </Tappable>
+  );
+
+  return (
+    <Modal visible={permission === 'unasked'} transparent animationType="fade" onRequestClose={() => setPermission('denied')}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <View
+          accessibilityRole="alert"
+          style={{
+            width: 270,
+            borderRadius: 14,
+            backgroundColor: card,
+            overflow: 'hidden',
+            ...(Platform.OS === 'web' ? ({ backdropFilter: 'blur(20px)' } as object) : null),
+          }}
+        >
+          <View style={{ paddingHorizontal: 16, paddingTop: 20, paddingBottom: 18 }}>
+            <Text style={{ fontSize: 17, fontWeight: '600', color: text, textAlign: 'center', lineHeight: 22, marginBottom: 6 }}>
+              Allow “AutoMate” to access your location while you are using the app?
+            </Text>
+            <Text style={{ fontSize: 13, color: text, textAlign: 'center', lineHeight: 18 }}>
+              Your current location will be displayed on the map and used for nearby shops, quotes, and estimated travel times.
+            </Text>
+          </View>
+          {button('Allow While Using App', () => setPermission('granted'), true)}
+          {button('Allow Once', () => setPermission('granted'))}
+          {button('Don’t Allow', () => setPermission('denied'))}
         </View>
       </View>
     </Modal>

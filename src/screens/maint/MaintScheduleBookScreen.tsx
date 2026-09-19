@@ -274,28 +274,6 @@ export function MaintScheduleBookScreen() {
             </View>
           ) : null}
 
-          {recoType ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: spacing.sm,
-                backgroundColor: colors.primarySurface,
-                borderRadius: radii.sm,
-                borderWidth: StyleSheet.hairlineWidth,
-                borderColor: colors.primaryLight,
-                padding: spacing.sm,
-                marginBottom: spacing.sm,
-              }}
-            >
-              <Text style={{ fontSize: 14 }}>ℹ️</Text>
-              <Text style={{ flex: 1, fontSize: 13, color: colors.primaryDeep, lineHeight: 17 }}>
-                Some services are pre-selected for your{' '}
-                <Text style={{ fontWeight: '800' }}>{active?.name ?? 'car'}</Text> — expand a category to
-                review or change them.
-              </Text>
-            </View>
-          ) : null}
-
           {MAINT_CATEGORIES.map((cat) => {
             const open = expanded.has(cat.id);
             const selectedCount = cat.services.filter((s) => inCart(s.id)).length;

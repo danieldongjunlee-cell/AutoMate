@@ -100,7 +100,6 @@ export function CalendarMonth({
                   alignItems: 'center',
                   justifyContent: 'center',
                   backgroundColor: selected ? colors.primary : 'transparent',
-                  opacity: pressed ? 0.6 : 1,
                 })}
               >
                 <Text
@@ -140,7 +139,6 @@ const navBtn = (bg: string, pressed?: boolean) =>
     backgroundColor: bg,
     alignItems: 'center',
     justifyContent: 'center',
-    opacity: pressed ? 0.6 : 1,
   }) as const;
 
 /** Horizontal time-slot chips (single select). */
@@ -169,7 +167,6 @@ export function TimeSlots({
               borderWidth: 1,
               borderColor: on ? colors.primary : colors.border,
               backgroundColor: on ? colors.primarySurface : colors.card,
-              opacity: pressed ? 0.7 : 1,
             })}
           >
             <Text

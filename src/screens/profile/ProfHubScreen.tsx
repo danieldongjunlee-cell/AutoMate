@@ -91,7 +91,6 @@ export function ProfHubScreen() {
             alignItems: 'center',
             gap: 14,
             height: 50,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <View style={{ width: 26, alignItems: 'center' }}>
@@ -138,6 +137,7 @@ export function ProfHubScreen() {
       {/* User settings */}
       {section('User settings', [
         { icon: hasCar ? <CarBrandLogo brand={carBrand} size={24} /> : 'car', label: 'My cars', to: 'ProfCars', gate: 'myCars', check: !hasCar },
+        { icon: 'shield', label: 'My insurance', to: 'ProfInsurance', gate: 'insurance', check: !hasPolicy },
         { icon: 'calendar', label: 'My bookings', cross: { tab: 'BookingsTab', screen: 'Bookings' } },
         { icon: 'search', label: 'AI estimate history', to: 'ProfEstimates', gate: 'estimateHistory' },
         { icon: 'wallet', label: 'Payment method', to: 'ProfPayment', gate: 'payment' },
@@ -166,7 +166,6 @@ export function ProfHubScreen() {
         { icon: 'tag', label: 'Deals & offers', cross: { tab: 'HomeTab', screen: 'BundleDeals' }, gate: 'deals' },
         { icon: 'chart', label: 'Points history', to: 'ProfPointsHistory', gate: 'pointsHistory' },
         { icon: 'bell', label: 'Notifications', cross: { tab: 'HomeTab', screen: 'Notifications' } },
-        { icon: 'shield', label: 'Insurance policy', to: 'ProfInsurance', gate: 'insurance', check: !hasPolicy },
       ])}
 
       {/* Support */}

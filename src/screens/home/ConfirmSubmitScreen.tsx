@@ -45,7 +45,6 @@ function ActionChip({
         borderRadius: radii.sm,
         paddingVertical: 9,
         alignItems: 'center',
-        opacity: pressed ? 0.7 : 1,
       })}
     >
       <Text
@@ -404,21 +403,6 @@ export function ConfirmSubmitScreen() {
             )}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: colors.warningSurface,
-            borderWidth: 1,
-            borderColor: colors.warning,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginBottom: spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
-            Submitting the new request removes your previous quotes, and you&apos;ll wait to
-            receive new quotes until the auto shops respond.
-          </Text>
-        </View>
         <PrimaryButton
           label="Keep my existing quotes"
           onPress={() => {
@@ -551,23 +535,6 @@ export function ConfirmSubmitScreen() {
             {rejected}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: colors.warningSurface,
-            borderWidth: 1,
-            borderColor: colors.warning,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginBottom: spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep, marginBottom: 4 }}>
-            Tips for a good photo
-          </Text>
-          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
-            • Fill the frame with the damaged part{'\n'}• Good, even lighting — avoid glare{'\n'}• Hold steady, about 1–2 ft away{'\n'}• Make sure the actual dent / scratch / crack is in view
-          </Text>
-        </View>
         <PrimaryButton
           label="Retake photos →"
           onPress={() => {
@@ -581,7 +548,6 @@ export function ConfirmSubmitScreen() {
             marginTop: spacing.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to my parts</Text>
@@ -644,7 +610,6 @@ export function ConfirmSubmitScreen() {
           padding: spacing.md,
           alignItems: 'center',
           marginBottom: spacing.md,
-          opacity: pressed ? 0.6 : 1,
         })}
       >
         <Icon name="plus" size={22} color={colors.primary} strokeWidth={2.4} />

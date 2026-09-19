@@ -81,7 +81,6 @@ export function ProLockOverlay({
             borderRadius: radii.pill,
             paddingHorizontal: 22,
             paddingVertical: 10,
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '800', color: palette.onAmber }}>{cta}</Text>

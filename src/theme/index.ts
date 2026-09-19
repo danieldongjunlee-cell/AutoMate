@@ -18,10 +18,10 @@ export interface Theme {
 const darkTheme: Theme = { dark: true, colors: darkColors, spacing, radii, typography };
 const lightTheme: Theme = { dark: false, colors: lightColors, spacing, radii, typography };
 
-/** App theme: Settings → Appearance (dark by default, light, or follow the device). */
+/** App theme: Settings → Appearance (light by default, dark, or follow the device). */
 export function useTheme(): Theme {
   const mode = useAppStore((s) => s.themeMode);
   const scheme = useColorScheme();
-  const dark = mode === 'system' ? scheme !== 'light' : mode === 'dark';
+  const dark = mode === 'system' ? scheme === 'dark' : mode === 'dark';
   return dark ? darkTheme : lightTheme;
 }

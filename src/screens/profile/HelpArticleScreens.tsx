@@ -95,7 +95,6 @@ function HelpArticle({
             paddingVertical: 13,
             alignItems: 'center',
             marginTop: spacing.xs,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark }}>
@@ -235,7 +234,6 @@ export function HelpContactScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
@@ -254,7 +252,6 @@ export function HelpContactScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Email us</Text>

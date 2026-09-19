@@ -162,7 +162,6 @@ export function BookingConfirmScreen() {
             borderRadius: radii.sm,
             paddingVertical: 9,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
@@ -179,7 +178,6 @@ export function BookingConfirmScreen() {
             borderRadius: radii.sm,
             paddingVertical: 9,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>

@@ -113,7 +113,6 @@ export function ProfMileDetScreen() {
                   borderRadius: radii.sm,
                   paddingVertical: 9,
                   alignItems: 'center',
-                  opacity: pressed ? 0.7 : 1,
                 })}
               >
                 <Text style={{ fontSize: 14, color: colors.primaryDark }}>Get directions</Text>
@@ -135,7 +134,6 @@ export function ProfMileDetScreen() {
                       borderRadius: radii.sm,
                       paddingVertical: 9,
                       alignItems: 'center',
-                      opacity: pressed ? 0.8 : 1,
                     })}
                   >
                     <Text

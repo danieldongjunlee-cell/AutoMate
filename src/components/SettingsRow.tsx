@@ -34,7 +34,6 @@ export function SettingsRow({
         paddingVertical: 13,
         borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth,
         borderBottomColor: colors.divider,
-        opacity: pressed ? 0.6 : 1,
       })}
     >
       <View style={{ width: 28, marginRight: spacing.sm, alignItems: 'center' }}>

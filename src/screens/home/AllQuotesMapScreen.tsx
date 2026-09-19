@@ -246,7 +246,6 @@ export function AllQuotesMapScreen() {
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.sm,
-              opacity: pressed ? 0.7 : 1,
             })}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>

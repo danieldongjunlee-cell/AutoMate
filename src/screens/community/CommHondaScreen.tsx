@@ -1,15 +1,15 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
-import { PostCard } from '../../components/PostCard';
+import { FeedPostCard } from '../../components/FeedPostCard';
 import { Screen } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { CHANNELS } from '../../services/mock/data';
-import { channelKind, groupPosts } from '../../services/mock/communityChannels';
+import { brandChannels, channelKind, FeedPost, groupPosts } from '../../services/mock/communityChannels';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
@@ -36,10 +36,12 @@ export function CommHondaScreen() {
   // Themed mock feed for this (brand, kind), minus blocked authors
   // (App Store 1.2). Memoized so it stays stable.
   const blockedAuthors = useAppStore((s) => s.blockedAuthors);
-  const posts = useMemo(
-    () => groupPosts(brand, kind).filter((p) => !blockedAuthors.includes(p.author)),
-    [brand, kind, blockedAuthors],
+  const community = useMemo(() => brandChannels(brand).find((c) => channelKind(c.name) === kind) ?? brandChannels(brand)[0], [brand, kind]);
+  const posts = useMemo<FeedPost[]>(
+    () => groupPosts(brand, kind).filter((p) => !blockedAuthors.includes(p.author)).map((p, i) => ({ ...p, community, brand, ageMin: i, hasPhoto: i % 3 === 0 })),
+    [brand, kind, blockedAuthors, community],
   );
+  const [upvoted, setUpvoted] = useState<Record<string, boolean>>({});
   const markPostsRead = useAppStore((s) => s.markPostsRead);
   // Browsing a community marks its posts read (drives the unread-posts badge).
   useEffect(() => {
@@ -61,7 +63,6 @@ export function CommHondaScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 5,
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>+ Post</Text>
@@ -99,10 +100,14 @@ export function CommHondaScreen() {
         </View>
       </View>
 
-      {posts.map((post) => (
-        <PostCard
+      {posts.map((post, i) => (
+        <FeedPostCard
           key={post.id}
           post={post}
+          index={i}
+          upvoted={!!upvoted[post.id]}
+          onUpvote={() => setUpvoted((u) => ({ ...u, [post.id]: !u[post.id] }))}
+          onCommunity={() => undefined}
           onPress={() => navigation.navigate('CommPost', { postId: post.id, post })}
         />
       ))}

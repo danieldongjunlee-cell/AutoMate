@@ -264,7 +264,6 @@ export function ProfInsEditScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Cancel</Text>

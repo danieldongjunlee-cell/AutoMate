@@ -240,3 +240,42 @@ export function groupPosts(brand: string, kind: ChannelKind): CommunityPost[] {
     likes: seed.likes,
   }));
 }
+
+/** Brands with active communities on the Reddit-style home feed. */
+export const FEED_BRANDS = ['Honda', 'Toyota', 'Kia', 'Ford', 'BMW'];
+
+/** A feed post plus the community it was posted in. */
+export interface FeedPost extends CommunityPost {
+  community: BrandChannel;
+  brand: string;
+  /** Deterministic "minutes ago" for New sorting. */
+  ageMin: number;
+}
+
+const AGE_MIN: Record<string, number> = { '1h ago': 60, '2h ago': 120, '3h ago': 180, '4h ago': 240, '5h ago': 300, '6h ago': 360, '7h ago': 420, '9h ago': 540, '10h ago': 600, '11h ago': 660, '1d ago': 1440, '2d ago': 2880 };
+
+/**
+ * The home feed: posts from every brand's communities, each tagged with its
+ * community, ids made unique per brand. Two posts per community keeps the
+ * feed varied without drowning the user's own brand.
+ */
+export function homeFeed(activeBrand: string): FeedPost[] {
+  const brands = [activeBrand, ...FEED_BRANDS.filter((b) => b.toLowerCase() !== activeBrand.toLowerCase())].filter((b) => b.trim());
+  return brands.flatMap((brand, bi) =>
+    brandChannels(brand).flatMap((community) => {
+      const kind = channelKind(community.name);
+      // The active brand gets its full feed; other brands contribute two posts each.
+      const take = bi === 0 ? 4 : 2;
+      return groupPosts(brand, kind)
+        .slice(0, take)
+        .map((post, i) => ({
+          ...post,
+          id: `${brand.toLowerCase()}-${post.id}`,
+          community,
+          brand,
+          ageMin: (AGE_MIN[post.ago] ?? 720) + bi * 7 + i,
+          hasPhoto: (hash(`${brand}-${kind}-${i}`) % 3) === 0,
+        }));
+    }),
+  );
+}

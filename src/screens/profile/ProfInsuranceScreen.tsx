@@ -1,20 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Dropdown } from '../../components/Dropdown';
 import { FormSheet } from '../../components/FormSheet';
+import { Icon } from '../../components/Icon';
 import { InsurerLogo } from '../../components/InsurerLogo';
+import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
+import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
-import { Screen, SectionLabel } from '../../components/ui';
+import { Screen } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, Policy, vehiclesService } from '../../services';
@@ -132,116 +132,35 @@ function PolicyFormModal({
   );
 }
 
-function PolicyCard({
-  policy,
-  coversLabel,
-  onEdit,
-  onRemove,
-}: {
-  policy: Policy;
-  /** The covered car, resolved against the user's registered car info. */
-  coversLabel: string;
-  onEdit: () => void;
-  onRemove: () => void;
-}) {
-  const { colors } = useTheme();
-  const details = [
-    ['Policy number', policy.policyNumber],
-    ['Deductible', `$${policy.deductible} (collision)`],
-    ['Annual premium', `$${policy.premiumPerYear.toLocaleString()}/yr`],
-    ['Covers', coversLabel],
-    ['Renewal date', policy.renewal],
-  ] as const;
-
+/**
+ * A policy as a swipe card: carrier name with the accent underline, the
+ * carrier's real logo where the car photo would be, four stat tiles
+ * (deductible, premium, renewal, covered car) and Edit / Remove.
+ */
+function PolicyCard({ policy, coversLabel, linked, onEdit, onRemove }: { policy: Policy; coversLabel: string; linked: boolean; onEdit: () => void; onRemove: () => void }) {
+  const renewShort = policy.renewal.replace(/,\s*\d{4}$/, '');
   return (
-    <View
-      style={{
-        backgroundColor: colors.surface,
-        borderRadius: radii.md,
-        borderWidth: 1.5,
-        borderColor: colors.warning,
-        overflow: 'hidden',
-        marginBottom: spacing.sm,
-      }}
-    >
-      <LinearGradient
-        colors={['#633806', '#854F0B']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          padding: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-        }}
-      >
-        <InsurerLogo carrier={policy.carrier} size={44} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{policy.carrier}</Text>
-          <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.65)' }}>{policy.coverage}</Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: 'rgba(29,158,117,.3)',
-            borderRadius: radii.pill,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: 'rgba(29,158,117,.5)',
-            paddingHorizontal: 10,
-            paddingVertical: 3,
-          }}
-        >
-          <Text style={{ fontSize: 13, color: palette.successLight }}>{policy.status}</Text>
-        </View>
-      </LinearGradient>
-      <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
-        {details.map(([label, value]) => (
-          <View
-            key={label}
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingVertical: 7,
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: colors.divider,
-            }}
-          >
-            <Text style={{ fontSize: 14, color: colors.textTertiary }}>{label}</Text>
-            <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
-              {value}
-            </Text>
-          </View>
-        ))}
+    <SwipeCard title={policy.carrier} subtitle={`${policy.coverage} · ${policy.policyNumber}`} badge={linked ? 'Active car' : policy.status}>
+      <View style={{ height: 150, alignItems: 'center', justifyContent: 'center', marginVertical: spacing.sm }}>
+        <InsurerLogo carrier={policy.carrier} size={120} />
       </View>
-      <View
-        style={{
-          padding: spacing.sm,
-          borderTopWidth: StyleSheet.hairlineWidth,
-          borderTopColor: colors.divider,
-          flexDirection: 'row',
-          gap: spacing.xs,
-        }}
-      >
-        <Tappable
-          onPress={onEdit}
-          style={{
-            flex: 1,
-            backgroundColor: colors.primarySurface,
-            borderRadius: radii.sm,
-            paddingVertical: 9,
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
-            Edit policy
-          </Text>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
+        <StatTile icon="shield" color={palette.teal} value={`$${policy.deductible}`} label="deductible" />
+        <StatTile icon="dollar" color={palette.amber} value={`$${policy.premiumPerYear.toLocaleString()}`} label="per year" />
+        <StatTile icon="calendar" color={palette.lavender} value={renewShort} label="renews" />
+        <StatTile icon="car" color={palette.primaryLight} value={coversLabel.split(' ').filter((w) => !/^(19|20)\d{2}$/.test(w))[1] ?? coversLabel} label="covers" />
+      </View>
+      <DeckButton label="Edit policy" onPress={onEdit} />
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
+        <Tappable onPress={onRemove} hitSlop={8} accessibilityLabel={`Remove ${policy.carrier} policy`}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffb4b1' }}>Remove policy</Text>
         </Tappable>
-        <RemoveButton onPress={onRemove} />
       </View>
-    </View>
+    </SwipeCard>
   );
 }
 
-/** Wireframe s-prof-insurance: live policy cards + compare cash-vs-insurance link. */
+/** My insurance: swipe through the policies (the active car's first), then "Add a policy". */
 export function ProfInsuranceScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -250,22 +169,12 @@ export function ProfInsuranceScreen() {
   const [formOpen, setFormOpen] = useState(false);
 
   const { active } = useActiveVehicle();
-
-  const { data: policies, isLoading } = useQuery({
-    queryKey: ['policies'],
-    queryFn: () => insuranceService.listPolicies(),
-  });
-
-  const { data: vehicles } = useQuery({
-    queryKey: ['vehicles'],
-    queryFn: vehiclesService.listVehicles,
-  });
+  const { data: policies, isLoading } = useQuery({ queryKey: ['policies'], queryFn: () => insuranceService.listPolicies() });
+  const { data: vehicles } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });
   const carOptions = (vehicles ?? []).map((v) => v.name);
 
-  // "Covers" should reflect the car the user registered in their car info. We
-  // resolve the policy's stored covers text to a registered car when one matches
-  // (e.g. "2019 Honda Accord" → "2019 Honda Accord EX-L"); when nothing matches
-  // we fall back to the primary registered car so it never shows a stale name.
+  // "Covers" reflects the car the user registered: resolve the policy's stored
+  // covers text to a registered car, else fall back to the primary car.
   const coversLabelFor = (policy: Policy): string => {
     const list = vehicles ?? [];
     const matched = list.find((v) => policyCoversVehicle(policy.covers, v.name));
@@ -275,7 +184,6 @@ export function ProfInsuranceScreen() {
   };
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['policies'] });
-
   const saveMutation = useMutation({
     mutationFn: (patch: Partial<Policy>) => insuranceService.updatePolicy(editing!.id, patch),
     onSuccess: () => {
@@ -283,118 +191,64 @@ export function ProfInsuranceScreen() {
       setFormOpen(false);
     },
   });
-
-  const removeMutation = useMutation({
-    mutationFn: (id: string) => insuranceService.removePolicy(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['policies'] }),
-  });
-
+  const removeMutation = useMutation({ mutationFn: (id: string) => insuranceService.removePolicy(id), onSuccess: invalidate });
   const openEdit = (policy: Policy) => {
     setEditing(policy);
     setFormOpen(true);
   };
 
-  const linkedPolicy = active
-    ? (policies ?? []).find((p) => policyCoversVehicle(p.covers, active.name))
-    : undefined;
-  // The active car's policy floats to the top as the primary.
-  const sortedPolicies = [...(policies ?? [])].sort((a, b) => {
-    if (a.id === linkedPolicy?.id) return -1;
-    if (b.id === linkedPolicy?.id) return 1;
-    return 0;
-  });
+  const linkedPolicy = active ? (policies ?? []).find((p) => policyCoversVehicle(p.covers, active.name)) : undefined;
+  // The active car's policy comes first.
+  const sortedPolicies = [...(policies ?? [])].sort((a, b) => (a.id === linkedPolicy?.id ? -1 : b.id === linkedPolicy?.id ? 1 : 0));
+
+  const addCard = (
+    <SwipeCard key="add" title="Add a policy" dashed>
+      <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+          <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
+        </View>
+        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Geico, Progressive, USAA… scan your card or enter the details.</Text>
+        <DeckButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} />
+      </View>
+    </SwipeCard>
+  );
 
   return (
     <Screen>
-      {/* Active-car context — updates when you switch cars on Home */}
-      {active ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            backgroundColor: linkedPolicy ? colors.successSurface : colors.warningSurface,
-            borderWidth: 1,
-            borderColor: linkedPolicy ? colors.successLight : colors.warning,
-            borderRadius: radii.md,
-            padding: spacing.sm,
-            marginBottom: spacing.md,
-          }}
-        >
-          <Icon name="car" size={16} color={colors.textSecondary} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{active.name}</Text>
-            <Text style={{ fontSize: 12, color: linkedPolicy ? colors.successDark : colors.warningDeep }}>
-              {linkedPolicy
-                ? `Covered by ${linkedPolicy.carrier} · $${linkedPolicy.deductible} deductible`
-                : 'No policy linked to this car yet'}
-            </Text>
-          </View>
-        </View>
-      ) : null}
-
-      <SectionLabel>Your policies</SectionLabel>
-      {isLoading ? (
-        <SkeletonList variant="card" count={1} tall />
-      ) : (policies ?? []).length === 0 ? (
-        <Text
-          style={{
-            fontSize: 14,
-            color: colors.textSecondary,
-            textAlign: 'center',
-            padding: spacing.lg,
-          }}
-        >
-          No policies on file — add one below.
-        </Text>
-      ) : (
-        sortedPolicies.map((policy) => (
-          <PolicyCard
-            key={policy.id}
-            policy={policy}
-            coversLabel={coversLabelFor(policy)}
-            onEdit={() => openEdit(policy)}
-            onRemove={() =>
-              confirmAction(
-                'Remove policy',
-                `Remove the ${policy.carrier} policy ${policy.policyNumber}?`,
-                () => removeMutation.mutate(policy.id),
-              )
-            }
-          />
-        ))
-      )}
-
-      {/* Add policy */}
-      <Tappable
-        onPress={() => navigation.navigate('ProfInsAdd')}
-        style={({ pressed }) => ({
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderStyle: 'dashed',
-          borderColor: colors.warning,
-          padding: spacing.lg,
-          alignItems: 'center',
-          marginBottom: spacing.md,
-          opacity: pressed ? 0.7 : 1,
-        })}
+      <SwipeDeck
+        caption={
+          active
+            ? linkedPolicy
+              ? `${active.name} · covered by ${linkedPolicy.carrier}`
+              : `${active.name} · no policy linked yet`
+            : sortedPolicies.length
+              ? `${sortedPolicies.length} polic${sortedPolicies.length !== 1 ? 'ies' : 'y'} on file · swipe to switch`
+              : 'No policies yet'
+        }
       >
-        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
-        <Text style={{ fontSize: 15, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
-          Add another policy
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>Geico, Progressive, USAA...</Text>
-      </Tappable>
+        {isLoading ? (
+          <SkeletonList variant="card" count={1} tall />
+        ) : (
+          <PagedCarousel
+            items={[
+              ...sortedPolicies.map((policy) => (
+                <PolicyCard
+                  key={policy.id}
+                  policy={policy}
+                  coversLabel={coversLabelFor(policy)}
+                  linked={policy.id === linkedPolicy?.id}
+                  onEdit={() => openEdit(policy)}
+                  onRemove={() => confirmAction('Remove policy', `Remove the ${policy.carrier} policy ${policy.policyNumber}?`, () => removeMutation.mutate(policy.id))}
+                />
+              )),
+              addCard,
+            ]}
+          />
+        )}
+      </SwipeDeck>
 
-      <PolicyFormModal
-        policy={editing}
-        visible={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSave={(fields) => saveMutation.mutate(fields)}
-        saving={saveMutation.isPending}
-        carOptions={carOptions}
-      />
+
+      <PolicyFormModal policy={editing} visible={formOpen} onClose={() => setFormOpen(false)} onSave={(fields) => saveMutation.mutate(fields)} saving={saveMutation.isPending} carOptions={carOptions} />
     </Screen>
   );
 }

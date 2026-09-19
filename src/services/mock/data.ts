@@ -18,10 +18,21 @@ export interface Dealer {
   address: string;
   /** Shop profile photo; the ShopCard shows a navy storefront placeholder when absent. */
   photoUrl?: string;
+  /** Front-desk number for the Call action. */
+  phone?: string;
 }
 
 /** The demo user's location — Fairfax, VA (s-all-quotes-map "Fairfax, VA"). */
 export const USER_LOCATION = { lat: 38.846, lng: -77.306 };
+
+/** "Mon–Sat 8–6" → "8 AM": when a closed shop opens next. */
+export function dealerOpensAt(dealer: { hours: string }): string {
+  const m = dealer.hours.match(/(\d{1,2})(?::(\d{2}))?\s*[–-]/);
+  if (!m) return 'tomorrow';
+  const h = Number(m[1]);
+  const min = m[2] ? `:${m[2]}` : '';
+  return h >= 12 ? `${h === 12 ? 12 : h - 12}${min} PM` : `${h}${min} AM`;
+}
 
 /** Distance filter options used app-wide (quotes, map, schedule). Caps at 30 mi. */
 export const DISTANCE_FILTERS = ['Any distance', 'Within 5 mi', 'Within 10 mi', 'Within 30 mi'];
@@ -47,6 +58,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.858,
     lng: -77.29,
     address: '11020 Fairfax Blvd, Fairfax, VA 22030',
+    phone: '+1 (703) 555-0110',
   },
   {
     id: 'autofix-pro',
@@ -62,6 +74,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.874,
     lng: -77.291,
     address: '3960 Chain Bridge Rd, Fairfax, VA 22030',
+    phone: '+1 (703) 555-0124',
   },
   {
     id: 'vienna-auto',
@@ -77,6 +90,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.881,
     lng: -77.261,
     address: '127 Maple Ave E, Vienna, VA 22180',
+    phone: '+1 (703) 555-0137',
   },
   {
     id: 'fairfax-collision',
@@ -92,6 +106,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.81,
     lng: -77.33,
     address: '9520 Lee Hwy, Fairfax, VA 22031',
+    phone: '+1 (703) 555-0142',
   },
   {
     id: 'chantilly-body',
@@ -107,6 +122,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.876,
     lng: -77.394,
     address: '14500 Lee Rd, Chantilly, VA 20151',
+    phone: '+1 (703) 555-0158',
   },
   {
     id: 'nova-dent',
@@ -122,6 +138,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.806,
     lng: -77.36,
     address: '6420 Rolling Rd, Springfield, VA 22152',
+    phone: '+1 (703) 555-0163',
   },
   {
     id: 'arlington-spa',
@@ -132,11 +149,12 @@ export const DEALERS: Dealer[] = [
     reviews: 87,
     distanceMi: 6.1,
     hours: 'Mon–Sat 8–6',
-    openStatus: 'Open',
+    openStatus: 'Closed',
     closesAt: '6PM',
     lat: 38.886,
     lng: -77.205,
     address: '2611 Columbia Pike, Arlington, VA 22204',
+    phone: '+1 (703) 555-0171',
   },
   {
     id: 'premier-body',
@@ -147,11 +165,12 @@ export const DEALERS: Dealer[] = [
     reviews: 64,
     distanceMi: 7.3,
     hours: 'Mon–Sat 8–6',
-    openStatus: 'Open',
+    openStatus: 'Closed',
     closesAt: '6PM',
     lat: 38.786,
     lng: -77.195,
     address: '6231 Richmond Hwy, Alexandria, VA 22303',
+    phone: '+1 (703) 555-0185',
   },
   {
     id: 'city-body',
@@ -167,6 +186,7 @@ export const DEALERS: Dealer[] = [
     lat: 38.856,
     lng: -77.354,
     address: '10912 Main St, Fairfax, VA 22030',
+    phone: '+1 (703) 555-0199',
   },
 ];
 

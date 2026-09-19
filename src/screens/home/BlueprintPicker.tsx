@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Text, View } from 'react-native';
 import Svg, { Circle, Defs, G, Path, Pattern, Polygon, RadialGradient, Rect, Stop } from 'react-native-svg';
 
+import { Icon } from '../../components/Icon';
 import { Tappable } from '../../components/Tappable';
 import { palette } from '../../theme';
 import { BLUEPRINT_CAPTIONS, BLUEPRINT_GROUPS, BLUEPRINT_VB, MARKERS, PART_NAMES, PartKey } from './carBlueprint';
@@ -9,6 +10,8 @@ import { BLUEPRINT_CAPTIONS, BLUEPRINT_GROUPS, BLUEPRINT_VB, MARKERS, PART_NAMES
 const PANEL_BG = '#070b14';
 const CAPTION_H = 38;
 const SELECT_FILL = 'rgba(79,227,193,.16)';
+/** Parts that already have photos: tinted green and no longer tappable. */
+const DONE_FILL = 'rgba(46,232,126,.14)';
 
 /**
  * Blueprint damage picker (canvas "Damage picker"): dark navy panel with a dot
@@ -96,11 +99,13 @@ export function BlueprintPicker({
                 })}
                 {g.regions.map((r) => {
                   const on = selected === r.key;
-                  const fill = on ? SELECT_FILL : 'rgba(0,0,0,0.001)';
+                  const locked = done.has(r.key) && !on;
+                  const fill = on ? SELECT_FILL : locked ? DONE_FILL : 'rgba(0,0,0,0.001)';
+                  const press = locked ? undefined : () => onPick(r.key);
                   return r.circle ? (
-                    <Circle key={r.key} cx={r.circle[0]} cy={r.circle[1]} r={r.circle[2]} fill={fill} onPress={() => onPick(r.key)} />
+                    <Circle key={r.key} cx={r.circle[0]} cy={r.circle[1]} r={r.circle[2]} fill={fill} onPress={press} />
                   ) : (
-                    <Polygon key={r.key} points={r.points} fill={fill} onPress={() => onPick(r.key)} />
+                    <Polygon key={r.key} points={r.points} fill={fill} onPress={press} />
                   );
                 })}
               </G>
@@ -160,7 +165,8 @@ function Marker({ x, y, label, active, done, onPress }: { x: number; y: number; 
     );
   };
 
-  const dot = active ? 14 : done ? 9 : 7;
+  const locked = done && !active;
+  const dot = active ? 14 : locked ? 16 : 7;
   const hit = useMemo(() => ({ top: 10, bottom: 10, left: 10, right: 10 }), []);
   return (
     <View pointerEvents="box-none" style={{ position: 'absolute', left: x, top: y, width: 0, height: 0 }}>
@@ -168,9 +174,11 @@ function Marker({ x, y, label, active, done, onPress }: { x: number; y: number; 
       {active ? ring(0.5, 24) : null}
       <Tappable
         onPress={onPress}
+        disabled={locked}
         hitSlop={hit}
-        accessibilityLabel={label}
+        accessibilityLabel={locked ? `${label} (added)` : label}
         accessibilityRole="button"
+        accessibilityState={{ disabled: locked }}
         noFeedback
         style={{
           position: 'absolute',
@@ -179,10 +187,14 @@ function Marker({ x, y, label, active, done, onPress }: { x: number; y: number; 
           width: dot,
           height: dot,
           borderRadius: dot / 2,
-          backgroundColor: palette.teal,
-          opacity: active ? 1 : done ? 0.95 : 0.6,
+          backgroundColor: locked ? palette.mint : palette.teal,
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: active ? 1 : locked ? 1 : 0.6,
         }}
-      />
+      >
+        {locked ? <Icon name="check" size={12} color="#0a0f19" strokeWidth={3} /> : null}
+      </Tappable>
     </View>
   );
 }

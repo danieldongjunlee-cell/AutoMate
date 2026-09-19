@@ -1,26 +1,30 @@
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FormSheet } from '../../components/FormSheet';
+import { Icon } from '../../components/Icon';
+import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
+import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
-import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { Screen } from '../../components/ui';
 import { brandOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { ProfileStackParamList } from '../../navigation/types';
 import { Vehicle, vehiclesService } from '../../services';
+import { useCarImage } from '../../services/carImage';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
+
+/** The Honda hero photo (bundled cut-out); other brands use the Car Images API. */
+const HONDA_HERO = require('../../../assets/cars/accord-2019.png');
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCars'>;
 
@@ -128,7 +132,67 @@ function VehicleFormModal({
   );
 }
 
-/** Wireframe s-prof-cars, now live CRUD against vehiclesService (pass 1). */
+/**
+ * A registered car as a swipe card: name with an accent underline, the car
+ * photo, four stat tiles (odometer, oil, last service, colour) and the
+ * active-car action. Edit / Remove sit under the button.
+ */
+function VehicleCard({
+  vehicle,
+  isActive,
+  onSetActive,
+  onEdit,
+  onRemove,
+}: {
+  vehicle: Vehicle;
+  isActive: boolean;
+  onSetActive: () => void;
+  onEdit: () => void;
+  onRemove: () => void;
+}) {
+  const { dark } = useTheme();
+  const brand = brandOf(vehicle.name);
+  const isHonda = brand.toLowerCase() === 'honda';
+  const { data: apiPhoto } = useCarImage(isHonda ? '' : vehicle.name);
+  const [failed, setFailed] = useState(false);
+  const photo = isHonda ? HONDA_HERO : apiPhoto && !failed ? { uri: apiPhoto } : null;
+  const year = vehicle.name.match(/\b(19|20)\d{2}\b/)?.[0];
+
+  return (
+    <SwipeCard title={vehicle.name} badge={isActive ? 'Active car' : vehicle.isPrimary ? 'Primary' : undefined}>
+      <View style={{ height: 150, alignItems: 'center', justifyContent: 'center', marginVertical: spacing.sm }}>
+        {photo ? (
+          <Image
+            source={photo}
+            onError={() => setFailed(true)}
+            accessibilityLabel={`${vehicle.name} photo`}
+            resizeMode="contain"
+            style={{ width: '100%', height: 150, shadowColor: '#000', shadowOpacity: dark ? 0.5 : 0, shadowRadius: 18, shadowOffset: { width: 0, height: 14 } }}
+          />
+        ) : (
+          <CarBrandLogo brand={brand} size={110} bg="rgba(255,255,255,0.92)" />
+        )}
+      </View>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
+        <StatTile icon="gauge" color={palette.primaryLight} value={`${vehicle.odometerMi.toLocaleString()}`} label="miles" />
+        <StatTile icon="oil" color={palette.amber} value={(vehicle.oilSpec || '—').split(' ')[0]} label="oil" />
+        <StatTile icon="wrench" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '—' ? vehicle.lastService.split(',')[0] : '—'} label="serviced" />
+        <StatTile icon="palette" color={palette.lavender} value={year ?? (vehicle.colorName || '—').split(' ')[0]} label={year ? 'year' : 'colour'} />
+      </View>
+      <DeckButton label={isActive ? 'Active car ✓' : 'Set as active car'} secondary={isActive} disabled={isActive} onPress={onSetActive} />
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
+        <Tappable onPress={onEdit} hitSlop={8} accessibilityLabel={`Edit ${vehicle.name}`}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: DECK_TEXT }}>Edit car</Text>
+        </Tappable>
+        <Tappable onPress={onRemove} hitSlop={8} accessibilityLabel={`Remove ${vehicle.name}`}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffb4b1' }}>Remove</Text>
+        </Tappable>
+      </View>
+    </SwipeCard>
+  );
+}
+
+/** My cars: swipe through the garage (active car first), then "Add a car". */
 export function ProfCarsScreen() {
   const { colors } = useTheme();
   const navigation = useNavigation<Nav>();
@@ -137,263 +201,71 @@ export function ProfCarsScreen() {
   const [editing, setEditing] = useState<Vehicle | null>(null);
   const [formOpen, setFormOpen] = useState(false);
 
-  const { data: vehicles, isLoading } = useQuery({
-    queryKey: ['vehicles'],
-    queryFn: vehiclesService.listVehicles,
-  });
+  const { data: vehicles, isLoading } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });
 
-  // The globally active car drives highlight + ordering; tapping a card switches it.
+  // The globally active car drives highlight + ordering; the button switches it.
   const { active } = useActiveVehicle();
   const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
-
-  // Active car floats to the top of the garage list.
-  const sortedVehicles = [...(vehicles ?? [])].sort((a, b) => {
-    if (a.id === active?.id) return -1;
-    if (b.id === active?.id) return 1;
-    return 0;
-  });
+  const sortedVehicles = [...(vehicles ?? [])].sort((a, b) => (a.id === active?.id ? -1 : b.id === active?.id ? 1 : 0));
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['vehicles'] });
-
   const saveMutation = useMutation({
-    mutationFn: async (fields: VehicleFormFields) => {
-      if (editing) return vehiclesService.updateVehicle(editing.id, fields);
-      return vehiclesService.addVehicle(fields);
-    },
+    mutationFn: async (fields: VehicleFormFields) => (editing ? vehiclesService.updateVehicle(editing.id, fields) : vehiclesService.addVehicle(fields)),
     onSuccess: () => {
       invalidate();
       setFormOpen(false);
     },
   });
-
-  const removeMutation = useMutation({
-    mutationFn: (id: string) => vehiclesService.removeVehicle(id),
-    onSuccess: invalidate,
-  });
+  const removeMutation = useMutation({ mutationFn: (id: string) => vehiclesService.removeVehicle(id), onSuccess: invalidate });
 
   const openEdit = (vehicle: Vehicle) => {
     setEditing(vehicle);
     setFormOpen(true);
   };
   const onRemove = (vehicle: Vehicle) =>
-    confirmAction(
-      'Remove car',
-      `Remove ${vehicle.name} from your garage? Its service history stays archived.`,
-      () => removeMutation.mutate(vehicle.id),
-    );
+    confirmAction('Remove car', `Remove ${vehicle.name} from your garage? Its service history stays archived.`, () => removeMutation.mutate(vehicle.id));
+  const addCar = () => requireAuth('saveCar', () => navigation.navigate('ProfCarAdd'));
+
+  const addCard = (
+    <SwipeCard key="add" title="Add a car" dashed>
+      <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+          <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
+        </View>
+        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Scan the VIN barcode or enter the details manually.</Text>
+        <DeckButton label="Add another car" onPress={addCar} />
+      </View>
+    </SwipeCard>
+  );
 
   return (
     <Screen>
-      <SectionLabel>Your vehicles</SectionLabel>
-      {isLoading ? (
-        <SkeletonList variant="card" count={1} tall />
-      ) : (vehicles ?? []).length === 0 ? (
-        <View
-          style={{
-            backgroundColor: colors.surface,
-            borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            padding: spacing.xl,
-            alignItems: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Icon name="car" size={28} color={colors.textSecondary} />
-          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-            No vehicles yet
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
-            Add a car to start tracking quotes and service.
-          </Text>
-        </View>
-      ) : (
-        sortedVehicles.map((vehicle) => {
-          const isActive = vehicle.id === active?.id;
-          const specs = [
-            ['VIN', vehicle.vin || '—'],
-            ['Odometer', `${vehicle.odometerMi.toLocaleString()} mi`],
-            ['Oil spec', vehicle.oilSpec || '—'],
-            ['Last service', vehicle.lastService],
-          ] as const;
-          return (
-            <Tappable
-              key={vehicle.id}
-              noFeedback
-              accessibilityRole="button"
-              accessibilityState={{ selected: isActive }}
-              accessibilityLabel={`Set ${vehicle.name} as your active car`}
-              onPress={() => setActiveVehicle(vehicle.id)}
-              style={{
-                backgroundColor: colors.surface,
-                borderRadius: radii.md,
-                borderWidth: 1.5,
-                borderColor: isActive ? colors.primary : colors.border,
-                overflow: 'hidden',
-                marginBottom: spacing.sm,
-              }}
-            >
-              <LinearGradient
-                colors={[palette.primary, palette.primaryDark]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={{
-                  padding: spacing.md,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: spacing.sm,
-                }}
-              >
-                <View
-                  style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: radii.sm,
-                    backgroundColor: 'rgba(255,255,255,.2)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CarBrandLogo brand={brandOf(vehicle.name)} size={36} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>
-                    {vehicle.name}
-                  </Text>
-                  <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.6)' }}>
-                    {vehicle.colorName || 'Color not set'}
-                  </Text>
-                </View>
-                {isActive ? (
-                  <View
-                    style={{
-                      backgroundColor: 'rgba(255,255,255,.25)',
-                      borderRadius: radii.pill,
-                      paddingHorizontal: 10,
-                      paddingVertical: 3,
-                    }}
-                  >
-                    <Text style={{ fontSize: 13, fontWeight: '600', color: '#fff' }}>Active</Text>
-                  </View>
-                ) : vehicle.isPrimary ? (
-                  <View
-                    style={{
-                      backgroundColor: 'rgba(255,255,255,.2)',
-                      borderRadius: radii.pill,
-                      paddingHorizontal: 10,
-                      paddingVertical: 3,
-                    }}
-                  >
-                    <Text style={{ fontSize: 13, color: '#fff' }}>Primary</Text>
-                  </View>
-                ) : null}
-              </LinearGradient>
-              <View style={{ paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}>
-                {specs.map(([label, value]) => (
-                  <View
-                    key={label}
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      paddingVertical: 7,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                      borderBottomColor: colors.divider,
-                    }}
-                  >
-                    <Text style={{ fontSize: 14, color: colors.textTertiary }}>{label}</Text>
-                    <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
-                      {value}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-              <View
-                style={{
-                  paddingHorizontal: spacing.md,
-                  paddingBottom: spacing.sm,
-                }}
-              >
-                {isActive ? (
-                  <Badge label="Active car" variant="primary" />
-                ) : (
-                  <Badge label="Tap to set active" variant="primarySoft" />
-                )}
-              </View>
-              <View
-                style={{
-                  padding: spacing.sm,
-                  borderTopWidth: StyleSheet.hairlineWidth,
-                  borderTopColor: colors.divider,
-                  flexDirection: 'row',
-                  gap: spacing.xs,
-                }}
-              >
-                <Tappable
-                  onPress={() => openEdit(vehicle)}
-                  style={{
-                    flex: 1,
-                    backgroundColor: colors.primarySurface,
-                    borderRadius: radii.sm,
-                    paddingVertical: 9,
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
-                    Edit car
-                  </Text>
-                </Tappable>
-                <RemoveButton onPress={() => onRemove(vehicle)} />
-              </View>
-            </Tappable>
-          );
-        })
-      )}
-
-      {/* Add car → dedicated v17 prof-car-add screen (guests sign in first) */}
-      <Tappable
-        onPress={() => requireAuth('saveCar', () => navigation.navigate('ProfCarAdd'))}
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderStyle: 'dashed',
-          borderColor: colors.primaryLight,
-          padding: spacing.lg,
-          alignItems: 'center',
-          marginBottom: spacing.md,
-        }}
+      <SwipeDeck
+        caption={sortedVehicles.length ? `${sortedVehicles.length} car${sortedVehicles.length !== 1 ? 's' : ''} in your garage · swipe to switch` : 'No cars yet — add your first car'}
       >
-        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
-        <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
-          Add another car
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          Scan VIN barcode or enter manually
-        </Text>
-      </Tappable>
+        {isLoading ? (
+          <SkeletonList variant="card" count={1} tall />
+        ) : (
+          <PagedCarousel
+            items={[
+              ...sortedVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  isActive={vehicle.id === active?.id}
+                  onSetActive={() => setActiveVehicle(vehicle.id)}
+                  onEdit={() => openEdit(vehicle)}
+                  onRemove={() => onRemove(vehicle)}
+                />
+              )),
+              addCard,
+            ]}
+          />
+        )}
+      </SwipeDeck>
 
-      <View
-        style={{
-          backgroundColor: colors.warningSurface,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          gap: spacing.sm,
-        }}
-      >
-        <Icon name="bulb" size={16} color={colors.textSecondary} />
-        <Text style={{ flex: 1, fontSize: 14, color: colors.warningDeep, lineHeight: 19 }}>
-          Add all your vehicles to compare quotes and track service for each one.
-        </Text>
-      </View>
 
-      <VehicleFormModal
-        vehicle={editing}
-        visible={formOpen}
-        onClose={() => setFormOpen(false)}
-        onSave={(fields) => saveMutation.mutate(fields)}
-        saving={saveMutation.isPending}
-      />
+      <VehicleFormModal vehicle={editing} visible={formOpen} onClose={() => setFormOpen(false)} onSave={(fields) => saveMutation.mutate(fields)} saving={saveMutation.isPending} />
     </Screen>
   );
 }

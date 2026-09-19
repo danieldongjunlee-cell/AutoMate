@@ -164,7 +164,6 @@ export function DiyUnlockScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.85 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '800', color: palette.onAmber }}>

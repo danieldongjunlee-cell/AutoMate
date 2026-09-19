@@ -148,7 +148,6 @@ export function ProfHelpCenterScreen() {
               padding: spacing.md,
               borderBottomWidth: i < HELP_TOPICS.length - 1 ? StyleSheet.hairlineWidth : 0,
               borderBottomColor: colors.divider,
-              opacity: pressed ? 0.6 : 1,
             })}
           >
             <View style={{ marginRight: spacing.md }}>
@@ -212,7 +211,6 @@ export function ProfLanguageScreen() {
               padding: spacing.md,
               borderBottomWidth: i < LANGUAGES.length - 1 ? StyleSheet.hairlineWidth : 0,
               borderBottomColor: colors.divider,
-              opacity: pressed ? 0.6 : 1,
             })}
           >
             <View style={{ width: 34, height: 26, borderRadius: 7, backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center', marginRight: spacing.md }}>
@@ -259,7 +257,6 @@ export function ProfDistanceScreen() {
               padding: spacing.lg,
               borderBottomWidth: i < rows.length - 1 ? StyleSheet.hairlineWidth : 0,
               borderBottomColor: colors.divider,
-              opacity: pressed ? 0.6 : 1,
             })}
           >
             <View style={{ flex: 1 }}>

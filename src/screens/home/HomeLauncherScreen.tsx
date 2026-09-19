@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { DealBanner, DEALS } from '../../components/DealBanner';
 import { Icon } from '../../components/Icon';
 import { EstimateGateSheet } from '../../components/EstimateGateSheet';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
@@ -45,31 +45,6 @@ export function HomeLauncherScreen() {
   const [gateOpen, setGateOpen] = useState(false);
   useResumeAfterAuth('newEstimate', () => navigation.navigate('CarDiagram'));
   const startEstimate = () => (isAuthenticated ? navigation.navigate('CarDiagram') : setGateOpen(true));
-
-  // Solid, borderless promo banner (filled gradient + white text), like a
-  // store coupon card. No icon — text only.
-  const dealItem = (
-    badge: string,
-    title: string,
-    sub: string,
-    gradient: readonly [string, string],
-    dealerId: string,
-  ) => (
-    <Tappable onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals', { focus: dealerId }))}>
-      <LinearGradient
-        colors={gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ borderRadius: radii.lg, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, minHeight: 92, justifyContent: 'center', overflow: 'hidden' }}
-      >
-        <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
-          <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{badge}</Text>
-        </View>
-        <Text style={{ fontSize: 16, fontWeight: '800', color: '#fff' }}>{title}</Text>
-        <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{sub}</Text>
-      </LinearGradient>
-    </Tappable>
-  );
 
   /** Real-customer review card with actual before/after repair photos. */
   const reviewCard = (r: HomeReview) => (
@@ -165,11 +140,9 @@ export function HomeLauncherScreen() {
         </Tappable>
       </View>
       <PagedCarousel
-        items={[
-          dealItem('LIMITED · BUNDLE', 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', ['#E0A93E', '#C2871F'], 'honda-fairfax'),
-          dealItem('20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', [palette.primary, '#1e4fcc'], 'autofix-pro'),
-          dealItem('SPONSORED', 'Vienna Auto Care — $30 off', 'Brakes, batteries & A/C service', ['#1f9e75', '#13795a'], 'vienna-auto'),
-        ]}
+        items={DEALS.map((deal) => (
+          <DealBanner key={deal.dealerId} deal={deal} onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals', { focus: deal.dealerId }))} />
+        ))}
       />
 
       {/* Real customer reviews — title only, then the sliding cards. */}
