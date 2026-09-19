@@ -20,8 +20,8 @@ type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfSettings'>;
 type NotifKey = 'quotes' | 'service' | 'community' | 'streak';
 
 const THEME_OPTIONS: { value: ThemeMode; label: string }[] = [
-  { value: 'dark', label: 'Dark' },
   { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
   { value: 'system', label: 'Auto' },
 ];
 
@@ -107,7 +107,7 @@ export function ProfSettingsScreen() {
 
       <SectionLabel>App preferences</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        {/* Appearance: dark (default) / light / follow the device. */}
+        {/* Appearance: light (default) / dark / follow the device. */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingVertical: 11, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.divider }}>
           <View style={{ width: 28, marginRight: spacing.sm, alignItems: 'center' }}>
             <Icon name={dark ? 'moon' : 'sun'} size={20} color={colors.textSecondary} />

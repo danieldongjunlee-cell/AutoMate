@@ -1,9 +1,9 @@
 /**
  * Color tokens for the AutoMate redesign (Claude Design canvas v34).
  *
- * The default ground is dark: background `#0a0f19`, surface `#121a2b`,
- * primary blue `#2e6bff`, teal accent `#4FE3C1`, amber `#F0B44E`. Settings →
- * Appearance switches to `lightColors` (or follows the device). `palette` holds
+ * Light is the default ground (`lightColors`); Settings → Appearance switches
+ * to the dark navy ground (`darkColors`) or follows the device. Primary blue
+ * `#2e6bff`, teal accent `#4FE3C1`, amber `#F0B44E` are shared. `palette` holds
  * the static brand accents; anything that sits on a neutral surface must read
  * from `useTheme().colors` so it flips with the mode.
  */
@@ -149,7 +149,7 @@ export interface ThemeColors {
   backdrop: string;
 }
 
-// Default theme: near-black navy chrome.
+// Dark theme: near-black navy chrome.
 export const darkColors: ThemeColors = {
   background: '#0a0f19',
   surface: '#121a2b',
@@ -200,8 +200,8 @@ export const darkColors: ThemeColors = {
   backdrop: 'rgba(3,6,12,0.66)',
 };
 
-// Light theme (Settings → Appearance): the same blue/teal/amber accents on a
-// cool off-white ground. Text-on-tint tokens (primaryDark, successDeep …) are
+// Light theme (the default): the same blue/teal/amber accents on a cool
+// off-white ground. Text-on-tint tokens (primaryDark, successDeep …) are
 // remapped so the same component code stays readable.
 export const lightColors: ThemeColors = {
   background: '#eef1f6',

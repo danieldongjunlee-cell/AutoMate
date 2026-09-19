@@ -303,7 +303,7 @@ interface AppState {
   setLanguage: (language: string) => void;
   distanceUnit: 'mi' | 'km';
   setDistanceUnit: (distanceUnit: 'mi' | 'km') => void;
-  /** Settings → Appearance: dark (default), light, or follow the device. Persisted. */
+  /** Settings → Appearance: light (default), dark, or follow the device. Persisted. */
   themeMode: ThemeMode;
   setThemeMode: (themeMode: ThemeMode) => void;
 
@@ -534,8 +534,8 @@ export const useAppStore = create<AppState>()(
   setLanguage: (language) => set({ language }),
   distanceUnit: 'mi',
   setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
-  // Appearance — dark by default; Settings can switch to light or the device setting.
-  themeMode: 'dark',
+  // Appearance — light by default; Settings can switch to dark or the device setting.
+  themeMode: 'light',
   setThemeMode: (themeMode) => set({ themeMode }),
 
   points: SEED_POINTS,
