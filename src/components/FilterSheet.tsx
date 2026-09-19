@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Modal, PanResponder, Text, View } from 'react-native';
+import { Modal, PanResponder, Platform, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from './Icon';
@@ -97,8 +97,9 @@ export function FilterSheet({
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <Tappable noFeedback onPress={onClose} style={{ flex: 1, backgroundColor: 'rgba(3,6,12,0.66)', justifyContent: 'flex-end' }}>
-        <View
-          onStartShouldSetResponder={() => true}
+        <Tappable
+          noFeedback
+          onPress={() => undefined}
           style={{
             backgroundColor: palette.sheet,
             borderTopLeftRadius: radii.actionSheet,
@@ -109,7 +110,7 @@ export function FilterSheet({
             paddingHorizontal: spacing.lg,
             paddingTop: spacing.md,
             paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.sm,
-            gap: 12,
+            gap: spacing.xxl,
           }}
         >
           <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: '#39435a', alignSelf: 'center', marginBottom: 2 }} />
@@ -125,7 +126,7 @@ export function FilterSheet({
           ) : null}
 
           {groups.map((g) => (
-            <View key={g.key} style={{ gap: 8 }}>
+            <View key={g.key} style={{ gap: 12 }}>
               <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>{g.title}</Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {g.options.map((o) => {
@@ -160,7 +161,7 @@ export function FilterSheet({
           >
             <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>Show results</Text>
           </Tappable>
-        </View>
+        </Tappable>
       </Tappable>
     </Modal>
   );
@@ -172,9 +173,13 @@ function DistanceSlider({ value, min, max, onChange }: { value: number; min: num
   const [w, setW] = useState(0);
   const wRef = useRef(0);
   wRef.current = w;
+  const trackRef = useRef<View>(null);
+  const trackX = useRef(0);
   const pct = ((value - min) / (max - min)) * 100;
-  const fromX = (x: number) => {
+  // Pointer x in window coordinates → value; the track's window x is measured on layout.
+  const fromPageX = (pageX: number) => {
     const tw = wRef.current || 1;
+    const x = pageX - trackX.current;
     const v = Math.round(min + (Math.max(0, Math.min(tw, x)) / tw) * (max - min));
     onChange(v);
   };
@@ -182,22 +187,48 @@ function DistanceSlider({ value, min, max, onChange }: { value: number; min: num
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: (e) => fromX(e.nativeEvent.locationX),
-      onPanResponderMove: (e) => fromX(e.nativeEvent.locationX),
+      onPanResponderGrant: (e) => fromPageX(e.nativeEvent.pageX),
+      onPanResponderMove: (_e, g) => fromPageX(g.moveX),
+      onPanResponderTerminationRequest: () => false,
     }),
   ).current;
+  // Web: the responder system doesn't deliver mouse-drag moves, so track the
+  // pointer with window listeners against the track's bounding box.
+  const onMouseDown = (e: { pageX: number; preventDefault?: () => void }) => {
+    if (typeof window === 'undefined') return;
+    e.preventDefault?.();
+    const node = trackRef.current as unknown as { getBoundingClientRect?: () => { left: number } } | null;
+    const left = node?.getBoundingClientRect?.().left;
+    if (left != null) trackX.current = left + window.scrollX;
+    fromPageX(e.pageX);
+    const onMove = (ev: MouseEvent) => fromPageX(ev.pageX);
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  };
+  const handlers = Platform.OS === 'web' ? ({ onMouseDown } as object) : pan.panHandlers;
 
   return (
-    <View style={{ gap: 6 }}>
+    <View style={{ gap: 10 }}>
       <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Distance</Text>
       <View style={{ paddingHorizontal: 4, paddingTop: 10 }}>
         <View
-          {...pan.panHandlers}
-          onLayout={(e) => setW(e.nativeEvent.layout.width)}
+          ref={trackRef}
+          {...handlers}
+          onLayout={(e) => {
+            setW(e.nativeEvent.layout.width);
+            trackRef.current?.measureInWindow((x) => {
+              trackX.current = x;
+            });
+          }}
           accessibilityRole="adjustable"
           accessibilityLabel="Distance"
           accessibilityValue={{ min, max, now: value }}
-          style={{ height: 30, justifyContent: 'center' }}
+          onResponderTerminationRequest={() => false}
+          style={[{ height: 30, justifyContent: 'center' }, Platform.OS === 'web' ? ({ cursor: 'pointer' } as object) : null]}
         >
           <View style={{ height: 6, borderRadius: 3, backgroundColor: colors.border }}>
             <View style={{ position: 'absolute', left: 0, top: 0, height: 6, width: `${pct}%`, borderRadius: 3, backgroundColor: colors.primary }} />

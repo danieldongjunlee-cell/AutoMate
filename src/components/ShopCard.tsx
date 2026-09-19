@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
 import { Icon } from './Icon';
-import { Storefront } from './Storefront';
+import { SHOP_PHOTOS } from '../assets/shopPhotos';
 import { Tappable } from './Tappable';
 import { Dealer } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
@@ -11,20 +11,9 @@ import { palette, radii, spacing, useTheme } from '../theme';
 const PHOTO_H = 150;
 
 /** Accent per shop for the placeholder storefront (teal / blue / lavender / amber cycle). */
-const ACCENTS = [palette.teal, palette.primaryLight, palette.lavender, palette.amber];
-
-function initialsOf(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('');
-}
-
 /**
  * Shop card (canvas "Quotes received" / "Book a service"): 150px photo (the
- * shop's profile image, or a navy storefront placeholder with its initials),
+ * shop's profile image, or one of the bundled shop photos),
  * price badge bottom-left, optional BEST PRICE tag, heart bottom-right, then
  * the shop name (18/800) and a meta line. `children` render below the meta
  * (price breakdown, accept button …).
@@ -45,7 +34,7 @@ export function ShopCard({
   /** "2.1 mi · ★ 4.7 (204) · 1-day repair". */
   meta: string;
   best?: boolean;
-  /** Position in the list — picks the placeholder variant/accent. */
+  /** Position in the list — picks which bundled photo is shown when the shop has none. */
   index?: number;
   selected?: boolean;
   onPress?: () => void;
@@ -55,7 +44,6 @@ export function ShopCard({
   const [w, setW] = useState(0);
   const saved = useAppStore((s) => s.savedDealerIds.includes(dealer.id));
   const toggleSaved = useAppStore((s) => s.toggleSavedDealer);
-  const accent = ACCENTS[index % ACCENTS.length];
 
   return (
     <View
@@ -76,11 +64,7 @@ export function ShopCard({
       <Tappable onPress={onPress} disabled={!onPress} noFeedback>
         <View onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))} style={{ height: PHOTO_H, backgroundColor: palette.tileNavy }}>
           {w > 0 ? (
-            dealer.photoUrl ? (
-              <Image source={{ uri: dealer.photoUrl }} style={{ width: w, height: PHOTO_H }} resizeMode="cover" />
-            ) : (
-              <Storefront initials={dealer.initial.length > 1 ? dealer.initial : initialsOf(dealer.name)} accent={accent} variant={(index % 2) as 0 | 1} width={w} height={PHOTO_H} />
-            )
+            <Image source={dealer.photoUrl ? { uri: dealer.photoUrl } : SHOP_PHOTOS[index % SHOP_PHOTOS.length]} style={{ width: w, height: PHOTO_H }} resizeMode="cover" />
           ) : null}
           {best ? (
             <View style={{ position: 'absolute', left: 12, top: 12, backgroundColor: '#11271c', borderWidth: 1, borderColor: '#1d5a3c', borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 3 }}>

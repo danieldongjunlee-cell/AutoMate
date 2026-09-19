@@ -7,18 +7,22 @@ import { DealerMap, MapMarker } from '../../components/DealerMap';
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { ShopCard } from '../../components/ShopCard';
 import { Screen } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useActiveVehicle, vehicleTypeOf } from '../../hooks/useActiveVehicle';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { MaintStackParamList } from '../../navigation/types';
 import {
   DEALER_SERVICE_CHIPS,
   DEALERS,
   dealerServicesBrand,
+  MAINT_CATEGORIES,
   SCHEDULE_SERVICE_FILTERS,
   SERVICE_FILTER_KEY,
   USER_LOCATION,
 } from '../../services/mock/data';
-import { useAppStore } from '../../store/useAppStore';
+import { CartService, useAppStore } from '../../store/useAppStore';
+
+/** MAINT_CATEGORIES id → the price-chip key used by DEALER_SERVICE_CHIPS. */
+const CATEGORY_CHIP_KEY: Record<string, string> = { oil: 'Oil', tires: 'Tires', filters: 'Filters', fluids: 'Fluids', brakes: 'Brakes' };
 import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintSchedule'>;
@@ -31,12 +35,25 @@ export function MaintScheduleScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const startBooking = useAppStore((s) => s.startBooking);
+  const setCartServices = useAppStore((s) => s.setCartServices);
+  const pick = useAppStore((s) => s.serviceTypePick);
   const requireAuth = useRequireAuth();
   const [pendingDealer, setPendingDealer] = useState<string | null>(null);
-  const { brand } = useActiveVehicle();
+  const { brand, active } = useActiveVehicle();
+  const pickedCategories = useMemo(() => MAINT_CATEGORIES.filter((c) => pick.includes(c.id)), [pick]);
 
   const goBook = (id: string) => {
     startBooking(id);
+    if (pickedCategories.length) {
+      // Seed the cart with one option per chosen category (the row sized to
+      // the car where a category prices by vehicle type, else the first).
+      const recoType = active ? vehicleTypeOf(active.name) : null;
+      const services: CartService[] = pickedCategories.map((cat) => {
+        const sub = (cat.byVehicleType && cat.services.find((s) => s.vehicleType === recoType)) || cat.services[0];
+        return { id: sub.id, name: `${cat.name} — ${sub.name}`, price: sub.price, durationMin: sub.durationMin };
+      });
+      setCartServices(services);
+    }
     navigation.navigate('MaintScheduleBook');
   };
   /** Picking a shop is a value action — guests sign in first, then resume. */
@@ -71,11 +88,13 @@ export function MaintScheduleScreen() {
         const chips = DEALER_SERVICE_CHIPS[d.id];
         if (!chips || d.distanceMi > radius) return false;
         if (!dealerServicesBrand(d.id, brand)) return false;
+        // Shops must offer every category chosen on the previous step.
+        if (pickedCategories.some((cat) => !chips.some((c) => c.startsWith(CATEGORY_CHIP_KEY[cat.id] ?? cat.name)))) return false;
         if (service === 'All') return true;
         const key = SERVICE_FILTER_KEY[service] ?? service;
         return chips.some((c) => c.startsWith(key));
       }).sort((a, b) => a.distanceMi - b.distanceMi),
-    [brand, radius, service],
+    [brand, radius, service, pickedCategories],
   );
 
   const filterBits = [service !== 'All' ? service : null, radius < 30 ? `Within ${radius} mi` : null].filter(Boolean) as string[];
@@ -97,7 +116,9 @@ export function MaintScheduleScreen() {
   return (
     <Screen scrollRef={scrollRef}>
       <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
-        Partner shops that service your {brand} · sorted by distance
+        {pickedCategories.length
+          ? `Shops offering ${pickedCategories.map((c) => c.name).join(' + ')} for your ${brand} · sorted by distance`
+          : `Partner shops that service your ${brand} · sorted by distance`}
       </Text>
 
       <FilterButton label={filterBits.length ? `Filter · ${filterBits[0]}` : 'Filter'} count={filterBits.length} onPress={() => setFilterOpen(true)} />
@@ -105,7 +126,7 @@ export function MaintScheduleScreen() {
         visible={filterOpen}
         onClose={() => setFilterOpen(false)}
         distance={{ value: radius }}
-        groups={[{ key: 'service', title: 'Service', options: SCHEDULE_SERVICE_FILTERS, value: service }]}
+        groups={pickedCategories.length ? [] : [{ key: 'service', title: 'Service', options: SCHEDULE_SERVICE_FILTERS, value: service }]}
         onApply={(v, d) => {
           setService(v.service ?? 'All');
           if (d != null) setRadius(d);

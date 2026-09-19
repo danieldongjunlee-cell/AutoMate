@@ -52,6 +52,7 @@ export function MaintDashboardScreen() {
   const { colors } = useTheme();
   const requireAuth = useRequireAuth();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const { data: upcoming } = useQuery({ queryKey: ['upcoming-services'], queryFn: maintService.getUpcomingServices });
   const { active } = useActiveVehicle();
   const carName = active?.name ?? VEHICLE.name;
@@ -147,7 +148,12 @@ export function MaintDashboardScreen() {
 
       {/* Book a service — the dashboard's primary action → partner shops */}
       <Tappable
-        onPress={() => requireAuth('bookService', () => navigation.navigate('MaintSchedule'))}
+        onPress={() =>
+          requireAuth('bookService', () => {
+            setServiceTypePick([]);
+            navigation.navigate('MaintSchedule');
+          })
+        }
         accessibilityLabel="Book a service"
         style={{
           height: 58,
@@ -169,7 +175,7 @@ export function MaintDashboardScreen() {
       </Tappable>
 
       {/* Quick actions */}
-      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg }}>
+      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
         {quick('DIY tips', 'star', palette.amber, () => navigation.navigate('MaintDiy'))}
         {quick('Receipt', 'camera', palette.teal, () => navigation.navigate('MaintScanCam'))}
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
@@ -228,7 +234,7 @@ export function MaintDashboardScreen() {
           borderColor: colors.border,
           borderRadius: radii.lg,
           padding: spacing.md,
-          marginTop: isAuthenticated ? spacing.xs : 0,
+          marginTop: isAuthenticated ? spacing.lg : 0,
         }}
       >
         <IconChip name="car" size={44} glyph={24} color={palette.teal} bg={`${palette.teal}14`} radius={12} />

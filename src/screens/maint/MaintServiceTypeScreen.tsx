@@ -9,6 +9,7 @@ import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
 import { MaintStackParamList } from '../../navigation/types';
 import { MAINT_CATEGORIES } from '../../services/mock/data';
+import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintServiceType'>;
@@ -21,6 +22,7 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintServiceType'>;
 export function MaintServiceTypeScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   const toggle = (id: string) =>
@@ -83,7 +85,10 @@ export function MaintServiceTypeScreen() {
       <PrimaryButton
         label={count > 0 ? `Find shops — ${count} service${count !== 1 ? 's' : ''} →` : 'Select a service type'}
         disabled={count === 0}
-        onPress={() => navigation.navigate('MaintSchedule')}
+        onPress={() => {
+          setServiceTypePick(MAINT_CATEGORIES.filter((c) => selected.has(c.id)).map((c) => c.id));
+          navigation.navigate('MaintSchedule');
+        }}
       />
     </Screen>
   );

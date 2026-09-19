@@ -30,6 +30,7 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
   const [gateOpen, setGateOpen] = useState(false);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setPendingAuth = useAppStore((s) => s.setPendingAuth);
+  const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const activeName = state.routes[state.index]?.name;
 
   const go = (name: keyof MainTabParamList) => {
@@ -183,7 +184,10 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
             icon: 'calcheck',
             color: palette.primary,
             glyphColor: '#ffffff',
-            onPress: () => openInHome('MaintSchedule'),
+            onPress: () => {
+              setServiceTypePick([]);
+              openInHome('MaintServiceType');
+            },
           },
           {
             key: 'bookings',

@@ -92,7 +92,7 @@ export function SectionLabel({
     <Text
       style={[
         typography.label,
-        { color: colors.textTertiary, marginTop: spacing.xl, marginBottom: spacing.sm },
+        { color: colors.textTertiary, marginTop: spacing.section, marginBottom: spacing.md },
         style,
       ]}
     >

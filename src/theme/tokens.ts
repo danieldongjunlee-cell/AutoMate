@@ -15,6 +15,8 @@ export const spacing = {
   screenTop: 56,
   /** Bottom padding so content scrolls clear of the floating dock. */
   screenBottom: 104,
+  /** Vertical gap between sections on a screen. */
+  section: 32,
 } as const;
 
 export const radii = {
