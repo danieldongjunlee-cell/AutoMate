@@ -20,7 +20,7 @@ import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
 import { useDistance } from '../../i18n';
-import { radii, spacing, useTheme } from '../../theme';
+import { palette, radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>;
@@ -85,7 +85,7 @@ export function MaintScheduleConfirmScreen() {
         <SectionLabel>Summary</SectionLabel>
         {promoLabel ? (
           <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.sm }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>🎉 {promoLabel}</Text>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>{promoLabel}</Text>
           </View>
         ) : null}
         <View
@@ -114,14 +114,8 @@ export function MaintScheduleConfirmScreen() {
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           <SummaryCell label="Service" value={serviceNames} />
-          <SummaryCell
-            label="Date & time"
-            value={formatDayLabel(booking.date, 'Mon, Apr 7')}
-            sub={booking.time ?? '8:00 AM'}
-            subColor={colors.primaryDark}
-            emphasizeSub
-          />
-          <SummaryCell label="Pay at shop" value={`$${total}`} sub="$0 today" subColor={colors.successDark} />
+          <SummaryCell label="Date & time" value={`${formatDayLabel(booking.date, 'Mon, Apr 7')} · ${booking.time ?? '8:00 AM'}`} />
+          <SummaryCell label="Pay at shop" value={`$${total}`} sub="$0 today · cash at pickup" subColor={palette.mint} />
           <SummaryCell label="Duration" value={`~${totalMin} min`} />
         </View>
       </Card>
@@ -130,7 +124,7 @@ export function MaintScheduleConfirmScreen() {
 
       {/* Primary action: manage (reschedule / cancel) the booking. */}
       <PrimaryButton
-        label="🗓 Reschedule"
+        label="Reschedule"
         onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
       />
 

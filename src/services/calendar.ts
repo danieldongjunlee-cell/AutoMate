@@ -102,7 +102,7 @@ export async function addToCalendar(evt: CalendarEventInput): Promise<void> {
       location: evt.location,
       notes: evt.notes,
     });
-    showAlert('Added to calendar 📅', `"${evt.title}" is on your calendar.`);
+    showAlert('Added to calendar ', `"${evt.title}" is on your calendar.`);
   } catch (e) {
     showAlert('Calendar error', e instanceof Error ? e.message : 'Could not add the event.');
   }

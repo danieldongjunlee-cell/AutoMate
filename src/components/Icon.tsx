@@ -139,3 +139,51 @@ export function Icon({ name, size = 24, color = '#e8edf5', strokeWidth = 1.7, fi
     </Svg>
   );
 }
+
+/**
+ * Legacy emoji glyph → outline icon. Data carries short icon keys (or, for
+ * anything not yet migrated, the old emoji); `Glyph` renders either as an
+ * outline icon so no emoji ever reaches the screen.
+ */
+export const EMOJI_ICON: Record<string, IconName> = {
+  '🎉': 'sparkle', '🥳': 'sparkle', '🤝': 'user', '✅': 'check', '☑️': 'check', '✔️': 'check', '✔': 'check', '✓': 'check',
+  '🌙': 'clock', '🔒': 'lock', '🔐': 'lock', '🔓': 'unlock', '📱': 'phone', '⭐': 'star', '🌟': 'star',
+  '🚗': 'car', '🚙': 'car', '🚘': 'car', '🔧': 'wrench', '🛠️': 'wrench', '🛠': 'wrench', '🧰': 'wrench', '🔩': 'gear',
+  '📅': 'calendar', '📆': 'calendar', '🗓️': 'calendar', '🗓': 'calendar', '📷': 'camera', '📸': 'camera', '🖼️': 'camera',
+  '💬': 'chat', '🛡️': 'shield', '🛡': 'shield', '💵': 'dollar', '💰': 'dollar', '💸': 'dollar', '💲': 'dollar', '⚖️': 'dollar',
+  '💳': 'wallet', '🏆': 'trophy', '📊': 'chart', '📈': 'chart', '📏': 'gauge', '⚠️': 'alert', '⚠': 'alert', '🚫': 'alert', '🚩': 'alert', '❓': 'alert',
+  '🔥': 'flame', '🎁': 'gift', '🏷️': 'tag', '🏷': 'tag', '👤': 'user', '👥': 'user', '👋': 'user', '📄': 'file', '📋': 'file', '🧾': 'file',
+  '📑': 'file', '🗂️': 'file', '🗂': 'file', '📚': 'file', '📍': 'pin', '🛣️': 'pin', '🧭': 'pin', '🔔': 'bell', '✏️': 'pencil', '✒️': 'pencil',
+  '📝': 'pencil', '✍️': 'pencil', '✎': 'pencil', '📧': 'mail', '✉️': 'mail', '🔍': 'search', '🔎': 'search', '🕵️': 'search', '⚙️': 'gear',
+  '🌐': 'globe', '🔗': 'globe', '⏰': 'clock', '🕐': 'clock', '⚡': 'bolt', '📡': 'bolt', '🚀': 'bolt', '⛽': 'fuel', '🪟': 'glass',
+  '📦': 'box', '🛞': 'tire', '↺': 'tire', '🛢️': 'oil', '🛢': 'oil', '🛑': 'brake', '🔊': 'brake', '🌬️': 'filter', '🍃': 'filter',
+  '😮‍💨': 'filter', '🔌': 'filter', '💧': 'droplet', '💦': 'droplet', '🧴': 'droplet', '🌧️': 'wiper', '🔋': 'battery', '🔑': 'key',
+  '♨️': 'kettle', '🪠': 'plunger', '🧽': 'sponge', '🧤': 'sponge', '🧼': 'sponge', '🖌️': 'brush', '🎨': 'palette', '💡': 'bulb',
+  '☀️': 'bulb', '🧲': 'magnet', '🌫️': 'fog', '❄️': 'snowflake', '✨': 'sparkle', '🤖': 'sparkle', '♾️': 'sparkle', '🧪': 'sparkle',
+  '❤️': 'heart', '🤍': 'heart', '💚': 'heart', '👍': 'check', '🗑️': 'trash', '🔁': 'swap', '➕': 'plus', '✕': 'close', '➤': 'arrow',
+  '📞': 'phone', '☎️': 'phone', '🎯': 'dot', '🏁': 'dot', '🏠': 'home', '🪑': 'seat',
+};
+
+/** Accent colour per maintenance / DIY subject (oil amber, tire blue, filter teal, fluids cyan, brakes red, inspection lavender). */
+export const SUBJECT_COLOR: Partial<Record<IconName, string>> = {
+  oil: '#F0B44E', tire: '#6fa0ff', wiper: '#6fa0ff', filter: '#4FE3C1', fog: '#4FE3C1', sponge: '#4FE3C1', seat: '#4FE3C1',
+  droplet: '#5BD1F5', glass: '#5BD1F5', snowflake: '#5BD1F5', brake: '#f0726e', kettle: '#f0726e', flame: '#f0726e',
+  search: '#B7B1F2', plunger: '#B7B1F2', magnet: '#B7B1F2', palette: '#B7B1F2', battery: '#2EE87E', key: '#F0B44E',
+  brush: '#F0B44E', bulb: '#F0B44E', star: '#F0B44E', gauge: '#6fa0ff', wrench: '#b8c3d3', car: '#4FE3C1',
+};
+export function subjectColor(glyph: string | undefined | null, fallback = '#b8c3d3'): string {
+  return SUBJECT_COLOR[iconForGlyph(glyph)] ?? fallback;
+}
+
+/** Resolve an icon key or legacy emoji to an icon name (falls back to a dot). */
+export function iconForGlyph(glyph: string | undefined | null): IconName {
+  if (!glyph) return 'dot';
+  const g = glyph.trim();
+  if (isIconName(g)) return g;
+  return EMOJI_ICON[g] ?? EMOJI_ICON[g.replace(/\uFE0F/g, '')] ?? 'dot';
+}
+
+/** Outline icon for an icon key or legacy emoji string (drop-in for a `<Text>{emoji}</Text>`). */
+export function Glyph({ glyph, size = 22, color = '#e8edf5', strokeWidth }: { glyph: string | undefined | null; size?: number; color?: string; strokeWidth?: number }) {
+  return <Icon name={iconForGlyph(glyph)} size={size} color={color} strokeWidth={strokeWidth} />;
+}

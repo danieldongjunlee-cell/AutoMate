@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -21,14 +22,14 @@ import { BOOKING_MONTH, dealerById, defaultBookingISO, QUOTES } from '../../serv
 import { useAppStore } from '../../store/useAppStore';
 import { formatDayLabel } from '../../utils/dates';
 import { useDistance } from '../../i18n';
-import { radii, spacing, useTheme } from '../../theme';
+import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookingConfirm'>;
 type Route = RouteProp<HomeStackParamList, 'BookingConfirm'>;
 
 const BRING_ITEMS = [
-  { icon: '📄', label: "Insurance card & driver's license" },
-  { icon: '🔑', label: 'Vehicle keys' },
+  { icon: 'file', label: "Insurance card & driver's license" },
+  { icon: 'key', label: 'Vehicle keys' },
 ];
 
 /** Wireframe s-booking-confirm: success summary after accepting a quote. */
@@ -38,6 +39,10 @@ export function BookingConfirmScreen() {
   const { colors } = useTheme();
   const dist = useDistance();
   const reminderPref = useAppStore((s) => s.reminderPref);
+  const damageParts = useAppStore((s) => s.damageParts);
+  const serviceLabel = damageParts.length
+    ? `${damageParts[0].part} ${damageParts[0].type.split(',')[0].toLowerCase()}${damageParts.length > 1 ? ` +${damageParts.length - 1}` : ''}`
+    : 'Rear bumper dent';
 
   const dealer = dealerById(route.params?.dealerId);
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
@@ -103,10 +108,10 @@ export function BookingConfirmScreen() {
           </View>
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <SummaryCell label="Date & time" value={dateLabel} sub={time} subColor={colors.primaryDark} emphasizeSub />
-          <SummaryCell label="Estimate" value={priceLabel} sub={isCash ? 'cash payment' : '± after inspection'} />
-          <SummaryCell label="Service" value="Rear bumper dent" sub={`${quote?.parts ?? 'OEM'} parts`} />
-          <SummaryCell label="Drop-off" value="Self drop-off" sub="15 min check-in" />
+          <SummaryCell label="Service" value={serviceLabel} sub={`${quote?.parts ?? 'OEM'} parts`} />
+          <SummaryCell label="Date & time" value={`${dateLabel} · ${time}`} />
+          <SummaryCell label="Pay at shop" value={priceLabel} sub={isCash ? '$0 today · cash at pickup' : '$0 today · ± after inspection'} subColor={palette.mint} />
+          <SummaryCell label="Duration" value="~2 days" sub="Self drop-off · 15 min check-in" />
         </View>
       </Card>
 
@@ -127,7 +132,7 @@ export function BookingConfirmScreen() {
               borderBottomColor: colors.divider,
             }}
           >
-            <Text style={{ fontSize: 18 }}>{icon}</Text>
+            <Glyph glyph={icon} size={18} color={colors.textSecondary} />
             <Text style={{ fontSize: 14, color: colors.textPrimary }}>{label}</Text>
           </View>
         ))}
@@ -135,7 +140,7 @@ export function BookingConfirmScreen() {
 
       {/* Primary action: manage (reschedule / cancel) the booking. */}
       <PrimaryButton
-        label="🗓 Reschedule"
+        label="Reschedule"
         onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
       />
       <Tappable
@@ -161,7 +166,7 @@ export function BookingConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
-            📅 Add to calendar
+            Add to calendar
           </Text>
         </Tappable>
         <Tappable
@@ -178,7 +183,7 @@ export function BookingConfirmScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
-            📍 View on map
+            View on map
           </Text>
         </Tappable>
       </View>

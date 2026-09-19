@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -68,7 +69,9 @@ export function ProfEarnScreen() {
             borderBottomColor: colors.divider,
           }}
         >
-          <Text style={{ fontSize: 18, width: 30, textAlign: 'center' }}>{action.icon}</Text>
+          <View style={{ width: 30, alignItems: 'center' }}>
+            <Glyph glyph={action.icon} size={20} color={colors.textSecondary} />
+          </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
               {action.title}

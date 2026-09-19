@@ -6,7 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
-import { PointsBadge } from '../../components/FilterChips';
+import { PointsBadge } from '../../components/PointsBadge';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { TextField } from '../../components/TextField';
 import { EARN_RULES, pointsToUsd } from '../../config/points';
@@ -64,7 +64,7 @@ export function MaintManualScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.primaryDark }}>✏️ Manual entry</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>Manual entry</Text>
         </View>
         <PointsBadge points={EARN_RULES.manualLog} usd />
       </View>

@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -89,13 +90,13 @@ export function ProSubscribeScreen() {
             justifyContent: 'center',
           }}
         >
-          {active && <Text style={{ color: '#fff', fontSize: 11 }}>✓</Text>}
+          {active && <Icon name="check" size={11} color={'#fff'} strokeWidth={2.4} />}
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{title}</Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>{sub}</Text>
         </View>
-        {badge && <Badge label={badge} variant="success" />}
+        {badge && <Badge label={badge} variant="warning" />}
       </Tappable>
     );
   };
@@ -106,7 +107,7 @@ export function ProSubscribeScreen() {
         colors={[palette.dark, palette.navyMid]}
         style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
-        <Text style={{ fontSize: 26 }}>⭐</Text>
+        <Icon name="star" size={26} color={colors.textSecondary} />
         <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
           Skip every security deposit — and more.
@@ -116,7 +117,7 @@ export function ProSubscribeScreen() {
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         {BENEFITS.map((b) => (
           <View key={b} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: 4 }}>
-            <Text style={{ color: colors.success, fontWeight: '800' }}>✓</Text>
+            <Icon name="check" size={18} color={colors.success} strokeWidth={2.4} />
             <Text style={{ fontSize: 14, color: colors.textSecondary }}>{b}</Text>
           </View>
         ))}
@@ -134,7 +135,7 @@ export function ProSubscribeScreen() {
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>
-          💚 Just $4 a month — cheaper than one coffee
+          Just $4 a month — cheaper than one coffee
         </Text>
       </View>
 
@@ -152,7 +153,7 @@ export function ProSubscribeScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 20 }}>💳</Text>
+        <Icon name="wallet" size={20} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             {cardLabel}
@@ -172,7 +173,7 @@ export function ProSubscribeScreen() {
 
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
-          variant="success"
+          variant="warning"
           label={`Start Pro — ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} →`}
           loading={busy}
           onPress={startPro}

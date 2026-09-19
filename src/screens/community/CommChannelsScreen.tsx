@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
@@ -122,7 +123,7 @@ export function CommChannelsScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 15, color: colors.textTertiary }}>🔍</Text>
+        <Icon name="search" size={15} color={colors.textTertiary} />
         <TextInput
           value={query}
           onChangeText={setQuery}
@@ -196,7 +197,7 @@ export function CommChannelsScreen() {
                   color: joined ? colors.primaryDeep : colors.textPrimary,
                 }}
               >
-                {channel.emoji} {channel.name}
+                {channel.name}
               </Text>
               <Text style={{ fontSize: 13, color: colors.textTertiary }}>
                 {channel.members.toLocaleString()} members
@@ -239,7 +240,7 @@ export function CommChannelsScreen() {
           marginTop: spacing.xs,
         }}
       >
-        <Text style={{ fontSize: 17 }}>💬</Text>
+        <Icon name="chat" size={17} color={colors.textSecondary} />
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
           Share tips, ask questions, help fellow {brand} owners
         </Text>

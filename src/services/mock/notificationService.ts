@@ -17,7 +17,7 @@ export interface AppNotification {
 let notifications: AppNotification[] = [
   {
     id: 'n-quote-accepted',
-    icon: '💰',
+    icon: 'dollar',
     title: 'Honda Fairfax accepted your quote',
     ago: '2 hours ago',
     body: 'Your rear bumper estimate ($320–$345) is ready. Tap to book your appointment.',
@@ -27,7 +27,7 @@ let notifications: AppNotification[] = [
   },
   {
     id: 'n-oil-due',
-    icon: '🔧',
+    icon: 'wrench',
     title: 'Oil change due soon',
     ago: 'Yesterday',
     body: 'Your 2019 Accord is ~800 miles from its next oil change. Schedule now with a partner dealer.',
@@ -37,7 +37,7 @@ let notifications: AppNotification[] = [
   },
   {
     id: 'n-gold-tier',
-    icon: '🏆',
+    icon: 'trophy',
     title: 'You reached Gold tier!',
     ago: '2 days ago',
     body: "Congrats — you've unlocked exclusive dealer discounts and early access to new features.",
@@ -47,7 +47,7 @@ let notifications: AppNotification[] = [
   },
   {
     id: 'n-shops-responded',
-    icon: '📊',
+    icon: 'chart',
     title: '8 shops responded to your request',
     ago: '3 days ago',
     body: 'AutoFix Pro quoted $295 — the lowest in your area. View all quotes.',
@@ -57,7 +57,7 @@ let notifications: AppNotification[] = [
   },
   {
     id: 'n-reply',
-    icon: '💬',
+    icon: 'chat',
     title: 'Sarah M. replied to your post',
     ago: '4 days ago',
     body: '"That DIY dent trick actually works — saved me $400 too!"',
@@ -67,7 +67,7 @@ let notifications: AppNotification[] = [
   },
   {
     id: 'n-upcoming',
-    icon: '📅',
+    icon: 'calendar',
     title: 'Upcoming: Honda Fairfax — Mon Apr 7',
     ago: '5 days ago',
     body: 'Oil change at 8:00 AM. Reminder will be sent the day before.',

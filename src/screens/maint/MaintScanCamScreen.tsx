@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
@@ -6,7 +7,7 @@ import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 import { Tappable } from '../../components/Tappable';
 
 import { LiveCamera } from '../../components/LiveCamera';
-import { PointsBadge } from '../../components/FilterChips';
+import { PointsBadge } from '../../components/PointsBadge';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Screen } from '../../components/ui';
 import { EARN_RULES } from '../../config/points';
@@ -97,7 +98,7 @@ export function MaintScanCamScreen() {
             paddingVertical: 5,
           }}
         >
-          <Text style={{ fontSize: 14, color: colors.primaryDark }}>📷 Receipt scanner</Text>
+          <Text style={{ fontSize: 14, color: colors.primaryDark }}>Receipt scanner</Text>
         </View>
         <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
@@ -160,7 +161,7 @@ export function MaintScanCamScreen() {
                 marginBottom: 34,
               }}
             >
-              🧾 Receipt {captured.source === 'gallery' ? 'imported' : 'captured'} ✓
+              Receipt {captured.source === 'gallery' ? 'imported' : 'captured'} 
             </Text>
           </View>
         ) : null}
@@ -249,7 +250,7 @@ export function MaintScanCamScreen() {
           marginBottom: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 16 }}>💡</Text>
+        <Icon name="bulb" size={16} color={colors.textSecondary} />
         <View>
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
             Tips
@@ -275,7 +276,7 @@ export function MaintScanCamScreen() {
         })}
       >
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          {captured?.source === 'gallery' ? '✓ Imported from gallery — repick' : '🗂 Gallery instead'}
+          {captured?.source === 'gallery' ? 'Imported from gallery — repick' : 'Gallery instead'}
         </Text>
       </Tappable>
 

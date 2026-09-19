@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
@@ -184,7 +185,7 @@ export function CommPostScreen() {
               marginBottom: spacing.sm,
             }}
           >
-            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }}>📸 Photo attached</Text>
+            <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.4)' }}>Photo attached</Text>
           </LinearGradient>
         ) : null}
         <View
@@ -205,17 +206,17 @@ export function CommPostScreen() {
                 color: postLiked ? colors.danger : colors.textTertiary,
               }}
             >
-              {postLiked ? '❤️' : '🤍'} {likeCount}
+              <Icon name="heart" size={14} color={postLiked ? colors.danger : colors.textTertiary} filled={postLiked} /> {likeCount}
             </Text>
           </Tappable>
           <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primary }}>
-            💬 {replyCount} replies
+            {replyCount} replies
           </Text>
           <View style={{ flex: 1 }} />
           {!isOwnPost ? (
             <>
               <Tappable onPress={onReport} hitSlop={6}>
-                <Text style={{ fontSize: 14, color: colors.textTertiary }}>🚩 Report</Text>
+                <Text style={{ fontSize: 14, color: colors.textTertiary }}>Report</Text>
               </Tappable>
               <Tappable onPress={onBlock} hitSlop={6}>
                 <Text style={{ fontSize: 14, color: colors.textTertiary }}>Block</Text>
@@ -258,7 +259,7 @@ export function CommPostScreen() {
                     color: liked ? colors.danger : colors.textTertiary,
                   }}
                 >
-                  {liked ? '❤️' : '🤍'} {cl.count}
+                  <Icon name="heart" size={13} color={liked ? colors.danger : colors.textTertiary} filled={liked} /> {cl.count}
                 </Text>
               </Tappable>
             </View>
@@ -305,9 +306,7 @@ export function CommPostScreen() {
           style={{ flex: 1, fontSize: 14, color: colors.textPrimary, paddingVertical: 0 }}
         />
         <Tappable onPress={sendComment} hitSlop={8} disabled={sending}>
-          <Text style={{ fontSize: 18, color: draft.trim() && !sending ? colors.primary : colors.disabled }}>
-            ➤
-          </Text>
+          <Icon name="arrow" size={18} color={draft.trim() && !sending ? colors.primary : colors.disabled} />
         </Tappable>
       </View>
     </Screen>

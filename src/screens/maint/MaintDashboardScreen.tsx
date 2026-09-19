@@ -129,7 +129,7 @@ export function MaintDashboardScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md }}>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>Estimated market value</Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>Checked today · VIN-decoded ✓</Text>
+            <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>Checked today · VIN-decoded </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, lineHeight: 26 }}>${mv.value.toLocaleString()}</Text>

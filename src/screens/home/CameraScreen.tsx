@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -84,7 +85,7 @@ export function CameraScreen() {
                 paddingVertical: 8,
               }}
             >
-              {on ? <Text style={{ color: colors.onPrimary, fontSize: 13 }}>✓</Text> : null}
+              {on ? <Icon name="check" size={13} color={colors.onPrimary} strokeWidth={2.4} /> : null}
               <Text
                 style={{
                   fontSize: 14,
@@ -121,7 +122,7 @@ export function CameraScreen() {
                 paddingVertical: 1,
               }}
             >
-              <Text style={{ fontSize: 11, fontWeight: '700', color: '#fff' }}>✔</Text>
+              <Icon name="check" size={11} color={'#fff'} strokeWidth={2.4} />
             </View>
           </View>
         ))}

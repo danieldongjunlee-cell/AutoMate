@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Icon } from './Icon';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -11,27 +12,12 @@ import { radii, spacing, useTheme } from '../theme';
  * s-booking-confirm and s-maint-schedule-confirm — one pattern, two routes).
  */
 
-/** ✅ circle + headline + subtitle. */
+/** Headline + subtitle (no hero decoration — canvas "You're all set!"). */
 export function SuccessHeader({ title, subtitle }: { title: string; subtitle: string }) {
   const { colors } = useTheme();
   return (
-    <View style={{ alignItems: 'center', paddingVertical: spacing.lg }}>
-      <View
-        style={{
-          width: 80,
-          height: 80,
-          borderRadius: 40,
-          backgroundColor: colors.successSurface,
-          borderWidth: 2.5,
-          borderColor: colors.success,
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        <Text style={{ fontSize: 36 }}>✅</Text>
-      </View>
-      <Text style={{ fontSize: 24, fontWeight: '700', color: colors.successDeep, marginBottom: 2 }}>
+    <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
+      <Text style={{ fontSize: 26, fontWeight: '800', color: colors.textPrimary, marginBottom: 4, letterSpacing: -0.3 }}>
         {title}
       </Text>
       <Text style={{ fontSize: 14, color: colors.textTertiary }}>{subtitle}</Text>
@@ -56,7 +42,7 @@ export function SummaryCell({
 }) {
   const { colors } = useTheme();
   return (
-    <View style={{ width: '50%', paddingVertical: spacing.xs }}>
+    <View style={{ width: '100%', paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.divider }}>
       <Text
         style={{
           fontSize: 12,
@@ -142,7 +128,7 @@ export const REMINDER_COPY: Record<ReminderPref, string> = {
 };
 
 /**
- * 🔔 tinted reminder row. Edit opens a timing modal (1 day / 2 days /
+ * tinted reminder row. Edit opens a timing modal (1 day / 2 days /
  * 2 hours before / morning of) saved to the store (user-feedback pass 2).
  */
 export function ReminderRow() {
@@ -165,7 +151,7 @@ export function ReminderRow() {
         marginBottom: spacing.sm,
       }}
     >
-      <Text style={{ fontSize: 20 }}>🔔</Text>
+      <Icon name="bell" size={20} color={colors.textSecondary} />
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
           Reminder set
@@ -209,7 +195,7 @@ export function ReminderRow() {
                 paddingBottom: spacing.xs,
               }}
             >
-              🔔 Remind me
+              Remind me
             </Text>
             {REMINDER_OPTIONS.map((option, i) => {
               const on = option === pref;
@@ -245,7 +231,7 @@ export function ReminderRow() {
                       {REMINDER_COPY[option]}
                     </Text>
                   </View>
-                  {on ? <Text style={{ fontSize: 16, color: colors.primary }}>✔</Text> : null}
+                  {on ? <Icon name="check" size={16} color={colors.primary} strokeWidth={2.4} /> : null}
                 </Tappable>
               );
             })}

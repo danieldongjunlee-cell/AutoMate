@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, Platform, Text, View } from 'react-native';
 
 import { Icon } from './Icon';
 import { Tappable } from './Tappable';
@@ -16,6 +16,7 @@ export function ProLockOverlay({
   subtitle,
   cta = 'Unlock Pro · $48/yr',
   onDark,
+  blur,
   onUnlock,
 }: {
   children: React.ReactNode;
@@ -23,12 +24,14 @@ export function ProLockOverlay({
   subtitle: string;
   cta?: string;
   onDark?: boolean;
+  /** Blur the locked preview (web) on top of dimming it. */
+  blur?: boolean;
   onUnlock?: () => void;
 }) {
   const { colors } = useTheme();
   return (
     <View>
-      <View style={{ opacity: 0.4 }} pointerEvents="none">
+      <View style={[{ opacity: 0.4 }, blur && Platform.OS === 'web' ? ({ filter: 'blur(3px)' } as object) : null]} pointerEvents="none">
         {children}
       </View>
       <View

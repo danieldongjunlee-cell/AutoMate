@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
@@ -22,7 +23,7 @@ import { palette, radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ConfirmSubmit'>;
 
-/** Per-card action chip (✎ Edit / 📷 + Photos / ✕ Remove). */
+/** Per-card action chip (Edit / + Photos / Remove). */
 function ActionChip({
   label,
   danger,
@@ -104,7 +105,7 @@ function PartCard({
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 20 }}>🚗</Text>
+            <Icon name="car" size={20} color={colors.textSecondary} />
           </View>
         )}
         <View style={{ flex: 1 }}>
@@ -141,9 +142,9 @@ function PartCard({
         </View>
       ) : null}
       <View style={{ flexDirection: 'row', gap: 6 }}>
-        <ActionChip label="✎ Edit" onPress={onEdit} />
-        <ActionChip label="📷 + Photos" onPress={onAddPhotos} />
-        <ActionChip label="✕ Remove" danger onPress={onRemove} />
+        <ActionChip label="Edit" onPress={onEdit} />
+        <ActionChip label="+ Photos" onPress={onAddPhotos} />
+        <ActionChip label="Remove" danger onPress={onRemove} />
       </View>
     </View>
   );
@@ -151,8 +152,8 @@ function PartCard({
 
 /** Staged copy shown while the AI service call is in flight. */
 const ANALYZE_STAGES = [
-  '🔍 Analyzing your photos…',
-  `📡 Contacting ${QUOTE_REQUEST.shopsNotified} shops…`,
+  'Analyzing your photos…',
+  `Contacting ${QUOTE_REQUEST.shopsNotified} shops…`,
 ];
 
 /** In-screen AI analyzing state: circular spinner + staged status text. */
@@ -376,7 +377,6 @@ export function ConfirmSubmitScreen() {
     return (
       <Screen>
         <View style={{ alignItems: 'center', paddingTop: spacing.xl, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>{dup ? '🔁' : '📋'}</Text>
           <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: 6, textAlign: 'center' }}>
             {dup ? 'Same as your previous request' : 'You already have an open quote request'}
           </Text>
@@ -415,7 +415,7 @@ export function ConfirmSubmitScreen() {
           }}
         >
           <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
-            ⚠️ Submitting the new request removes your previous quotes, and you&apos;ll wait to
+            Submitting the new request removes your previous quotes, and you&apos;ll wait to
             receive new quotes until the auto shops respond.
           </Text>
         </View>
@@ -465,7 +465,7 @@ export function ConfirmSubmitScreen() {
           }}
         >
           <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 4 }}>
-            🤖 AI estimated repair cost
+            AI estimated repair cost
           </Text>
           <Text style={{ fontSize: 30, fontWeight: '800', color: colors.successDeep }}>
             ${est.priceLow}–${est.priceHigh}
@@ -520,7 +520,7 @@ export function ConfirmSubmitScreen() {
                 elevation: 5,
               }}
             >
-              <Text style={{ fontSize: 28, marginBottom: 4 }}>🔒</Text>
+              <Icon name="lock" size={28} color={colors.textSecondary} />
               <Text style={{ fontSize: 14, fontWeight: '800', color: colors.textPrimary, textAlign: 'center' }}>
                 Quotes from nearby shops
               </Text>
@@ -544,7 +544,6 @@ export function ConfirmSubmitScreen() {
     return (
       <Screen>
         <View style={{ alignItems: 'center', paddingTop: spacing.xl, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 44, marginBottom: spacing.sm }}>🚫</Text>
           <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: 6, textAlign: 'center' }}>
             Couldn’t detect car damage
           </Text>
@@ -648,7 +647,7 @@ export function ConfirmSubmitScreen() {
           opacity: pressed ? 0.6 : 1,
         })}
       >
-        <Text style={{ fontSize: 22, color: colors.primary, marginBottom: 3 }}>➕</Text>
+        <Icon name="plus" size={22} color={colors.primary} strokeWidth={2.4} />
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primaryDark, marginBottom: 2 }}>
           Add another damaged part
         </Text>

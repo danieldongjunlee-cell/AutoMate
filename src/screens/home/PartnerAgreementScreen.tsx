@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
@@ -49,7 +50,7 @@ export function PartnerAgreementScreen() {
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.warningDeep, marginBottom: 3 }}>
-          ⚠ Penalties for abuse
+          Penalties for abuse
         </Text>
         <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 18 }}>
           Poaching or quote-dodging → warning → suspension → permanent removal plus a recovery fee.
@@ -72,13 +73,13 @@ export function PartnerAgreementScreen() {
             justifyContent: 'center',
           }}
         >
-          {agreed && <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text>}
+          {agreed && <Icon name="check" size={13} color={'#fff'} strokeWidth={2.4} />}
         </View>
         <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary }}>
           As the shop owner, I agree to these terms.
         </Text>
       </Tappable>
-      <PrimaryButton variant="success" label="Accept & continue →" disabled={!agreed} onPress={() => navigation.goBack()} />
+      <PrimaryButton label="Accept & continue →" disabled={!agreed} onPress={() => navigation.goBack()} />
     </Screen>
   );
 }

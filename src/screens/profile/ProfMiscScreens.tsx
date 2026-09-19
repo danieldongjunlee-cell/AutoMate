@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
@@ -126,7 +127,7 @@ export function ProfHelpCenterScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 22 }}>🔍</Text>
+        <Icon name="search" size={22} color={colors.textSecondary} />
         <TextInput
           value={query}
           onChangeText={setQuery}
@@ -150,7 +151,9 @@ export function ProfHelpCenterScreen() {
               opacity: pressed ? 0.6 : 1,
             })}
           >
-            <Text style={{ fontSize: 17, marginRight: spacing.md }}>{topic.icon}</Text>
+            <View style={{ marginRight: spacing.md }}>
+              <Glyph glyph={topic.icon} size={20} color={colors.textSecondary} />
+            </View>
             <Text style={{ flex: 1, fontSize: 15, color: colors.textPrimary }}>{topic.title}</Text>
             <Text style={{ fontSize: 17, color: colors.disabled }}>›</Text>
           </Tappable>
@@ -212,7 +215,9 @@ export function ProfLanguageScreen() {
               opacity: pressed ? 0.6 : 1,
             })}
           >
-            <Text style={{ fontSize: 18, marginRight: spacing.md }}>{lang.flag}</Text>
+            <View style={{ width: 34, height: 26, borderRadius: 7, backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center', marginRight: spacing.md }}>
+              <Text style={{ fontSize: 11, fontWeight: '800', color: colors.textSecondary }}>{lang.flag}</Text>
+            </View>
             <Text
               style={{
                 flex: 1,
@@ -223,7 +228,7 @@ export function ProfLanguageScreen() {
               {lang.name}
             </Text>
             {lang.name === language ? (
-              <Text style={{ fontSize: 18, color: colors.primary }}>✔</Text>
+              <Icon name="check" size={18} color={colors.primary} strokeWidth={2.4} />
             ) : null}
           </Tappable>
         ))}
@@ -271,7 +276,7 @@ export function ProfDistanceScreen() {
                 {row.sub}
               </Text>
             </View>
-            {unit === row.id ? <Text style={{ fontSize: 18, color: colors.primary }}>✔</Text> : null}
+            {unit === row.id ? <Icon name="check" size={18} color={colors.primary} strokeWidth={2.4} /> : null}
           </Tappable>
         ))}
       </Card>

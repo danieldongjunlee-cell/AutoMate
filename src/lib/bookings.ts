@@ -29,7 +29,7 @@ const toBooking = (r: Row): AppBooking => ({
   kind: (r.kind as AppBooking['kind']) ?? 'maintenance',
   dealerId: r.dealer_id ?? undefined,
   brand: r.brand ?? '',
-  icon: r.icon ?? '📅',
+  icon: r.icon ?? 'calendar',
   title: r.title ?? '',
   dealerName: r.dealer_name ?? '',
   dateLabel: r.date_label ?? '',

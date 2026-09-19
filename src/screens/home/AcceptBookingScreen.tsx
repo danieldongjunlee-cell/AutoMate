@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -85,7 +86,7 @@ export function AcceptBookingScreen() {
       kind: 'repair',
       brand,
       dealerId: dealer.id,
-      icon: '🚗',
+      icon: 'car',
       title: 'Rear bumper repair',
       dealerName: dealer.name,
       dateLabel: dateLabel!,
@@ -204,7 +205,7 @@ export function AcceptBookingScreen() {
               marginTop: 1,
             }}
           >
-            {agreed ? <Text style={{ color: '#fff', fontSize: 13 }}>✓</Text> : null}
+            {agreed ? <Icon name="check" size={13} color={'#fff'} strokeWidth={2.4} /> : null}
           </View>
           <Text style={{ flex: 1, fontSize: 13, color: colors.textSecondary, lineHeight: 18 }}>
             I agree to AutoMate&apos;s{' '}

@@ -1,4 +1,5 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Icon } from './Icon';
 import React, { useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
@@ -65,7 +66,7 @@ export function LiveCamera({
   if (!permission.granted) {
     return frame(
       <View style={{ alignItems: 'center', padding: spacing.lg }}>
-        <Text style={{ fontSize: 40, marginBottom: 6 }}>📷</Text>
+        <Icon name="camera" size={40} color={palette.textSecondary} />
         <Text style={{ color: 'rgba(255,255,255,.8)', fontSize: 14, textAlign: 'center', marginBottom: spacing.sm }}>
           Allow camera access to take photos
         </Text>
@@ -100,7 +101,7 @@ export function LiveCamera({
           {busy ? (
             <ActivityIndicator color={palette.primary} />
           ) : (
-            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#fff' }} />
+            <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#e8edf5' }} />
           )}
         </Tappable>
         {shutterLabel ? (

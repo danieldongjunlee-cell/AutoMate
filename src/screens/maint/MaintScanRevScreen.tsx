@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -6,7 +7,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
-import { PointsBadge } from '../../components/FilterChips';
+import { PointsBadge } from '../../components/PointsBadge';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { EARN_RULES, pointsToUsd } from '../../config/points';
@@ -80,7 +81,7 @@ export function MaintScanRevScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 18 }}>✅</Text>
+        <Icon name="check" size={18} color={colors.textSecondary} strokeWidth={2.4} />
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
           Scanned — verify below
         </Text>

@@ -50,7 +50,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'wiper-blades',
     title: 'Replace wiper blades',
-    emoji: '🌧️',
+    emoji: 'wiper',
     minutes: 10,
     difficulty: 'Easy',
     tools: ['New wiper blades (check your size)', 'A towel'],
@@ -65,8 +65,8 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'Replace blades every 6–12 months. If they chatter or streak even when new, wipe the rubber edge with a little glass cleaner — road film is often the culprit.',
     materials: [
-      mat('Wiper blades (pair)', '🌧️', 'windshield,wiper', '$12.99', 'AutoZone', 'https://www.autozone.com/search?searchText=wiper+blades'),
-      mat('Glass cleaner', '🧴', 'glass,cleaner,spray', '$3.48', 'Walmart', 'https://www.walmart.com/search?q=auto+glass+cleaner'),
+      mat('Wiper blades (pair)', 'wiper', 'windshield,wiper', '$12.99', 'AutoZone', 'https://www.autozone.com/search?searchText=wiper+blades'),
+      mat('Glass cleaner', 'droplet', 'glass,cleaner,spray', '$3.48', 'Walmart', 'https://www.walmart.com/search?q=auto+glass+cleaner'),
     ],
     videoUrl: vid('how to replace windshield wiper blades'),
     videoTitle: 'Replace wiper blades in 2 minutes',
@@ -74,7 +74,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'engine-air-filter',
     title: 'Change engine air filter',
-    emoji: '🍃',
+    emoji: 'filter',
     minutes: 15,
     difficulty: 'Easy',
     tools: ['New engine air filter', 'Flat screwdriver (sometimes)', 'Shop towel'],
@@ -92,7 +92,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'cabin-air-filter',
     title: 'Replace cabin air filter',
-    emoji: '😮‍💨',
+    emoji: 'filter',
     minutes: 15,
     difficulty: 'Easy',
     tools: ['New cabin air filter', 'Owner’s manual (for location)'],
@@ -107,7 +107,7 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'A clogged cabin filter causes weak A/C airflow and musty smells. Replace it about once a year or every 15,000 miles.',
     materials: [
-      mat('Cabin air filter', '😮‍💨', 'car,air,filter', '$8.99', 'Amazon', 'https://www.amazon.com/s?k=cabin+air+filter'),
+      mat('Cabin air filter', 'filter', 'car,air,filter', '$8.99', 'Amazon', 'https://www.amazon.com/s?k=cabin+air+filter'),
     ],
     videoUrl: vid('how to replace cabin air filter behind glovebox'),
     videoTitle: 'Replace a cabin air filter (glovebox)',
@@ -115,7 +115,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'tire-pressure',
     title: 'Check & top up tire pressure',
-    emoji: '🛞',
+    emoji: 'tire',
     minutes: 15,
     difficulty: 'Easy',
     tools: ['Tire pressure gauge', 'Air pump or gas-station air machine'],
@@ -133,7 +133,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'washer-fluid',
     title: 'Top up windshield washer fluid',
-    emoji: '💦',
+    emoji: 'droplet',
     minutes: 5,
     difficulty: 'Easy',
     tools: ['Washer fluid (not plain water)', 'Funnel (optional)'],
@@ -150,7 +150,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'oil-level',
     title: 'Check engine oil level',
-    emoji: '🛢️',
+    emoji: 'oil',
     minutes: 10,
     difficulty: 'Easy',
     tools: ['Clean paper towel or rag', 'Engine oil (only if topping up)'],
@@ -168,7 +168,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'key-fob-battery',
     title: 'Replace key fob battery',
-    emoji: '🔑',
+    emoji: 'key',
     minutes: 10,
     difficulty: 'Easy',
     tools: ['New coin battery (often CR2032)', 'Small flat screwdriver', 'Tape (optional)'],
@@ -186,7 +186,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'jump-start',
     title: 'Jump-start a dead battery',
-    emoji: '🔋',
+    emoji: 'battery',
     minutes: 20,
     difficulty: 'Medium',
     tools: ['Jumper cables or a portable jump pack', 'A working donor vehicle (for cables)', 'Gloves & eye protection'],
@@ -205,7 +205,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'boiling-water-dent',
     title: 'Boiling water dent method',
-    emoji: '♨️',
+    emoji: 'kettle',
     minutes: 15,
     difficulty: 'Easy',
     tools: ['Kettle or pot of boiling water', 'Rubber gloves', 'Cup-style plunger', 'A towel'],
@@ -220,9 +220,9 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'Works best on warm days and on bumpers where the plastic flexes. It will not fix dents with cracked or chipped paint.',
     materials: [
-      mat('Rubber dish gloves', '🧤', 'rubber,gloves', '$5.98', 'Walmart', 'https://www.walmart.com/search?q=rubber+gloves'),
-      mat('Cup-style plunger', '🪠', 'plunger,rubber', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
-      mat('Electric kettle', '♨️', 'electric,kettle', '$14.99', 'Amazon', 'https://www.amazon.com/s?k=electric+kettle'),
+      mat('Rubber dish gloves', 'sponge', 'rubber,gloves', '$5.98', 'Walmart', 'https://www.walmart.com/search?q=rubber+gloves'),
+      mat('Cup-style plunger', 'plunger', 'plunger,rubber', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Electric kettle', 'kettle', 'electric,kettle', '$14.99', 'Amazon', 'https://www.amazon.com/s?k=electric+kettle'),
     ],
     videoUrl: vid('how to fix car bumper dent with boiling water'),
     videoTitle: 'How to pop a bumper dent with boiling water',
@@ -230,7 +230,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'plunger-dent',
     title: 'Plunger pull method',
-    emoji: '🪠',
+    emoji: 'plunger',
     minutes: 12,
     difficulty: 'Medium',
     tools: ['Clean cup-style plunger (not a flanged toilet plunger)', 'Water', 'A towel'],
@@ -244,8 +244,8 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'Keep the pull straight, not at an angle, or the seal breaks. A sharp crease likely needs paintless dent repair by a pro.',
     materials: [
-      mat('Cup-style sink plunger', '🪠', 'plunger,cup', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
-      mat('Microfiber towel', '🧽', 'microfiber,cloth', '$1.97', 'Walmart', 'https://www.walmart.com/search?q=microfiber+towel'),
+      mat('Cup-style sink plunger', 'plunger', 'plunger,cup', '$6.97', 'Home Depot', 'https://www.homedepot.com/s/cup%20plunger'),
+      mat('Microfiber towel', 'sponge', 'microfiber,cloth', '$1.97', 'Walmart', 'https://www.walmart.com/search?q=microfiber+towel'),
     ],
     videoUrl: vid('how to remove car dent with plunger'),
     videoTitle: 'Pull a door/panel dent with a plunger',
@@ -253,7 +253,7 @@ export const DIY_GUIDES: DiyGuide[] = [
   {
     id: 'scratch-buff',
     title: 'Buff out a light scratch',
-    emoji: '✨',
+    emoji: 'sparkle',
     minutes: 20,
     difficulty: 'Easy',
     tools: ['Car wash soap & water', 'Microfiber cloths', 'Scratch-removal compound or polish', 'Optional: car wax'],
@@ -267,9 +267,9 @@ export const DIY_GUIDES: DiyGuide[] = [
     ],
     tip: 'If your nail catches the scratch, it has gone through the clear coat and needs touch-up paint or a shop — buffing alone won’t fill it.',
     materials: [
-      mat('Scratch & swirl remover', '🧴', 'car,polish,bottle', '$7.97', 'AutoZone', 'https://www.autozone.com/search?searchText=scratch+remover'),
-      mat('Microfiber cloths (6pk)', '🧽', 'microfiber,cloths', '$6.99', 'Amazon', 'https://www.amazon.com/s?k=microfiber+cloth'),
-      mat('Car wax', '✨', 'car,wax', '$8.47', 'Walmart', 'https://www.walmart.com/search?q=car+wax'),
+      mat('Scratch & swirl remover', 'droplet', 'car,polish,bottle', '$7.97', 'AutoZone', 'https://www.autozone.com/search?searchText=scratch+remover'),
+      mat('Microfiber cloths (6pk)', 'sponge', 'microfiber,cloths', '$6.99', 'Amazon', 'https://www.amazon.com/s?k=microfiber+cloth'),
+      mat('Car wax', 'sparkle', 'car,wax', '$8.47', 'Walmart', 'https://www.walmart.com/search?q=car+wax'),
     ],
     videoUrl: vid('how to buff out car scratch clear coat'),
     videoTitle: 'Buff a light clear-coat scratch by hand',

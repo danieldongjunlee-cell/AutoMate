@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -198,7 +199,7 @@ export function ProfCarsScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text style={{ fontSize: 28, marginBottom: 6 }}>🚗</Text>
+          <Icon name="car" size={28} color={colors.textSecondary} />
           <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
             No vehicles yet
           </Text>
@@ -362,7 +363,7 @@ export function ProfCarsScreen() {
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 28, marginBottom: 6 }}>➕</Text>
+        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
         <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
           Add another car
         </Text>
@@ -380,7 +381,7 @@ export function ProfCarsScreen() {
           gap: spacing.sm,
         }}
       >
-        <Text style={{ fontSize: 16 }}>💡</Text>
+        <Icon name="bulb" size={16} color={colors.textSecondary} />
         <Text style={{ flex: 1, fontSize: 14, color: colors.warningDeep, lineHeight: 19 }}>
           Add all your vehicles to compare quotes and track service for each one.
         </Text>

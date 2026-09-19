@@ -44,26 +44,26 @@ export function ProfSettingsScreen() {
     <Screen>
       <SectionLabel>Account</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <SettingsRow icon="👤" label="Edit profile" onPress={() => navigation.navigate('ProfEditProfile')} />
+        <SettingsRow icon="user" label="Edit profile" onPress={() => navigation.navigate('ProfEditProfile')} />
         <SettingsRow
-          icon="✉️"
+          icon="mail"
           label="Change email"
           value={email}
           onPress={() => navigation.navigate('ProfChangeEmail')}
         />
         <SettingsRow
-          icon="📱"
+          icon="phone"
           label="Change phone number"
           value={phone}
           onPress={() => navigation.navigate('ProfChangePhone')}
         />
         <SettingsRow
-          icon="🔑"
+          icon="key"
           label="Change password"
           onPress={() => navigation.navigate('ProfChangePassword')}
         />
         <SettingsRow
-          icon="🔗"
+          icon="globe"
           label="Linked accounts"
           value="Google"
           onPress={() => navigation.navigate('ProfLinkedAccounts')}
@@ -74,22 +74,22 @@ export function ProfSettingsScreen() {
       <SectionLabel>Notifications</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <SettingsRow
-          icon="🔔"
+          icon="bell"
           label="Quote alerts"
           right={<TogglePill value={notif.quotes} onToggle={() => flip('quotes')} />}
         />
         <SettingsRow
-          icon="🔧"
+          icon="wrench"
           label="Service reminders"
           right={<TogglePill value={notif.service} onToggle={() => flip('service')} />}
         />
         <SettingsRow
-          icon="📝"
+          icon="pencil"
           label="Community replies"
           right={<TogglePill value={notif.community} onToggle={() => flip('community')} />}
         />
         <SettingsRow
-          icon="🔥"
+          icon="flame"
           label="Streak reminders"
           right={<TogglePill value={notif.streak} onToggle={() => flip('streak')} />}
           last
@@ -99,13 +99,13 @@ export function ProfSettingsScreen() {
       <SectionLabel>App preferences</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <SettingsRow
-          icon="🌐"
+          icon="globe"
           label="Language"
           value={language}
           onPress={() => navigation.navigate('ProfLanguage')}
         />
         <SettingsRow
-          icon="📏"
+          icon="gauge"
           label="Distance units"
           value={distanceUnit === 'mi' ? 'Miles' : 'Kilometers'}
           onPress={() => navigation.navigate('ProfDistance')}
@@ -116,7 +116,7 @@ export function ProfSettingsScreen() {
       <SectionLabel>Developer</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         <SettingsRow
-          icon="🧪"
+          icon="sparkle"
           label="Supabase demo"
           value="Direct supabase-js"
           onPress={() => navigation.navigate('SupabaseDemo')}
@@ -126,9 +126,9 @@ export function ProfSettingsScreen() {
 
       <SectionLabel>Support & legal</SectionLabel>
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <SettingsRow icon="❓" label="Help center" onPress={() => navigation.navigate('ProfHelpCenter')} />
-        <SettingsRow icon="📄" label="Terms of service" onPress={() => navigation.navigate('ProfTerms')} />
-        <SettingsRow icon="🔒" label="Privacy policy" onPress={() => navigation.navigate('ProfPrivacy')} last />
+        <SettingsRow icon="alert" label="Help center" onPress={() => navigation.navigate('ProfHelpCenter')} />
+        <SettingsRow icon="file" label="Terms of service" onPress={() => navigation.navigate('ProfTerms')} />
+        <SettingsRow icon="lock" label="Privacy policy" onPress={() => navigation.navigate('ProfPrivacy')} last />
       </Card>
 
       {/* Sign out */}

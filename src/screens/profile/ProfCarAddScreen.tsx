@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -129,7 +130,7 @@ export function ProfCarAddScreen() {
           alignItems: 'center',
         }}
       >
-        <Text style={{ fontSize: 16 }}>{emoji}</Text>
+        <Glyph glyph={emoji} size={20} color={colors.textSecondary} />
         <Text style={{ fontSize: 13, fontWeight: '700', color: active ? colors.primary : colors.textSecondary }}>{title}</Text>
         <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
       </Tappable>
@@ -139,8 +140,8 @@ export function ProfCarAddScreen() {
   return (
     <Screen>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {method('📷', 'Scan VIN barcode', 'Auto-fill in seconds', 'scan')}
-        {method('✍️', 'Enter manually', 'Type details below', 'manual')}
+        {method('camera', 'Scan VIN barcode', 'Auto-fill in seconds', 'scan')}
+        {method('pencil', 'Enter manually', 'Type details below', 'manual')}
       </View>
 
       {mode === 'scan' ? (
@@ -154,7 +155,7 @@ export function ProfCarAddScreen() {
           />
           {vinScanned ? (
             <Text style={{ fontSize: 13, fontWeight: '600', color: colors.success, textAlign: 'center' }}>
-              VIN captured ✓ — fill in details below
+              VIN captured — fill in details below
             </Text>
           ) : (
             <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}>
@@ -229,7 +230,7 @@ export function ProfCarAddScreen() {
           ⓘ Same details we keep for your registered cars — used to match quotes and track service.
         </Text>
       </View>
-      <PrimaryButton variant="success" label="Add car" disabled={!canSave} loading={addMutation.isPending} onPress={() => addMutation.mutate()} />
+      <PrimaryButton label="Add car" disabled={!canSave} loading={addMutation.isPending} onPress={() => addMutation.mutate()} />
     </Screen>
   );
 }

@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
@@ -48,7 +49,7 @@ function HelpArticle({
           marginBottom: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 32 }}>{icon}</Text>
+        <Glyph glyph={icon} size={32} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.primaryDeep }}>{title}</Text>
           <Text style={{ fontSize: 13, color: colors.primaryDark }}>Help article · 2 min read</Text>
@@ -110,7 +111,7 @@ function HelpArticle({
 export function HelpPhotosScreen() {
   return (
     <HelpArticle
-      icon="📷"
+      icon="camera"
       title="How to submit damage photos"
       steps={[
         {
@@ -142,7 +143,7 @@ export function HelpPhotosScreen() {
 export function HelpQuotesScreen() {
   return (
     <HelpArticle
-      icon="💰"
+      icon="dollar"
       title="Understanding quotes & pricing"
       steps={[
         {
@@ -174,7 +175,7 @@ export function HelpQuotesScreen() {
 export function HelpBookingsScreen() {
   return (
     <HelpArticle
-      icon="📅"
+      icon="calendar"
       title="Managing bookings"
       steps={[
         {
@@ -207,7 +208,7 @@ export function HelpContactScreen() {
   const { colors } = useTheme();
   return (
     <HelpArticle
-      icon="📞"
+      icon="phone"
       title="Contact support"
       hideContactCta
       steps={[
@@ -238,7 +239,7 @@ export function HelpContactScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
-            💬 Start chat
+            Start chat
           </Text>
         </Tappable>
         <Tappable
@@ -256,7 +257,7 @@ export function HelpContactScreen() {
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, color: colors.textSecondary }}>✉️ Email us</Text>
+          <Text style={{ fontSize: 14, color: colors.textSecondary }}>Email us</Text>
         </Tappable>
       </View>
     </HelpArticle>

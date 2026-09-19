@@ -28,10 +28,10 @@ export interface BrandChannel {
 
 /** Four sub-community archetypes every brand gets. */
 const TEMPLATES: { suffix: string; emoji: string; color: string }[] = [
-  { suffix: 'A/S & Service', emoji: '🔧', color: '#2e6bff' },
-  { suffix: 'Maintenance & DIY', emoji: '🛠️', color: '#16a34a' },
-  { suffix: 'Owners Lounge', emoji: '💬', color: '#f0b44e' },
-  { suffix: 'Deals & Mods', emoji: '🏷️', color: '#e24b4a' },
+  { suffix: 'A/S & Service', emoji: 'wrench', color: '#2e6bff' },
+  { suffix: 'Maintenance & DIY', emoji: 'wrench', color: '#16a34a' },
+  { suffix: 'Owners Lounge', emoji: 'chat', color: '#f0b44e' },
+  { suffix: 'Deals & Mods', emoji: 'tag', color: '#e24b4a' },
 ];
 
 /** Cheap deterministic hash so counts stay constant for a given string. */
@@ -100,7 +100,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'James K.', initial: 'J', color: '#7F77DD', car: 'A/S & Service',
       ago: '2h ago', category: 'Review',
-      body: 'Booked a warranty repair at my local {brand} service center through AutoMate — they honored the claim with zero pushback and had a loaner ready. Smoothest dealer visit yet 👍',
+      body: 'Booked a warranty repair at my local {brand} service center through AutoMate — they honored the claim with zero pushback and had a loaner ready. Smoothest dealer visit yet ',
       replies: 14, likes: 28,
     },
     {
@@ -126,7 +126,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Sarah M.', initial: 'S', color: '#1D9E75', car: 'Maintenance & DIY',
       ago: '3h ago', category: 'DIY',
-      body: 'Did my first DIY oil change on the {brand} this weekend — 30 mins, half the dealer price. The AutoMate guide had the exact filter part number, super handy 🛠️',
+      body: 'Did my first DIY oil change on the {brand} this weekend — 30 mins, half the dealer price. The AutoMate guide had the exact filter part number, super handy ',
       replies: 18, likes: 52,
     },
     {
@@ -144,7 +144,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Owen P.', initial: 'O', color: '#7F77DD', car: 'Maintenance & DIY',
       ago: '1d ago', category: 'DIY',
-      body: 'Rotated tires + swapped cabin air filter on the {brand} today. The filter was filthy 😷 — set a reminder, it makes a real difference for AC smell.',
+      body: 'Rotated tires + swapped cabin air filter on the {brand} today. The filter was filthy — set a reminder, it makes a real difference for AC smell.',
       replies: 6, likes: 27,
     },
   ],
@@ -152,25 +152,25 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Alex T.', initial: 'A', color: '#e24b4a', car: 'Owners Lounge',
       ago: '1h ago', category: 'Review',
-      body: 'Just hit 100k miles on my {brand} and it still drives like new. Best car I\'ve owned. Anyone else here long-haul with theirs? 🚗',
+      body: 'Just hit 100k miles on my {brand} and it still drives like new. Best car I\'ve owned. Anyone else here long-haul with theirs? ',
       replies: 31, likes: 88,
     },
     {
       author: 'Nina H.', initial: 'N', color: '#16a34a', car: 'Owners Lounge',
       ago: '4h ago', category: 'Tip',
-      body: 'Took the {brand} on a 600-mile road trip and the fuel economy blew me away. Photos from the coast attached — what a machine 📸',
+      body: 'Took the {brand} on a 600-mile road trip and the fuel economy blew me away. Photos from the coast attached — what a machine ',
       replies: 12, likes: 45,
     },
     {
       author: 'Raj P.', initial: 'R', color: '#378ADD', car: 'Owners Lounge',
       ago: '9h ago', category: 'Question',
-      body: 'New {brand} owner here 👋 What\'s the one thing you wish you knew when you first got yours? Trying to learn from the veterans in the lounge.',
+      body: 'New {brand} owner here What\'s the one thing you wish you knew when you first got yours? Trying to learn from the veterans in the lounge.',
       replies: 27, likes: 36,
     },
     {
       author: 'Lena F.', initial: 'L', color: '#f0b44e', car: 'Owners Lounge',
       ago: '1d ago', category: 'Review',
-      body: 'Cleaned and detailed the {brand} this weekend and she\'s gleaming. Love this community — you all make ownership way more fun ❤️',
+      body: 'Cleaned and detailed the {brand} this weekend and she\'s gleaming. Love this community — you all make ownership way more fun ',
       replies: 8, likes: 29,
     },
   ],
@@ -178,13 +178,13 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Chris D.', initial: 'C', color: '#2e6bff', car: 'Deals & Mods',
       ago: '2h ago', category: 'Tip',
-      body: 'Scored OEM all-weather floor mats for my {brand} at 40% off — link in the thread. Best accessory deal I\'ve seen this year 🏷️',
+      body: 'Scored OEM all-weather floor mats for my {brand} at 40% off — link in the thread. Best accessory deal I\'ve seen this year ',
       replies: 19, likes: 61,
     },
     {
       author: 'Bianca S.', initial: 'B', color: '#e24b4a', car: 'Deals & Mods',
       ago: '5h ago', category: 'Review',
-      body: 'Installed a cat-back exhaust on the {brand} — sounds incredible and was a bolt-on job. Mod totally transformed the drive. Highly recommend 🔧',
+      body: 'Installed a cat-back exhaust on the {brand} — sounds incredible and was a bolt-on job. Mod totally transformed the drive. Highly recommend ',
       replies: 14, likes: 48,
     },
     {

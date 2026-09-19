@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Icon } from './Icon';
 import { ActivityIndicator, Animated, Modal, Text, View } from 'react-native';
 
 import { radii, spacing } from '../theme';
@@ -9,7 +10,7 @@ type Stage = 'confirm' | 'processing' | 'done';
 /**
  * Simulated Apple Pay bottom sheet (user-feedback pass 1). Dark sheet with
  * the  Pay header, card row, optional total line (payment contexts) and the
- * "Confirm with Side Button" affordance → animated processing → ✓ Done.
+ * "Confirm with Side Button" affordance → animated processing → Done.
  * In payment contexts `onConfirmed` completes the payment path (same onPay).
  */
 export function ApplePaySheet({
@@ -22,7 +23,7 @@ export function ApplePaySheet({
 }: {
   visible: boolean;
   onClose: () => void;
-  /** Called after the ✓ Done beat — wire the real payment handler here. */
+  /** Called after the Done beat — wire the real payment handler here. */
   onConfirmed?: () => void;
   /** e.g. "$49.00" — when set the sheet shows a "Pay Total" line. */
   totalLabel?: string;
@@ -186,7 +187,7 @@ export function ApplePaySheet({
                     marginBottom: spacing.sm,
                   }}
                 >
-                  <Text style={{ fontSize: 26, fontWeight: '700', color: '#fff' }}>✓</Text>
+                  <Icon name="check" size={26} color={'#fff'} strokeWidth={2.4} />
                 </View>
                 <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>Done</Text>
               </Animated.View>

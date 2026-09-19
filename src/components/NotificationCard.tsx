@@ -1,4 +1,5 @@
 import React from 'react';
+import { Glyph } from './Icon';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -45,7 +46,7 @@ export function NotificationCard({
       })}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: 5 }}>
-        <Text style={{ fontSize: 24 }}>{n.icon}</Text>
+        <Glyph glyph={n.icon} size={24} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: n.unread ? '700' : '600', color: tint.title }}>
             {n.title}

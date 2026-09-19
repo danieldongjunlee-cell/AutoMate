@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -171,7 +172,7 @@ function ToggleRow({
           alignItems: value ? 'flex-end' : 'flex-start',
         }}
       >
-        <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#fff' }} />
+        <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: colors.textPrimary }} />
       </View>
     </Tappable>
   );
@@ -227,14 +228,14 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
                 backgroundColor: colors.surface,
               }}
             >
-              <Text style={{ fontSize: 14, color: colors.textTertiary }}>📍</Text>
+              <Icon name="pin" size={14} color={colors.textTertiary} />
               <Text style={{ fontSize: 14, color: colors.textPrimary }}>{m}</Text>
             </Tappable>
           ))}
         </View>
       ) : null}
       {value && (!open || matches.length === 0) ? (
-        <Text style={{ fontSize: 12, color: colors.successDark, marginTop: 2 }}>✓ {value}</Text>
+        <Text style={{ fontSize: 12, color: colors.successDark, marginTop: 2 }}>{value}</Text>
       ) : null}
     </View>
   );

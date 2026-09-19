@@ -1,4 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { Text, View } from 'react-native';
@@ -43,7 +44,7 @@ export function ProSuccessScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Text style={{ fontSize: 28 }}>⭐</Text>
+          <Icon name="star" size={28} color={colors.textSecondary} />
         </View>
         <Text style={{ fontSize: 18, fontWeight: '800', color: colors.successDeep }}>You're a Pro!</Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
@@ -51,7 +52,7 @@ export function ProSuccessScreen() {
         </Text>
       </View>
       <Card style={{ padding: spacing.md, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-        <Text style={{ fontSize: 18 }}>⭐</Text>
+        <Icon name="star" size={18} color={colors.textSecondary} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             AutoMate Pro · {p.label}
@@ -61,7 +62,6 @@ export function ProSuccessScreen() {
         <Badge label="Active" variant="success" />
       </Card>
       <PrimaryButton
-        variant="success"
         label={
           toProfile
             ? 'Back to More →'

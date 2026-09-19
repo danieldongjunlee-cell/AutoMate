@@ -119,7 +119,7 @@ export function BundleDealsScreen() {
     // user picks are discounted with a visible breakdown.
     const discounts = Object.fromEntries(deal.discounts.map((d) => [d.categoryId, d.pct]));
     claimDeal(deal.dealerId, { label: deal.claimLabel, discounts });
-    // Bundle booking happens on the Maintenance tab (wireframe ⤴ edge).
+    // Bundle booking happens on the Maintenance tab (wireframe edge).
     navigateCrossTab(navigation, 'HomeTab', 'MaintScheduleBook');
   };
 

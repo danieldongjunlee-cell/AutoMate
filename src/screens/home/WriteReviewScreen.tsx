@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { TextInput, Text, View } from 'react-native';
@@ -43,7 +44,7 @@ export function WriteReviewScreen() {
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>Honda Fairfax Service</Text>
           <Text style={{ fontSize: 12, color: colors.textTertiary }}>Rear bumper · Apr 12</Text>
         </View>
-        <Badge label="✓ Verified booking" variant="success" />
+        <Badge label="Verified booking" variant="success" />
       </Card>
 
       <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
@@ -106,7 +107,7 @@ export function WriteReviewScreen() {
             gap: spacing.xs,
           }}
         >
-          <Text style={{ fontSize: 14 }}>🎁</Text>
+          <Icon name="gift" size={14} color={colors.textSecondary} />
           <Text style={{ fontSize: 12, color: colors.primary, lineHeight: 16 }}>
             Earn <Text style={{ fontWeight: '700' }}>+30 pts</Text> for a review with a photo
           </Text>

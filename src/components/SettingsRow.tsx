@@ -1,4 +1,5 @@
 import React from 'react';
+import { Glyph } from './Icon';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
@@ -36,7 +37,9 @@ export function SettingsRow({
         opacity: pressed ? 0.6 : 1,
       })}
     >
-      <Text style={{ fontSize: 18, marginRight: spacing.md }}>{icon}</Text>
+      <View style={{ width: 28, marginRight: spacing.sm, alignItems: 'center' }}>
+        <Glyph glyph={icon} size={20} color={colors.textSecondary} />
+      </View>
       <Text style={{ flex: 1, fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
         {label}
       </Text>

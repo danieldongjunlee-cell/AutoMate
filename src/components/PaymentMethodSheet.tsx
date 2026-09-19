@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Icon } from './Icon';
 import React from 'react';
 import { Text, View } from 'react-native';
 
@@ -49,11 +50,11 @@ export function PaymentMethodSheet({
               marginBottom: spacing.sm,
             }}
           >
-            <Text style={{ fontSize: 18 }}>💳</Text>
+            <Icon name="wallet" size={18} color={colors.textSecondary} />
             <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
               {c.brand} ••••{c.last4}
             </Text>
-            {on ? <Text style={{ color: colors.primary, fontWeight: '800' }}>✓</Text> : null}
+            {on ? <Icon name="check" size={18} color={colors.primary} strokeWidth={2.4} /> : null}
           </Tappable>
         );
       })}

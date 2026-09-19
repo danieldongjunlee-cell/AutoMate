@@ -1,4 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { Glyph } from '../../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
@@ -34,7 +35,7 @@ export function ProfMileDetScreen() {
         style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <Text style={{ fontSize: 32 }}>{milestone.icon}</Text>
+          <Glyph glyph={milestone.icon} size={32} color={colors.textSecondary} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 17, fontWeight: '600', color: '#fff' }}>{milestone.title}</Text>
             <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.7)' }}>{milestone.sub}</Text>
@@ -144,7 +145,7 @@ export function ProfMileDetScreen() {
                         color: locked ? colors.textTertiary : colors.onPrimary,
                       }}
                     >
-                      {locked ? `🔒 ${remaining.toLocaleString()} pts to go` : 'Redeem here'}
+                      {locked ? `${remaining.toLocaleString()} pts to go` : 'Redeem here'}
                     </Text>
                   </Tappable>
                 );
