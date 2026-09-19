@@ -38,7 +38,7 @@ export function BundleDealsScreen() {
   return (
     <Screen>
       {focusedDeal ? (
-        <Tappable onPress={clearFocus} style={({ pressed }) => ({ alignSelf: 'flex-start', marginBottom: spacing.md, opacity: pressed ? 0.6 : 1 })}>
+        <Tappable onPress={clearFocus} style={({ pressed }) => ({ alignSelf: 'flex-start', marginBottom: spacing.md })}>
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}>← See all deals</Text>
         </Tappable>
       ) : (

@@ -139,7 +139,6 @@ export function MaintScheduleConfirmScreen() {
           paddingVertical: 9,
           alignItems: 'center',
           marginTop: spacing.sm,
-          opacity: pressed ? 0.7 : 1,
         })}
       >
         <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>

@@ -106,7 +106,6 @@ export function ProfMilesScreen() {
               borderColor: colors.border,
               padding: spacing.md,
               marginBottom: spacing.sm,
-              opacity: pressed ? 0.7 : 1,
             })}
           >
             <View

@@ -76,7 +76,6 @@ export function DiyConfirmScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             gap: spacing.sm,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Glyph glyph={b.icon} size={24} color={colors.textSecondary} />

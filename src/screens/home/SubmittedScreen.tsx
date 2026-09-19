@@ -131,7 +131,6 @@ export function SubmittedScreen() {
           alignItems: 'center',
           gap: spacing.sm,
           marginBottom: spacing.md,
-          opacity: pressed ? 0.85 : 1,
         })}
       >
         <Icon name="bell" size={22} color={colors.warning} />
@@ -160,7 +159,6 @@ export function SubmittedScreen() {
           borderRadius: radii.md,
           paddingVertical: 13,
           alignItems: 'center',
-          opacity: pressed ? 0.7 : 1,
         })}
       >
         <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to home</Text>

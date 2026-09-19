@@ -269,7 +269,6 @@ export function MaintScanCamScreen() {
             borderColor: colors.border,
             paddingVertical: 14,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>← Retake</Text>

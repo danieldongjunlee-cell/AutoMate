@@ -422,7 +422,6 @@ function CalNav({ label, onPress }: { label: string; onPress: () => void }) {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.surfaceAlt,
-        opacity: pressed ? 0.6 : 1,
       })}
     >
       <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textSecondary }}>{label}</Text>

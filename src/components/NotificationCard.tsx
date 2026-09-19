@@ -42,7 +42,6 @@ export function NotificationCard({
         borderColor: tint.border,
         padding: spacing.md,
         marginBottom: spacing.sm,
-        opacity: pressed ? 0.75 : 1,
       })}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: 5 }}>

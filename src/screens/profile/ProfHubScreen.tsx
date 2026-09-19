@@ -91,7 +91,6 @@ export function ProfHubScreen() {
             alignItems: 'center',
             gap: 14,
             height: 50,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <View style={{ width: 26, alignItems: 'center' }}>

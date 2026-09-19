@@ -87,7 +87,6 @@ export function MaintManualScreen() {
                 borderColor: colors.border,
                 paddingHorizontal: 14,
                 paddingVertical: 6,
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Text style={{ fontSize: 14, color: on ? colors.onPrimary : colors.textTertiary }}>

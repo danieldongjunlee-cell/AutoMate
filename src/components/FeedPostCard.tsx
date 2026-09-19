@@ -44,7 +44,6 @@ export function FeedPostCard({
         borderColor: colors.border,
         padding: spacing.md,
         marginBottom: spacing.md,
-        opacity: pressed ? 0.85 : 1,
         shadowColor: '#000',
         shadowOpacity: 0.06,
         shadowRadius: 10,

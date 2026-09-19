@@ -86,7 +86,7 @@ export const communityService = {
   },
 
   /** Publish a post; +50 pts, +10 with photos (wireframe s-comm-create). */
-  async createPost(body: string, category: PostCategory, photoCount: number) {
+  async createPost(body: string, category: PostCategory, photoCount: number, community?: string) {
     await delay(500);
     posts = [
       {
@@ -94,7 +94,7 @@ export const communityService = {
         author: USER.name,
         initial: USER.initial,
         color: '#7F77DD',
-        car: '2019 Accord EX-L',
+        car: community ?? '2019 Accord EX-L',
         ago: 'Just now',
         category,
         body,

@@ -2,13 +2,15 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { Screen } from '../../components/ui';
+import { AvatarCircle, Screen } from '../../components/ui';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { BrandChannel, brandChannels, channelKind, FEED_BRANDS } from '../../services/mock/communityChannels';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -25,6 +27,14 @@ export function CommCreateScreen() {
   const { colors } = useTheme();
   const addPoints = useAppStore((s) => s.addPoints);
 
+  // Communities you can post to: the registered car's brand communities (guests: every brand's lounge).
+  const { active, brand } = useActiveVehicle();
+  const communities = useMemo<BrandChannel[]>(
+    () => (active ? brandChannels(brand) : FEED_BRANDS.map((b) => brandChannels(b).find((c) => channelKind(c.name) === 'lounge') ?? brandChannels(b)[0])),
+    [active, brand],
+  );
+  const [communityId, setCommunityId] = useState<string>(communities[0]?.id ?? '');
+  const community = communities.find((c) => c.id === communityId) ?? communities[0];
   const [category, setCategory] = useState<PostCategory>('Question');
   const [body, setBody] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
@@ -46,6 +56,7 @@ export function CommCreateScreen() {
       body.trim() || 'Shared from the AutoMate app ',
       category,
       photos.length,
+      community?.name,
     );
     addPoints(pointsEarned, 'Community post');
     // Fire-and-forget: the feed refetches while we navigate back to it.
@@ -56,34 +67,40 @@ export function CommCreateScreen() {
 
   return (
     <Screen>
-      {/* Channel picker (single channel for now) */}
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
-        }}
-      >
-        <View
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: 6,
-            backgroundColor: colors.primary,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>H</Text>
-        </View>
-        <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
-          Honda Owners
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>▼</Text>
+      {/* Community picker — the user's brand communities (auto-membership). */}
+      <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>Post to</Text>
+      <View style={{ gap: 8, marginBottom: spacing.md }}>
+        {communities.map((c) => {
+          const on = c.id === communityId;
+          return (
+            <Tappable
+              key={c.id}
+              onPress={() => setCommunityId(c.id)}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: on }}
+              accessibilityLabel={`Post to ${c.name}`}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.sm,
+                backgroundColor: on ? colors.primarySurface : colors.surface,
+                borderWidth: on ? 1.5 : StyleSheet.hairlineWidth,
+                borderColor: on ? colors.primary : colors.border,
+                borderRadius: radii.md,
+                padding: spacing.sm,
+              }}
+            >
+              <AvatarCircle initial={c.initial} color={c.color} size={30} />
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: on ? colors.primaryDeep : colors.textPrimary }}>{c.name}</Text>
+                <Text style={{ fontSize: 12, color: colors.textTertiary }}>{c.members.toLocaleString()} members</Text>
+              </View>
+              <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: on ? colors.primary : colors.border, backgroundColor: on ? colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+                {on ? <Icon name="check" size={13} color={colors.onPrimary} strokeWidth={2.4} /> : null}
+              </View>
+            </Tappable>
+          );
+        })}
       </View>
 
       {/* Category chips */}
@@ -101,7 +118,6 @@ export function CommCreateScreen() {
                 borderColor: colors.border,
                 paddingHorizontal: 15,
                 paddingVertical: 6,
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Text style={{ fontSize: 14, color: on ? colors.onPrimary : colors.textTertiary }}>
@@ -116,7 +132,7 @@ export function CommCreateScreen() {
       <TextInput
         value={body}
         onChangeText={setBody}
-        placeholder="Share with the Honda community..."
+        placeholder={`Share with ${community?.name ?? "the community"}...`}
         placeholderTextColor={colors.textPlaceholder}
         multiline
         style={{
@@ -195,7 +211,6 @@ export function CommCreateScreen() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 2,
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Icon name="camera" size={20} color={colors.textSecondary} />
@@ -214,7 +229,6 @@ export function CommCreateScreen() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 2,
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Icon name="camera" size={20} color={colors.textSecondary} />

@@ -57,7 +57,6 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
         flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
-        opacity: pressed ? 0.7 : 1,
       })}
     >
       <Glyph glyph={guide.icon} size={21} color={colors.textSecondary} />
@@ -100,7 +99,6 @@ export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () =
         flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
-        opacity: pressed ? 0.7 : 1,
       })}
     >
       <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: colors.chip, alignItems: 'center', justifyContent: 'center' }}>
@@ -176,7 +174,6 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
                     borderRadius: radii.sm,
                     padding: spacing.sm,
                     marginBottom: spacing.xs,
-                    opacity: pressed ? 0.75 : 1,
                   })}
                 >
                   <View style={{ width: 44, height: 44, borderRadius: radii.sm, overflow: 'hidden', backgroundColor: colors.surfaceAlt, alignItems: 'center', justifyContent: 'center' }}>
@@ -208,7 +205,6 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
-              opacity: pressed ? 0.85 : 1,
             })}
           >
             <Text style={{ fontSize: 24 }}>▶️</Text>
@@ -277,7 +273,6 @@ export function DiyGuideSheet({ guide, onClose }: { guide: DiyGuide; onClose: ()
           borderRadius: radii.sm,
           paddingVertical: 12,
           alignItems: 'center',
-          opacity: pressed ? 0.8 : 1,
         })}
       >
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>Done</Text>
@@ -361,7 +356,6 @@ export function DiyMatchScreen() {
               borderRadius: radii.sm,
               paddingVertical: 10,
               alignItems: 'center',
-              opacity: pressed ? 0.8 : 1,
             })}
           >
             <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Open guide</Text>
@@ -376,7 +370,6 @@ export function DiyMatchScreen() {
               borderRadius: radii.sm,
               paddingVertical: 10,
               alignItems: 'center',
-              opacity: pressed ? 0.7 : 1,
             })}
           >
             <Text style={{ fontSize: 14, color: colors.textSecondary }}>Compare to quotes</Text>
@@ -534,7 +527,6 @@ export function DiyFutureScreen() {
                 paddingHorizontal: 12,
                 paddingVertical: 6,
                 alignItems: 'center',
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Text

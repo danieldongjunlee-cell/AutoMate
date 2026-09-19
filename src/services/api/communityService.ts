@@ -19,9 +19,9 @@ export const communityService = {
     );
   },
 
-  async createPost(body: string, category: PostCategory, photoCount: number) {
+  async createPost(body: string, category: PostCategory, photoCount: number, community?: string) {
     return request<{ ok: boolean; pointsEarned: number }>('/community/posts', {
-      body: { body, category, photoCount },
+      body: { body, category, photoCount, community },
     });
   },
 

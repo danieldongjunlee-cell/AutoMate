@@ -39,7 +39,6 @@ export function PostCard({ post, onPress }: { post: CommunityPost; onPress: () =
         borderColor: colors.border,
         padding: spacing.md,
         marginBottom: spacing.sm,
-        opacity: pressed ? 0.8 : 1,
       })}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>

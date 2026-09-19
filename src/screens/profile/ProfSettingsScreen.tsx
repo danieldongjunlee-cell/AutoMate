@@ -179,7 +179,6 @@ export function ProfSettingsScreen() {
           paddingVertical: 13,
           alignItems: 'center',
           marginBottom: spacing.sm,
-          opacity: pressed ? 0.7 : 1,
         })}
       >
         <Text style={{ fontSize: 15, fontWeight: '700', color: colors.danger }}>Sign out</Text>
@@ -271,7 +270,6 @@ export function ProfSettingsScreen() {
                 paddingVertical: 15,
                 alignItems: 'center',
                 marginBottom: spacing.sm,
-                opacity: pressed ? 0.8 : 1,
               })}
             >
               <Text style={{ fontSize: 15, fontWeight: '700', color: '#fff' }}>Sign out</Text>
@@ -285,7 +283,6 @@ export function ProfSettingsScreen() {
                 borderColor: colors.border,
                 paddingVertical: 15,
                 alignItems: 'center',
-                opacity: pressed ? 0.7 : 1,
               })}
             >
               <Text style={{ fontSize: 15, color: colors.textSecondary }}>Cancel</Text>

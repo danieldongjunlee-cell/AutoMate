@@ -154,7 +154,6 @@ export function DealerMapScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Get directions</Text>
@@ -174,7 +173,6 @@ export function DealerMapScreen() {
             borderRadius: radii.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Share</Text>

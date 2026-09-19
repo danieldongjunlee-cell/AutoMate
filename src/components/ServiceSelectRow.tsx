@@ -32,7 +32,6 @@ export function ServiceSelectRow({
         borderLeftColor: selected ? colors.primary : 'transparent',
         borderBottomWidth: last ? 0 : StyleSheet.hairlineWidth,
         borderBottomColor: colors.divider,
-        opacity: pressed ? 0.7 : 1,
       })}
     >
       <View style={{ marginRight: spacing.sm }}>

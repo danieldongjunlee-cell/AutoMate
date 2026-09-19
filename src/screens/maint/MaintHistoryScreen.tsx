@@ -120,7 +120,6 @@ export function MaintHistoryScreen() {
             padding: spacing.md,
             alignItems: 'center',
             gap: 5,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Icon name="camera" size={26} color={colors.textSecondary} />
@@ -140,7 +139,6 @@ export function MaintHistoryScreen() {
             padding: spacing.md,
             alignItems: 'center',
             gap: 5,
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Icon name="pencil" size={26} color={colors.textSecondary} />

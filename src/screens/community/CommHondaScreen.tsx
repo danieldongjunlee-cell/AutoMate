@@ -63,7 +63,6 @@ export function CommHondaScreen() {
             flexDirection: 'row',
             alignItems: 'center',
             gap: 5,
-            opacity: pressed ? 0.8 : 1,
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.onPrimary }}>+ Post</Text>

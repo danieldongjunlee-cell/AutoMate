@@ -45,7 +45,6 @@ function ActionChip({
         borderRadius: radii.sm,
         paddingVertical: 9,
         alignItems: 'center',
-        opacity: pressed ? 0.7 : 1,
       })}
     >
       <Text
@@ -549,7 +548,6 @@ export function ConfirmSubmitScreen() {
             marginTop: spacing.sm,
             paddingVertical: 13,
             alignItems: 'center',
-            opacity: pressed ? 0.7 : 1,
           })}
         >
           <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to my parts</Text>
@@ -612,7 +610,6 @@ export function ConfirmSubmitScreen() {
           padding: spacing.md,
           alignItems: 'center',
           marginBottom: spacing.md,
-          opacity: pressed ? 0.6 : 1,
         })}
       >
         <Icon name="plus" size={22} color={colors.primary} strokeWidth={2.4} />
