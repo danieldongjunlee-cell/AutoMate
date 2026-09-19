@@ -51,7 +51,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   DiyFuture: 'Coming soon', // s-diy-future
   MaintLanding: 'Maintenance', // s-maint-landing (book a service / dashboard)
   MaintServiceType: 'Book a service', // s-maint-service-type (multi-select)
-  MaintSchedule: 'Choose a shop', // s-maint-schedule (map + shop list)
+  MaintSchedule: 'Book a service', // canvas "Book a service" (partner shops)
   MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book
   MaintPayment: 'Payment', // s-maint-payment
   MaintScheduleConfirm: 'Booking confirmed', // s-maint-schedule-confirm

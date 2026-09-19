@@ -382,6 +382,9 @@ interface AppState {
   setDamageRequestId: (id: string | null) => void;
   /** Whether the user has opened the Quotes tab since the latest submit (badge). */
   quotesViewed: boolean;
+  /** Shops the user hearted on the quote / partner cards (session only). */
+  savedDealerIds: string[];
+  toggleSavedDealer: (dealerId: string) => void;
   setQuotesViewed: (v: boolean) => void;
   /** submissionKey() of the last submitted quote request — non-null means an
    *  open request exists; matching a new submission's key flags a duplicate.
@@ -657,6 +660,13 @@ export const useAppStore = create<AppState>()(
   setDamageRequestId: (currentDamageRequestId) => set({ currentDamageRequestId }),
   quotesViewed: true,
   setQuotesViewed: (quotesViewed) => set({ quotesViewed }),
+  savedDealerIds: [],
+  toggleSavedDealer: (dealerId) =>
+    set((s) => ({
+      savedDealerIds: s.savedDealerIds.includes(dealerId)
+        ? s.savedDealerIds.filter((d) => d !== dealerId)
+        : [...s.savedDealerIds, dealerId],
+    })),
   lastSubmissionKey: null,
   setLastSubmissionKey: (lastSubmissionKey) => set({ lastSubmissionKey }),
   // Starts "viewed" so seeded/returning bookings don't flash a tab badge on

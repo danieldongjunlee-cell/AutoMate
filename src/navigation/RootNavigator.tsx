@@ -1,7 +1,7 @@
-import { DarkTheme as NavDarkTheme, NavigationContainer } from '@react-navigation/native';
+import { DarkTheme as NavDarkTheme, NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { fetchBookings } from '../lib/bookings';
 import { fetchPointsBalance } from '../lib/points';
@@ -22,6 +22,17 @@ export function RootNavigator() {
   const setBookings = useAppStore((s) => s.setBookings);
   const setPoints = useAppStore((s) => s.setPoints);
   const theme = useTheme();
+
+  // E2E hook: only when the web export is built with EXPO_PUBLIC_E2E=1 (the
+  // screenshot runs in docs/redesign). Never set on Vercel, so production
+  // bundles carry neither the ref nor the store handle.
+  const navRef = useRef<NavigationContainerRef<RootStackParamList>>(null);
+  useEffect(() => {
+    if (process.env.EXPO_PUBLIC_E2E === '1') {
+      (globalThis as { __nav?: unknown; __store?: unknown }).__nav = navRef;
+      (globalThis as { __nav?: unknown; __store?: unknown }).__store = useAppStore;
+    }
+  }, []);
 
   // Returning users: if Supabase still has a valid session, restore it.
   useEffect(() => {
@@ -55,7 +66,7 @@ export function RootNavigator() {
   };
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer ref={navRef} theme={navTheme}>
       <StatusBar style="light" />
       {/* Guest-first: the tabs are always mounted; auth is a modal presented
           over them at value-action gates (useRequireAuth → navigate('Auth')). */}

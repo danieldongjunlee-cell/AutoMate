@@ -1,9 +1,10 @@
 import React from 'react';
 import { Alert, Text, View } from 'react-native';
 
+import { Icon } from './Icon';
 import { Tappable } from './Tappable';
 
-import { radii, spacing, useTheme } from '../theme';
+import { palette, radii, spacing, useTheme } from '../theme';
 
 /**
  * Pro paywall overlay (submitted / after-hours / DIY hub). Children render
@@ -39,21 +40,21 @@ export function ProLockOverlay({
           bottom: 0,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: onDark ? 'rgba(11,30,61,.75)' : 'rgba(248,247,244,.8)',
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderStyle: 'dashed',
-          borderColor: onDark ? 'rgba(127,119,221,.5)' : colors.primaryLight,
+          backgroundColor: 'rgba(10,15,25,.78)',
+          borderRadius: radii.lg,
+          borderWidth: 1,
+          borderColor: onDark ? 'rgba(240,180,78,.35)' : colors.border,
           padding: spacing.md,
         }}
       >
-        <Text style={{ fontSize: 26, marginBottom: 4 }}>🔒</Text>
+        <Icon name="lock" size={22} color={palette.amber} />
         <Text
           style={{
             fontSize: 14,
             fontWeight: '700',
             color: onDark ? '#fff' : colors.textPrimary,
-            marginBottom: 3,
+            marginTop: 2,
+            marginBottom: 2,
           }}
         >
           {title}
@@ -64,8 +65,8 @@ export function ProLockOverlay({
             color: onDark ? 'rgba(255,255,255,.5)' : colors.textTertiary,
             textAlign: 'center',
             lineHeight: 17,
-            marginBottom: spacing.md,
-            paddingHorizontal: spacing.lg,
+            marginBottom: spacing.sm,
+            paddingHorizontal: spacing.md,
           }}
         >
           {subtitle}
@@ -73,14 +74,14 @@ export function ProLockOverlay({
         <Tappable
           onPress={onUnlock}
           style={({ pressed }) => ({
-            backgroundColor: colors.primary,
+            backgroundColor: palette.amber,
             borderRadius: radii.pill,
             paddingHorizontal: 22,
-            paddingVertical: 9,
+            paddingVertical: 10,
             opacity: pressed ? 0.8 : 1,
           })}
         >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>{cta}</Text>
+          <Text style={{ fontSize: 14, fontWeight: '800', color: palette.onAmber }}>{cta}</Text>
         </Tappable>
       </View>
     </View>
@@ -143,7 +144,7 @@ export function DiyGuideRow({
             paddingVertical: 2,
           }}
         >
-          <Text style={{ fontSize: 11, color: colors.successDeep }}>📄 Free</Text>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: palette.mint }}>Free</Text>
         </View>
       ) : null}
       {showLink ? (

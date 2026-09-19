@@ -16,6 +16,8 @@ export interface Dealer {
   lat: number;
   lng: number;
   address: string;
+  /** Shop profile photo; the ShopCard shows a navy storefront placeholder when absent. */
+  photoUrl?: string;
 }
 
 /** The demo user's location — Fairfax, VA (s-all-quotes-map "📍 Fairfax, VA"). */
