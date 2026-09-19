@@ -10,7 +10,7 @@ import { Icon } from '../../components/Icon';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
-import { StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
+import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Screen } from '../../components/ui';
@@ -150,7 +150,7 @@ function VehicleCard({
   onEdit: () => void;
   onRemove: () => void;
 }) {
-  const { colors, dark } = useTheme();
+  const { dark } = useTheme();
   const brand = brandOf(vehicle.name);
   const isHonda = brand.toLowerCase() === 'honda';
   const { data: apiPhoto } = useCarImage(isHonda ? '' : vehicle.name);
@@ -170,7 +170,7 @@ function VehicleCard({
             style={{ width: '100%', height: 150, shadowColor: '#000', shadowOpacity: dark ? 0.5 : 0, shadowRadius: 18, shadowOffset: { width: 0, height: 14 } }}
           />
         ) : (
-          <CarBrandLogo brand={brand} size={110} />
+          <CarBrandLogo brand={brand} size={110} bg="rgba(255,255,255,0.92)" />
         )}
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
@@ -179,13 +179,13 @@ function VehicleCard({
         <StatTile icon="wrench" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '—' ? vehicle.lastService.split(',')[0] : '—'} label="serviced" />
         <StatTile icon="palette" color={palette.lavender} value={year ?? (vehicle.colorName || '—').split(' ')[0]} label={year ? 'year' : 'colour'} />
       </View>
-      <PrimaryButton label={isActive ? 'Active car ✓' : 'Set as active car'} variant={isActive ? 'outline' : 'primary'} disabled={isActive} onPress={onSetActive} />
+      <DeckButton label={isActive ? 'Active car ✓' : 'Set as active car'} secondary={isActive} disabled={isActive} onPress={onSetActive} />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
         <Tappable onPress={onEdit} hitSlop={8} accessibilityLabel={`Edit ${vehicle.name}`}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDark }}>Edit car</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: DECK_TEXT }}>Edit car</Text>
         </Tappable>
         <Tappable onPress={onRemove} hitSlop={8} accessibilityLabel={`Remove ${vehicle.name}`}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.danger }}>Remove</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffb4b1' }}>Remove</Text>
         </Tappable>
       </View>
     </SwipeCard>
@@ -229,11 +229,11 @@ export function ProfCarsScreen() {
   const addCard = (
     <SwipeCard key="add" title="Add a car" dashed>
       <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: colors.primarySurface, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
-          <Icon name="plus" size={40} color={colors.primary} strokeWidth={2.4} />
+        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+          <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
         </View>
-        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.lg }}>Scan the VIN barcode or enter the details manually.</Text>
-        <PrimaryButton label="Add another car" onPress={addCar} />
+        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Scan the VIN barcode or enter the details manually.</Text>
+        <DeckButton label="Add another car" onPress={addCar} />
       </View>
     </SwipeCard>
   );
@@ -264,12 +264,6 @@ export function ProfCarsScreen() {
         )}
       </SwipeDeck>
 
-      <View style={{ backgroundColor: colors.warningSurface, borderRadius: radii.sm, padding: spacing.sm, flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg }}>
-        <Icon name="bulb" size={16} color={colors.warningDeep} />
-        <Text style={{ flex: 1, fontSize: 14, color: colors.warningDeep, lineHeight: 19 }}>
-          Add all your vehicles to compare quotes and track service for each one.
-        </Text>
-      </View>
 
       <VehicleFormModal vehicle={editing} visible={formOpen} onClose={() => setFormOpen(false)} onSave={(fields) => saveMutation.mutate(fields)} saving={saveMutation.isPending} />
     </Screen>

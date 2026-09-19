@@ -56,26 +56,6 @@ export function CommCreateScreen() {
 
   return (
     <Screen>
-      {/* Community guidelines banner */}
-      <View
-        style={{
-          backgroundColor: colors.primarySurface,
-          borderRadius: radii.sm,
-          borderWidth: 1,
-          borderColor: colors.primaryLight,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
-        }}
-      >
-        <Icon name="chat" size={16} color={colors.textSecondary} />
-        <Text style={{ flex: 1, fontSize: 14, color: colors.primaryDark }}>
-          Keep it helpful and on-topic — no spam or self-promotion.
-        </Text>
-      </View>
-
       {/* Channel picker (single channel for now) */}
       <View
         style={{

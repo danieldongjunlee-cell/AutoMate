@@ -11,7 +11,7 @@ import { InsurerLogo } from '../../components/InsurerLogo';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SkeletonList } from '../../components/Skeleton';
-import { StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
+import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
 import { Screen } from '../../components/ui';
@@ -138,7 +138,6 @@ function PolicyFormModal({
  * (deductible, premium, renewal, covered car) and Edit / Remove.
  */
 function PolicyCard({ policy, coversLabel, linked, onEdit, onRemove }: { policy: Policy; coversLabel: string; linked: boolean; onEdit: () => void; onRemove: () => void }) {
-  const { colors } = useTheme();
   const renewShort = policy.renewal.replace(/,\s*\d{4}$/, '');
   return (
     <SwipeCard title={policy.carrier} subtitle={`${policy.coverage} · ${policy.policyNumber}`} badge={linked ? 'Active car' : policy.status}>
@@ -151,10 +150,10 @@ function PolicyCard({ policy, coversLabel, linked, onEdit, onRemove }: { policy:
         <StatTile icon="calendar" color={palette.lavender} value={renewShort} label="renews" />
         <StatTile icon="car" color={palette.primaryLight} value={coversLabel.split(' ').filter((w) => !/^(19|20)\d{2}$/.test(w))[1] ?? coversLabel} label="covers" />
       </View>
-      <PrimaryButton label="Edit policy" variant="outline" onPress={onEdit} />
+      <DeckButton label="Edit policy" onPress={onEdit} />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
         <Tappable onPress={onRemove} hitSlop={8} accessibilityLabel={`Remove ${policy.carrier} policy`}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.danger }}>Remove policy</Text>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffb4b1' }}>Remove policy</Text>
         </Tappable>
       </View>
     </SwipeCard>
@@ -205,11 +204,11 @@ export function ProfInsuranceScreen() {
   const addCard = (
     <SwipeCard key="add" title="Add a policy" dashed>
       <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: colors.primarySurface, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
-          <Icon name="plus" size={40} color={colors.primary} strokeWidth={2.4} />
+        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+          <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
         </View>
-        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', marginBottom: spacing.lg }}>Geico, Progressive, USAA… scan your card or enter the details.</Text>
-        <PrimaryButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} />
+        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Geico, Progressive, USAA… scan your card or enter the details.</Text>
+        <DeckButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} />
       </View>
     </SwipeCard>
   );
@@ -248,12 +247,6 @@ export function ProfInsuranceScreen() {
         )}
       </SwipeDeck>
 
-      <View style={{ backgroundColor: colors.warningSurface, borderRadius: radii.sm, padding: spacing.sm, flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg }}>
-        <Icon name="bulb" size={16} color={colors.warningDeep} />
-        <Text style={{ flex: 1, fontSize: 14, color: colors.warningDeep, lineHeight: 19 }}>
-          Your deductible is compared with each quote so you can see whether to claim or pay cash.
-        </Text>
-      </View>
 
       <PolicyFormModal policy={editing} visible={formOpen} onClose={() => setFormOpen(false)} onSave={(fields) => saveMutation.mutate(fields)} saving={saveMutation.isPending} carOptions={carOptions} />
     </Screen>

@@ -1,39 +1,23 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 
 import { Card, Screen } from '../../components/ui';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
-import { MapMarker } from '../../components/DealerMap';
-import { FilterSheet } from '../../components/FilterSheet';
 import { Icon } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
-import { FilterChip, MapSheet } from '../../components/MapSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { QuoteShopCard } from '../../components/QuoteShopCard';
-import { SkeletonList } from '../../components/Skeleton';
+import { QuotesSheet } from '../../components/QuotesSheet';
 import { Tappable } from '../../components/Tappable';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { QuotesStackParamList } from '../../navigation/types';
-import { quoteService } from '../../services';
-import { dealerById, quotesInEstimateRange, USER_LOCATION } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
-import { applyQuoteFilters, QUOTE_PARTS, QUOTE_SORTS, quoteFilterSummary } from '../home/DealerQuotesScreen';
 
 type Nav = NativeStackNavigationProp<QuotesStackParamList, 'Quotes'>;
-
-/** Short chip labels for the quote sorts. */
-const SORT_CHIP: Record<string, string> = {
-  'Price: low to high': 'Price ↑',
-  'Price: high to low': 'Price ↓',
-  'Rating: high to low': 'Top rated',
-  'Nearest first': 'Nearest',
-};
 
 /**
  * Quotes tab in a maps-app layout: the map of quoting shops fills the screen
@@ -51,35 +35,13 @@ export function QuotesReceivedScreen() {
   // stay empty until they sign up / log in.
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const requireAuth = useRequireAuth();
-  const { data: rawQuotes, isLoading } = useQuery({ queryKey: ['quotes'], queryFn: quoteService.getQuotes });
-  const quotes = useMemo(() => quotesInEstimateRange(rawQuotes ?? [], aiEstimate), [rawQuotes, aiEstimate]);
 
   // Opening this tab clears the unread-quotes badge.
   useEffect(() => {
     setQuotesViewed(true);
   }, [setQuotesViewed]);
 
-  const [sort, setSort] = useState(QUOTE_SORTS[0]);
-  const [parts, setParts] = useState(QUOTE_PARTS[0]);
-  const [openNow, setOpenNow] = useState(false);
-  const [radius, setRadius] = useState(30);
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const scrollRef = useRef<ScrollView>(null);
-  const rowY = useRef<Record<string, number>>({});
-
   const hasRequest = damageParts.length > 0;
-  const filtered = useMemo(
-    () => (isAuthenticated ? applyQuoteFilters(quotes, sort, parts, radius).filter((q) => !openNow || dealerById(q.dealerId).openStatus !== 'Closed') : []),
-    [quotes, sort, parts, radius, isAuthenticated, openNow],
-  );
-  const summary = quoteFilterSummary(sort, parts, radius);
-
-  const onPinSelect = (dealerId: string) => {
-    setSelectedId(dealerId);
-    const y = rowY.current[dealerId];
-    if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: true });
-  };
 
   const onCancel = () =>
     confirmAction(
@@ -169,76 +131,12 @@ export function QuotesReceivedScreen() {
     );
   }
 
-  const markers: MapMarker[] = filtered.map((q) => {
-    const d = dealerById(q.dealerId);
-    return {
-      id: q.dealerId,
-      lat: d.lat,
-      lng: d.lng,
-      label: `$${q.price}`,
-      color: q.tier === 'best' ? '#085041' : q.tier === 'recommended' ? palette.primary : colors.surfaceAlt,
-      selected: q.dealerId === selectedId,
-    };
-  });
-  const cycle = (list: string[], cur: string) => list[(list.indexOf(cur) + 1) % list.length];
-
   return (
-    <>
-      <MapSheet
-        markers={markers}
-        center={USER_LOCATION}
-        onSelectPin={onPinSelect}
-        title="Quotes received"
-        subtitle={`${filtered.length} shops responded · ${summary.label.toLowerCase()}`}
-        headerRight={<CarSwitchChip />}
-        scrollRef={scrollRef}
-        chips={
-          <>
-            <FilterChip icon="funnel" onPress={() => setFilterOpen(true)} active={summary.count > 0} />
-            <FilterChip label={sort === QUOTE_SORTS[0] ? 'Sort by' : SORT_CHIP[sort] ?? sort} caret active={sort !== QUOTE_SORTS[0]} onPress={() => setSort(cycle(QUOTE_SORTS, sort))} />
-            <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
-            <FilterChip label={parts === QUOTE_PARTS[0] ? 'Parts' : parts} caret active={parts !== QUOTE_PARTS[0]} onPress={() => setParts(cycle(QUOTE_PARTS, parts))} />
-            <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
-          </>
-        }
-      >
-        <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>{estimateBlock}</View>
-
-        {isLoading ? (
-          <View style={{ padding: spacing.lg }}>
-            <SkeletonList variant="card" count={4} />
-          </View>
-        ) : filtered.length === 0 ? (
-          <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', padding: spacing.xl }}>No quotes match these filters.</Text>
-        ) : (
-          filtered.map((q, i) => (
-            <View key={q.id} onLayout={(e) => (rowY.current[q.dealerId] = e.nativeEvent.layout.y)}>
-              <QuoteShopCard
-                quote={q}
-                index={i}
-                selected={q.dealerId === selectedId}
-                onSelect={() => onPinSelect(q.dealerId)}
-                onAccept={() => navigateCrossTab(navigation, 'HomeTab', 'AcceptBooking', { dealerId: q.dealerId })}
-              />
-            </View>
-          ))
-        )}
-      </MapSheet>
-
-      <FilterSheet
-        visible={filterOpen}
-        onClose={() => setFilterOpen(false)}
-        distance={{ value: radius }}
-        groups={[
-          { key: 'sort', title: 'Sort by', options: QUOTE_SORTS, value: sort },
-          { key: 'parts', title: 'Parts', options: QUOTE_PARTS, value: parts },
-        ]}
-        onApply={(v, d) => {
-          setSort(v.sort ?? QUOTE_SORTS[0]);
-          setParts(v.parts ?? QUOTE_PARTS[0]);
-          if (d != null) setRadius(d);
-        }}
-      />
-    </>
+    <QuotesSheet
+      headerRight={<CarSwitchChip />}
+      onAccept={(dealerId) => navigateCrossTab(navigation, 'HomeTab', 'AcceptBooking', { dealerId })}
+      onRevise={() => navigateCrossTab(navigation, 'HomeTab', 'CarDiagram')}
+      onCancel={onCancel}
+    />
   );
 }

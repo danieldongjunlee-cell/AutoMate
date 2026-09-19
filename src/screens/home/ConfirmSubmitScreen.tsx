@@ -404,21 +404,6 @@ export function ConfirmSubmitScreen() {
             )}
           </Text>
         </View>
-        <View
-          style={{
-            backgroundColor: colors.warningSurface,
-            borderWidth: 1,
-            borderColor: colors.warning,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginBottom: spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
-            Submitting the new request removes your previous quotes, and you&apos;ll wait to
-            receive new quotes until the auto shops respond.
-          </Text>
-        </View>
         <PrimaryButton
           label="Keep my existing quotes"
           onPress={() => {
@@ -549,23 +534,6 @@ export function ConfirmSubmitScreen() {
           </Text>
           <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', lineHeight: 21 }}>
             {rejected}
-          </Text>
-        </View>
-        <View
-          style={{
-            backgroundColor: colors.warningSurface,
-            borderWidth: 1,
-            borderColor: colors.warning,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginBottom: spacing.lg,
-          }}
-        >
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.warningDeep, marginBottom: 4 }}>
-            Tips for a good photo
-          </Text>
-          <Text style={{ fontSize: 13, color: colors.warningDeep, lineHeight: 20 }}>
-            • Fill the frame with the damaged part{'\n'}• Good, even lighting — avoid glare{'\n'}• Hold steady, about 1–2 ft away{'\n'}• Make sure the actual dent / scratch / crack is in view
           </Text>
         </View>
         <PrimaryButton

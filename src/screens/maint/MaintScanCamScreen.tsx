@@ -239,28 +239,6 @@ export function MaintScanCamScreen() {
       </View>
       )}
 
-      {/* Tips */}
-      <View
-        style={{
-          backgroundColor: colors.warningSurface,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          gap: spacing.sm,
-          marginBottom: spacing.sm,
-        }}
-      >
-        <Icon name="bulb" size={16} color={colors.textSecondary} />
-        <View>
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.warningDeep, marginBottom: 2 }}>
-            Tips
-          </Text>
-          <Text style={{ fontSize: 13, color: colors.warningDeep, opacity: 0.85 }}>
-            Lay flat · Good lighting · Keep text visible
-          </Text>
-        </View>
-      </View>
-
       <Tappable
         onPress={grabFromGallery}
         disabled={picking}

@@ -84,7 +84,7 @@ import { EstimateHistoryScreen } from '../screens/profile/EstimateHistoryScreen'
 import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
 import { useActiveVehicle } from '../hooks/useActiveVehicle';
-import { joinedBrandPosts } from '../services/mock/communityChannels';
+import { allBrandPosts } from '../services/mock/communityChannels';
 import { QUOTES } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
@@ -356,7 +356,6 @@ export function MainTabs() {
   const damageParts = useAppStore((s) => s.damageParts);
   const quotesViewed = useAppStore((s) => s.quotesViewed);
   const readPostIds = useAppStore((s) => s.readPostIds);
-  const joinedCommunityIds = useAppStore((s) => s.joinedCommunityIds);
   const bookings = useAppStore((s) => s.bookings);
 
   // Per-tab notification counts.
@@ -371,9 +370,9 @@ export function MainTabs() {
       !b.id.startsWith('bk-seed-') &&
       (b.status === 'confirmed' || b.status === 'paid'),
   ).length;
-  // Community = unread posts in the communities the user has JOINED (no joins →
-  // no badge). Cleared as the posts are read.
-  const unreadPosts = joinedBrandPosts(brand, joinedCommunityIds).filter((p) => !readPostIds[p.id]).length;
+  // Community = unread posts in the active car's brand communities (membership
+  // is automatic once a car is registered). Cleared as the posts are read.
+  const unreadPosts = (brand === 'your car' ? [] : allBrandPosts(brand)).filter((p) => !readPostIds[p.id]).length;
   const badges: Partial<Record<keyof MainTabParamList, number>> = {
     QuotesTab: damageParts.length > 0 && !quotesViewed ? QUOTES.length : undefined,
     BookingsTab: upcoming || undefined,
