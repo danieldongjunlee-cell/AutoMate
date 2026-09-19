@@ -8,7 +8,8 @@ import { palette, useTheme } from '../theme';
 import { Tappable } from './Tappable';
 
 /** Shared yellow used for every review star across the app. */
-export const STAR_YELLOW = palette.warning;
+/** Google-style review-star yellow. */
+export const STAR_YELLOW = '#FBBC04';
 
 /**
  * Tappable "★ 4.9 (312 reviews)" rating → the in-app Reviews screen for the

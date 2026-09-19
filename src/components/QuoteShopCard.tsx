@@ -2,14 +2,15 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { PrimaryButton } from './PrimaryButton';
-import { ShopCard } from './ShopCard';
+import { ShopListRow } from './ShopListRow';
 import { dealerById, Quote, quoteBreakdown } from '../services/mock/data';
-import { radii, spacing, useTheme } from '../theme';
+import { palette, radii, spacing, useTheme } from '../theme';
 
 /**
- * A shop quote as a photo card (Quotes tab + post-submit quotes). Tapping the
- * card selects the shop: the price breakdown expands and "Accept & book"
- * appears. `index` picks the placeholder storefront variant.
+ * A shop's quote as a maps-app result row (Quotes tab + post-submit quotes):
+ * rating with a yellow star, open / closed, photos, the quote as a callout
+ * with "Accept", and Directions · Call · Website chips. Tapping the row
+ * selects the shop: the price breakdown expands and "Accept & book" appears.
  */
 export function QuoteShopCard({
   quote,
@@ -29,7 +30,7 @@ export function QuoteShopCard({
   const discount = quote.tier === 'best' ? 20 : 0;
   const b = quoteBreakdown(quote.price, discount);
   const price = quote.priceHigh ? `$${quote.price}–${quote.priceHigh}` : `$${quote.price}`;
-  const meta = `${dealer.distanceMi} mi · ★ ${dealer.rating.toFixed(1)} (${dealer.reviews}) · ${quote.note}`;
+  const tier = quote.tier === 'best' ? ' · Best price' : quote.tier === 'recommended' ? ' · Recommended' : '';
 
   const line = (label: string, value: string, strong = false) => (
     <View key={label} style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
@@ -39,9 +40,20 @@ export function QuoteShopCard({
   );
 
   return (
-    <ShopCard dealer={dealer} price={price} meta={meta} best={quote.tier === 'best'} index={index} selected={selected} onPress={onSelect}>
+    <ShopListRow
+      dealer={dealer}
+      index={index}
+      tags={`${quote.parts} parts`}
+      selected={selected}
+      onPress={onSelect}
+      callout={{ title: `Quote ${price}${tier}`, body: quote.note, button: 'Accept', onPress: onAccept }}
+      actions={[{ label: 'Accept & book', icon: 'calcheck', primary: true, onPress: onAccept }]}
+    >
       {selected ? (
         <View>
+          {quote.tier === 'best' ? (
+            <Text style={{ fontSize: 12, fontWeight: '800', letterSpacing: 0.6, color: palette.mint, marginBottom: 6 }}>BEST PRICE · 20% partner discount applied</Text>
+          ) : null}
           <View style={{ backgroundColor: colors.surfaceAlt, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.sm }}>
             {line('Labor total', `$${b.labor}`)}
             {line('Parts total', `$${b.parts}`)}
@@ -55,6 +67,6 @@ export function QuoteShopCard({
           <PrimaryButton label={`Accept & book ${dealer.name} →`} onPress={onAccept} textStyle={{ fontSize: 16 }} />
         </View>
       ) : null}
-    </ShopCard>
+    </ShopListRow>
   );
 }
