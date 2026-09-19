@@ -141,7 +141,7 @@ export function HomeLauncherScreen() {
       ) : null}
 
       {/* AI Repair Estimate + Maintenance dashboard photo tiles, side by side. */}
-      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.md }}>
+      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
         <PhotoTile
           title={t('AI Repair Estimate')}
           source={TILE_AI}
@@ -159,13 +159,12 @@ export function HomeLauncherScreen() {
       </View>
 
       {/* Deals carousel — only a right-aligned "View all deals →" link above it. */}
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: spacing.xs, marginBottom: spacing.sm }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: spacing.sm }}>
         <Tappable onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals'))} hitSlop={8}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all deals →</Text>
         </Tappable>
       </View>
       <PagedCarousel
-        arrows={false}
         items={[
           dealItem('LIMITED · BUNDLE', 'Honda Fairfax Summer Bundle', 'Oil + rotation + 27-pt check · Save $40', ['#E0A93E', '#C2871F'], 'honda-fairfax'),
           dealItem('20% OFF', 'AutoFix Pro — new customer', 'Free inspection w/ any oil change', [palette.primary, '#1e4fcc'], 'autofix-pro'),
@@ -174,16 +173,16 @@ export function HomeLauncherScreen() {
       />
 
       {/* Real customer reviews — title only, then the sliding cards. */}
-      <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.xl, marginBottom: spacing.sm }}>
+      <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.section, marginBottom: spacing.md }}>
         {t('Real customer reviews')}
       </Text>
-      <PagedCarousel arrows={false} items={HOME_REVIEWS.map((r) => reviewCard(r))} />
+      <PagedCarousel items={HOME_REVIEWS.map((r) => reviewCard(r))} />
 
       {/* Footer: help, legal & support documents. */}
       <View
         style={{
-          marginTop: spacing.xxl,
-          paddingTop: spacing.md,
+          marginTop: spacing.section,
+          paddingTop: spacing.lg,
           borderTopWidth: 1,
           borderTopColor: colors.border,
           alignItems: 'center',

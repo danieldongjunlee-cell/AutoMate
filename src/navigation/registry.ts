@@ -59,7 +59,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   CommPost: 'Post detail', // s-comm-post
   CommCreate: 'New post', // s-comm-create
   ProfHub: 'Profile', // s-prof-hub
-  ProfMiles: 'Reward milestones', // s-prof-miles
+  ProfMiles: 'Rewards', // check-in · points · milestones
   ProfMileDet: 'Free Oil Change', // s-prof-mile-det
   ProfEarn: 'How you earn', // s-prof-earn
   ProfCars: 'My cars', // s-prof-cars

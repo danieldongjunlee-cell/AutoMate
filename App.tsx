@@ -1,5 +1,7 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { Analytics } from '@vercel/analytics/react';
 import React from 'react';
+import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { RootNavigator } from './src/navigation/RootNavigator';
@@ -10,6 +12,8 @@ export default function App() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <RootNavigator />
+        {/* Vercel Web Analytics — web only; the component touches the DOM. */}
+        {Platform.OS === 'web' ? <Analytics /> : null}
       </QueryClientProvider>
     </SafeAreaProvider>
   );

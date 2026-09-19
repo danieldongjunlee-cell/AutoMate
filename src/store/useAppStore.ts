@@ -415,6 +415,16 @@ interface AppState {
 
   // Maintenance booking cart (multi-service selection)
   cart: BookingCart;
+  /** Service categories chosen on "What service do you need?" (dock → Book
+   *  maintenance). Drives the partner-shop filter and seeds the cart; empty
+   *  when the booking started from the dashboard's "Book a service". */
+  serviceTypePick: string[];
+  setServiceTypePick: (ids: string[]) => void;
+  /** Option chosen per picked category (MAINT_CATEGORIES id → sub-service id). */
+  serviceSubPick: Record<string, string>;
+  setServiceSubPick: (picks: Record<string, string>) => void;
+  /** Replace the cart's services wholesale (seeding from the pick). */
+  setCartServices: (services: CartService[]) => void;
   /** Open a booking at a dealer: drops any stale cart and seeds the defaults. */
   startBooking: (dealerId: string) => void;
   /** Claim a bundle/discount: pre-selects the deal's services at their
@@ -700,6 +710,11 @@ export const useAppStore = create<AppState>()(
   setReminderPref: (reminderPref) => set({ reminderPref }),
 
   cart: emptyCart,
+  serviceTypePick: [],
+  setServiceTypePick: (serviceTypePick) => set({ serviceTypePick }),
+  serviceSubPick: {},
+  setServiceSubPick: (serviceSubPick) => set({ serviceSubPick }),
+  setCartServices: (services) => set((s) => ({ cart: { ...s.cart, services } })),
   startBooking: (dealerId) => set({ cart: defaultCart(dealerId) }),
   claimDeal: (dealerId, promo) => {
     // Pre-select a representative service from each discounted category at its

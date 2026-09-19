@@ -39,45 +39,8 @@ export function SubmittedScreen() {
   return (
     <Screen>
       <SubmitProgress step={3} left="Submitted" right="Done" />
-      {/* Success header — the key facts (free · response time) live here as a
-          single subtitle, so the old three-box stat row is no longer needed. */}
-      <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 3, textAlign: 'center' }}>
-          Photos sent to {QUOTE_REQUEST.shopsNotified} shops
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
-          Free · no obligation · 1–3 hr est. response
-        </Text>
-      </View>
-
-      {/* Notify banner — slimmed to a single tappable row. */}
-      <Tappable
-        onPress={() => setNotifyEnabled(true)}
-        disabled={notifyEnabled}
-        style={({ pressed }) => ({
-          backgroundColor: colors.warningSurface,
-          borderRadius: radii.sm,
-          borderWidth: 1,
-          borderColor: palette.warningBorder,
-          paddingVertical: spacing.sm,
-          paddingHorizontal: spacing.md,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.sm,
-          marginBottom: spacing.md,
-          opacity: pressed ? 0.85 : 1,
-        })}
-      >
-        <Icon name="bell" size={22} color={colors.warning} />
-        <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-          {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
-        </Text>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? palette.mint : colors.warningDeep }}>
-          {notifyEnabled ? 'Enabled' : 'Enable'}
-        </Text>
-      </Tappable>
-
-      {/* AI Repair Recommendation — header, analysis and DIY guides consolidated
+      {/* AI Repair Recommendation first (the estimate leads), then the submission status.
+          Header, analysis and DIY guides consolidated
           into a single card so the screen reads as one block instead of many. */}
       <View
         style={{
@@ -141,6 +104,44 @@ export function SubmittedScreen() {
           </ProLockOverlay>
         )}
       </View>
+
+      {/* Success header — the key facts (free · response time) live here as a
+          single subtitle, so the old three-box stat row is no longer needed. */}
+      <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
+        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 3, textAlign: 'center' }}>
+          Photos sent to {QUOTE_REQUEST.shopsNotified} shops
+        </Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
+          Free · no obligation · 1–3 hr est. response
+        </Text>
+      </View>
+
+      {/* Notify banner — slimmed to a single tappable row. */}
+      <Tappable
+        onPress={() => setNotifyEnabled(true)}
+        disabled={notifyEnabled}
+        style={({ pressed }) => ({
+          backgroundColor: colors.warningSurface,
+          borderRadius: radii.sm,
+          borderWidth: 1,
+          borderColor: palette.warningBorder,
+          paddingVertical: spacing.sm,
+          paddingHorizontal: spacing.md,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          marginBottom: spacing.md,
+          opacity: pressed ? 0.85 : 1,
+        })}
+      >
+        <Icon name="bell" size={22} color={colors.warning} />
+        <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
+          {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
+        </Text>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? palette.mint : colors.warningDeep }}>
+          {notifyEnabled ? 'Enabled' : 'Enable'}
+        </Text>
+      </Tappable>
 
       {guide ? <DiyGuideSheet guide={guide} onClose={() => setGuide(null)} /> : null}
 

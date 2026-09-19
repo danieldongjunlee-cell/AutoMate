@@ -81,6 +81,35 @@ export function AfterHoursScreen() {
 
   return (
     <Screen>
+      {/* AI Repair Recommendation — its own card, shown first. */}
+      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md, marginBottom: spacing.md }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
+          <IconChip name="sparkle" size={36} glyph={22} color={colors.primaryDark} />
+          <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>AI Repair Recommendation</Text>
+          <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 2 }}>
+            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>Pro</Text>
+          </View>
+        </View>
+        <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart} — DIY feasible</Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Est. ${priceLow}–${priceHigh}</Text>
+        </View>
+        {isPro ? (
+          <View>
+            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </View>
+        ) : (
+          <ProLockOverlay
+            subtitle="Unlock AI-matched DIY guides based on your damage photos"
+            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
+          >
+            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
+            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
+          </ProLockOverlay>
+        )}
+      </View>
+
       {/* Dark after-hours card */}
       <LinearGradient
         colors={[palette.navy, palette.navyMid]}
@@ -150,35 +179,6 @@ export function AfterHoursScreen() {
           Your photos are queued. Dealers review when they open.
         </Text>
       </LinearGradient>
-
-      {/* AI Repair Recommendation — its own card below the submitted card. */}
-      <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md, marginBottom: spacing.md }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
-          <IconChip name="sparkle" size={36} glyph={22} color={colors.primaryDark} />
-          <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>AI Repair Recommendation</Text>
-          <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 2 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: colors.primaryDark }}>Pro</Text>
-          </View>
-        </View>
-        <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart} — DIY feasible</Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Est. ${priceLow}–${priceHigh}</Text>
-        </View>
-        {isPro ? (
-          <View>
-            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
-            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
-          </View>
-        ) : (
-          <ProLockOverlay
-            subtitle="Unlock AI-matched DIY guides based on your damage photos"
-            onUnlock={() => navigateCrossTab(navigation, 'HomeTab', 'DiyUnlock', { returnTo: 'DealerQuotes' })}
-          >
-            <DiyGuideRow level="EASY" title="Boiling water dent method" meta="3 steps · ~8 min · No tools needed" />
-            <DiyGuideRow level="MED" title="Plunger pull method" meta="4 steps · ~12 min · Plunger required" />
-          </ProLockOverlay>
-        )}
-      </View>
 
       <PrimaryButton
         label="View available quotes →"
