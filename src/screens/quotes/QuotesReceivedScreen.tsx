@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { Card, Screen } from '../../components/ui';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { AiEstimateCard } from '../../components/AiEstimateCard';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Icon } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
@@ -75,20 +76,12 @@ export function QuotesReceivedScreen() {
   const estimateBlock = (
     <>
       {aiEstimate ? (
-        <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.primaryLight, padding: spacing.md, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep, marginBottom: 2 }}>AI estimated repair cost</Text>
-          <Text style={{ fontSize: 24, fontWeight: '800', color: colors.primaryDark }}>
-            ${aiEstimate.priceLow} – ${aiEstimate.priceHigh}
-          </Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: spacing.sm }}>
-            {damageParts.map((p) => (
-              <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.primaryLight, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>{p.part}</Text>
-                <Text style={{ fontSize: 12, color: colors.textSecondary }}>{p.type} · {p.photos} photo{p.photos !== 1 ? 's' : ''}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        <AiEstimateCard
+          priceLow={aiEstimate.priceLow}
+          priceHigh={aiEstimate.priceHigh}
+          points={damageParts.reduce((n, p) => n + (p.photos || 1), 0)}
+          style={{ marginBottom: spacing.md }}
+        />
       ) : null}
 
       {/* Add parts / revise + cancel */}

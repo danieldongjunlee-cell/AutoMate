@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
+import { AiEstimateCard } from '../../components/AiEstimateCard';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 
@@ -39,6 +40,7 @@ export function SubmittedScreen() {
   return (
     <Screen>
       <SubmitProgress step={3} left="Submitted" right="Done" />
+      <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damageParts.reduce((n, p) => n + (p.photos || 1), 0)} style={{ marginBottom: spacing.lg }} />
       {/* AI Repair Recommendation first (the estimate leads), then the submission status.
           Header, analysis and DIY guides consolidated
           into a single card so the screen reads as one block instead of many. */}
@@ -72,7 +74,7 @@ export function SubmittedScreen() {
             {primaryPart} — DIY feasible
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>
-            Est. ${priceLow}–${priceHigh}
+            Matched DIY methods for this repair
           </Text>
         </View>
 

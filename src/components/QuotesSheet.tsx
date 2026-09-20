@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import React, { useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
+import { AiEstimateCard } from './AiEstimateCard';
 import { MapMarker } from './DealerMap';
 import { FilterSheet } from './FilterSheet';
 import { Icon } from './Icon';
@@ -93,6 +94,8 @@ export function QuotesSheet({
     [quotes, sort, parts, radius, openNow],
   );
   const summary = quoteFilterSummary(sort, parts, radius);
+  /** Photos the AI analysed — shown as "detected damage points". */
+  const damagePoints = damageParts.reduce((n, p) => n + (p.photos || 1), 0);
 
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
@@ -136,24 +139,7 @@ export function QuotesSheet({
       >
         {/* AI estimate strip + add / cancel */}
         <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
-          <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.primaryLight, padding: spacing.md, marginBottom: spacing.md }}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep, marginBottom: 2 }}>AI estimated repair cost</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: colors.primaryDark }}>
-              ${priceLow} – ${priceHigh}
-            </Text>
-            {damageParts.length > 0 ? (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: spacing.sm }}>
-                {damageParts.map((p) => (
-                  <View key={p.part} style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.primaryLight, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 4 }}>
-                    <Text style={{ fontSize: 13, fontWeight: '800', color: colors.textPrimary }}>{p.part}</Text>
-                    <Text style={{ fontSize: 12, color: colors.textSecondary }}>
-                      {p.type} · {p.photos} photo{p.photos !== 1 ? 's' : ''}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ) : null}
-          </View>
+          <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damagePoints} style={{ marginBottom: spacing.md }} />
           <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <Tappable
               onPress={onRevise}

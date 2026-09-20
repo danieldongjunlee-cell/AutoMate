@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -170,33 +171,32 @@ export function ProfCarAddScreen() {
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
             All fields required except Oil spec &amp; Last service.
           </Text>
-          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+          {/* Brand — real logos, tap to pick. */}
+          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
+            Which brand is your car? *
+          </Text>
+          <BrandGrid
+            brands={BRANDS}
+            value={brand}
+            onChange={(b) => {
+              setBrand(b);
+              setModel('');
+            }}
+          />
+
+          {/* Model — the chosen brand's line-up. */}
+          {brand ? (
+            <>
+              <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
+                Which {brand}? *
+              </Text>
+              <OptionGrid options={modelOptions} value={model} onChange={setModel} initialCount={6} />
+            </>
+          ) : null}
+
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg }}>
             <View style={{ flex: 1 }}>
               <Dropdown label="Year *" value={year} options={YEARS} onChange={setYear} placeholder="2019" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Dropdown
-                label="Brand *"
-                value={brand}
-                options={BRANDS}
-                placeholder="Honda"
-                onChange={(b) => {
-                  setBrand(b);
-                  setModel('');
-                }}
-              />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', gap: spacing.md }}>
-            <View style={{ flex: 1 }}>
-              <Dropdown
-                label="Model *"
-                value={model}
-                options={modelOptions}
-                onChange={setModel}
-                disabled={!brand}
-                placeholder={brand ? 'Accord' : 'Select brand first'}
-              />
             </View>
             <View style={{ flex: 1 }}>
               <Dropdown label="Trim *" value={trim} options={TRIMS} onChange={setTrim} placeholder="EX-L" />

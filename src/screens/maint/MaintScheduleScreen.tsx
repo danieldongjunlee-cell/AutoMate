@@ -1,11 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
 import { MapMarker } from '../../components/DealerMap';
 import { FilterSheet } from '../../components/FilterSheet';
 import { FilterChip, MapSheet } from '../../components/MapSheet';
+import { PriceBreakdown } from '../../components/PriceBreakdown';
 import { ShopListRow } from '../../components/ShopListRow';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
@@ -131,6 +132,12 @@ export function MaintScheduleScreen() {
     if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: true });
   };
 
+  // Ribbons: the cheapest shop for the chosen services, and the best-rated one.
+  const cheapestId = dealers.length
+    ? [...dealers].sort((a, b) => (pickedCategories.length ? totalAt(a.id) - totalAt(b.id) : fromPrice(a.id) - fromPrice(b.id)))[0].id
+    : null;
+  const topRatedId = dealers.length ? [...dealers].sort((a, b) => b.rating - a.rating)[0].id : null;
+
   const pickedLabel = pickedCategories.map((c) => c.name).join(' + ');
   const cycleSort = () => setSort((s) => SORTS[(SORTS.indexOf(s) + 1) % SORTS.length]);
 
@@ -173,6 +180,13 @@ export function MaintScheduleScreen() {
                 dealer={dealer}
                 index={i}
                 tags={tags}
+                tag={
+                  dealer.id === cheapestId
+                    ? { label: 'Best price', tone: 'best' as const }
+                    : dealer.id === topRatedId
+                      ? { label: 'Top rated', tone: 'reco' as const }
+                      : undefined
+                }
                 selected={dealer.id === selectedId}
                 onPress={() => selectShop(dealer.id)}
                 callout={
@@ -183,25 +197,16 @@ export function MaintScheduleScreen() {
                 actions={[{ label: 'Book', icon: 'calcheck', primary: true, onPress: () => selectShop(dealer.id) }]}
               >
                 {total != null ? (
-                  // Your services at this shop: each line priced, total on the right.
-                  <View style={{ backgroundColor: colors.surfaceAlt, borderRadius: 16, padding: spacing.md }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md, marginBottom: 6 }}>
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Your services here</Text>
-                        <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>{dealer.name}&apos;s prices · pay at the shop</Text>
-                      </View>
-                      <View style={{ alignItems: 'flex-end' }}>
-                        <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, lineHeight: 26 }}>${total}</Text>
-                        <Text style={{ fontSize: 11, color: colors.textTertiary }}>total</Text>
-                      </View>
-                    </View>
-                    {servicesAt(dealer.id).map((svc) => (
-                      <View key={svc.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 5, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border }}>
-                        <Text style={{ flex: 1, fontSize: 14, color: colors.textSecondary }} numberOfLines={1}>{svc.name}</Text>
-                        <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>${svc.price}</Text>
-                      </View>
-                    ))}
-                  </View>
+                  // Your services at this shop: total on the right, tap for the per-service lines.
+                  <PriceBreakdown
+                    title="Your services here"
+                    total={`$${total}`}
+                    caption={`${dealer.name}'s prices · pay at the shop`}
+                    lines={[
+                      ...servicesAt(dealer.id).map((svc) => ({ label: svc.name, value: `$${svc.price}` })),
+                      { label: 'Total', value: `$${total}`, strong: true },
+                    ]}
+                  />
                 ) : null}
               </ShopListRow>
             </View>

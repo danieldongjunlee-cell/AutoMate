@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
@@ -309,36 +310,30 @@ export function EstimateIntakeScreen() {
 
       {/* 1 — Car info (always shown). Model is a dropdown filtered by brand. */}
       <Section n={1} title="Your car" subtitle="Brand, model, year & color">
-        <Dropdown
-          label="Brand"
+        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
+          Which brand is your car?
+        </Text>
+        <BrandGrid
+          brands={CAR_BRANDS}
           value={brand}
-          options={CAR_BRANDS}
           onChange={(b) => {
             setBrand(b);
             setModel(''); // reset the model when the brand changes
           }}
-          placeholder="Select brand"
-          containerStyle={{ marginBottom: spacing.sm }}
         />
-        {modelsForBrand(brand).length > 0 ? (
-          <Dropdown
-            label="Model"
-            value={model}
-            options={modelsForBrand(brand)}
-            onChange={setModel}
-            placeholder={brand ? `Select a ${brand} model` : 'Select a model'}
-            containerStyle={{ marginBottom: spacing.sm }}
-          />
-        ) : (
-          <TextField
-            label="Model"
-            value={model}
-            onChangeText={setModel}
-            placeholder={brand ? 'Enter your model' : 'Select a brand first'}
-            editable={!!brand}
-            containerStyle={{ marginBottom: spacing.sm }}
-          />
-        )}
+        {brand ? (
+          <>
+            <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
+              Which {brand}?
+            </Text>
+            {modelsForBrand(brand).length > 0 ? (
+              <OptionGrid options={modelsForBrand(brand)} value={model} onChange={setModel} initialCount={6} />
+            ) : (
+              <TextField label="Model" value={model} onChangeText={setModel} placeholder="Enter your model" containerStyle={{ marginBottom: spacing.sm }} />
+            )}
+          </>
+        ) : null}
+        <View style={{ height: spacing.lg }} />
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           <Dropdown label="Year" value={year} options={YEARS} onChange={setYear} placeholder="Year" containerStyle={{ flex: 1 }} />
           <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Color" containerStyle={{ flex: 1 }} />

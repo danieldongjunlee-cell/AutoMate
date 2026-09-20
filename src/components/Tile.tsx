@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, ImageBackground, ImageSourcePropType, Platform, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Animated, Easing, Image, ImageSourcePropType, Platform, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
@@ -146,10 +146,13 @@ function ScanOverlay({ active, height }: { active: boolean; height: number }) {
   );
 }
 
+/** Dark ground behind the tile photos so a contained photo letterboxes cleanly. */
+const TILE_GROUND = '#0a1020';
+
 /**
- * Photo tile: a full-bleed photo behind a top-to-bottom navy gradient so the
- * title stays legible. Hovering (web) or holding (touch) plays the scan
- * animation. Used for the two Home launchers.
+ * Photo tile: the whole photo, slightly transparent, on a dark ground with a
+ * bottom gradient so the title stays legible. Hovering (web) or holding
+ * (touch) plays the scan animation. Used for the two Home launchers.
  */
 export function PhotoTile({
   title,
@@ -179,7 +182,7 @@ export function PhotoTile({
         {
           height,
           borderRadius: radii.tile,
-          backgroundColor: colors.tileNavy,
+          backgroundColor: TILE_GROUND,
           borderWidth: 1,
           borderColor: scanning ? '#4FE3C1' : colors.tileNavyBorder,
           overflow: 'hidden',
@@ -187,18 +190,18 @@ export function PhotoTile({
         style,
       ]}
     >
-      <ImageBackground source={source} resizeMode="cover" style={{ flex: 1 }}>
-        <LinearGradient
-          colors={['rgba(22,35,61,0.05)', 'rgba(22,35,61,0.35)', 'rgba(10,15,25,0.9)']}
-          locations={[0, 0.55, 1]}
-          start={{ x: 0.5, y: 0 }}
-          end={{ x: 0.5, y: 1 }}
-          style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
-        >
-          <TileTitle color="#e8edf5">{title}</TileTitle>
-        </LinearGradient>
-        <ScanOverlay active={scanning} height={height} />
-      </ImageBackground>
+      {/* The full photo, a touch transparent so it sits back behind the label. */}
+      <Image source={source} resizeMode="contain" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.85 }]} />
+      <LinearGradient
+        colors={['rgba(10,16,32,0)', 'rgba(10,16,32,0.35)', 'rgba(10,16,32,0.92)']}
+        locations={[0, 0.55, 1]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
+      >
+        <TileTitle color="#e8edf5">{title}</TileTitle>
+      </LinearGradient>
+      <ScanOverlay active={scanning} height={height} />
     </Tappable>
   );
 }
