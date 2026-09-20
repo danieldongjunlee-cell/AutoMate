@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 
 import { pointsToUsd } from '../config/points';
-import { radii, useTheme } from '../theme';
+import { palette, radii, useTheme } from '../theme';
 
 /** ★ +N pts chip (scan/manual/post rewards). `usd` appends the dollar value. */
 export function PointsBadge({ points, usd = false }: { points: number; usd?: boolean }) {
@@ -20,7 +20,7 @@ export function PointsBadge({ points, usd = false }: { points: number; usd?: boo
         overflow: 'hidden',
       }}
     >
-      ★ +{points} pts{usd ? ` · ${pointsToUsd(points)}` : ''}
+      <Text style={{ color: palette.star }}>★</Text> +{points} pts{usd ? ` · ${pointsToUsd(points)}` : ''}
     </Text>
   );
 }

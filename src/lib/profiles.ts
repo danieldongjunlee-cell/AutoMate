@@ -28,7 +28,6 @@ export async function getMyProfile(): Promise<Profile | null> {
 /** Update the signed-in user's profile (only the fields you pass). */
 export async function updateMyProfile(patch: {
   full_name?: string;
-  username?: string;
   phone?: string;
 }): Promise<void> {
   if (!supabase) throw new Error('Supabase is not configured.');

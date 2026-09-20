@@ -42,7 +42,7 @@ export function ProManageScreen() {
         style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-          <Icon name="star" size={26} color={colors.textSecondary} />
+          <Icon name="star" size={26} color={palette.star} />
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
             <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>

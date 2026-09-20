@@ -190,7 +190,7 @@ export function MaintDashboardScreen() {
 
       {/* Quick actions */}
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
-        {quick('DIY tips', 'star', palette.amber, () => navigation.navigate('MaintDiy'))}
+        {quick('DIY tips', 'star', palette.star, () => navigation.navigate('MaintDiy'))}
         {quick('Receipt', 'camera', palette.teal, () => navigation.navigate('MaintScanCam'))}
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>

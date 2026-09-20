@@ -7,7 +7,6 @@ import { supabase } from './supabase';
 export interface SupabaseAuthResult {
   name: string;
   email: string;
-  username?: string;
   phone?: string;
   token: string | null;
 }
@@ -19,24 +18,22 @@ function nameFromMetadata(meta: Record<string, unknown> | undefined, fallback: s
 
 /**
  * Build the display user from a session, preferring the editable public.profiles
- * row (full_name + username + phone) so profile edits and relaunches show the
+ * row (full_name + phone) so profile edits and relaunches show the
  * right values. Falls back to auth metadata / email-local-part. A brand-new
  * Google user has no profile phone yet, so phone comes back empty.
  */
 async function fromProfile(email: string, metaName: string, token: string | null): Promise<SupabaseAuthResult> {
   let name = metaName;
-  let username: string | undefined;
   let phone: string | undefined;
   try {
     const p = await getMyProfile();
     if (p?.full_name && p.full_name.trim()) name = p.full_name.trim();
-    if (p?.username && p.username.trim()) username = p.username.trim();
     if (p?.phone && p.phone.trim()) phone = p.phone.trim();
   } catch {
     // profiles table may not exist yet, keep the metadata/email fallback
   }
   if (!name.trim()) name = email.split('@')[0] || email;
-  return { name, email, username, phone, token };
+  return { name, email, phone, token };
 }
 
 /**

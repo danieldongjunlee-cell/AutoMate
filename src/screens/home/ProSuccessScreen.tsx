@@ -9,7 +9,7 @@ import { Badge, Card, Screen } from '../../components/ui';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { HomeStackParamList } from '../../navigation/types';
 import { PRO_PLANS, useAppStore } from '../../store/useAppStore';
-import { spacing, useTheme } from '../../theme';
+import { palette, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'ProSuccess'>;
 type Route = RouteProp<HomeStackParamList, 'ProSuccess'>;
@@ -44,7 +44,7 @@ export function ProSuccessScreen() {
             marginBottom: spacing.sm,
           }}
         >
-          <Icon name="star" size={28} color={colors.textSecondary} />
+          <Icon name="star" size={28} color={palette.star} />
         </View>
         <Text style={{ fontSize: 18, fontWeight: '800', color: colors.successDeep }}>You're a Pro!</Text>
         <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
@@ -52,7 +52,7 @@ export function ProSuccessScreen() {
         </Text>
       </View>
       <Card style={{ padding: spacing.md, marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-        <Icon name="star" size={18} color={colors.textSecondary} />
+        <Icon name="star" size={18} color={palette.star} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
             AutoMate Pro · {p.label}

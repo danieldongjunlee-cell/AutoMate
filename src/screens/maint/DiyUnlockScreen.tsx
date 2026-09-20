@@ -140,7 +140,7 @@ export function DiyUnlockScreen() {
               justifyContent: 'center',
             }}
           >
-            <Icon name="star" size={20} color={colors.textSecondary} />
+            <Icon name="star" size={20} color={palette.star} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
