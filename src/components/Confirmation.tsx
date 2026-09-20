@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Icon } from './Icon';
 import { Modal, StyleSheet, Text, View } from 'react-native';
 
+import { Glyph, Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
 
 import { REMINDER_OPTIONS, ReminderPref, useAppStore } from '../store/useAppStore';
@@ -12,65 +12,6 @@ import { radii, spacing, useTheme } from '../theme';
  * s-booking-confirm and s-maint-schedule-confirm, one pattern, two routes).
  */
 
-/** Headline + subtitle (no hero decoration, canvas "You're all set!"). */
-export function SuccessHeader({ title, subtitle }: { title: string; subtitle: string }) {
-  const { colors } = useTheme();
-  return (
-    <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-      <Text style={{ fontSize: 26, fontWeight: '800', color: colors.textPrimary, marginBottom: 4, letterSpacing: -0.3 }}>
-        {title}
-      </Text>
-      <Text style={{ fontSize: 14, color: colors.textTertiary }}>{subtitle}</Text>
-    </View>
-  );
-}
-
-/** Two-column label/value cell in the booking summary grid. */
-export function SummaryCell({
-  label,
-  value,
-  sub,
-  subColor,
-  emphasizeSub,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  subColor?: string;
-  /** Render the sub line larger/bolder than the value (used for the time). */
-  emphasizeSub?: boolean;
-}) {
-  const { colors } = useTheme();
-  return (
-    <View style={{ width: '100%', paddingVertical: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.divider }}>
-      <Text
-        style={{
-          fontSize: 12,
-          fontWeight: '600',
-          color: colors.textTertiary,
-          textTransform: 'uppercase',
-          marginBottom: 2,
-        }}
-      >
-        {label}
-      </Text>
-      <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
-      {sub ? (
-        <Text
-          style={{
-            fontSize: emphasizeSub ? 18 : 13,
-            fontWeight: emphasizeSub ? '800' : '400',
-            color: subColor ?? colors.textTertiary,
-            marginTop: emphasizeSub ? 1 : 0,
-          }}
-        >
-          {sub}
-        </Text>
-      ) : null}
-    </View>
-  );
-}
-
 /** Stable confirmation code (e.g. "AM-3F9K2") derived from a booking seed. */
 export function confirmationCode(seed: string): string {
   let h = 0;
@@ -79,47 +20,7 @@ export function confirmationCode(seed: string): string {
   return `AM-${base}`;
 }
 
-/**
- * Confirmation-number card the customer shows the shop at check-in (replaces the
- * old "AutoMate app for check-in QR"). Big, legible code on a tinted card.
- */
-export function ConfirmationNumber({ code }: { code: string }) {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={{
-        backgroundColor: colors.primarySurface,
-        borderRadius: radii.md,
-        borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.primaryLight,
-        padding: spacing.md,
-        marginBottom: spacing.sm,
-        alignItems: 'center',
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 12,
-          fontWeight: '700',
-          letterSpacing: 0.6,
-          textTransform: 'uppercase',
-          color: colors.primaryDark,
-          marginBottom: 4,
-        }}
-      >
-        Confirmation number
-      </Text>
-      <Text style={{ fontSize: 28, fontWeight: '800', letterSpacing: 3, color: colors.primaryDeep }}>
-        {code}
-      </Text>
-      <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 4, textAlign: 'center' }}>
-        Show this to the shop when you arrive
-      </Text>
-    </View>
-  );
-}
-
-/** Row copy per reminder timing (the row updates live as the pref changes). */
+/** Row copy per reminder timing. */
 export const REMINDER_COPY: Record<ReminderPref, string> = {
   '1 day before': '1 day before at 9:00 AM',
   '2 days before': '2 days before at 9:00 AM',
@@ -127,117 +28,209 @@ export const REMINDER_COPY: Record<ReminderPref, string> = {
   'Morning of': 'Morning of at 8:00 AM',
 };
 
-/**
- * tinted reminder row. Edit opens a timing modal (1 day / 2 days /
- * 2 hours before / morning of) saved to the store (user-feedback pass 2).
- */
-export function ReminderRow() {
+/** Card shell shared by the two confirmation pop-ups. */
+function PopoverCard({ title, children }: { title: string; children: React.ReactNode }) {
   const { colors } = useTheme();
-  const pref = useAppStore((s) => s.reminderPref);
-  const setPref = useAppStore((s) => s.setReminderPref);
-  const [open, setOpen] = useState(false);
-
   return (
     <View
       style={{
-        backgroundColor: colors.primarySurface,
-        borderRadius: radii.sm,
+        backgroundColor: colors.surface,
+        borderRadius: radii.md,
+        overflow: 'hidden',
         borderWidth: StyleSheet.hairlineWidth,
-        borderColor: colors.primaryLight,
-        padding: spacing.sm,
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: spacing.sm,
-        marginBottom: spacing.sm,
+        borderColor: colors.border,
       }}
     >
-      <Icon name="bell" size={20} color={colors.textSecondary} />
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDeep }}>
-          Reminder set
-        </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary }}>{REMINDER_COPY[pref]}</Text>
-      </View>
-      <Tappable onPress={() => setOpen(true)} hitSlop={6}>
-        <Text style={{ fontSize: 14, color: colors.primary }}>Edit</Text>
-      </Tappable>
+      <Text
+        style={{
+          fontSize: 13,
+          fontWeight: '700',
+          letterSpacing: 0.6,
+          textTransform: 'uppercase',
+          color: colors.textTertiary,
+          paddingHorizontal: spacing.md,
+          paddingTop: spacing.md,
+          paddingBottom: spacing.xs,
+        }}
+      >
+        {title}
+      </Text>
+      {children}
+    </View>
+  );
+}
 
-      {/* Timing picker modal */}
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
-        <Tappable
-          noFeedback
-          onPress={() => setOpen(false)}
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,.45)',
-            justifyContent: 'center',
-            padding: spacing.xl,
-          }}
-        >
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: radii.md,
-              overflow: 'hidden',
-              borderWidth: StyleSheet.hairlineWidth,
-              borderColor: colors.border,
-            }}
-          >
-            <Text
+/** Timing picker (1 day / 2 days / 2 hours before / morning of), saved to the store. */
+export function ReminderPickerModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const { colors } = useTheme();
+  const pref = useAppStore((s) => s.reminderPref);
+  const setPref = useAppStore((s) => s.setReminderPref);
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Tappable
+        noFeedback
+        onPress={onClose}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'center', padding: spacing.xl }}
+      >
+        <PopoverCard title="Remind me">
+          {REMINDER_OPTIONS.map((option, i) => {
+            const on = option === pref;
+            return (
+              <Tappable
+                key={option}
+                onPress={() => {
+                  setPref(option);
+                  onClose();
+                }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: spacing.md,
+                  paddingVertical: 13,
+                  backgroundColor: on ? colors.primarySurface : 'transparent',
+                  borderBottomWidth: i < REMINDER_OPTIONS.length - 1 ? StyleSheet.hairlineWidth : 0,
+                  borderBottomColor: colors.divider,
+                }}
+              >
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 15, fontWeight: on ? '600' : '400', color: on ? colors.primaryDeep : colors.textPrimary }}>
+                    {option}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: colors.textTertiary }}>{REMINDER_COPY[option]}</Text>
+                </View>
+                {on ? <Icon name="check" size={16} color={colors.primary} strokeWidth={2.4} /> : null}
+              </Tappable>
+            );
+          })}
+        </PopoverCard>
+      </Tappable>
+    </Modal>
+  );
+}
+
+export interface BringItem {
+  icon: string;
+  label: string;
+}
+
+/** What to bring to the appointment, opened from the confirmation's icon row. */
+function BringModal({ visible, items, onClose }: { visible: boolean; items: BringItem[]; onClose: () => void }) {
+  const { colors } = useTheme();
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Tappable
+        noFeedback
+        onPress={onClose}
+        style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'center', padding: spacing.xl }}
+      >
+        <PopoverCard title="What to bring">
+          {items.map(({ icon, label }, i) => (
+            <View
+              key={label}
               style={{
-                fontSize: 13,
-                fontWeight: '700',
-                letterSpacing: 0.6,
-                textTransform: 'uppercase',
-                color: colors.textTertiary,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: spacing.sm,
                 paddingHorizontal: spacing.md,
-                paddingTop: spacing.md,
-                paddingBottom: spacing.xs,
+                paddingVertical: 13,
+                borderBottomWidth: i < items.length - 1 ? StyleSheet.hairlineWidth : 0,
+                borderBottomColor: colors.divider,
               }}
             >
-              Remind me
-            </Text>
-            {REMINDER_OPTIONS.map((option, i) => {
-              const on = option === pref;
-              return (
-                <Tappable
-                  key={option}
-                  onPress={() => {
-                    setPref(option);
-                    setOpen(false);
-                  }}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: 13,
-                    backgroundColor: on ? colors.primarySurface : 'transparent',
-                    borderBottomWidth:
-                      i < REMINDER_OPTIONS.length - 1 ? StyleSheet.hairlineWidth : 0,
-                    borderBottomColor: colors.divider,
-                  }}
-                >
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: 15,
-                        fontWeight: on ? '600' : '400',
-                        color: on ? colors.primaryDeep : colors.textPrimary,
-                      }}
-                    >
-                      {option}
-                    </Text>
-                    <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-                      {REMINDER_COPY[option]}
-                    </Text>
-                  </View>
-                  {on ? <Icon name="check" size={16} color={colors.primary} strokeWidth={2.4} /> : null}
-                </Tappable>
-              );
-            })}
-          </View>
-        </Tappable>
-      </Modal>
+              <Glyph glyph={icon} size={20} color={colors.textSecondary} />
+              <Text style={{ flex: 1, fontSize: 15, color: colors.textPrimary }}>{label}</Text>
+            </View>
+          ))}
+          <Text style={{ fontSize: 13, color: colors.textTertiary, padding: spacing.md, paddingTop: spacing.sm }}>
+            Your confirmation code is on this screen, the shop can look the booking up with it.
+          </Text>
+        </PopoverCard>
+      </Tappable>
+    </Modal>
+  );
+}
+
+/** One square in the confirmation's action row. */
+function ActionTile({
+  icon,
+  label,
+  caption,
+  onPress,
+}: {
+  icon: IconName;
+  label: string;
+  caption?: string;
+  onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  return (
+    <Tappable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      style={{
+        flex: 1,
+        backgroundColor: colors.surface,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: colors.border,
+        borderRadius: radii.md,
+        paddingVertical: spacing.sm,
+        paddingHorizontal: 4,
+        alignItems: 'center',
+        gap: 6,
+      }}
+    >
+      <View
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 19,
+          backgroundColor: colors.primarySurface,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Icon name={icon} size={20} color={colors.primaryDark} />
+      </View>
+      <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textPrimary, textAlign: 'center' }} numberOfLines={2}>
+        {label}
+      </Text>
+      {caption ? (
+        <Text style={{ fontSize: 10, color: colors.textTertiary, textAlign: 'center' }} numberOfLines={1}>
+          {caption}
+        </Text>
+      ) : null}
+    </Tappable>
+  );
+}
+
+/**
+ * The four things a confirmed booking offers, as icons rather than stacked
+ * cards: what to bring, the reminder, the calendar export and the map.
+ */
+export function ConfirmActions({
+  bring,
+  onAddToCalendar,
+  onViewMap,
+}: {
+  bring: BringItem[];
+  onAddToCalendar: () => void;
+  onViewMap: () => void;
+}) {
+  const pref = useAppStore((s) => s.reminderPref);
+  const [bringOpen, setBringOpen] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
+
+  return (
+    <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+      <ActionTile icon="box" label="What to bring" onPress={() => setBringOpen(true)} />
+      <ActionTile icon="bell" label="Reminder" caption={pref.replace(' before', '')} onPress={() => setReminderOpen(true)} />
+      <ActionTile icon="calendar" label="Add to calendar" onPress={onAddToCalendar} />
+      <ActionTile icon="map" label="View on map" onPress={onViewMap} />
+
+      <BringModal visible={bringOpen} items={bring} onClose={() => setBringOpen(false)} />
+      <ReminderPickerModal visible={reminderOpen} onClose={() => setReminderOpen(false)} />
     </View>
   );
 }

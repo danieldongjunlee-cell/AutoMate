@@ -1,22 +1,27 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { Tappable } from '../../components/Tappable';
 
-import { confirmationCode, ReminderRow } from '../../components/Confirmation';
+import { ConfirmActions, confirmationCode } from '../../components/Confirmation';
 import { SuccessReceipt } from '../../components/SuccessReceipt';
 import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
-import { radii, spacing, useTheme } from '../../theme';
+import { spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>;
+
+const BRING_ITEMS = [
+  { icon: 'file', label: "Driver's license" },
+  { icon: 'key', label: 'Vehicle keys' },
+  { icon: 'history', label: 'Past service records, if you have them' },
+];
 
 /** Wireframe s-maint-schedule-confirm: paid-booking success summary. */
 export function MaintScheduleConfirmScreen() {
@@ -86,37 +91,34 @@ export function MaintScheduleConfirmScreen() {
 
       <View style={{ height: spacing.lg }} />
 
-      <ReminderRow />
-
-      {/* Primary action: manage (reschedule / cancel) the booking. */}
-      <PrimaryButton
-        label="Reschedule"
-        onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
+      {/* What to bring, the reminder, the calendar and the map, as icons. */}
+      <ConfirmActions
+        bring={BRING_ITEMS}
+        onAddToCalendar={onAddToCalendar}
+        onViewMap={() => navigation.navigate('DealerMap', { dealerId: dealer.id })}
       />
 
-      {/* Secondary, smaller: add to calendar. */}
-      <Tappable
-        onPress={onAddToCalendar}
-        style={({ pressed }) => ({
-          backgroundColor: colors.surface,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.border,
-          borderRadius: radii.sm,
-          paddingVertical: 9,
-          alignItems: 'center',
-          marginTop: spacing.sm,
-        })}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
-          Add to calendar
-        </Text>
-      </Tappable>
-      <Tappable
-        onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
-        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Cancel booking</Text>
-      </Tappable>
+      {/* Manage the booking: reschedule or cancel side by side, then home. */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg }}>
+        <PrimaryButton
+          label="Reschedule"
+          style={{ flex: 1 }}
+          onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
+        />
+        <PrimaryButton
+          label="Cancel"
+          variant="outline"
+          style={{ flex: 1, borderColor: colors.dangerBorder }}
+          textStyle={{ color: colors.danger }}
+          onPress={() => navigation.navigate('Reschedule', { kind: 'maintenance' })}
+        />
+      </View>
+      <PrimaryButton
+        label="Back to home"
+        variant="outline"
+        style={{ marginTop: spacing.sm }}
+        onPress={() => navigation.popToTop()}
+      />
     </Screen>
   );
 }
