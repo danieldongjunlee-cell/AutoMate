@@ -5,6 +5,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Icon, IconName } from '../../components/Icon';
+import { AiEstimateCard } from '../../components/AiEstimateCard';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 
@@ -81,6 +82,7 @@ export function AfterHoursScreen() {
 
   return (
     <Screen>
+      <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damageParts.reduce((n, p) => n + (p.photos || 1), 0)} style={{ marginBottom: spacing.lg }} />
       {/* AI Repair Recommendation — its own card, shown first. */}
       <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md, marginBottom: spacing.md }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
@@ -92,7 +94,7 @@ export function AfterHoursScreen() {
         </View>
         <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart} — DIY feasible</Text>
-          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Est. ${priceLow}–${priceHigh}</Text>
+          <Text style={{ fontSize: 13, color: colors.textSecondary }}>Matched DIY methods for this repair</Text>
         </View>
         {isPro ? (
           <View>

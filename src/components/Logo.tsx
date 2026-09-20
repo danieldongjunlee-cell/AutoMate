@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { palette } from '../theme';
@@ -50,6 +50,26 @@ export function LogoRow({ markSize = 20, textSize = 13 }: { markSize?: number; t
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
       <LogoMark size={markSize} />
       <LogoWordmark size={textSize} />
+    </View>
+  );
+}
+
+/** The AutoMate app icon (bundled artwork). */
+const APP_MARK = require('../../assets/logo/automate-mark.png');
+
+/** The app icon, at whatever size the header needs. */
+export function AppMark({ size = 36 }: { size?: number }) {
+  return <Image source={APP_MARK} accessibilityLabel="AutoMate" resizeMode="contain" style={{ width: size, height: size }} />;
+}
+
+/** App mark + "AutoMate" in the theme's text colour (Home header). */
+export function AppLogoRow({ markSize = 34, textSize = 18, color = '#151a26' }: { markSize?: number; textSize?: number; color?: string }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} accessibilityLabel="AutoMate">
+      <AppMark size={markSize} />
+      <Text style={{ fontSize: textSize, fontWeight: '800', letterSpacing: -0.4, color }}>
+        Auto<Text style={{ color: palette.primary }}>Mate</Text>
+      </Text>
     </View>
   );
 }

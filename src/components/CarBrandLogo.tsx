@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
+import { bundledBrandLogo } from '../assets/brandLogos';
 import { brandLogoUrl } from '../hooks/useActiveVehicle';
 
 /**
@@ -16,9 +17,10 @@ export function CarBrandLogo({
   size?: number;
   bg?: string;
 }) {
+  const bundled = bundledBrandLogo(brand);
   const url = brandLogoUrl(brand);
   const [failed, setFailed] = useState(false);
-  const showImg = !!url && !failed;
+  const showImg = (!!bundled || !!url) && !failed;
   return (
     <View
       style={{
@@ -33,7 +35,7 @@ export function CarBrandLogo({
     >
       {showImg ? (
         <Image
-          source={{ uri: url! }}
+          source={bundled ?? { uri: url! }}
           style={{ width: size * 0.82, height: size * 0.82 }}
           resizeMode="contain"
           onError={() => setFailed(true)}

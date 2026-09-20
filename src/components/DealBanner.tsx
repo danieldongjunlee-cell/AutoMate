@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
 
 import { Tappable } from './Tappable';
 import { palette, radii, spacing } from '../theme';
@@ -28,7 +28,13 @@ export interface Deal {
   cta: string;
   /** Short label shown on the booking once the deal is claimed. */
   claimLabel: string;
+  /** Product cut-out shown on the right of the banner (oil bottles, tires …). */
+  image: ImageSourcePropType;
 }
+
+const IMG_OIL = require('../../assets/deals/oil.png');
+const IMG_TIRES = require('../../assets/deals/tires.png');
+const IMG_HANDSHAKE = require('../../assets/deals/handshake.png');
 
 /** The partner deals — one source for the Home carousel and "View all deals". */
 export const DEALS: Deal[] = [
@@ -47,6 +53,7 @@ export const DEALS: Deal[] = [
     ],
     cta: 'Claim this bundle →',
     claimLabel: 'Summer Bundle',
+    image: IMG_OIL,
   },
   {
     dealerId: 'autofix-pro',
@@ -62,6 +69,7 @@ export const DEALS: Deal[] = [
     ],
     cta: 'Claim this deal →',
     claimLabel: 'New customer deal',
+    image: IMG_HANDSHAKE,
   },
   {
     dealerId: 'vienna-auto',
@@ -77,6 +85,7 @@ export const DEALS: Deal[] = [
     ],
     cta: 'Book & save →',
     claimLabel: 'Member deal',
+    image: IMG_TIRES,
   },
 ];
 
@@ -109,18 +118,27 @@ export function DealBanner({
           borderRadius: radii.lg,
           paddingHorizontal: spacing.lg,
           paddingVertical: expanded ? spacing.lg : spacing.md,
-          minHeight: 92,
+          minHeight: 104,
           justifyContent: 'center',
           overflow: 'hidden',
           borderWidth: highlighted ? 2 : 0,
           borderColor: '#fff',
         }}
       >
-        <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
-          <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{deal.badge}</Text>
+        {/* Product cut-out on the right (oil bottles / tires). */}
+        <Image
+          source={deal.image}
+          resizeMode="contain"
+          accessibilityLabel=""
+          style={{ position: 'absolute', right: 10, top: 8, width: expanded ? 150 : 128, height: expanded ? 96 : 84 }}
+        />
+        <View style={{ paddingRight: expanded ? 150 : 130 }}>
+          <View style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.22)', borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 2, marginBottom: 5 }}>
+            <Text style={{ fontSize: 11, fontWeight: '800', color: '#fff' }}>{deal.badge}</Text>
+          </View>
+          <Text style={{ fontSize: expanded ? 19 : 16, fontWeight: '800', color: '#fff' }}>{deal.title}</Text>
+          <Text style={{ fontSize: expanded ? 13 : 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{deal.sub}</Text>
         </View>
-        <Text style={{ fontSize: expanded ? 19 : 16, fontWeight: '800', color: '#fff' }}>{deal.title}</Text>
-        <Text style={{ fontSize: expanded ? 13 : 12, color: 'rgba(255,255,255,0.82)', marginTop: 1 }}>{deal.sub}</Text>
 
         {expanded ? (
           <>

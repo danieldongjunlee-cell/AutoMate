@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -19,10 +20,51 @@ type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfCarAdd'>;
 
 const YEARS = Array.from({ length: 2026 - 2000 + 1 }, (_, i) => String(2026 - i));
 
+/** Every brand we ship a logo for, A→Z. */
 const BRANDS = [
-  'Honda', 'Toyota', 'Subaru', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'Hyundai',
-  'Kia', 'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Tesla', 'Jeep', 'Lexus',
-  'Acura', 'GMC', 'Ram', 'Dodge', 'Volvo', 'Porsche',
+  'Acura',
+  'Alfa Romeo',
+  'Audi',
+  'BMW',
+  'Bentley',
+  'Buick',
+  'Cadillac',
+  'Chevrolet',
+  'Chrysler',
+  'Dodge',
+  'Ferrari',
+  'Fiat',
+  'Ford',
+  'GMC',
+  'Genesis',
+  'Honda',
+  'Hyundai',
+  'Infiniti',
+  'Jaguar',
+  'Jeep',
+  'Kia',
+  'Lamborghini',
+  'Land Rover',
+  'Lexus',
+  'Lincoln',
+  'Maserati',
+  'Mazda',
+  'Mercedes',
+  'Mini',
+  'Mitsubishi',
+  'Nissan',
+  'Peugeot',
+  'Polestar',
+  'Porsche',
+  'Ram',
+  'Rivian',
+  'Skoda',
+  'Subaru',
+  'Suzuki',
+  'Tesla',
+  'Toyota',
+  'Volkswagen',
+  'Volvo',
 ];
 
 const MODELS_BY_BRAND: Record<string, string[]> = {
@@ -170,33 +212,32 @@ export function ProfCarAddScreen() {
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
             All fields required except Oil spec &amp; Last service.
           </Text>
-          <View style={{ flexDirection: 'row', gap: spacing.md }}>
+          {/* Brand — real logos, tap to pick. */}
+          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
+            Which brand is your car? *
+          </Text>
+          <BrandGrid
+            brands={BRANDS}
+            value={brand}
+            onChange={(b) => {
+              setBrand(b);
+              setModel('');
+            }}
+          />
+
+          {/* Model — the chosen brand's line-up. */}
+          {brand ? (
+            <>
+              <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
+                Which {brand}? *
+              </Text>
+              <OptionGrid options={modelOptions} value={model} onChange={setModel} initialCount={6} />
+            </>
+          ) : null}
+
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg }}>
             <View style={{ flex: 1 }}>
               <Dropdown label="Year *" value={year} options={YEARS} onChange={setYear} placeholder="2019" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Dropdown
-                label="Brand *"
-                value={brand}
-                options={BRANDS}
-                placeholder="Honda"
-                onChange={(b) => {
-                  setBrand(b);
-                  setModel('');
-                }}
-              />
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', gap: spacing.md }}>
-            <View style={{ flex: 1 }}>
-              <Dropdown
-                label="Model *"
-                value={model}
-                options={modelOptions}
-                onChange={setModel}
-                disabled={!brand}
-                placeholder={brand ? 'Accord' : 'Select brand first'}
-              />
             </View>
             <View style={{ flex: 1 }}>
               <Dropdown label="Trim *" value={trim} options={TRIMS} onChange={setTrim} placeholder="EX-L" />

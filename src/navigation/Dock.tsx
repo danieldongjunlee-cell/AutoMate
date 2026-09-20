@@ -25,7 +25,6 @@ const PLUS_LIFT = (DOCK_HEIGHT - PLUS_SIZE) / 2 + 16;
 interface DockAction {
   key: string;
   title: string;
-  sub: string;
   icon: IconName;
   color: string;
   glyphColor?: string;
@@ -75,7 +74,6 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
     {
       key: 'estimate',
       title: 'New AI estimate',
-      sub: 'Photos of the damage → quotes from local shops',
       icon: 'camera',
       color: palette.teal,
       // Guests get the guest / join gate first; Home resumes the picker after Join.
@@ -84,7 +82,6 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
     {
       key: 'maintenance',
       title: 'Book maintenance',
-      sub: 'Oil, tires, brakes, inspection at a partner shop',
       icon: 'calcheck',
       color: palette.primary,
       glyphColor: '#ffffff',
@@ -96,7 +93,6 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
     {
       key: 'bookings',
       title: 'My bookings',
-      sub: 'Upcoming appointments & pending quotes',
       icon: 'calendar',
       color: palette.amber,
       onPress: () => go('BookingsTab'),
@@ -253,12 +249,7 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
                       }}
                     >
                       <IconChip name={a.icon} size={48} glyph={26} bg={a.color} color={a.glyphColor ?? colors.sheet} radius={14} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>{a.title}</Text>
-                        <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 1 }} numberOfLines={1}>
-                          {a.sub}
-                        </Text>
-                      </View>
+                      <Text style={{ flex: 1, fontSize: 17, fontWeight: '800', color: colors.textPrimary }}>{a.title}</Text>
                     </Tappable>
                   </Animated.View>
                 );

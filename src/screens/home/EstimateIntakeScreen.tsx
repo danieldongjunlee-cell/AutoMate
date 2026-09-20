@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
@@ -18,10 +19,51 @@ import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'EstimateIntake'>;
 
+/** Every brand we ship a logo for, A→Z. */
 const CAR_BRANDS = [
-  'Honda', 'Toyota', 'Subaru', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'Hyundai',
-  'Kia', 'BMW', 'Mercedes', 'Audi', 'Volkswagen', 'Tesla', 'Jeep', 'Lexus',
-  'Acura', 'GMC', 'Ram', 'Dodge', 'Volvo', 'Porsche', 'Other',
+  'Acura',
+  'Alfa Romeo',
+  'Audi',
+  'BMW',
+  'Bentley',
+  'Buick',
+  'Cadillac',
+  'Chevrolet',
+  'Chrysler',
+  'Dodge',
+  'Ferrari',
+  'Fiat',
+  'Ford',
+  'GMC',
+  'Genesis',
+  'Honda',
+  'Hyundai',
+  'Infiniti',
+  'Jaguar',
+  'Jeep',
+  'Kia',
+  'Lamborghini',
+  'Land Rover',
+  'Lexus',
+  'Lincoln',
+  'Maserati',
+  'Mazda',
+  'Mercedes',
+  'Mini',
+  'Mitsubishi',
+  'Nissan',
+  'Peugeot',
+  'Polestar',
+  'Porsche',
+  'Ram',
+  'Rivian',
+  'Skoda',
+  'Subaru',
+  'Suzuki',
+  'Tesla',
+  'Toyota',
+  'Volkswagen',
+  'Volvo',
 ];
 const YEARS = Array.from({ length: 28 }, (_, i) => String(2027 - i));
 const COLORS = ['White', 'Black', 'Silver', 'Gray', 'Blue', 'Red', 'Green', 'Brown', 'Beige', 'Gold', 'Orange', 'Yellow', 'Other'];
@@ -56,12 +98,43 @@ const modelsForBrand = (brand: string): string[] => MODELS_BY_BRAND[brand] ?? []
 
 /** Canonical service locations (NoVA) — typing a city / county / ZIP filters
  *  this list so every user stores the exact same location string. */
-const LOCATIONS = [
-  'Fairfax, VA', 'Arlington, VA', 'Alexandria, VA', 'Vienna, VA', 'Falls Church, VA',
-  'Reston, VA', 'Herndon, VA', 'McLean, VA', 'Annandale, VA', 'Springfield, VA',
-  'Burke, VA', 'Centreville, VA', 'Chantilly, VA', 'Tysons, VA', 'Oakton, VA',
-  'Fairfax County, VA', 'Arlington County, VA', 'Loudoun County, VA', 'Prince William County, VA',
-  '22030', '22031', '22033', '22042', '22101', '22180', '22201', '22314', '20170', '20191',
+/** Service areas the picker suggests: cities, counties and ZIPs (each ZIP
+ *  carries its city so a numeric search still reads clearly). */
+interface LocationOption {
+  label: string;
+  kind: 'City' | 'County' | 'ZIP';
+}
+
+const LOCATIONS: LocationOption[] = [
+  { label: 'Fairfax, VA', kind: 'City' },
+  { label: 'Arlington, VA', kind: 'City' },
+  { label: 'Alexandria, VA', kind: 'City' },
+  { label: 'Vienna, VA', kind: 'City' },
+  { label: 'Falls Church, VA', kind: 'City' },
+  { label: 'Reston, VA', kind: 'City' },
+  { label: 'Herndon, VA', kind: 'City' },
+  { label: 'McLean, VA', kind: 'City' },
+  { label: 'Annandale, VA', kind: 'City' },
+  { label: 'Springfield, VA', kind: 'City' },
+  { label: 'Burke, VA', kind: 'City' },
+  { label: 'Centreville, VA', kind: 'City' },
+  { label: 'Chantilly, VA', kind: 'City' },
+  { label: 'Tysons, VA', kind: 'City' },
+  { label: 'Oakton, VA', kind: 'City' },
+  { label: 'Fairfax County, VA', kind: 'County' },
+  { label: 'Arlington County, VA', kind: 'County' },
+  { label: 'Loudoun County, VA', kind: 'County' },
+  { label: 'Prince William County, VA', kind: 'County' },
+  { label: '22030 · Fairfax, VA', kind: 'ZIP' },
+  { label: '22031 · Fairfax, VA', kind: 'ZIP' },
+  { label: '22033 · Fairfax, VA', kind: 'ZIP' },
+  { label: '22042 · Falls Church, VA', kind: 'ZIP' },
+  { label: '22101 · McLean, VA', kind: 'ZIP' },
+  { label: '22180 · Vienna, VA', kind: 'ZIP' },
+  { label: '22201 · Arlington, VA', kind: 'ZIP' },
+  { label: '22314 · Alexandria, VA', kind: 'ZIP' },
+  { label: '20170 · Herndon, VA', kind: 'ZIP' },
+  { label: '20191 · Reston, VA', kind: 'ZIP' },
 ];
 
 /** A numbered, progressively-revealed section card. */
@@ -185,7 +258,9 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
   const [query, setQuery] = useState(value);
   const [open, setOpen] = useState(false);
   const q = query.trim().toLowerCase();
-  const matches = q.length >= 1 ? LOCATIONS.filter((l) => l.toLowerCase().includes(q)).slice(0, 6) : [];
+  // Typing narrows by city, county, state or ZIP; an empty box suggests the
+  // nearest service areas so the field always offers something to pick.
+  const matches = (q.length >= 1 ? LOCATIONS.filter((l) => l.label.toLowerCase().includes(q)) : LOCATIONS).slice(0, 6);
   return (
     <View>
       <TextField
@@ -196,7 +271,8 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
           setOpen(true);
           if (value) onSelect(''); // re-typing clears the confirmed pick
         }}
-        placeholder="City, county or ZIP — e.g. Fairfax, VA"
+        placeholder="City, county, state or ZIP — e.g. Fairfax, VA or 22031"
+        onFocus={() => setOpen(true)}
       />
       {open && matches.length > 0 ? (
         <View
@@ -211,10 +287,10 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
         >
           {matches.map((m, i) => (
             <Tappable
-              key={m}
+              key={m.label}
               onPress={() => {
-                onSelect(m);
-                setQuery(m);
+                onSelect(m.label);
+                setQuery(m.label);
                 setOpen(false);
               }}
               style={{
@@ -229,7 +305,10 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
               }}
             >
               <Icon name="pin" size={14} color={colors.textTertiary} />
-              <Text style={{ fontSize: 14, color: colors.textPrimary }}>{m}</Text>
+              <Text style={{ flex: 1, fontSize: 14, color: colors.textPrimary }} numberOfLines={1}>
+                {m.label}
+              </Text>
+              <Text style={{ fontSize: 11, fontWeight: '700', letterSpacing: 0.4, color: colors.textTertiary }}>{m.kind}</Text>
             </Tappable>
           ))}
         </View>
@@ -309,36 +388,30 @@ export function EstimateIntakeScreen() {
 
       {/* 1 — Car info (always shown). Model is a dropdown filtered by brand. */}
       <Section n={1} title="Your car" subtitle="Brand, model, year & color">
-        <Dropdown
-          label="Brand"
+        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
+          Which brand is your car?
+        </Text>
+        <BrandGrid
+          brands={CAR_BRANDS}
           value={brand}
-          options={CAR_BRANDS}
           onChange={(b) => {
             setBrand(b);
             setModel(''); // reset the model when the brand changes
           }}
-          placeholder="Select brand"
-          containerStyle={{ marginBottom: spacing.sm }}
         />
-        {modelsForBrand(brand).length > 0 ? (
-          <Dropdown
-            label="Model"
-            value={model}
-            options={modelsForBrand(brand)}
-            onChange={setModel}
-            placeholder={brand ? `Select a ${brand} model` : 'Select a model'}
-            containerStyle={{ marginBottom: spacing.sm }}
-          />
-        ) : (
-          <TextField
-            label="Model"
-            value={model}
-            onChangeText={setModel}
-            placeholder={brand ? 'Enter your model' : 'Select a brand first'}
-            editable={!!brand}
-            containerStyle={{ marginBottom: spacing.sm }}
-          />
-        )}
+        {brand ? (
+          <>
+            <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
+              Which {brand}?
+            </Text>
+            {modelsForBrand(brand).length > 0 ? (
+              <OptionGrid options={modelsForBrand(brand)} value={model} onChange={setModel} initialCount={6} />
+            ) : (
+              <TextField label="Model" value={model} onChangeText={setModel} placeholder="Enter your model" containerStyle={{ marginBottom: spacing.sm }} />
+            )}
+          </>
+        ) : null}
+        <View style={{ height: spacing.lg }} />
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           <Dropdown label="Year" value={year} options={YEARS} onChange={setYear} placeholder="Year" containerStyle={{ flex: 1 }} />
           <Dropdown label="Color" value={color} options={COLORS} onChange={setColor} placeholder="Color" containerStyle={{ flex: 1 }} />

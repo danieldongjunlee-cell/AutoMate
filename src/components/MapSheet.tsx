@@ -226,7 +226,7 @@ export function FilterChip({
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ selected: !!active }}
-      accessibilityLabel={label}
+      accessibilityLabel={label ?? 'Filters'}
       style={{
         flexDirection: 'row',
         alignItems: 'center',

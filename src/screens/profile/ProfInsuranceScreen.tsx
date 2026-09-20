@@ -142,7 +142,7 @@ function PolicyCard({ policy, coversLabel, linked, onEdit, onRemove }: { policy:
   return (
     <SwipeCard title={policy.carrier} subtitle={`${policy.coverage} · ${policy.policyNumber}`} badge={linked ? 'Active car' : policy.status}>
       <View style={{ height: 150, alignItems: 'center', justifyContent: 'center', marginVertical: spacing.sm }}>
-        <InsurerLogo carrier={policy.carrier} size={120} />
+        <InsurerLogo carrier={policy.carrier} size={120} bg="transparent" />
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
         <StatTile icon="shield" color={palette.teal} value={`$${policy.deductible}`} label="deductible" />
@@ -208,7 +208,7 @@ export function ProfInsuranceScreen() {
           <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
         </View>
         <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Geico, Progressive, USAA… scan your card or enter the details.</Text>
-        <DeckButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} />
+        <PrimaryButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} style={{ alignSelf: 'stretch' }} />
       </View>
     </SwipeCard>
   );

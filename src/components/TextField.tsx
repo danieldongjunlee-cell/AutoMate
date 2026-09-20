@@ -45,8 +45,14 @@ export function TextField({ label, onDark, secure, containerStyle, ...inputProps
         <TextInput
           {...inputProps}
           secureTextEntry={hidden}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={(e) => {
+            setFocused(true);
+            inputProps.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setFocused(false);
+            inputProps.onBlur?.(e);
+          }}
           placeholderTextColor={colors.textPlaceholder}
           style={{
             flex: 1,

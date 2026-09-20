@@ -7,6 +7,7 @@ import { PanResponder, StyleSheet, Text, View } from 'react-native';
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { Tappable } from '../../components/Tappable';
+import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
 import { GuestBanner } from '../../components/GuestBanner';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
@@ -266,33 +267,7 @@ export function BookingsScreen() {
         <CarSwitchChip />
       </View>
 
-      {/* Calendar header row — "Book service" sits right below the car switch,
-          aligned with the calendar. */}
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: spacing.sm,
-        }}
-      >
-        <SectionLabel style={{ marginBottom: 0 }}>{t('Calendar')}</SectionLabel>
-        <Tappable
-          onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintServiceType')}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 5,
-            backgroundColor: colors.primary,
-            borderRadius: radii.pill,
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-          }}
-        >
-          <Text style={{ fontSize: 14, color: colors.onPrimary }}>＋</Text>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>Book service</Text>
-        </Tappable>
-      </View>
+      <SectionLabel style={{ marginBottom: spacing.sm }}>{t('Calendar')}</SectionLabel>
       <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
         {/* Month/year nav: «=year ‹=month  title  ›=month »=year */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm }}>
@@ -370,6 +345,13 @@ export function BookingsScreen() {
           </View>
         </View>
       </Card>
+
+      {/* Book service sits between the calendar and the scheduled list. */}
+      <PrimaryButton
+        label={`＋  ${t('Book service')}`}
+        onPress={() => navigateCrossTab(navigation, 'HomeTab', 'MaintServiceType')}
+        style={{ marginBottom: spacing.xs }}
+      />
 
       <SectionLabel>{t('Scheduled services')}</SectionLabel>
       <FilterButton label={statusFilter === 'All' ? 'Filter' : `Filter · ${statusFilter}`} count={statusFilter === 'All' ? 0 : 1} onPress={() => setFilterOpen(true)} />

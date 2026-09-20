@@ -10,8 +10,8 @@ import { palette, radii, spacing, useTheme } from '../theme';
 import { callDealer, openDealerReviews, openDealerWebsite, openDirections } from '../utils/links';
 
 const OPEN_GREEN = '#34C759';
-const PHOTO_W = 156;
-const PHOTO_H = 132;
+const PHOTO_W = 104;
+const PHOTO_H = 82;
 
 export interface RowAction {
   label: string;
@@ -58,6 +58,7 @@ export function ShopListRow({
   dealer,
   index = 0,
   tags,
+  tag,
   selected,
   onPress,
   callout,
@@ -69,6 +70,8 @@ export function ShopListRow({
   index?: number;
   /** "Oil · Tires · Filters" or "Body · Paint". */
   tags?: string;
+  /** Ribbon on the row's top right — BEST PRICE / RECOMMENDED / … */
+  tag?: { label: string; tone?: 'best' | 'reco' | 'neutral' };
   selected?: boolean;
   onPress?: () => void;
   /** Highlighted box under the photos (price for your services, the shop's quote …). */
@@ -122,21 +125,34 @@ export function ShopListRow({
     >
       <Tappable onPress={onPress} disabled={!onPress} noFeedback accessibilityRole={onPress ? 'button' : undefined} accessibilityLabel={onPress ? dealer.name : undefined}>
         <View style={{ paddingHorizontal: spacing.lg }}>
-          <Text style={{ fontSize: 22, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 }} numberOfLines={1}>
-            {dealer.name}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}>
+            <Text style={{ flex: 1, fontSize: 22, fontWeight: '600', color: colors.textPrimary, marginBottom: 4 }} numberOfLines={1}>
+              {dealer.name}
+            </Text>
+            {tag ? (
+              <View
+                style={{
+                  backgroundColor: tag.tone === 'best' ? colors.successSurface : tag.tone === 'reco' ? colors.primarySurface : colors.surfaceAlt,
+                  borderWidth: 1,
+                  borderColor: tag.tone === 'best' ? colors.successLight : tag.tone === 'reco' ? colors.primaryLight : colors.border,
+                  borderRadius: radii.pill,
+                  paddingHorizontal: 10,
+                  paddingVertical: 3,
+                  marginTop: 3,
+                }}
+              >
+                <Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 0.6, color: tag.tone === 'best' ? colors.successDeep : tag.tone === 'reco' ? colors.primaryDark : colors.textSecondary }}>
+                  {tag.label.toUpperCase()}
+                </Text>
+              </View>
+            ) : null}
+          </View>
           <RatingLine dealer={dealer} tags={tags} />
           <View style={{ marginTop: 3 }}>
             <OpenStatus dealer={dealer} />
           </View>
         </View>
 
-        {/* Photo strip */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8, paddingVertical: spacing.md }}>
-          {(dealer.photoUrl ? [{ uri: dealer.photoUrl }, ...photos.slice(0, 2)] : photos).map((src, i) => (
-            <Image key={i} source={src} resizeMode="cover" style={{ width: PHOTO_W, height: PHOTO_H, borderRadius: 12, backgroundColor: colors.tileNavy }} />
-          ))}
-        </ScrollView>
       </Tappable>
 
       {callout ? (
@@ -158,7 +174,15 @@ export function ShopListRow({
         </View>
       ) : null}
 
-      {children ? <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.md }}>{children}</View> : null}
+      {/* Price breakdown, then the photos. */}
+      {children ? <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.md, marginBottom: spacing.md }}>{children}</View> : null}
+        {/* Photo strip */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8, paddingVertical: spacing.md }}>
+          {(dealer.photoUrl ? [{ uri: dealer.photoUrl }, ...photos.slice(0, 2)] : photos).map((src, i) => (
+            <Image key={i} source={src} resizeMode="cover" style={{ width: PHOTO_W, height: PHOTO_H, borderRadius: 12, backgroundColor: colors.tileNavy }} />
+          ))}
+        </ScrollView>
+
 
       {/* Action chips */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8 }}>
