@@ -153,12 +153,6 @@ export function ShopListRow({
           </View>
         </View>
 
-        {/* Photo strip */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8, paddingVertical: spacing.md }}>
-          {(dealer.photoUrl ? [{ uri: dealer.photoUrl }, ...photos.slice(0, 2)] : photos).map((src, i) => (
-            <Image key={i} source={src} resizeMode="cover" style={{ width: PHOTO_W, height: PHOTO_H, borderRadius: 12, backgroundColor: colors.tileNavy }} />
-          ))}
-        </ScrollView>
       </Tappable>
 
       {callout ? (
@@ -180,7 +174,15 @@ export function ShopListRow({
         </View>
       ) : null}
 
-      {children ? <View style={{ paddingHorizontal: spacing.lg, marginBottom: spacing.md }}>{children}</View> : null}
+      {/* Price breakdown, then the photos. */}
+      {children ? <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.md, marginBottom: spacing.md }}>{children}</View> : null}
+        {/* Photo strip */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8, paddingVertical: spacing.md }}>
+          {(dealer.photoUrl ? [{ uri: dealer.photoUrl }, ...photos.slice(0, 2)] : photos).map((src, i) => (
+            <Image key={i} source={src} resizeMode="cover" style={{ width: PHOTO_W, height: PHOTO_H, borderRadius: 12, backgroundColor: colors.tileNavy }} />
+          ))}
+        </ScrollView>
+
 
       {/* Action chips */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.lg, gap: 8 }}>

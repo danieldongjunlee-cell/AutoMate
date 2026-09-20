@@ -85,6 +85,8 @@ export function MaintScheduleScreen() {
   const [service, setService] = useState(SCHEDULE_SERVICE_FILTERS[0]);
   const [radius, setRadius] = useState(30);
   const [filterOpen, setFilterOpen] = useState(false);
+  // Sort / Service / Distance stay hidden until the funnel is tapped.
+  const [chipsOpen, setChipsOpen] = useState(false);
   // Pin ↔ row selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
@@ -153,13 +155,17 @@ export function MaintScheduleScreen() {
         scrollRef={scrollRef}
         chips={
           <>
-            <FilterChip icon="funnel" onPress={() => setFilterOpen(true)} active={radius < 30} />
-            <FilterChip label={sort === SORTS[0] ? 'Sort by' : sort} caret onPress={cycleSort} active={sort !== SORTS[0]} />
+            <FilterChip icon="funnel" onPress={() => setChipsOpen((v) => !v)} active={chipsOpen || radius < 30} />
             <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
-            {pickedCategories.length === 0 ? (
-              <FilterChip label={service === 'All' ? 'Service' : service} caret active={service !== 'All'} onPress={() => setFilterOpen(true)} />
+            {chipsOpen ? (
+              <>
+                <FilterChip label={sort === SORTS[0] ? 'Sort by' : sort} caret onPress={cycleSort} active={sort !== SORTS[0]} />
+                {pickedCategories.length === 0 ? (
+                  <FilterChip label={service === 'All' ? 'Service' : service} caret active={service !== 'All'} onPress={() => setFilterOpen(true)} />
+                ) : null}
+                <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
+              </>
             ) : null}
-            <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
           </>
         }
       >

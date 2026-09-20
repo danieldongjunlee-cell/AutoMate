@@ -9,7 +9,7 @@ import { BLUEPRINT_CAPTIONS, BLUEPRINT_GROUPS, BLUEPRINT_VB, MARKERS, PART_NAMES
 
 /** Panel grounds: near-black on dark, a shade under the page on light so it blends in. */
 const PANEL_BG_DARK = '#070b14';
-const PANEL_BG_LIGHT = '#e3e8f0';
+const PANEL_BG_LIGHT = '#e7ecf4';
 /** Line art is authored as white-on-dark; on light it's recoloured to the ink colour. */
 const INK_LIGHT = '21,26,38';
 const CAPTION_H = 38;
@@ -37,9 +37,21 @@ export function BlueprintPicker({
   const [width, setWidth] = useState(0);
   const { colors, dark } = useTheme();
   const panelBg = dark ? PANEL_BG_DARK : PANEL_BG_LIGHT;
-  // Line art colours come from the blueprint data as rgba(255,255,255,a); on
-  // light they're mapped to the ink colour and the dark fill to the panel.
-  const tone = (c: string) => (dark ? c : c === PANEL_BG_DARK ? PANEL_BG_LIGHT : c.replace('255,255,255', INK_LIGHT));
+  // Line art is authored white-on-dark. In light mode the outlines become
+  // near-black and the translucent white body fills become solid white, so the
+  // car reads as white panels with a black outline.
+  const strokeTone = (c: string) => {
+    if (dark) return c;
+    const m = c.match(/rgba\(255,255,255,([\d.]+)\)/);
+    if (!m) return c === PANEL_BG_DARK ? PANEL_BG_LIGHT : c;
+    return `rgba(${INK_LIGHT},${Math.min(1, Number(m[1]) * 1.7).toFixed(2)})`;
+  };
+  const fillTone = (c: string) => {
+    if (dark) return c;
+    if (c === 'none') return c;
+    // Body panels and the dark panel fill both become white in light mode.
+    return '#ffffff';
+  };
   const { w: vw, h: vh } = BLUEPRINT_VB;
   const svgH = width ? Math.round((width * vh) / vw) : 0;
   const scale = width ? width / vw : 0;
@@ -99,12 +111,12 @@ export function BlueprintPicker({
               <G key={g.name} transform={g.transform}>
                 {g.lines.map((l, i) => {
                   if (l.t === 'p') {
-                    return <Path key={i} d={l.d} fill={tone(l.f)} stroke={tone(l.s)} strokeWidth={l.w} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />;
+                    return <Path key={i} d={l.d} fill={fillTone(l.f)} stroke={strokeTone(l.s)} strokeWidth={l.w} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />;
                   }
                   if (l.t === 'r') {
-                    return <Rect key={i} x={l.x} y={l.y} width={l.w} height={l.h} rx={l.rx} fill={tone(l.f)} stroke={tone(l.s)} strokeWidth={l.sw} vectorEffect="non-scaling-stroke" />;
+                    return <Rect key={i} x={l.x} y={l.y} width={l.w} height={l.h} rx={l.rx} fill={fillTone(l.f)} stroke={strokeTone(l.s)} strokeWidth={l.sw} vectorEffect="non-scaling-stroke" />;
                   }
-                  return <Circle key={i} cx={l.cx} cy={l.cy} r={l.r} fill={tone(l.f)} stroke={tone(l.s)} strokeWidth={l.sw} vectorEffect="non-scaling-stroke" />;
+                  return <Circle key={i} cx={l.cx} cy={l.cy} r={l.r} fill={fillTone(l.f)} stroke={strokeTone(l.s)} strokeWidth={l.sw} vectorEffect="non-scaling-stroke" />;
                 })}
                 {g.regions.map((r) => {
                   const on = selected === r.key;

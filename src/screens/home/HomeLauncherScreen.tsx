@@ -101,6 +101,7 @@ export function HomeLauncherScreen() {
         <PhotoTile
           title={t('AI Repair Estimate')}
           source={TILE_AI}
+          fit="cover"
           height={168}
           style={{ flex: 1 }}
           onPress={startEstimate}
@@ -108,6 +109,7 @@ export function HomeLauncherScreen() {
         <PhotoTile
           title="Maintenance"
           source={TILE_MAINT}
+          effect="service"
           height={168}
           style={{ flex: 1 }}
           // Guests are sent to Sign up first; the dashboard opens once they join.

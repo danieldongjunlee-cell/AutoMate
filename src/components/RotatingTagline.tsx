@@ -17,8 +17,8 @@ const LINES: TaglineLine[] = [
 
 const HOLD_MS = 2400;
 const SLIDE_MS = 440;
-/** How far the accent row is indented under its lead row. */
-const INDENT = 18;
+/** Both rows start at the same point — no indent. */
+const INDENT = 0;
 
 /**
  * Home header tagline: shows one two-row line at a time — a plain lead and an

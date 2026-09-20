@@ -148,35 +148,116 @@ function ScanOverlay({ active, height }: { active: boolean; height: number }) {
 
 /** Dark ground behind the tile photos so a contained photo letterboxes cleanly. */
 const TILE_GROUND = '#0a1020';
+const SCAN_TEAL = '#4FE3C1';
+const SERVICE_AMBER = '#F0B44E';
 
 /**
- * Photo tile: the whole photo, slightly transparent, on a dark ground with a
- * bottom gradient so the title stays legible. Hovering (web) or holding
- * (touch) plays the scan animation. Used for the two Home launchers.
+ * Maintenance tile overlay: a service check running — the gauge sweeps, the
+ * dashboard warning lights self-test in sequence and a gear turns, all in the
+ * amber of a service light.
+ */
+function ServiceOverlay({ active, height }: { active: boolean; height: number }) {
+  const spin = useRef(new Animated.Value(0)).current;
+  const pulse = useRef(new Animated.Value(0)).current;
+  const fade = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(fade, { toValue: active ? 1 : 0, duration: 220, useNativeDriver: Platform.OS !== 'web' }).start();
+    if (!active) return;
+    spin.setValue(0);
+    pulse.setValue(0);
+    const loops = [
+      Animated.loop(Animated.timing(spin, { toValue: 1, duration: 2600, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
+      Animated.loop(Animated.timing(pulse, { toValue: 3, duration: 1800, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
+    ];
+    loops.forEach((l) => l.start());
+    return () => loops.forEach((l) => l.stop());
+  }, [active, spin, pulse, fade]);
+
+  /** One warning light in the self-test row; each lights in turn. */
+  const lamp = (i: number, icon: IconName) => (
+    <Animated.View
+      key={icon}
+      style={{
+        opacity: pulse.interpolate({ inputRange: [i - 0.6, i, i + 0.6, 3], outputRange: [0.25, 1, 0.25, 0.25], extrapolate: 'clamp' }),
+      }}
+    >
+      <Icon name={icon} size={18} color={SERVICE_AMBER} strokeWidth={2} />
+    </Animated.View>
+  );
+
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: fade }]}>
+      {/* Sweep across the dial, like a needle test */}
+      <LinearGradient
+        colors={['rgba(240,180,78,0)', 'rgba(240,180,78,0.16)', 'rgba(240,180,78,0)']}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
+        style={StyleSheet.absoluteFill}
+      />
+      {/* Turning gear */}
+      <Animated.View
+        style={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+          transform: [{ rotate: spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) }],
+        }}
+      >
+        <Icon name="gear" size={26} color={SERVICE_AMBER} strokeWidth={1.8} />
+      </Animated.View>
+      {/* Warning-light self test */}
+      <View style={{ position: 'absolute', left: 14, top: 14, flexDirection: 'row', gap: 10 }}>
+        {[lamp(0, 'oil'), lamp(1, 'brake'), lamp(2, 'battery')]}
+      </View>
+      {/* Service-check frame */}
+      {[
+        { top: 8, left: 8, borderTopWidth: 2, borderLeftWidth: 2 },
+        { top: 8, right: 8, borderTopWidth: 2, borderRightWidth: 2 },
+        { bottom: 8, left: 8, borderBottomWidth: 2, borderLeftWidth: 2 },
+        { bottom: 8, right: 8, borderBottomWidth: 2, borderRightWidth: 2 },
+      ].map((st, i) => (
+        <View key={i} style={{ position: 'absolute', width: 14, height: 14, borderColor: SERVICE_AMBER, ...st }} />
+      ))}
+      <View style={{ position: 'absolute', left: 0, right: 0, bottom: height * 0.26, height: 1, backgroundColor: 'rgba(240,180,78,0.35)' }} />
+    </Animated.View>
+  );
+}
+
+/**
+ * Photo tile: the photo on a dark ground with a bottom gradient so the title
+ * stays legible. `fit` picks cover (fill the tile, crop the overflow) or
+ * contain (show the whole photo). Hovering (web) or holding (touch) plays the
+ * tile's animation — the damage scan, or the maintenance service check.
  */
 export function PhotoTile({
   title,
   source,
   onPress,
   height = 168,
+  fit = 'contain',
+  effect = 'scan',
   style,
 }: {
   title: string;
   source: ImageSourcePropType;
   onPress?: () => void;
   height?: number;
+  /** cover fills the tile (top/bottom cropped); contain shows the whole photo. */
+  fit?: 'cover' | 'contain';
+  effect?: 'scan' | 'service';
   style?: StyleProp<ViewStyle>;
 }) {
   const { colors } = useTheme();
-  const [scanning, setScanning] = useState(false);
+  const [active, setActive] = useState(false);
+  const accent = effect === 'service' ? SERVICE_AMBER : SCAN_TEAL;
   return (
     <Tappable
       onPress={onPress}
       disabled={!onPress}
-      onHoverIn={() => setScanning(true)}
-      onHoverOut={() => setScanning(false)}
-      onPressIn={() => setScanning(true)}
-      onPressOut={() => Platform.OS !== 'web' && setScanning(false)}
+      onHoverIn={() => setActive(true)}
+      onHoverOut={() => setActive(false)}
+      onPressIn={() => setActive(true)}
+      onPressOut={() => Platform.OS !== 'web' && setActive(false)}
       noFeedback
       style={[
         {
@@ -184,16 +265,16 @@ export function PhotoTile({
           borderRadius: radii.tile,
           backgroundColor: TILE_GROUND,
           borderWidth: 1,
-          borderColor: scanning ? '#4FE3C1' : colors.tileNavyBorder,
+          borderColor: active ? accent : colors.tileNavyBorder,
           overflow: 'hidden',
         },
         style,
       ]}
     >
-      {/* The full photo, a touch transparent so it sits back behind the label. */}
-      <Image source={source} resizeMode="contain" style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.85 }]} />
+      {/* The photo, a touch transparent so it sits back behind the label. */}
+      <Image source={source} resizeMode={fit} style={[StyleSheet.absoluteFill, { width: '100%', height: '100%', opacity: 0.88 }]} />
       <LinearGradient
-        colors={['rgba(10,16,32,0)', 'rgba(10,16,32,0.35)', 'rgba(10,16,32,0.92)']}
+        colors={['rgba(10,16,32,0)', 'rgba(10,16,32,0.3)', 'rgba(10,16,32,0.9)']}
         locations={[0, 0.55, 1]}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
@@ -201,7 +282,7 @@ export function PhotoTile({
       >
         <TileTitle color="#e8edf5">{title}</TileTitle>
       </LinearGradient>
-      <ScanOverlay active={scanning} height={height} />
+      {effect === 'service' ? <ServiceOverlay active={active} height={height} /> : <ScanOverlay active={active} height={height} />}
     </Tappable>
   );
 }

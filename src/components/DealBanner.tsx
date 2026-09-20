@@ -34,6 +34,7 @@ export interface Deal {
 
 const IMG_OIL = require('../../assets/deals/oil.png');
 const IMG_TIRES = require('../../assets/deals/tires.png');
+const IMG_HANDSHAKE = require('../../assets/deals/handshake.png');
 
 /** The partner deals — one source for the Home carousel and "View all deals". */
 export const DEALS: Deal[] = [
@@ -68,7 +69,7 @@ export const DEALS: Deal[] = [
     ],
     cta: 'Claim this deal →',
     claimLabel: 'New customer deal',
-    image: IMG_OIL,
+    image: IMG_HANDSHAKE,
   },
   {
     dealerId: 'vienna-auto',

@@ -85,6 +85,8 @@ export function QuotesSheet({
   const [openNow, setOpenNow] = useState(false);
   const [radius, setRadius] = useState(30);
   const [filterOpen, setFilterOpen] = useState(false);
+  // Sort / Parts / Distance stay hidden until the funnel is tapped.
+  const [chipsOpen, setChipsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const rowY = useRef<Record<string, number>>({});
@@ -129,11 +131,15 @@ export function QuotesSheet({
         scrollRef={scrollRef}
         chips={
           <>
-            <FilterChip icon="funnel" onPress={() => setFilterOpen(true)} active={summary.count > 0} />
-            <FilterChip label={sort === QUOTE_SORTS[0] ? 'Sort by' : SORT_CHIP[sort] ?? sort} caret active={sort !== QUOTE_SORTS[0]} onPress={() => setSort(cycle(QUOTE_SORTS, sort))} />
+            <FilterChip icon="funnel" onPress={() => setChipsOpen((v) => !v)} active={chipsOpen || summary.count > 0} />
             <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
-            <FilterChip label={parts === QUOTE_PARTS[0] ? 'Parts' : parts} caret active={parts !== QUOTE_PARTS[0]} onPress={() => setParts(cycle(QUOTE_PARTS, parts))} />
-            <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
+            {chipsOpen ? (
+              <>
+                <FilterChip label={sort === QUOTE_SORTS[0] ? 'Sort by' : SORT_CHIP[sort] ?? sort} caret active={sort !== QUOTE_SORTS[0]} onPress={() => setSort(cycle(QUOTE_SORTS, sort))} />
+                <FilterChip label={parts === QUOTE_PARTS[0] ? 'Parts' : parts} caret active={parts !== QUOTE_PARTS[0]} onPress={() => setParts(cycle(QUOTE_PARTS, parts))} />
+                <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
+              </>
+            ) : null}
           </>
         }
       >
