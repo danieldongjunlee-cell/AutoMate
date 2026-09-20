@@ -3,13 +3,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
-import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { DealBanner, DEALS } from '../../components/DealBanner';
 import { Icon } from '../../components/Icon';
 import { EstimateGateSheet } from '../../components/EstimateGateSheet';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
 import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
+import { AppLogoRow } from '../../components/Logo';
 import { PagedCarousel } from '../../components/PagedCarousel';
+import { RotatingTagline } from '../../components/RotatingTagline';
 import { PhotoTile } from '../../components/Tile';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
@@ -27,7 +28,7 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'HomeLauncher'>;
 const TILE_AI = require('../../../assets/tiles/ai-estimate.jpg');
 const TILE_MAINT = require('../../../assets/tiles/maintenance.jpg');
 
-/** Home tab hub (canvas "Home"): greeting, two photo tiles, deals, reviews, footer. */
+/** Home tab hub (canvas "Home"): tagline + logo, two photo tiles, deals, reviews, footer. */
 export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
@@ -36,14 +37,12 @@ export function HomeLauncherScreen() {
   // they submit their first AI estimate, and never shows for returning users.
   const isNewUser = useAppStore((s) => s.isNewUser);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  // Greeting shows the signed-in user's first name; "Guest" when signed out.
-  const user = useAppStore((s) => s.user);
-  const firstName = isAuthenticated ? (user?.name ?? '').trim().split(/\s+/)[0] : '';
   const requireAuth = useRequireAuth();
   // Guest gate for the AI estimate: sheet → picker as guest, or Join first
   // (the picker opens once they're signed in).
   const [gateOpen, setGateOpen] = useState(false);
   useResumeAfterAuth('newEstimate', () => navigation.navigate('CarDiagram'));
+  useResumeAfterAuth('maintenance', () => navigation.navigate('MaintDashboard'));
   const startEstimate = () => (isAuthenticated ? navigation.navigate('CarDiagram') : setGateOpen(true));
 
   /** Real-customer review card with actual before/after repair photos. */
@@ -75,30 +74,12 @@ export function HomeLauncherScreen() {
 
   return (
     <Screen safeTop>
-      {/* Greeting + active-car switcher, or the guest greeting + Log in / Sign up pill. */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm, marginBottom: spacing.lg }}>
-        <Text style={{ flex: 1, fontSize: 28, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.3 }} numberOfLines={1}>
-          {isAuthenticated ? `Hi, ${firstName || 'there'}` : 'Hi, Guest'}
-        </Text>
-        {isAuthenticated ? (
-          <CarSwitchChip />
-        ) : (
-          <Tappable
-            onPress={() => requireAuth('signIn')}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 6,
-              backgroundColor: colors.primary,
-              borderRadius: radii.pill,
-              paddingHorizontal: 14,
-              paddingVertical: 9,
-            }}
-          >
-            <Icon name="user" size={18} color="#fff" />
-            <Text style={{ fontSize: 14, fontWeight: '800', color: '#fff' }}>Log in / Sign up</Text>
-          </Tappable>
-        )}
+      {/* Header: rotating tagline on the left, the app mark + AutoMate on the right. */}
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: spacing.md, marginBottom: spacing.lg }}>
+        <View style={{ flex: 1 }}>
+          <RotatingTagline size={20} />
+        </View>
+        <AppLogoRow markSize={34} textSize={17} color={colors.textPrimary} />
       </View>
 
       {/* New here? — how-it-works entry (new users only) */}
@@ -115,7 +96,7 @@ export function HomeLauncherScreen() {
         </Tappable>
       ) : null}
 
-      {/* AI Repair Estimate + Maintenance dashboard photo tiles, side by side. */}
+      {/* AI Repair Estimate + Maintenance photo tiles, side by side (hover / hold plays the scan). */}
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
         <PhotoTile
           title={t('AI Repair Estimate')}
@@ -125,11 +106,12 @@ export function HomeLauncherScreen() {
           onPress={startEstimate}
         />
         <PhotoTile
-          title="Maintenance dashboard"
+          title="Maintenance"
           source={TILE_MAINT}
           height={168}
           style={{ flex: 1 }}
-          onPress={() => navigation.navigate('MaintDashboard')}
+          // Guests are sent to Sign up first; the dashboard opens once they join.
+          onPress={() => requireAuth('maintenance', () => navigation.navigate('MaintDashboard'), 'join')}
         />
       </View>
 
@@ -140,6 +122,7 @@ export function HomeLauncherScreen() {
         </Tappable>
       </View>
       <PagedCarousel
+        autoPlay={4500}
         items={DEALS.map((deal) => (
           <DealBanner key={deal.dealerId} deal={deal} onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals', { focus: deal.dealerId }))} />
         ))}
@@ -149,7 +132,7 @@ export function HomeLauncherScreen() {
       <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.section, marginBottom: spacing.md }}>
         {t('Real customer reviews')}
       </Text>
-      <PagedCarousel items={HOME_REVIEWS.map((r) => reviewCard(r))} />
+      <PagedCarousel autoPlay={6000} items={HOME_REVIEWS.map((r) => reviewCard(r))} />
 
       {/* Footer: help, legal & support documents. */}
       <View

@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
-import { ImageBackground, ImageSourcePropType, StyleProp, Text, View, ViewStyle } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, ImageBackground, ImageSourcePropType, Platform, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
@@ -95,8 +95,61 @@ export function Tile({
 }
 
 /**
- * Photo tile: a full-bleed duotone photo behind a top-to-bottom navy gradient
- * so the title stays legible. Used for the two Home launchers.
+ * Scan overlay for the photo tiles: while the tile is hovered (or being
+ * pressed on touch), a teal laser line sweeps top → bottom on a faint grid,
+ * like the damage-scanner animation on the AutoMate site.
+ */
+function ScanOverlay({ active, height }: { active: boolean; height: number }) {
+  const y = useRef(new Animated.Value(0)).current;
+  const fade = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(fade, { toValue: active ? 1 : 0, duration: 220, useNativeDriver: Platform.OS !== 'web' }).start();
+    if (!active) return;
+    y.setValue(0);
+    const loop = Animated.loop(Animated.timing(y, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.sin), useNativeDriver: Platform.OS !== 'web' }));
+    loop.start();
+    return () => loop.stop();
+  }, [active, y, fade]);
+  const lines = Array.from({ length: Math.max(1, Math.round(height / 22)) }, (_, i) => i);
+  return (
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: fade }]}>
+      {/* Grid */}
+      {lines.map((i) => (
+        <View key={`h${i}`} style={{ position: 'absolute', left: 0, right: 0, top: i * 22, height: 1, backgroundColor: 'rgba(79,227,193,0.14)' }} />
+      ))}
+      {[0.2, 0.4, 0.6, 0.8].map((x) => (
+        <View key={`v${x}`} style={{ position: 'absolute', top: 0, bottom: 0, left: `${x * 100}%`, width: 1, backgroundColor: 'rgba(79,227,193,0.12)' }} />
+      ))}
+      {/* Sweeping laser line + glow */}
+      <Animated.View
+        style={{
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          height: 26,
+          transform: [{ translateY: y.interpolate({ inputRange: [0, 1], outputRange: [-26, height] }) }],
+        }}
+      >
+        <LinearGradient colors={['rgba(79,227,193,0)', 'rgba(79,227,193,0.35)']} style={{ height: 22 }} />
+        <View style={{ height: 2, backgroundColor: '#4FE3C1', shadowColor: '#4FE3C1', shadowOpacity: 0.9, shadowRadius: 8, shadowOffset: { width: 0, height: 0 } }} />
+      </Animated.View>
+      {/* Corner brackets */}
+      {[
+        { top: 10, left: 10, borderTopWidth: 2, borderLeftWidth: 2 },
+        { top: 10, right: 10, borderTopWidth: 2, borderRightWidth: 2 },
+        { bottom: 10, left: 10, borderBottomWidth: 2, borderLeftWidth: 2 },
+        { bottom: 10, right: 10, borderBottomWidth: 2, borderRightWidth: 2 },
+      ].map((st, i) => (
+        <View key={i} style={{ position: 'absolute', width: 16, height: 16, borderColor: '#4FE3C1', ...st }} />
+      ))}
+    </Animated.View>
+  );
+}
+
+/**
+ * Photo tile: a full-bleed photo behind a top-to-bottom navy gradient so the
+ * title stays legible. Hovering (web) or holding (touch) plays the scan
+ * animation. Used for the two Home launchers.
  */
 export function PhotoTile({
   title,
@@ -112,17 +165,23 @@ export function PhotoTile({
   style?: StyleProp<ViewStyle>;
 }) {
   const { colors } = useTheme();
+  const [scanning, setScanning] = useState(false);
   return (
     <Tappable
       onPress={onPress}
       disabled={!onPress}
+      onHoverIn={() => setScanning(true)}
+      onHoverOut={() => setScanning(false)}
+      onPressIn={() => setScanning(true)}
+      onPressOut={() => Platform.OS !== 'web' && setScanning(false)}
+      noFeedback
       style={[
         {
           height,
           borderRadius: radii.tile,
           backgroundColor: colors.tileNavy,
           borderWidth: 1,
-          borderColor: colors.tileNavyBorder,
+          borderColor: scanning ? '#4FE3C1' : colors.tileNavyBorder,
           overflow: 'hidden',
         },
         style,
@@ -130,14 +189,15 @@ export function PhotoTile({
     >
       <ImageBackground source={source} resizeMode="cover" style={{ flex: 1 }}>
         <LinearGradient
-          colors={['rgba(22,35,61,0.10)', 'rgba(22,35,61,0.55)', 'rgba(10,15,25,0.94)']}
-          locations={[0, 0.5, 1]}
+          colors={['rgba(22,35,61,0.05)', 'rgba(22,35,61,0.35)', 'rgba(10,15,25,0.9)']}
+          locations={[0, 0.55, 1]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
           style={{ flex: 1, justifyContent: 'flex-end', padding: 16 }}
         >
           <TileTitle color="#e8edf5">{title}</TileTitle>
         </LinearGradient>
+        <ScanOverlay active={scanning} height={height} />
       </ImageBackground>
     </Tappable>
   );

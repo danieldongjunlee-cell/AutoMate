@@ -832,6 +832,8 @@ export const useAppStore = create<AppState>()(
         blockedAuthors: s.blockedAuthors,
         // Device preference — survives restarts and sign-out.
         themeMode: s.themeMode,
+        // The car a guest entered during intake, kept until they sign up.
+        pendingVehicle: s.pendingVehicle,
       }),
     },
   ),

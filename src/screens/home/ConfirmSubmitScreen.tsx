@@ -267,13 +267,14 @@ export function ConfirmSubmitScreen() {
     setExistingPrompt(null);
     setSubmitting(true);
     try {
-      // A new user just signed up — persist the car they entered during intake.
+      // Persist the car entered during intake — now if signed in, otherwise it
+      // stays pending and is saved the moment the guest signs up (RootNavigator).
       const pending = useAppStore.getState().pendingVehicle;
       // Snapshot before pendingVehicle is consumed — this key identifies the
       // request so an identical resubmission can be flagged as a duplicate.
       // pending wins: it's the car this submission was captured for.
       const subKey = submissionKey(damageParts, pending?.name ?? active?.name);
-      if (pending) {
+      if (pending && useAppStore.getState().isAuthenticated) {
         vehiclesService
           .addVehicle({ name: pending.name, colorName: pending.colorName })
           .then((r) => {

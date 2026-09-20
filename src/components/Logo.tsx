@@ -53,3 +53,38 @@ export function LogoRow({ markSize = 20, textSize = 13 }: { markSize?: number; t
     </View>
   );
 }
+
+/**
+ * The app icon (the rounded navy tile with a white car and a blue check
+ * badge), redrawn as SVG so it stays crisp at any size.
+ */
+export function AppMark({ size = 36 }: { size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+      <Rect width={64} height={64} rx={16} fill="#0f1a2e" />
+      <Rect x={1} y={1} width={62} height={62} rx={15} stroke="rgba(255,255,255,0.08)" strokeWidth={1.5} />
+      {/* Car body */}
+      <Path d="M12 39.5l4.2-9.6A3 3 0 0 1 19 28h13.5a3 3 0 0 1 2.6 1.5l3.4 6.2" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+      <Path d="M10 39.5h32.5" stroke="#fff" strokeWidth={3} strokeLinecap="round" />
+      <Path d="M10 39.5v7.5h3.5M42.5 39.5v7.5h-2" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+      <Circle cx={19} cy={47} r={3.6} fill="#0f1a2e" stroke="#fff" strokeWidth={3} />
+      <Circle cx={35} cy={47} r={3.6} fill="#0f1a2e" stroke="#fff" strokeWidth={3} />
+      <Path d="M15 44h1.5M38 44h1.5" stroke="#fff" strokeWidth={2} strokeLinecap="round" />
+      {/* Check badge */}
+      <Circle cx={47} cy={27} r={11} fill="#2e6bff" />
+      <Path d="M41.5 27.5l3.8 3.8L52.5 23" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** App mark + "AutoMate" in the theme's text colour (Home header). */
+export function AppLogoRow({ markSize = 34, textSize = 18, color = '#151a26' }: { markSize?: number; textSize?: number; color?: string }) {
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} accessibilityLabel="AutoMate">
+      <AppMark size={markSize} />
+      <Text style={{ fontSize: textSize, fontWeight: '800', letterSpacing: -0.4, color }}>
+        Auto<Text style={{ color: palette.primary }}>Mate</Text>
+      </Text>
+    </View>
+  );
+}

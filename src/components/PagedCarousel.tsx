@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import { Icon } from './Icon';
@@ -11,7 +11,7 @@ import { spacing, useTheme } from '../theme';
  * is down and snap to the nearest card on release. ‹ › buttons flank the
  * tappable dot indicators.
  */
-export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode[]; /** Show the ‹ › step buttons. */ arrows?: boolean }) {
+export function PagedCarousel({ items, arrows = true, autoPlay }: { items: React.ReactNode[]; /** Show the ‹ › step buttons. */ arrows?: boolean; /** Advance every N ms (wraps around); pauses while hovered or dragged. */ autoPlay?: number }) {
   const { colors } = useTheme();
   const ref = useRef<ScrollView>(null);
   const [w, setW] = useState(0);
@@ -28,6 +28,24 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
   };
   const onEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (w > 0) setIdx(Math.round(e.nativeEvent.contentOffset.x / w));
+  };
+
+  // Auto-play: step to the next card (wrapping) on a timer; any manual step
+  // restarts the timer, and hovering / dragging pauses it.
+  const [hovered, setHovered] = useState(false);
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (!autoPlay || items.length < 2 || hovered) return;
+    const id = setInterval(() => {
+      const next = (idxRef.current + 1) % items.length;
+      setIdx(next);
+      ref.current?.scrollTo({ x: next * wRef.current, animated: true });
+    }, autoPlay);
+    return () => clearInterval(id);
+  }, [autoPlay, items.length, hovered, tick]);
+  const goManual = (next: number) => {
+    go(next);
+    setTick((t) => t + 1);
   };
 
   // Web: the ScrollView doesn't follow mouse drags, so window mouse listeners
@@ -64,13 +82,13 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
       // Snap: a drag past a third of the width (or a quick flick) turns the page.
       const from = idxRef.current;
       const next = dx <= -wRef.current / 3 || dx <= -60 ? from + 1 : dx >= wRef.current / 3 || dx >= 60 ? from - 1 : from;
-      go(next);
+      goManual(next);
       setTimeout(() => setDragging(false), 50);
     };
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onUp);
   };
-  const webMouse = Platform.OS === 'web' ? ({ onMouseDown } as object) : {};
+  const webMouse = Platform.OS === 'web' ? ({ onMouseDown, onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) } as object) : {};
 
   /** Small ‹ › step buttons that flank the dots (never over the card content). */
   const arrow = (side: 'left' | 'right', onPress: () => void, disabled: boolean) => (
@@ -121,11 +139,11 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
         {dragging ? <View style={StyleSheet.absoluteFill} /> : null}
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: spacing.md }}>
-        {arrows && items.length > 1 ? <View style={{ marginRight: 10 }}>{arrow('left', () => go(idx - 1), idx === 0)}</View> : null}
+        {arrows && items.length > 1 ? <View style={{ marginRight: 10 }}>{arrow('left', () => goManual(idx - 1), idx === 0)}</View> : null}
         {items.map((_, i) => (
           <Tappable
             key={i}
-            onPress={() => go(i)}
+            onPress={() => goManual(i)}
             hitSlop={6}
             noFeedback
             style={{
@@ -136,7 +154,7 @@ export function PagedCarousel({ items, arrows = true }: { items: React.ReactNode
             }}
           />
         ))}
-        {arrows && items.length > 1 ? <View style={{ marginLeft: 10 }}>{arrow('right', () => go(idx + 1), idx === items.length - 1)}</View> : null}
+        {arrows && items.length > 1 ? <View style={{ marginLeft: 10 }}>{arrow('right', () => goManual(idx + 1), idx === items.length - 1)}</View> : null}
       </View>
     </View>
   );

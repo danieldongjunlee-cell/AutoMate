@@ -8,7 +8,9 @@ import { fetchBookings } from '../lib/bookings';
 import { fetchPointsBalance } from '../lib/points';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { getSupabaseSessionUser } from '../lib/supabaseAuth';
+import { vehiclesService } from '../services';
 import { seedDemoPolicies } from '../services/mock/insuranceService';
+import { queryClient } from '../services/queryClient';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
 import { AuthModal } from './AuthStack';
@@ -47,6 +49,24 @@ export function RootNavigator() {
       }
     });
   }, [setAuth, signIn]);
+
+  // A guest who entered their car during the AI estimate and then signed up:
+  // save that car to their new account and make it the active car.
+  const pendingVehicle = useAppStore((s) => s.pendingVehicle);
+  const setPendingVehicle = useAppStore((s) => s.setPendingVehicle);
+  const setActiveVehicle = useAppStore((s) => s.setActiveVehicle);
+  useEffect(() => {
+    if (!isAuthenticated || !pendingVehicle) return;
+    const car = pendingVehicle;
+    setPendingVehicle(null);
+    vehiclesService
+      .addVehicle({ name: car.name, colorName: car.colorName })
+      .then((r) => {
+        setActiveVehicle(r.vehicle.id, { carrySubmission: true });
+        void queryClient.invalidateQueries({ queryKey: ['vehicles'] });
+      })
+      .catch(() => setPendingVehicle(car));
+  }, [isAuthenticated, pendingVehicle, setPendingVehicle, setActiveVehicle]);
 
   // Hydrate Supabase-backed store caches (bookings, points) once authenticated.
   useEffect(() => {
