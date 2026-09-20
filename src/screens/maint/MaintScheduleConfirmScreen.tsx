@@ -6,16 +6,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import { confirmationCode, ReminderRow, SummaryCell } from '../../components/Confirmation';
+import { confirmationCode, ReminderRow } from '../../components/Confirmation';
 import { SuccessReceipt } from '../../components/SuccessReceipt';
-import { RatingLink } from '../../components/RatingLink';
-import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
+import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKED_APPOINTMENT, dealerById } from '../../services/mock/data';
 import { cartTotals, useAppStore } from '../../store/useAppStore';
-import { useDistance } from '../../i18n';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>;
@@ -24,7 +22,6 @@ type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleConfirm'>
 export function MaintScheduleConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-  const dist = useDistance();
   const clearCart = useAppStore((s) => s.clearCart);
 
   // Snapshot once on mount: keeps the summary stable while Done clears the
@@ -78,54 +75,16 @@ export function MaintScheduleConfirmScreen() {
           { label: 'Time', value: booking.time ?? '8:00 AM' },
           { label: 'Shop', value: dealer.name },
           { label: 'Service', value: serviceNames },
+          ...(promoLabel ? [{ label: 'Deal', value: promoLabel }] : []),
         ]}
         total={`$${total}`}
-        totalLabel="Total"
+        totalLabel={`Total · ~${totalMin} min`}
         method={{ name: 'Pay at the shop', detail: 'No deposit taken' }}
         stamp="CONFIRMED"
         reference={confirmation}
       />
 
       <View style={{ height: spacing.lg }} />
-
-      <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-        <SectionLabel>Summary</SectionLabel>
-        {promoLabel ? (
-          <View style={{ alignSelf: 'flex-start', backgroundColor: colors.successSurface, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3, marginBottom: spacing.sm }}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: colors.successDeep }}>{promoLabel}</Text>
-          </View>
-        ) : null}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            paddingBottom: spacing.sm,
-            marginBottom: spacing.sm,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: colors.divider,
-          }}
-        >
-          <AvatarCircle initial={dealer.initial} color={dealer.color} size={40} />
-          <View>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-              {dealer.name}
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-                {dist.format(dealer.distanceMi)} ·{' '}
-              </Text>
-              <RatingLink dealer={dealer} label={`★ ${dealer.rating}`} />
-            </View>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <SummaryCell label="Service" value={serviceNames} />
-          <SummaryCell label="Date & time" value={`${formatDayLabel(booking.date, 'Mon, Apr 7')} · ${booking.time ?? '8:00 AM'}`} />
-          <SummaryCell label="Pay at shop" value={`$${total}`} sub="$0 today · cash at pickup" subColor={palette.mint} />
-          <SummaryCell label="Duration" value={`~${totalMin} min`} />
-        </View>
-      </Card>
 
       <ReminderRow />
 

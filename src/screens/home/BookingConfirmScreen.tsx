@@ -7,17 +7,15 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import { confirmationCode, ReminderRow, SummaryCell } from '../../components/Confirmation';
+import { confirmationCode, ReminderRow } from '../../components/Confirmation';
 import { SuccessReceipt } from '../../components/SuccessReceipt';
-import { RatingLink } from '../../components/RatingLink';
-import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
+import { Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKING_MONTH, dealerById, defaultBookingISO, QUOTES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { formatDayLabel } from '../../utils/dates';
-import { useDistance } from '../../i18n';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookingConfirm'>;
 type Route = RouteProp<HomeStackParamList, 'BookingConfirm'>;
@@ -32,7 +30,6 @@ export function BookingConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
-  const dist = useDistance();
   const reminderPref = useAppStore((s) => s.reminderPref);
   const damageParts = useAppStore((s) => s.damageParts);
   const serviceLabel = damageParts.length
@@ -76,51 +73,17 @@ export function BookingConfirmScreen() {
           { label: 'Date', value: route.params?.dateLabel ?? 'Thu, Apr 12' },
           { label: 'Time', value: route.params?.time ?? '10:30 AM' },
           { label: 'Shop', value: dealer.name },
+          { label: 'Service', value: serviceLabel },
           { label: 'Parts', value: `${quote?.parts ?? 'OEM'} parts` },
         ]}
         total={priceLabel}
-        totalLabel="Estimate"
+        totalLabel="Estimate · ~2 days"
         method={{ name: 'Pay the shop after the repair', detail: 'Deposit refunded on arrival' }}
         stamp="CONFIRMED"
         reference={confirmation}
       />
 
       <View style={{ height: spacing.lg }} />
-
-      {/* Booking summary */}
-      <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-        <SectionLabel>Booking summary</SectionLabel>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            paddingBottom: spacing.sm,
-            marginBottom: spacing.sm,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: colors.divider,
-          }}
-        >
-          <AvatarCircle initial={dealer.initial} color={dealer.color} size={44} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-              {dealer.name} Service Center
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-                {dist.format(dealer.distanceMi)} away ·{' '}
-              </Text>
-              <RatingLink dealer={dealer} />
-            </View>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <SummaryCell label="Service" value={serviceLabel} sub={`${quote?.parts ?? 'OEM'} parts`} />
-          <SummaryCell label="Date & time" value={`${dateLabel} · ${time}`} />
-          <SummaryCell label="Pay at shop" value={priceLabel} sub={isCash ? '$0 today · cash at pickup' : '$0 today · ± after inspection'} subColor={palette.mint} />
-          <SummaryCell label="Duration" value="~2 days" sub="Self drop-off · 15 min check-in" />
-        </View>
-      </Card>
 
       <ReminderRow />
 
