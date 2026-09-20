@@ -64,6 +64,7 @@ export function AiEstimateCard({
   points,
   /** Seconds the analysis took. */
   seconds = 1.8,
+  footer,
   style,
 }: {
   priceLow: number;
@@ -71,6 +72,8 @@ export function AiEstimateCard({
   total?: number;
   points?: number;
   seconds?: number;
+  /** Rendered inside the same card, under a divider (submission timeline …). */
+  footer?: React.ReactNode;
   style?: object;
 }) {
   const [w, setW] = React.useState(0);
@@ -106,6 +109,10 @@ export function AiEstimateCard({
             <Text style={{ fontSize: 12, fontWeight: '600', color: BODY }}>{money(priceHigh)}</Text>
           </View>
         </View>
+
+        {footer ? (
+          <View style={{ marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: 'rgba(126,155,255,0.2)' }}>{footer}</View>
+        ) : null}
 
         <Gloss width={w} />
       </LinearGradient>

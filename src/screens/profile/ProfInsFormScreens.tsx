@@ -330,28 +330,6 @@ export function ProfInsAddScreen() {
   };
 
 
-  /** "Connect my insurer" → aggregator link → policies imported. */
-  const connect = async (providerId: string) => {
-    if (connectingId) return;
-    setConnectingId(providerId);
-    setError('');
-    try {
-      const result = await insuranceService.connect(providerId);
-      if (result.linkUrl) {
-        // Real vendors hand back a hosted consent widget; finishing that flow
-        // is outside the demo, so surface where the user would continue.
-        setError(`Finish connecting in your insurer portal: ${result.linkUrl}`);
-        return;
-      }
-      await invalidate();
-      navigation.goBack();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not connect to your insurer');
-    } finally {
-      setConnectingId(null);
-    }
-  };
-
   /** "Add policy" persists via the service, then back (list auto-refreshes). */
   const addPolicy = async () => {
     if (saving) return;
@@ -422,59 +400,6 @@ export function ProfInsAddScreen() {
             you add them.
           </Text>
         </View>
-      </Card>
-
-      {/* Connect my insurer (aggregator link — Phase 4) */}
-      <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
-        <View style={fieldRowStyle(colors.divider)}>
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-            Connect my insurer
-          </Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>
-            Log in once — your policies import automatically
-          </Text>
-        </View>
-        {(providers ?? []).map((p, i, arr) => (
-          <Tappable
-            key={p.id}
-            onPress={() => connect(p.id)}
-            disabled={connectingId !== null}
-            style={({ pressed }) => ({
-              paddingHorizontal: spacing.md,
-              paddingVertical: 12,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
-              borderBottomWidth: i < arr.length - 1 ? StyleSheet.hairlineWidth : 0,
-              borderBottomColor: colors.divider,
-              opacity: pressed || (connectingId !== null && connectingId !== p.id) ? 0.6 : 1,
-            })}
-          >
-            <InsurerLogo carrier={p.name} size={30} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.textPrimary }}>
-              {p.name}
-            </Text>
-            {p.active ? (
-              <View
-                style={{
-                  backgroundColor: colors.successSurface,
-                  borderRadius: radii.pill,
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                }}
-              >
-                <Text style={{ fontSize: 11, fontWeight: '700', color: colors.successDeep }}>
-                  DEFAULT
-                </Text>
-              </View>
-            ) : null}
-            {connectingId === p.id ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <Text style={{ fontSize: 14, color: colors.primary }}>Connect →</Text>
-            )}
-          </Tappable>
-        ))}
       </Card>
 
       {error ? (

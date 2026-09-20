@@ -10,7 +10,9 @@ import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
-import { Badge, Screen, SectionLabel } from '../../components/ui';
+import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
+import { PagedCarousel } from '../../components/PagedCarousel';
+import { Screen } from '../../components/ui';
 import { PaymentCard, paymentMethodsService } from '../../services';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction } from '../../utils/alerts';
@@ -163,36 +165,93 @@ function CardFormModal({
   );
 }
 
-/** Wireframe s-prof-payment, now live card CRUD. */
+/**
+ * A saved card as a swipe card: the card face (brand, number, holder, expiry)
+ * over the blue deck, four stat tiles, then the primary action and Edit /
+ * Remove — the same deck pattern as My cars and My insurance.
+ */
+function SavedCard({
+  card,
+  onSetDefault,
+  onEdit,
+  onRemove,
+}: {
+  card: PaymentCard;
+  onSetDefault: () => void;
+  onEdit: () => void;
+  onRemove: () => void;
+}) {
+  return (
+    <SwipeCard title={card.brand} subtitle={`•••• •••• •••• ${card.last4}`} badge={card.isDefault ? 'Primary' : undefined}>
+      {/* Card face */}
+      <View style={{ marginVertical: spacing.sm }}>
+        <LinearGradient
+          colors={[palette.navyBright, palette.navy]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ borderRadius: 18, padding: spacing.lg, borderWidth: 1, borderColor: 'rgba(255,255,255,0.22)' }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Chip */}
+            <View style={{ width: 36, height: 26, borderRadius: 6, backgroundColor: 'rgba(240,180,78,0.9)' }} />
+            <Text style={{ fontSize: 13, fontWeight: '800', letterSpacing: 1.4, color: 'rgba(255,255,255,0.75)' }}>{card.brand.toUpperCase()}</Text>
+          </View>
+          <Text style={{ fontSize: 20, fontWeight: '700', letterSpacing: 2.4, color: '#ffffff', marginTop: spacing.lg }}>•••• •••• •••• {card.last4}</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.md }}>
+            <View>
+              <Text style={{ fontSize: 10, letterSpacing: 0.6, color: 'rgba(255,255,255,0.5)' }}>CARD HOLDER</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffffff' }} numberOfLines={1}>
+                {card.holder}
+              </Text>
+            </View>
+            <View>
+              <Text style={{ fontSize: 10, letterSpacing: 0.6, color: 'rgba(255,255,255,0.5)' }}>EXPIRES</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffffff' }}>{card.expires}</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
+
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
+        <StatTile icon="wallet" color={palette.primaryLight} value={card.brand} label="brand" />
+        <StatTile icon="lock" color={palette.teal} value={`••${card.last4.slice(-2)}`} label="last 4" />
+        <StatTile icon="calendar" color={palette.lavender} value={card.expires} label="expires" />
+        <StatTile icon="check" color={palette.mint} value={card.isDefault ? 'Yes' : 'No'} label="primary" />
+      </View>
+
+      <DeckButton
+        label={card.isDefault ? 'Primary card ✓' : 'Set as primary'}
+        secondary={card.isDefault}
+        disabled={card.isDefault}
+        onPress={onSetDefault}
+      />
+      <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
+        <Tappable onPress={onEdit} hitSlop={8} accessibilityLabel={`Edit ${card.brand} card`}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: DECK_TEXT }}>Edit card</Text>
+        </Tappable>
+        <Tappable onPress={onRemove} hitSlop={8} accessibilityLabel={`Remove ${card.brand} card`}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: '#ffb4b1' }}>Remove</Text>
+        </Tappable>
+      </View>
+    </SwipeCard>
+  );
+}
+
+/** Payment methods: swipe through the saved cards, then "Add a card". */
 export function ProfPaymentScreen() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<PaymentCard | null>(null);
   const [formOpen, setFormOpen] = useState(false);
 
-  const { data: cards, isLoading } = useQuery({
-    queryKey: ['payment-cards'],
-    queryFn: paymentMethodsService.listCards,
-  });
-
+  const { data: cards, isLoading } = useQuery({ queryKey: ['payment-cards'], queryFn: paymentMethodsService.listCards });
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['payment-cards'] });
 
   const saveMutation = useMutation({
-    mutationFn: async (fields: {
-      holder: string;
-      expires: string;
-      last4: string;
-      isDefault: boolean;
-    }) => {
+    mutationFn: async (fields: { holder: string; expires: string; last4: string; isDefault: boolean }) => {
       if (editing) {
-        await paymentMethodsService.updateCard(editing.id, {
-          holder: fields.holder,
-          expires: fields.expires,
-        });
-        // Edit form can also (re)designate the primary card.
-        if (fields.isDefault && !editing.isDefault) {
-          await paymentMethodsService.setDefault(editing.id);
-        }
+        await paymentMethodsService.updateCard(editing.id, { holder: fields.holder, expires: fields.expires });
+        if (fields.isDefault && !editing.isDefault) await paymentMethodsService.setDefault(editing.id);
         return;
       }
       await paymentMethodsService.addCard(fields);
@@ -202,194 +261,68 @@ export function ProfPaymentScreen() {
       setFormOpen(false);
     },
   });
-
-  const removeMutation = useMutation({
-    mutationFn: (id: string) => paymentMethodsService.removeCard(id),
-    onSuccess: invalidate,
-  });
-
-  const setDefaultMutation = useMutation({
-    mutationFn: (id: string) => paymentMethodsService.setDefault(id),
-    onSuccess: invalidate,
-  });
+  const removeMutation = useMutation({ mutationFn: (id: string) => paymentMethodsService.removeCard(id), onSuccess: invalidate });
+  const setDefaultMutation = useMutation({ mutationFn: (id: string) => paymentMethodsService.setDefault(id), onSuccess: invalidate });
 
   const onRemove = (card: PaymentCard) =>
-    confirmAction('Remove card', `Remove the ${card.brand} ending ${card.last4}?`, () =>
-      removeMutation.mutate(card.id),
-    );
+    confirmAction('Remove card', `Remove the ${card.brand} ending ${card.last4}?`, () => removeMutation.mutate(card.id));
+  const addCard = () => {
+    setEditing(null);
+    setFormOpen(true);
+  };
+
+  // The primary card leads the deck.
+  const sorted = [...(cards ?? [])].sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+
+  const addCardFace = (
+    <SwipeCard key="add" title="Add a card" dashed>
+      <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
+        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+          <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
+        </View>
+        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>
+          Visa, Mastercard or Amex — used for deposits and bookings.
+        </Text>
+        <PrimaryButton label="Add payment method" onPress={addCard} style={{ alignSelf: 'stretch' }} />
+      </View>
+    </SwipeCard>
+  );
 
   return (
     <Screen>
-      <SectionLabel>Saved methods</SectionLabel>
-
-      {isLoading ? (
-        <SkeletonList variant="card" count={1} tall />
-      ) : (cards ?? []).length === 0 ? (
-        <View
-          style={{
-            backgroundColor: colors.surface,
-            borderRadius: radii.md,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            padding: spacing.xl,
-            alignItems: 'center',
-            marginBottom: spacing.sm,
-          }}
-        >
-          <Icon name="wallet" size={28} color={colors.textSecondary} />
-          <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-            No payment methods yet
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
-            Add a card below to pay for bookings faster.
-          </Text>
-        </View>
-      ) : (
-        (cards ?? []).map((card) => (
-          <View
-            key={card.id}
-            style={{
-              backgroundColor: colors.surface,
-              borderRadius: radii.md,
-              borderWidth: 1.5,
-              borderColor: colors.primary,
-              overflow: 'hidden',
-              marginBottom: spacing.sm,
-            }}
-          >
-            <LinearGradient
-              colors={[palette.dark, palette.darkAlt]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{ padding: spacing.lg }}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: spacing.md,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    color: 'rgba(255,255,255,.5)',
-                    letterSpacing: 2,
-                  }}
-                >
-                  {card.brand}
-                </Text>
-                {card.isDefault ? <Badge label="Primary" variant="primarySoft" /> : null}
-              </View>
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: '600',
-                  color: '#fff',
-                  letterSpacing: 2,
-                  marginBottom: spacing.md,
-                }}
-              >
-                •••• •••• •••• {card.last4}
-              </Text>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <View>
-                  <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}>CARDHOLDER</Text>
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>
-                    {card.holder}
-                  </Text>
-                </View>
-                <View>
-                  <Text style={{ fontSize: 11, color: 'rgba(255,255,255,.4)' }}>EXPIRES</Text>
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: '#fff' }}>
-                    {card.expires}
-                  </Text>
-                </View>
-              </View>
-            </LinearGradient>
-            <View style={{ padding: spacing.sm, flexDirection: 'row', gap: spacing.xs }}>
-              {!card.isDefault ? (
-                <Tappable
-                  onPress={() => setDefaultMutation.mutate(card.id)}
-                  disabled={setDefaultMutation.isPending}
-                  style={{
-                    flex: 1,
-                    backgroundColor: colors.primarySurface,
-                    borderRadius: radii.sm,
-                    paddingVertical: 9,
-                    alignItems: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
-                    Make primary
-                  </Text>
-                </Tappable>
-              ) : null}
-              <Tappable
-                onPress={() => {
-                  setEditing(card);
-                  setFormOpen(true);
-                }}
-                style={{
-                  flex: 1,
-                  backgroundColor: colors.primarySurface,
-                  borderRadius: radii.sm,
-                  paddingVertical: 9,
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ fontSize: 14, fontWeight: '500', color: colors.primaryDark }}>
-                  Edit card
-                </Text>
-              </Tappable>
-              <RemoveButton onPress={() => onRemove(card)} />
-            </View>
-          </View>
-        ))
-      )}
-
-      {/* Add method */}
-      <Tappable
-        onPress={() => {
-          setEditing(null);
-          setFormOpen(true);
-        }}
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1.5,
-          borderStyle: 'dashed',
-          borderColor: colors.primaryLight,
-          padding: spacing.lg,
-          alignItems: 'center',
-          marginBottom: spacing.md,
-        }}
+      <SwipeDeck
+        caption={
+          sorted.length
+            ? `${sorted.length} card${sorted.length !== 1 ? 's' : ''} saved · swipe to switch`
+            : 'No cards saved yet'
+        }
       >
-        <Icon name="plus" size={28} color={colors.textSecondary} strokeWidth={2.4} />
-        <Text style={{ fontSize: 15, fontWeight: '500', color: colors.primaryDark, marginBottom: 2 }}>
-          Add payment method
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          Credit / debit card
-        </Text>
-      </Tappable>
+        {isLoading ? (
+          <SkeletonList variant="card" count={1} tall />
+        ) : (
+          <PagedCarousel
+            items={[
+              ...sorted.map((card) => (
+                <SavedCard
+                  key={card.id}
+                  card={card}
+                  onSetDefault={() => setDefaultMutation.mutate(card.id)}
+                  onEdit={() => {
+                    setEditing(card);
+                    setFormOpen(true);
+                  }}
+                  onRemove={() => onRemove(card)}
+                />
+              )),
+              addCardFace,
+            ]}
+          />
+        )}
+      </SwipeDeck>
 
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderRadius: radii.sm,
-          padding: spacing.sm,
-          flexDirection: 'row',
-          gap: spacing.sm,
-        }}
-      >
-        <Icon name="lock" size={15} color={colors.textSecondary} />
-        <Text style={{ flex: 1, fontSize: 13, color: colors.textTertiary, lineHeight: 18 }}>
-          256-bit encrypted · PCI DSS compliant · AutoMate never stores full card numbers.
-        </Text>
-      </View>
+      <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.lg }}>
+        Cards are stored with our payment processor — AutoMate never sees the full number.
+      </Text>
 
       <CardFormModal
         card={editing}

@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
@@ -7,7 +6,6 @@ import { Text, View } from 'react-native';
 
 import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
-import { LiveCamera } from '../../components/LiveCamera';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { TextField } from '../../components/TextField';
@@ -110,9 +108,6 @@ export function ProfCarAddScreen() {
   const { colors } = useTheme();
   const queryClient = useQueryClient();
 
-  const [mode, setMode] = useState<'scan' | 'manual'>('manual');
-  const [vinScanned, setVinScanned] = useState(false);
-
   const [year, setYear] = useState('');
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
@@ -152,62 +147,9 @@ export function ProfCarAddScreen() {
     },
   });
 
-  const method = (
-    emoji: string,
-    title: string,
-    sub: string,
-    value: 'scan' | 'manual',
-  ) => {
-    const active = mode === value;
-    return (
-      <Tappable
-        onPress={() => setMode(value)}
-        style={{
-          flex: 1,
-          borderWidth: active ? 1.5 : 1,
-          borderColor: active ? colors.success : colors.border,
-          backgroundColor: active ? colors.primarySurface : colors.surface,
-          borderRadius: radii.md,
-          padding: spacing.sm,
-          alignItems: 'center',
-        }}
-      >
-        <Glyph glyph={emoji} size={20} color={colors.textSecondary} />
-        <Text style={{ fontSize: 13, fontWeight: '700', color: active ? colors.primary : colors.textSecondary }}>{title}</Text>
-        <Text style={{ fontSize: 11, color: colors.textTertiary }}>{sub}</Text>
-      </Tappable>
-    );
-  };
-
   return (
     <Screen>
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        {method('camera', 'Scan VIN barcode', 'Auto-fill in seconds', 'scan')}
-        {method('pencil', 'Enter manually', 'Type details below', 'manual')}
-      </View>
-
-      {mode === 'scan' ? (
-        <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-          <LiveCamera
-            height={180}
-            shutterLabel="Scan VIN"
-            onCapture={() => {
-              setVinScanned(true);
-            }}
-          />
-          {vinScanned ? (
-            <Text style={{ fontSize: 13, fontWeight: '600', color: colors.success, textAlign: 'center' }}>
-              VIN captured — fill in details below
-            </Text>
-          ) : (
-            <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center' }}>
-              Point the camera at the VIN barcode, then tap Scan VIN.
-            </Text>
-          )}
-        </Card>
-      ) : null}
-
-      {mode === 'manual' || vinScanned ? (
+      {(
         <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
             All fields required except Oil spec &amp; Last service.
@@ -244,7 +186,7 @@ export function ProfCarAddScreen() {
             </View>
           </View>
           <Dropdown label="Color *" value={color} options={COLORS} onChange={setColor} placeholder="Lunar Silver Metallic" />
-          <TextField label="VIN *" value={vin} onChangeText={setVin} placeholder="Enter or scan VIN" autoCapitalize="characters" />
+          <TextField label="VIN *" value={vin} onChangeText={setVin} placeholder="1HGCV1F34KA01234" autoCapitalize="characters" />
           <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <View style={{ flex: 1 }}>
               <TextField label="Odometer (mi) *" value={odometer} onChangeText={(t) => setOdometer(t.replace(/[^\d]/g, ''))} keyboardType="number-pad" placeholder="0" />
@@ -255,7 +197,7 @@ export function ProfCarAddScreen() {
           </View>
           <TextField label="Last service" value={lastService} onChangeText={setLastService} placeholder="Mar 12, 2025" />
         </Card>
-      ) : null}
+      )}
 
       <View
         style={{

@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Icon } from '../../components/Icon';
 import { AiEstimateCard } from '../../components/AiEstimateCard';
+import { QuoteTimeline } from '../../components/QuoteTimeline';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 
@@ -32,6 +33,8 @@ export function SubmittedScreen() {
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   // The DIY guide opened from an "AI Repair Recommendation" row.
   const [guide, setGuide] = useState<DiyGuide | null>(null);
+  // The recommendation starts collapsed; the estimate is what leads.
+  const [recOpen, setRecOpen] = useState(false);
   const primaryPart = damageParts[0]?.part ?? 'Rear bumper';
   // Live AI analysis from the submit response; wireframe demo values otherwise.
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
@@ -40,7 +43,23 @@ export function SubmittedScreen() {
   return (
     <Screen>
       <SubmitProgress step={3} left="Submitted" right="Done" />
-      <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damageParts.reduce((n, p) => n + (p.photos || 1), 0)} style={{ marginBottom: spacing.lg }} />
+      {/* Estimate, submission timeline and the response window read as one box. */}
+      <AiEstimateCard
+        priceLow={priceLow}
+        priceHigh={priceHigh}
+        points={damageParts.reduce((n, p) => n + (p.photos || 1), 0)}
+        style={{ marginBottom: spacing.lg }}
+        footer={
+          <QuoteTimeline
+            steps={[
+              { icon: 'check', time: 'Now', label: 'Sent', state: 'done' },
+              { icon: 'search', time: '~30 min', label: 'Reviewing', state: 'next' },
+              { icon: 'chat', time: '1–3 hr', label: 'Quotes', state: 'later' },
+            ]}
+            note={`Photos sent to ${QUOTE_REQUEST.shopsNotified} shops · free, no obligation · 1–3 hr est. response`}
+          />
+        }
+      />
       {/* AI Repair Recommendation first (the estimate leads), then the submission status.
           Header, analysis and DIY guides consolidated
           into a single card so the screen reads as one block instead of many. */}
@@ -54,19 +73,31 @@ export function SubmittedScreen() {
           marginBottom: spacing.lg,
         }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
+        <Tappable
+          onPress={() => setRecOpen((v) => !v)}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: recOpen }}
+          accessibilityLabel="AI Repair Recommendation"
+          style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+        >
           <IconChip name="sparkle" size={36} glyph={22} color={colors.primaryDark} />
           <Text style={{ flex: 1, fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>
             AI Repair Recommendation
           </Text>
           <Badge label="Pro" variant="primarySoft" />
-        </View>
+          <View style={{ transform: [{ rotate: recOpen ? '-90deg' : '90deg' }] }}>
+            <Icon name="chevron" size={18} color={colors.textTertiary} strokeWidth={2} />
+          </View>
+        </Tappable>
 
+        {recOpen ? (
+        <>
         <View
           style={{
             backgroundColor: colors.primarySurface,
             borderRadius: radii.sm,
             padding: spacing.md,
+            marginTop: spacing.md,
             marginBottom: spacing.md,
           }}
         >
@@ -105,17 +136,8 @@ export function SubmittedScreen() {
             <DiyGuideRow level="MED" title="Plunger pull method" meta="6 steps · ~12 min · Plunger required" showLink />
           </ProLockOverlay>
         )}
-      </View>
-
-      {/* Success header — the key facts (free · response time) live here as a
-          single subtitle, so the old three-box stat row is no longer needed. */}
-      <View style={{ alignItems: 'center', paddingVertical: spacing.md }}>
-        <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 3, textAlign: 'center' }}>
-          Photos sent to {QUOTE_REQUEST.shopsNotified} shops
-        </Text>
-        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center' }}>
-          Free · no obligation · 1–3 hr est. response
-        </Text>
+        </>
+        ) : null}
       </View>
 
       {/* Notify banner — slimmed to a single tappable row. */}

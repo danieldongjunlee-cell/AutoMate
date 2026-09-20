@@ -6,13 +6,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import {
-  ConfirmationNumber,
-  confirmationCode,
-  ReminderRow,
-  SuccessHeader,
-  SummaryCell,
-} from '../../components/Confirmation';
+import { confirmationCode, ReminderRow, SummaryCell } from '../../components/Confirmation';
+import { SuccessReceipt } from '../../components/SuccessReceipt';
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -74,12 +69,24 @@ export function MaintScheduleConfirmScreen() {
 
   return (
     <Screen>
-      <SuccessHeader
-        title="You're booked!"
-        subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
+      {/* Receipt-style confirmation: tick, the booking's facts, total and stub. */}
+      <SuccessReceipt
+        title="Thank you!"
+        subtitle={`Your booking is confirmed · we'll remind you ${reminderPref.toLowerCase()}`}
+        rows={[
+          { label: 'Date', value: formatDayLabel(booking.date, 'Tomorrow') },
+          { label: 'Time', value: booking.time ?? '8:00 AM' },
+          { label: 'Shop', value: dealer.name },
+          { label: 'Service', value: serviceNames },
+        ]}
+        total={`$${total}`}
+        totalLabel="Total"
+        method={{ name: 'Pay at the shop', detail: 'No deposit taken' }}
+        stamp="CONFIRMED"
+        reference={confirmation}
       />
 
-      <ConfirmationNumber code={confirmation} />
+      <View style={{ height: spacing.lg }} />
 
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
         <SectionLabel>Summary</SectionLabel>

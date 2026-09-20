@@ -7,13 +7,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import {
-  ConfirmationNumber,
-  confirmationCode,
-  ReminderRow,
-  SuccessHeader,
-  SummaryCell,
-} from '../../components/Confirmation';
+import { confirmationCode, ReminderRow, SummaryCell } from '../../components/Confirmation';
+import { SuccessReceipt } from '../../components/SuccessReceipt';
 import { RatingLink } from '../../components/RatingLink';
 import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
@@ -73,12 +68,24 @@ export function BookingConfirmScreen() {
 
   return (
     <Screen>
-      <SuccessHeader
-        title="You're all set!"
-        subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
+      {/* Receipt-style confirmation: tick, the booking's facts, estimate and stub. */}
+      <SuccessReceipt
+        title="Thank you!"
+        subtitle={`Your booking is confirmed · we'll remind you ${reminderPref.toLowerCase()}`}
+        rows={[
+          { label: 'Date', value: route.params?.dateLabel ?? 'Thu, Apr 12' },
+          { label: 'Time', value: route.params?.time ?? '10:30 AM' },
+          { label: 'Shop', value: dealer.name },
+          { label: 'Parts', value: `${quote?.parts ?? 'OEM'} parts` },
+        ]}
+        total={priceLabel}
+        totalLabel="Estimate"
+        method={{ name: 'Pay the shop after the repair', detail: 'Deposit refunded on arrival' }}
+        stamp="CONFIRMED"
+        reference={confirmation}
       />
 
-      <ConfirmationNumber code={confirmation} />
+      <View style={{ height: spacing.lg }} />
 
       {/* Booking summary */}
       <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>

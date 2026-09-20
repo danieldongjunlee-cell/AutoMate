@@ -109,6 +109,7 @@ export function HomeLauncherScreen() {
         <PhotoTile
           title="Maintenance"
           source={TILE_MAINT}
+          fit="cover"
           effect="service"
           height={168}
           style={{ flex: 1 }}
