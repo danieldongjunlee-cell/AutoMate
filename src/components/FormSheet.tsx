@@ -6,7 +6,7 @@ import { radii, spacing, useTheme } from '../theme';
 /**
  * Centered form modal with a robust dismiss: the dimmed backdrop is an
  * absolute-fill Pressable rendered BEHIND the card (a sibling, not a parent),
- * so taps/typing inside the card never bubble to the close handler — fixing the
+ * so taps/typing inside the card never bubble to the close handler, fixing the
  * "popup disappears when I tap a field" bug on web. Tapping outside closes
  * (unless `dismissable` is false, e.g. while saving).
  */

@@ -1,4 +1,4 @@
-/** Real insurance service (server /profile/policies + /insurance) — mirrors services/mock/insuranceService. */
+/** Real insurance service (server /profile/policies + /insurance), mirrors services/mock/insuranceService. */
 import {
   ConnectResult,
   InsuranceProviderInfo,

@@ -1,10 +1,10 @@
 /**
- * DamageEstimator — the app's swappable boundary to the AI damage backend.
+ * DamageEstimator, the app's swappable boundary to the AI damage backend.
  *
  * Nothing in the app imports the model or the FastAPI shapes directly; screens
  * call `damageEstimator.estimate(...)`. With EXPO_PUBLIC_DAMAGE_AI_URL set this
  * POSTs to services/damage-ai (`/estimate`); without it (the default), an
- * in-app deterministic mock answers — mirroring the Python mock so the whole
+ * in-app deterministic mock answers, mirroring the Python mock so the whole
  * app runs end-to-end with no model or GPU.
  */
 import { YOLO_MODEL, type AiEstimateSummary } from '../services/mock/data';
@@ -106,7 +106,7 @@ const moderateRange = (part: string, type: string): [number, number] => {
 };
 
 /** Multi-type part → the dominant (most expensive) single repair, not the sum
- *  — mirrors the service's price_range_multi. */
+ * , mirrors the service's price_range_multi. */
 const dominantRange = (part: string, rawType: string): [number, number] => {
   let best: [number, number] = DEFAULT_MODERATE.dent;
   for (const t of splitTypes(rawType)) {
@@ -137,7 +137,7 @@ function mockResult(input: EstimateInput): DamageEstimateResult {
   });
 
   // Safety guard: if the least-confident detection is below threshold, the model
-  // is unsure the photos show car damage — reject instead of returning a range.
+  // is unsure the photos show car damage, reject instead of returning a range.
   if (minConf < YOLO_MIN_CONFIDENCE) {
     return {
       estimateId: 'est_rejected',
@@ -148,7 +148,7 @@ function mockResult(input: EstimateInput): DamageEstimateResult {
       modelMode: 'mock',
       rejected: true,
       rejectReason:
-        "Our YOLOv8 model couldn't confidently identify car damage in these photos. Retake clear, close-up shots of the damaged part in good light — make sure the damage is in frame.",
+        "Our YOLOv8 model couldn't confidently identify car damage in these photos. Retake clear, close-up shots of the damaged part in good light, make sure the damage is in frame.",
     };
   }
 
@@ -239,7 +239,7 @@ export const httpDamageEstimator: DamageEstimator = {
 };
 
 /** The adapter the app uses. HTTP when configured, deterministic mock otherwise.
- *  Never throws — a failed live call degrades to the mock so submit never hangs. */
+ *  Never throws, a failed live call degrades to the mock so submit never hangs. */
 export const damageEstimator: DamageEstimator = {
   async estimate(input) {
     if (!DAMAGE_AI_URL) return mockDamageEstimator.estimate(input);

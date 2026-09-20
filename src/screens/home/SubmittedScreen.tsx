@@ -29,7 +29,7 @@ export function SubmittedScreen() {
   const damageParts = useAppStore((s) => s.damageParts);
   const isPro = useAppStore((s) => s.isPro);
   const aiEstimate = useAppStore((s) => s.aiEstimate);
-  // Quote-alert opt-in (mock push permission — flips the banner state).
+  // Quote-alert opt-in (mock push permission, flips the banner state).
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   // The DIY guide opened from an "AI Repair Recommendation" row.
   const [guide, setGuide] = useState<DiyGuide | null>(null);
@@ -102,7 +102,7 @@ export function SubmittedScreen() {
           }}
         >
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>
-            {primaryPart} — DIY feasible
+            {primaryPart} · DIY feasible
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>
             Matched DIY methods for this repair
@@ -140,7 +140,7 @@ export function SubmittedScreen() {
         ) : null}
       </View>
 
-      {/* Notify banner — slimmed to a single tappable row. */}
+      {/* Notify banner · slimmed to a single tappable row. */}
       <Tappable
         onPress={() => setNotifyEnabled(true)}
         disabled={notifyEnabled}
@@ -159,7 +159,7 @@ export function SubmittedScreen() {
       >
         <Icon name="bell" size={22} color={colors.warning} />
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.warningDeep }}>
-          {notifyEnabled ? "Alerts on — we'll ping you per quote" : 'Notify me when quotes arrive'}
+          {notifyEnabled ? "Alerts on · we'll ping you per quote" : 'Notify me when quotes arrive'}
         </Text>
         <Text style={{ fontSize: 14, fontWeight: '700', color: notifyEnabled ? palette.mint : colors.warningDeep }}>
           {notifyEnabled ? 'Enabled' : 'Enable'}

@@ -143,7 +143,7 @@ export function RescheduleScreen() {
           ))}
         </View>
         <PrimaryButton
-          label={`Confirm new time — ${dayMonthAbbr} ${day} · ${time} →`}
+          label={`Confirm new time · ${dayMonthAbbr} ${day} · ${time} →`}
           onPress={() => navigation.navigate(confirmScreen as never)}
         />
       </Card>
@@ -163,7 +163,7 @@ export function RescheduleScreen() {
         <Text style={{ fontSize: 13, color: colors.textSecondary, lineHeight: 18, marginBottom: spacing.sm }}>
           Cancel <Text style={{ color: colors.successDark, fontWeight: '700' }}>12+ hours ahead</Text> and
           your deposit is fully refunded. Within 12 hours or a no-show, the deposit is kept and a
-          strike is added — 3 strikes removes your account.
+          strike is added · 3 strikes removes your account.
         </Text>
         <PrimaryButton variant="danger" label="Cancel booking" onPress={onCancel} />
       </View>

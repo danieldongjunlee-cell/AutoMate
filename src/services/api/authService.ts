@@ -13,7 +13,7 @@ interface SessionResponse {
   user: { name: string; email: string };
 }
 
-/** Email of whoever just passed login/sign-up — verify-otp needs it. */
+/** Email of whoever just passed login/sign-up, verify-otp needs it. */
 let pendingEmail = DEMO_EMAIL;
 
 export const authService = {

@@ -30,7 +30,7 @@ const VIEWFINDER_H = 190;
 /**
  * Receipt scanner with REAL capture (user-feedback pass 2): the camera /
  * gallery buttons use expo-image-picker and show the actual image in the
- * viewfinder. The OCR itself stays mocked — Review scan parses the canonical
+ * viewfinder. The OCR itself stays mocked, Review scan parses the canonical
  * receipt regardless of pixels.
  */
 export function MaintScanCamScreen() {
@@ -103,7 +103,7 @@ export function MaintScanCamScreen() {
         <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>
 
-      {/* Viewfinder — live camera until a receipt is captured/scanning */}
+      {/* Viewfinder · live camera until a receipt is captured/scanning */}
       {!captured && !scanning ? (
         <LiveCamera
           height={VIEWFINDER_H}
@@ -254,7 +254,7 @@ export function MaintScanCamScreen() {
         })}
       >
         <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-          {captured?.source === 'gallery' ? 'Imported from gallery — repick' : 'Gallery instead'}
+          {captured?.source === 'gallery' ? 'Imported from gallery · repick' : 'Gallery instead'}
         </Text>
       </Tappable>
 

@@ -1,6 +1,6 @@
 import { TextStyle } from 'react-native';
 
-/** 4-pt spacing scale (wireframe rhythm ×2 — docs/wireframe-analysis.md §3). */
+/** 4-pt spacing scale (wireframe rhythm ×2, docs/wireframe-analysis.md §3). */
 export const spacing = {
   xs: 4,
   sm: 8,

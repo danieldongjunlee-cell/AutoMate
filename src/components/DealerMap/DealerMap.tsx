@@ -6,7 +6,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
 
 /**
- * Native map: react-native-maps (Apple Maps on iOS, Google Maps on Android —
+ * Native map: react-native-maps (Apple Maps on iOS, Google Maps on Android -
  * both bundled with Expo Go, no config plugin needed). Same props as the
  * Leaflet web twin; pins are custom marker views styled like the web pills.
  */

@@ -60,7 +60,7 @@ export function BookAgreementScreen() {
         status: 'confirmed',
       });
     } else {
-      // Maintenance — v17 is pay-at-shop (no upfront payment), so record the
+      // Maintenance, v17 is pay-at-shop (no upfront payment), so record the
       // scheduled service from the cart now that there's no payment screen.
       const cart = useAppStore.getState().cart;
       const { total } = cartTotals(cart);
@@ -139,7 +139,7 @@ export function BookAgreementScreen() {
           >
             Terms of Service
           </Text>{' '}
-          — show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only
+          · show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only
           through AutoMate.
         </Text>
       </Tappable>

@@ -56,7 +56,7 @@ export function MaintScheduleBookScreen() {
   // the brake job sized to the car's type (e.g. KIA Sportage → SUV).
   const didPreselect = useRef(false);
   useEffect(() => {
-    // Don't auto-add the brake reco when a bundle/deal seeded the cart — that
+    // Don't auto-add the brake reco when a bundle/deal seeded the cart, that
     // would inflate the claimed (discounted) price.
     if (didPreselect.current || !recoType || cart.promo || pickMode) return;
     didPreselect.current = true;
@@ -65,7 +65,7 @@ export function MaintScheduleBookScreen() {
     if (reco && !cart.services.some((s) => s.id === reco.id)) {
       toggleCartService({
         id: reco.id,
-        name: `Brakes — ${reco.name}`,
+        name: `Brakes · ${reco.name}`,
         price: reco.price,
         durationMin: reco.durationMin,
       });
@@ -79,7 +79,7 @@ export function MaintScheduleBookScreen() {
   const totalLabel = `$${total}`;
 
   // Maintenance is pay-at-shop (no deposit), so booking is confirmed right here
-  // once the agreement is checked — the separate agreement screen is gone.
+  // once the agreement is checked, the separate agreement screen is gone.
   const onConfirm = () => {
     if (!canContinue || !agreed) return;
     const dateLabel = formatDayLabel(cart.date, formatDayLabel(defaultBookingISO()));
@@ -107,7 +107,7 @@ export function MaintScheduleBookScreen() {
     const pct = pctFor(cat.id);
     toggleCartService({
       id: sub.id,
-      name: `${cat.name} — ${sub.name}`,
+      name: `${cat.name} · ${sub.name}`,
       price: discountedPrice(sub.price, pct),
       originalPrice: pct ? sub.price : undefined,
       durationMin: sub.durationMin,
@@ -188,7 +188,7 @@ export function MaintScheduleBookScreen() {
     <Screen>
       {pickMode ? (
         <>
-          {/* Your services — the booking's centrepiece: what this shop will do and charge. */}
+          {/* Your services · the booking's centrepiece: what this shop will do and charge. */}
           <LinearGradient
             colors={[colors.primary, palette.teal]}
             start={{ x: 0, y: 0 }}
@@ -384,7 +384,7 @@ export function MaintScheduleBookScreen() {
 
         </>
       )}
-      {/* Booking agreement — folded into this screen as a compact consent. */}
+      {/* Booking agreement · folded into this screen as a compact consent. */}
       <View
         style={{
           backgroundColor: colors.surface,
@@ -396,7 +396,7 @@ export function MaintScheduleBookScreen() {
         }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 6 }}>
-          No payment today — you pay the shop after your service.
+          No payment today · you pay the shop after your service.
         </Text>
         <Tappable onPress={() => setAgreed((v) => !v)} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' }}>
           <View
@@ -419,13 +419,13 @@ export function MaintScheduleBookScreen() {
             <Text style={{ color: colors.primary, fontWeight: '700' }} onPress={() => navigation.navigate('TosBooking')}>
               Terms of Service
             </Text>{' '}
-            — show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
+           , show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
           </Text>
         </Tappable>
       </View>
 
       <PrimaryButton
-        label={canContinue ? `Confirm booking — ${totalLabel} →` : 'Select services, date & time'}
+        label={canContinue ? `Confirm booking · ${totalLabel} →` : 'Select services, date & time'}
         disabled={!canContinue || !agreed}
         onPress={onConfirm}
       />

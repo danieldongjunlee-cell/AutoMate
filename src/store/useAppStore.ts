@@ -20,7 +20,7 @@ export interface CartService {
   name: string;
   /** Effective (post-discount) price. */
   price: number;
-  /** Pre-discount price when a claimed deal applies — drives the breakdown. */
+  /** Pre-discount price when a claimed deal applies, drives the breakdown. */
   originalPrice?: number;
   durationMin: number;
 }
@@ -85,7 +85,7 @@ export const PRO_PLANS = {
 };
 export const DIY_ONLY_PRICE_CENTS = 1000; // $10 one-time DIY-only unlock
 
-/** Next renewal date for a plan — mirrors server/src/routes/pro.ts renewsAtFor
+/** Next renewal date for a plan, mirrors server/src/routes/pro.ts renewsAtFor
  *  (annual → +1 year, monthly → +1 month). Used when the server doesn't supply
  *  one (mock mode / older responses). */
 const renewsAtFor = (plan: 'annual' | 'monthly'): string => {
@@ -104,7 +104,7 @@ export interface AppBooking {
   id: string;
   kind: 'repair' | 'maintenance';
   dealerId?: string;
-  /** Owning car's brand — the Bookings tab filters to the active car. */
+  /** Owning car's brand, the Bookings tab filters to the active car. */
   brand: string;
   icon: string;
   title: string;
@@ -157,7 +157,7 @@ const SEED_BOOKINGS: AppBooking[] = [
     priceLabel: '$320–345',
     status: 'reschedule_proposed',
     proposedTime: 'Fri, Apr 13 · 2:00 PM',
-    reason: 'The replacement bumper cover is on backorder until Apr 13 — the shop proposed the next available slot.',
+    reason: 'The replacement bumper cover is on backorder until Apr 13, the shop proposed the next available slot.',
     createdAt: 2,
   },
   {
@@ -174,7 +174,7 @@ const SEED_BOOKINGS: AppBooking[] = [
     time: '1:00 PM',
     priceLabel: '$240–290',
     status: 'cancelled',
-    reason: 'The shop had to cancel — their paint booth is down for repairs this week. They suggested rebooking next week.',
+    reason: 'The shop had to cancel, their paint booth is down for repairs this week. They suggested rebooking next week.',
     createdAt: 4,
   },
   {
@@ -238,13 +238,13 @@ export interface DamagePart {
   part: string;
   type: string; // Dent / Scratch / Crack / Paint
   photos: number;
-  /** Real captured/picked image uris (feedback pass 2 — count mirrors `photos`). */
+  /** Real captured/picked image uris (feedback pass 2, count mirrors `photos`). */
   photoUris?: string[];
   /** Optional free-text description the user typed at capture time. */
   note?: string;
 }
 
-/** Deterministic signature of a quote submission — the same parts (name +
+/** Deterministic signature of a quote submission, the same parts (name +
  *  damage types + photos) on the same car produce the same key. Used to detect
  *  that a new request is identical to the previously submitted one. */
 export function submissionKey(parts: DamagePart[], vehicleName?: string | null): string {
@@ -284,7 +284,7 @@ interface AppState {
   signIn: () => void;
   signOut: () => void;
   /** True only for a brand-new sign-up, until they submit their first AI
-   *  estimate. Drives the Home "New here?" onboarding hint — returning users
+   *  estimate. Drives the Home "New here?" onboarding hint, returning users
    *  (sign-in / restored session) never see it. */
   isNewUser: boolean;
   setIsNewUser: (v: boolean) => void;
@@ -298,7 +298,7 @@ interface AppState {
   setPendingVehicle: (v: { name: string; colorName: string } | null) => void;
 
   // App preferences (Settings → Language / Distance units). Stored here so the
-  // selection persists across navigation (device-level prefs — survive sign-out).
+  // selection persists across navigation (device-level prefs, survive sign-out).
   language: string;
   setLanguage: (language: string) => void;
   distanceUnit: 'mi' | 'km';
@@ -308,7 +308,7 @@ interface AppState {
   setThemeMode: (themeMode: ThemeMode) => void;
 
   // Reward points (420 pts seed; earned by scans/logs/posts).
-  // Single client cache — the points services (mock + api) keep it current.
+  // Single client cache, the points services (mock + api) keep it current.
   points: number;
   /** Apply a delta and (Supabase) append a ledger row tagged with `reason`. */
   addPoints: (n: number, reason?: string) => void;
@@ -322,9 +322,9 @@ interface AppState {
   /** ISO date the subscription renews (server value in API mode, else computed). */
   proRenewsAt: string | null;
   diyUnlocked: boolean; // true via Pro OR the $10 DIY-only purchase
-  unlockPro: (renewsAt?: string) => void; // legacy entry — defaults to annual
+  unlockPro: (renewsAt?: string) => void; // legacy entry · defaults to annual
   subscribePro: (plan: 'annual' | 'monthly', renewsAt?: string) => void;
-  cancelPro: () => void; // cancel membership — effective immediately across the app
+  cancelPro: () => void; // cancel membership · effective immediately across the app
   unlockDiyOnly: () => void;
 
   // Daily check-in (Home): claim once → award points + show the checked state.
@@ -335,7 +335,7 @@ interface AppState {
   noShowCount: number;
   addNoShow: () => void;
 
-  // Active vehicle (v17 car switcher — shown when >2 cars registered).
+  // Active vehicle (v17 car switcher, shown when >2 cars registered).
   // Switching cars swaps the per-car damage/quotes flow (see damageByVehicle).
   activeVehicleId: string | null;
   /** Activate a car (swaps the per-car damage/quotes slice). Pass
@@ -373,7 +373,7 @@ interface AppState {
   setDraftNote: (note: string) => void;
   addDraftPhoto: (uri: string) => void;
   removeDraftPhoto: (index: number) => void;
-  /** Merge the draft into damageParts (idempotent — replaces an entry with the same part name). */
+  /** Merge the draft into damageParts (idempotent, replaces an entry with the same part name). */
   commitDraftPart: () => void;
   /** Clear only the draft ("+ Add another damaged part" starts a fresh pass). */
   resetDraft: () => void;
@@ -382,7 +382,7 @@ interface AppState {
   /** AI estimate from the latest submit (Submitted + DealerQuotes headers). */
   aiEstimate: AiEstimateSummary | null;
   setAiEstimate: (estimate: AiEstimateSummary | null) => void;
-  /** Supabase id of the latest saved damage_requests row — attached to the
+  /** Supabase id of the latest saved damage_requests row, attached to the
    *  repair booking the user accepts, so estimate↔actual-price links exactly. */
   currentDamageRequestId: string | null;
   setDamageRequestId: (id: string | null) => void;
@@ -392,23 +392,23 @@ interface AppState {
   savedDealerIds: string[];
   toggleSavedDealer: (dealerId: string) => void;
   setQuotesViewed: (v: boolean) => void;
-  /** submissionKey() of the last submitted quote request — non-null means an
+  /** submissionKey() of the last submitted quote request, non-null means an
    *  open request exists; matching a new submission's key flags a duplicate.
    *  Cleared when the request is cancelled or the session ends. */
   lastSubmissionKey: string | null;
   setLastSubmissionKey: (key: string | null) => void;
-  /** Tab-badge "seen" flags — cleared when the tab is opened. */
+  /** Tab-badge "seen" flags, cleared when the tab is opened. */
   bookingsViewed: boolean;
   setBookingsViewed: (v: boolean) => void;
   /** Community post ids the user has opened/seen → drives the unread-posts badge. */
   readPostIds: Record<string, boolean>;
   markPostsRead: (ids: string[]) => void;
-  /** Authors this user has blocked (App Store 1.2) — their posts/comments are
+  /** Authors this user has blocked (App Store 1.2), their posts/comments are
    *  hidden everywhere. Keyed by display name (the client post shape's id). */
   blockedAuthors: string[];
   blockAuthor: (author: string) => void;
   unblockAuthor: (author: string) => void;
-  /** Communities the user has explicitly joined. Empty for new users — a
+  /** Communities the user has explicitly joined. Empty for new users, a
    *  registered car makes its brand's communities *appear*, but none are joined
    *  (and no notifications) until the user joins one. */
   joinedCommunityIds: string[];
@@ -440,7 +440,7 @@ interface AppState {
   setCartSlot: (date: string, time: string) => void;
   clearCart: () => void;
 
-  // Bookings (v17 Bookings tab) — confirmed/paid bookings the user has made.
+  // Bookings (v17 Bookings tab), confirmed/paid bookings the user has made.
   bookings: AppBooking[];
   /** Replace the booking list (used to hydrate from Supabase on login). */
   setBookings: (bookings: AppBooking[]) => void;
@@ -534,7 +534,7 @@ export const useAppStore = create<AppState>()(
   setLanguage: (language) => set({ language }),
   distanceUnit: 'mi',
   setDistanceUnit: (distanceUnit) => set({ distanceUnit }),
-  // Appearance — light by default; Settings can switch to dark or the device setting.
+  // Appearance, light by default; Settings can switch to dark or the device setting.
   themeMode: 'light',
   setThemeMode: (themeMode) => set({ themeMode }),
 
@@ -588,7 +588,7 @@ export const useAppStore = create<AppState>()(
       };
       if (opts?.carrySubmission) {
         // The in-flight submission belongs to the car being activated (it was
-        // captured during this car's intake) — move it instead of stranding it
+        // captured during this car's intake), move it instead of stranding it
         // under whichever car happened to be active while it was drafted.
         byVehicle[id] = current;
         if (s.activeVehicleId) delete byVehicle[s.activeVehicleId];
@@ -687,7 +687,7 @@ export const useAppStore = create<AppState>()(
   lastSubmissionKey: null,
   setLastSubmissionKey: (lastSubmissionKey) => set({ lastSubmissionKey }),
   // Starts "viewed" so seeded/returning bookings don't flash a tab badge on
-  // login — the badge only appears when the user makes a NEW booking
+  // login, the badge only appears when the user makes a NEW booking
   // (addBooking flips this to false).
   bookingsViewed: true,
   setBookingsViewed: (bookingsViewed) => set({ bookingsViewed }),
@@ -733,7 +733,7 @@ export const useAppStore = create<AppState>()(
       const sub = cat.services[0];
       services.push({
         id: sub.id,
-        name: `${cat.name} — ${sub.name}`,
+        name: `${cat.name} · ${sub.name}`,
         price: discountedPrice(sub.price, pct),
         originalPrice: sub.price,
         durationMin: sub.durationMin,
@@ -830,7 +830,7 @@ export const useAppStore = create<AppState>()(
         isNewUser: s.isNewUser,
         // Moderation must survive restarts (App Store 1.2).
         blockedAuthors: s.blockedAuthors,
-        // Device preference — survives restarts and sign-out.
+        // Device preference, survives restarts and sign-out.
         themeMode: s.themeMode,
         // The car a guest entered during intake, kept until they sign up.
         pendingVehicle: s.pendingVehicle,

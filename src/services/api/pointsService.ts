@@ -1,4 +1,4 @@
-/** Real points service (server/ /points routes) — mirrors services/mock/pointsService. */
+/** Real points service (server/ /points routes), mirrors services/mock/pointsService. */
 import { EARN_REASONS, EARN_RULES, EarnRule } from '../../config/points';
 import { useAppStore } from '../../store/useAppStore';
 import type { CheckInResult, PointsLedgerEntry } from '../mock/pointsService';

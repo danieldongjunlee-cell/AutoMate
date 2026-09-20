@@ -45,8 +45,8 @@ export function MaintScanRevScreen() {
     setSaving(true);
     const { pointsEarned } = await maintService.saveServiceRecord(
       {
-        // "Oil change — synthetic" → history row type "Oil change"
-        type: receipt.serviceType.split('—')[0].trim() || 'Service',
+        // "Oil change, synthetic" → history row type "Oil change"
+        type: receipt.serviceType.split('-')[0].trim() || 'Service',
         shop: receipt.shop,
         // "Mar 12, 2025" → dateLabel "Mar 12" + year 2025
         dateLabel: receipt.date.split(',')[0].trim(),
@@ -83,7 +83,7 @@ export function MaintScanRevScreen() {
       >
         <Icon name="check" size={18} color={colors.textSecondary} strokeWidth={2.4} />
         <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
-          Scanned — verify below
+          Scanned · verify below
         </Text>
         <PointsBadge points={EARN_RULES.scanReceipt} usd />
       </View>

@@ -22,7 +22,7 @@ export interface Dealer {
   phone?: string;
 }
 
-/** The demo user's location — Fairfax, VA (s-all-quotes-map "Fairfax, VA"). */
+/** The demo user's location, Fairfax, VA (s-all-quotes-map "Fairfax, VA"). */
 export const USER_LOCATION = { lat: 38.846, lng: -77.306 };
 
 /** "Mon–Sat 8–6" → "8 AM": when a closed shop opens next. */
@@ -240,7 +240,7 @@ const DEALER_WEEKLY_HOURS: Record<string, string[]> = {
 export const dealerWeeklyHours = (dealerId: string): string[] =>
   DEALER_WEEKLY_HOURS[dealerId] ?? DEFAULT_WEEKLY_HOURS;
 
-/** Weekday indices (0=Sun) on which a shop is closed — disabled in the calendar. */
+/** Weekday indices (0=Sun) on which a shop is closed, disabled in the calendar. */
 export const dealerClosedWeekdays = (dealerId: string): number[] =>
   dealerWeeklyHours(dealerId)
     .map((h, i) => (h === 'Closed' ? i : -1))
@@ -416,13 +416,13 @@ export const PHOTO_TIPS = [
   {
     icon: 'bulb',
     bold: 'Good lighting',
-    rest: ' — daylight or bright shade, avoid flash or direct sun',
+    rest: ' · daylight or bright shade, avoid flash or direct sun',
   },
-  { icon: 'gauge', bold: '3–5 ft away', rest: ' — close enough for detail, far enough for context' },
+  { icon: 'gauge', bold: '3–5 ft away', rest: ' · close enough for detail, far enough for context' },
   {
     icon: 'camera',
     bold: '3+ angles',
-    rest: ' — straight-on, left-side, right-side for accurate AI estimate',
+    rest: ' · straight-on, left-side, right-side for accurate AI estimate',
   },
 ];
 
@@ -430,7 +430,7 @@ export const PHOTO_TIPS = [
 export const TIME_SLOTS = ['9:00 AM', '10:30 AM', '1:00 PM', '2:30 PM', '4:00 PM'];
 
 /**
- * Booking calendar config — the CURRENT month, so the date picker always opens
+ * Booking calendar config, the CURRENT month, so the date picker always opens
  * on a live month. Past days are marked unavailable and the picker defaults to
  * tomorrow (today when tomorrow rolls into next month).
  */
@@ -506,7 +506,7 @@ export interface HomeReview {
   afterColor: string;
 }
 
-// Real photos from the web (LoremFlickr — keyword-matched Flickr photos; `lock`
+// Real photos from the web (LoremFlickr, keyword-matched Flickr photos; `lock`
 // keeps each review's pair stable): "before" shows the damaged part, "after" a
 // clean/repaired car, and the quotes describe that exact repair.
 const photo = (keywords: string, lock: number) =>
@@ -519,7 +519,7 @@ export const HOME_REVIEWS: HomeReview[] = [
     car: '2019 Honda Accord',
     stars: 5,
     repair: 'Rear bumper dent',
-    quote: 'My rear bumper had an ugly dent (left photo). Snapped 3 photos, had real quotes in an hour, and the shop popped it out good as new (right photo) — matched the AI estimate to the dollar.',
+    quote: 'My rear bumper had an ugly dent (left photo). Snapped 3 photos, had real quotes in an hour, and the shop popped it out good as new (right photo), matched the AI estimate to the dollar.',
     beforeUri: photo('car,bumper,dent', 21),
     afterUri: photo('car,bumper,clean', 22),
     beforeColor: '#7a3034',
@@ -543,7 +543,7 @@ export const HOME_REVIEWS: HomeReview[] = [
     car: '2018 Subaru Outback',
     stars: 4,
     repair: 'Door panel repaint',
-    quote: 'Scraped door panel (left) repainted to match perfectly (right). Compared cash vs insurance right in the app — saved me a claim and about $600 in premium hikes.',
+    quote: 'Scraped door panel (left) repainted to match perfectly (right). Compared cash vs insurance right in the app, saved me a claim and about $600 in premium hikes.',
     beforeUri: photo('car,door,scratch', 41),
     afterUri: photo('car,door,paint', 42),
     beforeColor: '#7a3034',
@@ -568,7 +568,7 @@ const KNOWN_MARKET_VALUES: Record<string, number> = {
 };
 
 /**
- * Estimated market value for a vehicle — changes per car so the Maintenance
+ * Estimated market value for a vehicle, changes per car so the Maintenance
  * dashboard reflects the selected car. Known demo cars use fixed figures; any
  * other car derives a plausible, deterministic value from its name + year.
  */
@@ -651,7 +651,7 @@ export const MANUAL_SERVICE_TYPES = ['Oil change', 'Tire service', 'Filters', 'F
 
 /** Receipt fields parsed by the mock OCR (maint-scan-rev). */
 export const SCANNED_RECEIPT = {
-  serviceType: 'Oil change — synthetic',
+  serviceType: 'Oil change · synthetic',
   shop: 'AutoFix Pro',
   date: 'Mar 12, 2025',
   mileage: '44,500 mi',
@@ -725,7 +725,7 @@ export interface ProGuide {
   difficulty: 'Easy' | 'Medium';
 }
 
-/** The full unlocked Pro library (s-diy-guides — 12 guides). */
+/** The full unlocked Pro library (s-diy-guides, 12 guides). */
 export const PRO_GUIDES: ProGuide[] = [
   { id: 'pg-1', icon: 'car', title: 'Bumper dent removal', sub: 'PDR with hot water & plunger', time: '25 min', difficulty: 'Easy' },
   { id: 'pg-2', icon: 'brush', title: 'Paint chip touch-up', sub: 'Color-match & layer like a pro', time: '20 min', difficulty: 'Easy' },
@@ -741,7 +741,7 @@ export const PRO_GUIDES: ProGuide[] = [
   { id: 'pg-12', icon: 'lock', title: 'Interior scuff removal', sub: 'Leather & plastic restore', time: '25 min', difficulty: 'Easy' },
 ];
 
-/** The 5 maintenance service types — single source of truth (mirrors
+/** The 5 maintenance service types, single source of truth (mirrors
  *  MAINT_CATEGORIES) so filters, chips and labels stay consistent app-wide. */
 export const SERVICE_TYPES = ['Oil change', 'Tire service', 'Filters', 'Fluids', 'Brakes'] as const;
 
@@ -756,7 +756,7 @@ export const SERVICE_FILTER_KEY: Record<string, string> = {
   Brakes: 'Brakes',
 };
 
-/** Per-dealer price chips on maint-schedule cards — every partner lists all 5
+/** Per-dealer price chips on maint-schedule cards, every partner lists all 5
  *  service types (prices vary by shop). */
 export const DEALER_SERVICE_CHIPS: Record<string, string[]> = {
   'honda-fairfax': ['Oil $49', 'Tires $89', 'Filters $45', 'Fluids $99', 'Brakes $149'],
@@ -1000,7 +1000,7 @@ export const MAINT_CATEGORIES: MaintCategory[] = [
     id: 'brakes',
     name: 'Brakes',
     icon: 'brake',
-    blurb: 'Pads & rotors — sized to your vehicle',
+    blurb: 'Pads & rotors · sized to your vehicle',
     byVehicleType: true,
     exclusive: true,
     services: [
@@ -1071,7 +1071,7 @@ export const INSURANCE_POLICY = {
   carrier: 'State Farm',
   coverage: 'Comprehensive + Collision',
   // The wireframe shows SF-7821-VA on the compare screens and SF-8847234 on
-  // s-prof-insurance's "Policy number" row — both kept verbatim.
+  // s-prof-insurance's "Policy number" row, both kept verbatim.
   policyNumber: 'SF-7821-VA',
   accountNumber: 'SF-8847234',
   deductible: 500,
@@ -1141,7 +1141,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '2h ago',
     category: 'Tip',
     body:
-      'Used AutoMate for a rear bumper dent — submitted photos at midnight and woke up to 6 quotes from local shops. Honda Fairfax was $285, lowest by $60. Booked same day ',
+      'Used AutoMate for a rear bumper dent, submitted photos at midnight and woke up to 6 quotes from local shops. Honda Fairfax was $285, lowest by $60. Booked same day ',
     replies: 14,
     likes: 28,
     hasPhoto: true,
@@ -1181,7 +1181,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '12h ago',
     category: 'Warning',
     body:
-      'Heads up Fairfax Honda owners — some shops are quoting 2-3x market rate for bumper repairs right now. AutoMate showed me the range so I knew what was fair ',
+      'Heads up Fairfax Honda owners, some shops are quoting 2-3x market rate for bumper repairs right now. AutoMate showed me the range so I knew what was fair ',
     replies: 11,
     likes: 54,
   },
@@ -1362,7 +1362,7 @@ export function acceptedQuotesInEstimateRange(
 export const COMP_TIME_SLOTS = ['9:00 AM', '10:30 AM', '2:00 PM'];
 
 /**
- * The confirmed appointment behind the "Upcoming: Honda Fairfax — Mon Apr 7"
+ * The confirmed appointment behind the "Upcoming: Honda Fairfax, Mon Apr 7"
  * notification (s-notifications → s-maint-schedule-confirm deep link).
  */
 export const BOOKED_APPOINTMENT = {

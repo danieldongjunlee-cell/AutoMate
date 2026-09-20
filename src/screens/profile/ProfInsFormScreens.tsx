@@ -165,7 +165,7 @@ export function ProfInsEditScreen() {
         renewal,
       });
       // Policy list + every cached cash-vs-insurance comparison are stale now
-      // — the Compare tab must reflect the edited deductible/premium.
+      //, the Compare tab must reflect the edited deductible/premium.
       await queryClient.invalidateQueries({ queryKey: ['policies'] });
       await queryClient.invalidateQueries({ queryKey: ['comparison'] });
       navigation.goBack();
@@ -296,7 +296,7 @@ export function ProfInsAddScreen() {
   const { colors } = useTheme();
 
   // Covered-vehicle options come from the user's registered cars. With more than
-  // one car we never auto-pick — the user filters/chooses from the list.
+  // one car we never auto-pick, the user filters/chooses from the list.
   const { data: vehicles } = useQuery({ queryKey: ['vehicles'], queryFn: vehiclesService.listVehicles });
   const carOptions = (vehicles ?? []).map((v) => v.name);
 
@@ -345,14 +345,14 @@ export function ProfInsAddScreen() {
         carrier,
         coverage,
         policyNumber,
-        // Left at 0 when not entered — the cash-vs-insurance comparison stays
+        // Left at 0 when not entered, the cash-vs-insurance comparison stays
         // locked until the user fills these in (on prof-ins-edit).
         deductible: parseMoney(deductible) ?? 0,
         premiumPerYear: parseMoney(premium) ?? 0,
         covers,
         renewal,
       });
-      // "Add insurance policy" earn rule (+100 pts — s-prof-earn).
+      // "Add insurance policy" earn rule (+100 pts, s-prof-earn).
       await pointsService.earn('addInsurance');
       await invalidate();
       navigation.goBack();

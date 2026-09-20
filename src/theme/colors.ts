@@ -8,7 +8,7 @@
  * from `useTheme().colors` so it flips with the mode.
  */
 export const palette = {
-  // Brand / primary action (v17 blue — 180 uses across the wireframe)
+  // Brand / primary action (v17 blue, 180 uses across the wireframe)
   primary: '#2e6bff',
   primaryDark: '#1e4fcc',
   primaryDeep: '#15307a',
@@ -19,14 +19,14 @@ export const palette = {
   accent: '#7F77DD',
   brandBlue: '#29ABE2',
 
-  // Auth / navy family (splash, login — always navy)
+  // Auth / navy family (splash, login, always navy)
   navy: '#0B1E3D',
   navyMid: '#1A2A42',
   navyDeep: '#0D1B2A',
   navyBright: '#122F60',
   authAction: '#1B4E8F',
 
-  // Neutrals (dark ground — identical to darkColors, kept for static styles)
+  // Neutrals (dark ground, identical to darkColors, kept for static styles)
   background: '#0a0f19',
   surface: '#121a2b',
   surfaceAlt: '#1a2333',
@@ -62,14 +62,14 @@ export const palette = {
   sheet: '#0f1626',
   chip: 'rgba(255,255,255,0.06)',
 
-  // Semantic — success (v17 green)
+  // Semantic, success (v17 green)
   success: '#16a34a',
   successDark: '#0f8a43',
   successDeep: '#085041',
   successSurface: '#e6f6ee',
   successLight: '#bce3cc',
 
-  // Semantic — warning / points / gold (v17 stars)
+  // Semantic, warning / points / gold (v17 stars)
   warning: '#f0b44e',
   gold: '#f0b44e',
   warningSurface: '#fcf3e1',
@@ -77,18 +77,18 @@ export const palette = {
   warningMid: '#a06a14',
   warningBorder: '#efddb2',
 
-  // Semantic — danger
+  // Semantic, danger
   danger: '#e24b4a',
   dangerSurface: '#fcecec',
   dangerBorder: '#f3caca',
   dangerDeep: '#c0322f',
 
-  // Semantic — info (blue tint)
+  // Semantic, info (blue tint)
   info: '#2e6bff',
   infoSurface: '#eef4ff',
   infoDeep: '#0c447c',
 
-  // Dark navy cards / panels (Pro upsell, AI panels) — v17 navy
+  // Dark navy cards / panels (Pro upsell, AI panels), v17 navy
   dark: '#0B1E3D',
   darkAlt: '#1A2A42',
   aiPanel: '#0a0f19',

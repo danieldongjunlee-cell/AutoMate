@@ -100,19 +100,19 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'James K.', initial: 'J', color: '#7F77DD', car: 'A/S & Service',
       ago: '2h ago', category: 'Review',
-      body: 'Booked a warranty repair at my local {brand} service center through AutoMate — they honored the claim with zero pushback and had a loaner ready. Smoothest dealer visit yet ',
+      body: 'Booked a warranty repair at my local {brand} service center through AutoMate, they honored the claim with zero pushback and had a loaner ready. Smoothest dealer visit yet ',
       replies: 14, likes: 28,
     },
     {
       author: 'Priya N.', initial: 'P', color: '#378ADD', car: 'A/S & Service',
       ago: '6h ago', category: 'Warning',
-      body: 'Heads up {brand} owners: there\'s an open recall on the fuel pump for some model years. Check your VIN — mine qualified and the fix was free at the {brand} dealer.',
+      body: 'Heads up {brand} owners: there\'s an open recall on the fuel pump for some model years. Check your VIN, mine qualified and the fix was free at the {brand} dealer.',
       replies: 22, likes: 67,
     },
     {
       author: 'Diego R.', initial: 'D', color: '#16a34a', car: 'A/S & Service',
       ago: '1d ago', category: 'Question',
-      body: 'My {brand} appointment got pushed back twice — is anyone else seeing long waits at {brand} service centers right now? Trying to figure out if I should try an independent shop.',
+      body: 'My {brand} appointment got pushed back twice, is anyone else seeing long waits at {brand} service centers right now? Trying to figure out if I should try an independent shop.',
       replies: 11, likes: 19,
     },
     {
@@ -126,13 +126,13 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Sarah M.', initial: 'S', color: '#1D9E75', car: 'Maintenance & DIY',
       ago: '3h ago', category: 'DIY',
-      body: 'Did my first DIY oil change on the {brand} this weekend — 30 mins, half the dealer price. The AutoMate guide had the exact filter part number, super handy ',
+      body: 'Did my first DIY oil change on the {brand} this weekend, 30 mins, half the dealer price. The AutoMate guide had the exact filter part number, super handy ',
       replies: 18, likes: 52,
     },
     {
       author: 'Tom B.', initial: 'T', color: '#2e6bff', car: 'Maintenance & DIY',
       ago: '7h ago', category: 'Tip',
-      body: 'Brake pad swap on the {brand} is easier than you\'d think. Torque the caliper bolts to spec and bed them in properly — squeal gone, saved ~$300 in labor.',
+      body: 'Brake pad swap on the {brand} is easier than you\'d think. Torque the caliper bolts to spec and bed them in properly, squeal gone, saved ~$300 in labor.',
       replies: 9, likes: 40,
     },
     {
@@ -144,7 +144,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Owen P.', initial: 'O', color: '#7F77DD', car: 'Maintenance & DIY',
       ago: '1d ago', category: 'DIY',
-      body: 'Rotated tires + swapped cabin air filter on the {brand} today. The filter was filthy — set a reminder, it makes a real difference for AC smell.',
+      body: 'Rotated tires + swapped cabin air filter on the {brand} today. The filter was filthy, set a reminder, it makes a real difference for AC smell.',
       replies: 6, likes: 27,
     },
   ],
@@ -158,7 +158,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Nina H.', initial: 'N', color: '#16a34a', car: 'Owners Lounge',
       ago: '4h ago', category: 'Tip',
-      body: 'Took the {brand} on a 600-mile road trip and the fuel economy blew me away. Photos from the coast attached — what a machine ',
+      body: 'Took the {brand} on a 600-mile road trip and the fuel economy blew me away. Photos from the coast attached, what a machine ',
       replies: 12, likes: 45,
     },
     {
@@ -170,7 +170,7 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Lena F.', initial: 'L', color: '#f0b44e', car: 'Owners Lounge',
       ago: '1d ago', category: 'Review',
-      body: 'Cleaned and detailed the {brand} this weekend and she\'s gleaming. Love this community — you all make ownership way more fun ',
+      body: 'Cleaned and detailed the {brand} this weekend and she\'s gleaming. Love this community, you all make ownership way more fun ',
       replies: 8, likes: 29,
     },
   ],
@@ -178,25 +178,25 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
     {
       author: 'Chris D.', initial: 'C', color: '#2e6bff', car: 'Deals & Mods',
       ago: '2h ago', category: 'Tip',
-      body: 'Scored OEM all-weather floor mats for my {brand} at 40% off — link in the thread. Best accessory deal I\'ve seen this year ',
+      body: 'Scored OEM all-weather floor mats for my {brand} at 40% off, link in the thread. Best accessory deal I\'ve seen this year ',
       replies: 19, likes: 61,
     },
     {
       author: 'Bianca S.', initial: 'B', color: '#e24b4a', car: 'Deals & Mods',
       ago: '5h ago', category: 'Review',
-      body: 'Installed a cat-back exhaust on the {brand} — sounds incredible and was a bolt-on job. Mod totally transformed the drive. Highly recommend ',
+      body: 'Installed a cat-back exhaust on the {brand}, sounds incredible and was a bolt-on job. Mod totally transformed the drive. Highly recommend ',
       replies: 14, likes: 48,
     },
     {
       author: 'Kev M.', initial: 'K', color: '#16a34a', car: 'Deals & Mods',
       ago: '10h ago', category: 'Quotes',
-      body: 'Found a discount code stacking with the spring sale on {brand} accessories — got a roof rack + crossbars for under $200 shipped. Sharing before it expires!',
+      body: 'Found a discount code stacking with the spring sale on {brand} accessories, got a roof rack + crossbars for under $200 shipped. Sharing before it expires!',
       replies: 23, likes: 70,
     },
     {
       author: 'Hana K.', initial: 'H', color: '#f0b44e', car: 'Deals & Mods',
       ago: '1d ago', category: 'Question',
-      body: 'Looking to upgrade the wheels on my {brand} — any trusted shops or group-buy deals you\'d recommend? Want to mod without overpaying.',
+      body: 'Looking to upgrade the wheels on my {brand}, any trusted shops or group-buy deals you\'d recommend? Want to mod without overpaying.',
       replies: 17, likes: 25,
     },
   ],

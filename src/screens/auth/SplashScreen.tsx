@@ -76,7 +76,7 @@ export function SplashScreen() {
       </LinearGradient>
 
       <PrimaryButton
-        label="Get started — it's free"
+        label="Get started · it's free"
         variant="auth"
         onPress={() => navigation.navigate('AuthMain', { tab: 'join' })}
         style={{ marginBottom: spacing.sm }}
@@ -145,7 +145,7 @@ export function SplashScreen() {
         ))}
       </View>
 
-      {/* ToS / Privacy disclaimer — light/translucent on the navy background. */}
+      {/* ToS / Privacy disclaimer · light/translucent on the navy background. */}
       <Text
         style={{
           fontSize: 13,

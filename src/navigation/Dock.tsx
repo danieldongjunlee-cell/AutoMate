@@ -12,7 +12,7 @@ import { palette, radii, spacing, useTheme } from '../theme';
 import { TabIcon } from './TabIcons';
 import { MainTabParamList } from './types';
 
-/** Dock slots left→right; `null` is the centre `+`. Bookings has no slot — it
+/** Dock slots left→right; `null` is the centre `+`. Bookings has no slot, it
  *  is reached from the + menu, Home and More. */
 const SLOTS: (keyof MainTabParamList | null)[] = ['HomeTab', 'QuotesTab', null, 'CommunityTab', 'MoreTab'];
 

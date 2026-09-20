@@ -187,13 +187,13 @@ export function ProfSettingsScreen() {
         onPress={() =>
           confirmAction(
             'Delete account',
-            'This permanently deletes your AutoMate account and all its data — cars, quotes, bookings, points and membership. This cannot be undone.',
+            'This permanently deletes your AutoMate account and all its data, cars, quotes, bookings, points and membership. This cannot be undone.',
             () => {
               // Server-side removal first (App Store 5.1.1(v)); then clear the
               // local session regardless so the device never keeps a ghost login.
               void accountService
                 .deleteAccount()
-                .catch(() => showAlert('Account deletion', 'We could not reach the server — your account will be removed and you have been signed out.'))
+                .catch(() => showAlert('Account deletion', 'We could not reach the server, your account will be removed and you have been signed out.'))
                 .finally(() => signOut());
             },
             'Delete account',

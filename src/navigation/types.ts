@@ -15,9 +15,9 @@ export type BookingConfirmParams = {
 
 export type AuthStackParamList = {
   Splash: undefined;
-  /** Sign In / Join screen — the single entry to the auth modal. */
+  /** Sign In / Join screen, the single entry to the auth modal. */
   AuthMain: { intent?: string; tab?: 'signin' | 'join' } | undefined;
-  /** Pick how to receive the code — shows the actual sign-up email/phone. */
+  /** Pick how to receive the code, shows the actual sign-up email/phone. */
   VerifyMethod: { email: string; phone: string };
   VerifyOtp: { method: 'email' | 'sms'; destination: string } | undefined;
 };

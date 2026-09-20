@@ -160,7 +160,7 @@ export function MaintDashboardScreen() {
         </View>
       </View>
 
-      {/* Book a service — the dashboard's primary action → pick services, then shops */}
+      {/* Book a service · the dashboard's primary action → pick services, then shops */}
       <Tappable
         onPress={() =>
           requireAuth('bookService', () => {
@@ -195,7 +195,7 @@ export function MaintDashboardScreen() {
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>
 
-      {/* Upcoming services — hidden for guests (no account history yet). */}
+      {/* Upcoming services · hidden for guests (no account history yet). */}
       {isAuthenticated ? (
         <>
           <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>Upcoming services</Text>

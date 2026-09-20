@@ -152,7 +152,7 @@ const SCAN_TEAL = '#4FE3C1';
 const SERVICE_AMBER = '#F0B44E';
 
 /**
- * Maintenance tile overlay: a service check running — the gauge sweeps, the
+ * Maintenance tile overlay: a service check running, the gauge sweeps, the
  * dashboard warning lights self-test in sequence and a gear turns, all in the
  * amber of a service light.
  */
@@ -227,7 +227,7 @@ function ServiceOverlay({ active, height }: { active: boolean; height: number })
  * Photo tile: the photo on a dark ground with a bottom gradient so the title
  * stays legible. `fit` picks cover (fill the tile, crop the overflow) or
  * contain (show the whole photo). Hovering (web) or holding (touch) plays the
- * tile's animation — the damage scan, or the maintenance service check.
+ * tile's animation, the damage scan, or the maintenance service check.
  */
 export function PhotoTile({
   title,

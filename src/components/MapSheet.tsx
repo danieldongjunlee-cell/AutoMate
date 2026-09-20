@@ -13,7 +13,7 @@ const HALF_SHARE = 0.44;
 const HANDLE_AREA_H = 26;
 
 /**
- * Shift a map centre so `center` lands `dyPx` above the map's middle — used to
+ * Shift a map centre so `center` lands `dyPx` above the map's middle, used to
  * keep the pins in the strip of map that shows above the half-open sheet.
  */
 function offsetCenter(center: LatLng, zoom: number, dyPx: number): LatLng {

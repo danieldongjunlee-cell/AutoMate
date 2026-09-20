@@ -48,7 +48,7 @@ export function MaintScheduleConfirmScreen() {
   );
 
   // The summary is snapshotted in `booking` above, so we can clear the live
-  // cart immediately — leaving via reschedule/back/tab no longer strands it.
+  // cart immediately, leaving via reschedule/back/tab no longer strands it.
   useEffect(() => {
     clearCart();
   }, [clearCart]);
@@ -59,7 +59,7 @@ export function MaintScheduleConfirmScreen() {
     const startDate = dateAtTime(y, m, d, booking.time ?? '8:00 AM');
     const endDate = new Date(startDate.getTime() + Math.max(totalMin, 30) * 60 * 1000);
     void addToCalendar({
-      title: `${dealer.name} — ${serviceNames}`,
+      title: `${dealer.name} · ${serviceNames}`,
       startDate,
       endDate,
       location: dealer.address,

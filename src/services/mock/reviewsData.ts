@@ -44,7 +44,7 @@ const REVIEW_SETS: Record<string, ReviewSet> = {
         stars: 5,
         helpful: 24,
         body:
-          "Quoted $330 on AutoMate and that's exactly what I paid — no surprises. OEM paint match on my Accord is flawless and they finished a day early.",
+          "Quoted $330 on AutoMate and that's exactly what I paid, no surprises. OEM paint match on my Accord is flawless and they finished a day early.",
       },
       {
         initial: 'DT',
@@ -81,7 +81,7 @@ const REVIEW_SETS: Record<string, ReviewSet> = {
         stars: 5,
         helpful: 16,
         body:
-          'Fastest turnaround in town — dropped off at 8, picked up by lunch. Aftermarket parts but you genuinely cannot tell. Saved me $60 vs the dealer.',
+          'Fastest turnaround in town, dropped off at 8, picked up by lunch. Aftermarket parts but you genuinely cannot tell. Saved me $60 vs the dealer.',
       },
       {
         initial: 'SC',
@@ -118,7 +118,7 @@ const REVIEW_SETS: Record<string, ReviewSet> = {
         stars: 5,
         helpful: 10,
         body:
-          'Honest crew — they checked my tread and said the rotation could wait, then did it for $79 anyway when I asked. Rare to find that.',
+          'Honest crew, they checked my tread and said the rotation could wait, then did it for $79 anyway when I asked. Rare to find that.',
       },
       {
         initial: 'TM',
@@ -145,7 +145,7 @@ const REVIEW_SETS: Record<string, ReviewSet> = {
         stars: 5,
         helpful: 19,
         body:
-          'Certified body shop and it shows — frame pull and OEM panel replacement after a fender bender. Lifetime warranty on the repair sealed it.',
+          'Certified body shop and it shows, frame pull and OEM panel replacement after a fender bender. Lifetime warranty on the repair sealed it.',
       },
       {
         initial: 'KH',

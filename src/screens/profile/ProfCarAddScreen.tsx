@@ -154,7 +154,7 @@ export function ProfCarAddScreen() {
           <Text style={{ fontSize: 12, color: colors.textTertiary, marginBottom: spacing.sm }}>
             All fields required except Oil spec &amp; Last service.
           </Text>
-          {/* Brand — real logos, tap to pick. */}
+          {/* Brand · real logos, tap to pick. */}
           <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
             Which brand is your car? *
           </Text>
@@ -167,7 +167,7 @@ export function ProfCarAddScreen() {
             }}
           />
 
-          {/* Model — the chosen brand's line-up. */}
+          {/* Model · the chosen brand's line-up. */}
           {brand ? (
             <>
               <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
@@ -210,7 +210,7 @@ export function ProfCarAddScreen() {
         }}
       >
         <Text style={{ fontSize: 12, color: colors.primary }}>
-          ⓘ Same details we keep for your registered cars — used to match quotes and track service.
+          ⓘ Same details we keep for your registered cars · used to match quotes and track service.
         </Text>
       </View>
       <PrimaryButton label="Add car" disabled={!canSave} loading={addMutation.isPending} onPress={() => addMutation.mutate()} />

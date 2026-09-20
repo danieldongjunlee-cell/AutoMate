@@ -142,7 +142,7 @@ export function BookDepositScreen() {
         >
           <Icon name="sparkle" size={18} color={colors.textSecondary} />
           <Text style={{ fontWeight: '700', color: colors.successDeep, fontSize: 14 }}>
-            Deposit waived — Pro member
+            Deposit waived · Pro member
           </Text>
         </View>
       ) : (
@@ -189,7 +189,7 @@ export function BookDepositScreen() {
 
       <PrimaryButton
         variant="warning"
-        label={waived ? 'Confirm booking — no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
+        label={waived ? 'Confirm booking · no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
         loading={booking}
         onPress={confirm}
       />

@@ -11,7 +11,7 @@ const LANG_CODE: Record<string, 'en' | 'ko' | 'es' | 'zh'> = {
 /**
  * Translation dictionaries ported 1:1 from the v17 wireframe's `DICT`
  * (localize()). Only curated UI phrases are translated; unknown strings fall
- * back to English — same behavior as the wireframe.
+ * back to English, same behavior as the wireframe.
  */
 const DICT: Record<'ko' | 'es' | 'zh', Record<string, string>> = {
   ko: {

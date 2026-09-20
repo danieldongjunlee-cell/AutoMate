@@ -244,7 +244,7 @@ export const communityService: typeof mockCommunityService = {
     }
   },
 
-  /** Flag a post for moderation (App Store 1.2) — best-effort insert into
+  /** Flag a post for moderation (App Store 1.2), best-effort insert into
    *  post_reports; falls back to an accepted no-op for seeded/non-uuid posts. */
   async reportPost(postId: string, reason?: string): Promise<{ ok: boolean }> {
     try {

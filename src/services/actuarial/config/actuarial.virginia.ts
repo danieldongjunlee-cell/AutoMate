@@ -11,13 +11,13 @@
  *    claims (glass, theft, weather) move premiums far less (~0–10%/yr).
  *  - NAIC Auto Insurance Database reports for state-level premium baselines.
  *
- * All percentages below are ESTIMATES tuned for the AutoMate demo — they
+ * All percentages below are ESTIMATES tuned for the AutoMate demo, they
  * are NOT filed rates and NOT a quote from any insurer. The <$1k collision
  * band is pinned at 15%/yr × 3yr so the wireframe example ($320 repair,
  * $500 deductible, $1,200/yr premium → +$540 surcharge, $1,040 insurance
  * 3-yr total vs $320 cash) reproduces exactly on s-comp-deep-dive.
  *
- * IMPORTANT: this file is duplicated byte-for-byte in two packages —
+ * IMPORTANT: this file is duplicated byte-for-byte in two packages -
  *   server/src/actuarial/config/   and   src/services/actuarial/config/
  * Keep both copies identical; scripts/actuarial-parity.ts enforces it.
  */

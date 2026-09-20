@@ -2,7 +2,7 @@
  * Native-stack header titles per route, keyed by wireframe screen id in the
  * trailing comment. The full navigation graph (edges, back-stack parents,
  * cross-tab jumps) is documented in docs/wireframe-analysis.md §2 and
- * implemented directly by the screens — no runtime copy to drift.
+ * implemented directly by the screens, no runtime copy to drift.
  */
 export const SCREEN_TITLES: Record<string, string> = {
   Splash: 'Splash', // s-splash
@@ -51,7 +51,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   DiyFuture: 'Coming soon', // s-diy-future
   MaintServiceType: 'Book a service', // s-maint-service-type (multi-select)
   MaintSchedule: 'Book a service', // canvas "Book a service" (partner shops)
-  MaintScheduleBook: 'Honda Fairfax — select services', // s-maint-schedule-book
+  MaintScheduleBook: 'Honda Fairfax · select services', // s-maint-schedule-book
   MaintPayment: 'Payment', // s-maint-payment
   MaintScheduleConfirm: 'Booking confirmed', // s-maint-schedule-confirm
   CommChannels: 'Community', // s-comm-channels

@@ -1,9 +1,9 @@
 /**
- * Purchases abstraction — the single entry point for anything money-related
+ * Purchases abstraction, the single entry point for anything money-related
  * that unlocks DIGITAL content (Pro subscription, DIY-guide unlock).
  *
  * Why: on iOS App Store builds these are digital goods, so Apple guideline
- * 3.1.1 requires StoreKit In-App Purchase — card rails are not allowed for
+ * 3.1.1 requires StoreKit In-App Purchase, card rails are not allowed for
  * them (bookings/deposits are physical services and stay on card payments,
  * 3.1.3(e)). Everywhere else (web, demo, Android pilot) the existing
  * proService flow applies.
@@ -64,7 +64,7 @@ export const purchases = {
     return { ok: true };
   },
 
-  /** One-time DIY unlock (wireframe diy-payment chain — unlocks Pro incl. DIY). */
+  /** One-time DIY unlock (wireframe diy-payment chain, unlocks Pro incl. DIY). */
   async purchaseDiyUnlock(): Promise<PurchaseResult> {
     if (iapRequired()) {
       const res = await buyWithStoreKit('automate_diy_unlock');
@@ -77,7 +77,7 @@ export const purchases = {
   },
 
   /** Restore previous StoreKit purchases (required App Store UX). No-op on
-   *  non-IAP builds — entitlements come from the account/server instead. */
+   *  non-IAP builds, entitlements come from the account/server instead. */
   async restore(): Promise<PurchaseResult> {
     if (!iapRequired()) return { ok: true };
     return { ok: false, error: 'Restore requires the StoreKit adapter (see purchases.ts).' };

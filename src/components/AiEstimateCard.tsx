@@ -95,7 +95,7 @@ export function AiEstimateCard({
           </Text>
         </View>
 
-        {/* AutoMate AI analysis — the market range for this repair */}
+        {/* AutoMate AI analysis · the market range for this repair */}
         <View style={{ marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: 'rgba(126,155,255,0.2)' }}>
           <Text style={{ fontSize: 11, fontWeight: '800', letterSpacing: 1, textTransform: 'uppercase', color: palette.amber }}>✦ AutoMate AI analysis</Text>
           <Text style={{ fontSize: 13, fontWeight: '600', color: BODY, marginTop: 6, marginBottom: 8 }}>Market range for this repair</Text>

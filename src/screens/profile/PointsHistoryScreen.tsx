@@ -16,7 +16,7 @@ const when = (iso: string) =>
     minute: '2-digit',
   });
 
-/** Points ledger from Supabase — every labeled earn / redeem row. */
+/** Points ledger from Supabase, every labeled earn / redeem row. */
 export function PointsHistoryScreen() {
   const { colors } = useTheme();
   const { data: rows = [], isLoading } = useQuery({

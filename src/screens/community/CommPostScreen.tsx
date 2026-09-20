@@ -131,7 +131,7 @@ export function CommPostScreen() {
       'Report content that breaks the community rules. Our team reviews reports within 24 hours and removes content that violates them.',
       () => {
         void communityService.reportPost(post.id).catch(() => {});
-        showAlert('Report received', 'Thanks — our team will review this post within 24 hours.');
+        showAlert('Report received', 'Thanks, our team will review this post within 24 hours.');
       },
       'Report',
     );

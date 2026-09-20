@@ -5,7 +5,7 @@ import { MainTabParamList } from './types';
 /**
  * Jump to a screen on another tab, leaving that tab's root beneath it so the
  * back button lands on the tab root (wireframe edges + notification deep
- * links). Single owner of the dispatch shape — use this instead of
+ * links). Single owner of the dispatch shape, use this instead of
  * hand-rolling CommonActions/getParent at call sites.
  */
 export function navigateCrossTab(

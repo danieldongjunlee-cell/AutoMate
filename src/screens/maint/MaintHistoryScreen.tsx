@@ -202,12 +202,12 @@ export function MaintHistoryScreen() {
               <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                 {rec.type}
               </Text>
-              {/* Price is primary info — secondary tier, not tertiary (feedback pass 1) */}
+              {/* Price is primary info · secondary tier, not tertiary (feedback pass 1) */}
               <Text style={{ fontSize: 14, color: colors.textSecondary }}>
                 {rec.dateLabel} · {rec.mileage} · ${rec.cost}
               </Text>
             </View>
-            {/* Scanned-receipt thumbnail — tap to view the photo full-size. */}
+            {/* Scanned-receipt thumbnail · tap to view the photo full-size. */}
             {rec.receiptUri ? (
               <Tappable
                 onPress={() => setPreview(rec.receiptUri!)}

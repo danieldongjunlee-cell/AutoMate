@@ -62,7 +62,7 @@ export function CameraScreen() {
         angles.
       </Text>
 
-      {/* Damage type — multi-select */}
+      {/* Damage type · multi-select */}
       <SectionLabel>
         Damage type <Text style={{ textTransform: 'none' }}>(select all that apply)</Text>
       </SectionLabel>
@@ -100,7 +100,7 @@ export function CameraScreen() {
         })}
       </View>
 
-      {/* Photos — uploaded thumbnails + add tile */}
+      {/* Photos · uploaded thumbnails + add tile */}
       <SectionLabel>
         Photos ({photoCount}/{MAX_PHOTOS})
       </SectionLabel>
@@ -163,7 +163,7 @@ export function CameraScreen() {
         value={note}
         onChangeText={setNote}
         multiline
-        placeholder="e.g. Scraped a pole backing out — paint is chipped and there's a small dent on the lower-left corner."
+        placeholder="e.g. Scraped a pole backing out, paint is chipped and there's a small dent on the lower-left corner."
         placeholderTextColor={colors.textTertiary}
         style={{
           minHeight: 72,

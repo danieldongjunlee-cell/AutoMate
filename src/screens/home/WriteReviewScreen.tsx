@@ -25,11 +25,11 @@ export function WriteReviewScreen() {
   const [body, setBody] = useState('');
 
   const onPost = () => {
-    // Posting a review is a value action — guests sign in first.
+    // Posting a review is a value action, guests sign in first.
     if (!requireAuth('writeReview')) return;
     addReview({
       stars,
-      body: body.trim() || 'Great experience — the price matched my quote and the work was solid.',
+      body: body.trim() || 'Great experience, the price matched my quote and the work was solid.',
       dealerName: 'Honda Fairfax Service',
       meta: 'Rear bumper · Apr 2027',
     });

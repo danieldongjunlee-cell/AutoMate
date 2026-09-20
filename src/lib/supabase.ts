@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Direct Supabase client (the "no server / no Prisma" path). Reads the project
- * URL + anon (publishable) key from EXPO_PUBLIC_* env vars — put them in a root
+ * URL + anon (publishable) key from EXPO_PUBLIC_* env vars, put them in a root
  * `.env` and restart Expo. If they're missing the client is `null` so the app
  * still runs on mocks instead of crashing at startup.
  */

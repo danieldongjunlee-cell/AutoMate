@@ -35,8 +35,8 @@ export function carrierLogoUrl(carrier: string): string | null {
 }
 
 /**
- * Real insurance-carrier logo (Clearbit). Always renders a mark — the carrier's
- * initial in a rounded tile if the logo can't load — never a generic shield emoji.
+ * Real insurance-carrier logo (Clearbit). Always renders a mark, the carrier's
+ * initial in a rounded tile if the logo can't load, never a generic shield emoji.
  */
 export function InsurerLogo({
   carrier,
@@ -53,7 +53,7 @@ export function InsurerLogo({
   const showImg = !!url && !failed;
   // Wordmarks are wide: a bundled logo gets a 16:9 tile instead of a square.
   if (bundled) {
-    // Wordmarks are wide and already transparent — no tile, just the logo.
+    // Wordmarks are wide and already transparent, no tile, just the logo.
     return (
       <View style={{ width: Math.round(size * 1.9), height: size, alignItems: 'center', justifyContent: 'center' }}>
         <Image source={bundled} accessibilityLabel={`${carrier} logo`} style={{ width: Math.round(size * 1.9), height: size }} resizeMode="contain" />

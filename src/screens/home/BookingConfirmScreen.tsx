@@ -58,7 +58,7 @@ export function BookingConfirmScreen() {
     const startDate = dateAtTime(BOOKING_MONTH.year, BOOKING_MONTH.month, day, time);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
     void addToCalendar({
-      title: `${dealer.name} — Rear bumper dent repair`,
+      title: `${dealer.name} · Rear bumper dent repair`,
       startDate,
       endDate,
       location: dealer.address,

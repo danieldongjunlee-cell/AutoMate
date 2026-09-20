@@ -36,7 +36,7 @@ export function AuthStack({ intent, tab }: { intent?: string; tab?: 'signin' | '
 
 /**
  * The auth flow as a root-stack modal (guest-first). Once the user signs in/up
- * anywhere inside it, `isAuthenticated` flips and this dismisses itself — the
+ * anywhere inside it, `isAuthenticated` flips and this dismisses itself, the
  * gate that opened it resumes the pending action.
  */
 export function AuthModal() {

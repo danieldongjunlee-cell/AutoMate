@@ -6,7 +6,7 @@ import { spacing, useTheme } from '../theme';
 
 /**
  * Dot-controlled carousel (wireframe ad-banner / reviews pattern): shows one
- * item at a time, switched by tapping the dots below — no swipe, matching the
+ * item at a time, switched by tapping the dots below, no swipe, matching the
  * wireframe's carGo()/adGo()/revGo() behavior.
  */
 export function DotCarousel({ items }: { items: React.ReactNode[] }) {

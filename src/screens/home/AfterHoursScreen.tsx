@@ -98,11 +98,11 @@ export function AfterHoursScreen() {
               { icon: 'bell', time: '8:00 AM', label: 'Shops open', state: 'next' },
               { icon: 'chat', time: '~10 AM', label: 'Quotes', state: 'later' },
             ]}
-            note="Submitted after hours — your photos are queued and shops review them when they open."
+            note="Submitted after hours · your photos are queued and shops review them when they open."
           />
         }
       />
-      {/* AI Repair Recommendation — its own card, shown first. */}
+      {/* AI Repair Recommendation · its own card, shown first. */}
       <View style={{ backgroundColor: colors.surface, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md, marginBottom: spacing.md }}>
         <Tappable
           onPress={() => setRecOpen((v) => !v)}
@@ -123,7 +123,7 @@ export function AfterHoursScreen() {
         {recOpen ? (
         <>
         <View style={{ backgroundColor: colors.primarySurface, borderRadius: radii.md, padding: spacing.md, marginTop: spacing.md, marginBottom: spacing.md }}>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart} — DIY feasible</Text>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.textPrimary, marginBottom: 4 }}>{primaryPart}, DIY feasible</Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>Matched DIY methods for this repair</Text>
         </View>
         {isPro ? (

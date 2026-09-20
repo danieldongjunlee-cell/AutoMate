@@ -6,7 +6,7 @@ import { Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
 import { palette, radii, spacing } from '../theme';
 
-/** Type colours on the blue deck — white, with two softer tints. */
+/** Type colours on the blue deck, white, with two softer tints. */
 export const DECK_TEXT = '#ffffff';
 export const DECK_TEXT_SOFT = 'rgba(255,255,255,0.78)';
 export const DECK_TEXT_MUTED = 'rgba(255,255,255,0.6)';
@@ -33,8 +33,8 @@ export function SwipeDeck({ caption, children }: { caption?: string; children: R
 }
 
 /**
- * One card in the deck: no solid background — the blue ground shows through a
- * faint frosted fill — with the title, a short accent underline, an optional
+ * One card in the deck: no solid background, the blue ground shows through a
+ * faint frosted fill, with the title, a short accent underline, an optional
  * badge, then the body in white type.
  */
 export function SwipeCard({ title, subtitle, badge, dashed, children }: { title: string; subtitle?: string; badge?: string; dashed?: boolean; children: React.ReactNode }) {

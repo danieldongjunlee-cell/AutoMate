@@ -34,7 +34,7 @@ export const compareService = {
     await delay(300);
     const quote = acceptedQuoteById(req.quoteId);
     // Live policy state (mock insuranceService) rather than the static
-    // INSURANCE_POLICY constant — editing the deductible/premium on
+    // INSURANCE_POLICY constant, editing the deductible/premium on
     // prof-ins-edit changes the deep-dive math in mock mode too, exactly
     // like the server resolving the stored policy on /compare/estimate.
     const policy = primaryPolicy();

@@ -1,4 +1,4 @@
-/** Real Pro service (server/) — mirrors services/mock/proService (v17).
+/** Real Pro service (server/), mirrors services/mock/proService (v17).
  *  Endpoints are wired in P5; signatures match the mock so the service-switch
  *  (typeof mockProService) stays type-safe. */
 import { PRO_PLANS, DIY_ONLY_PRICE_CENTS, useAppStore } from '../../store/useAppStore';

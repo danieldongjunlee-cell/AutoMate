@@ -1,5 +1,5 @@
 import L from 'leaflet';
-// Leaflet's stylesheet ships with the bundle (Metro CSS) — no CDN request.
+// Leaflet's stylesheet ships with the bundle (Metro CSS), no CDN request.
 import 'leaflet/dist/leaflet.css';
 import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
@@ -12,7 +12,7 @@ import { DEFAULT_ZOOM, DealerMapProps, MapMarker, isLightPin } from './types';
 const TILES = {
   light: { url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' },
   dark: {
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
   },
 };
@@ -24,7 +24,7 @@ const TILES = {
  * price pills (incl. BEST PRICE / RECOMMENDED captions + selected enlarge).
  */
 
-/** Neutralize Leaflet's default divIcon chrome (white box + border) — once per page. */
+/** Neutralize Leaflet's default divIcon chrome (white box + border), once per page. */
 function injectPinCss() {
   if (typeof document === 'undefined' || document.getElementById('am-divicon-css')) return;
   const style = document.createElement('style');
@@ -86,7 +86,7 @@ export function DealerMap({
     if (!el || mapRef.current) return;
 
     const map = L.map(el, {
-      // Wheel zoom hijacks page scrolling — the +/- control still zooms.
+      // Wheel zoom hijacks page scrolling, the +/- control still zooms.
       scrollWheelZoom: false,
       attributionControl: true,
     }).setView([center.lat, center.lng], zoom);
@@ -95,7 +95,7 @@ export function DealerMap({
     injectPinCss();
     map.invalidateSize();
 
-    // Full-bleed maps get their size after mount — re-measure when the box changes.
+    // Full-bleed maps get their size after mount, re-measure when the box changes.
     const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => map.invalidateSize()) : null;
     ro?.observe(el);
 
@@ -115,8 +115,20 @@ export function DealerMap({
     if (!map) return;
     tileRef.current?.remove();
     const t = dark ? TILES.dark : TILES.light;
-    tileRef.current = L.tileLayer(t.url, { maxZoom: 19, attribution: t.attribution }).addTo(map);
-    tileRef.current.bringToBack();
+    const layer = L.tileLayer(t.url, { maxZoom: 19, attribution: t.attribution });
+    // If the themed basemap can't be reached, fall back to the standard OSM
+    // tiles so the map never renders as an empty grey panel.
+    let fellBack = false;
+    layer.on('tileerror', () => {
+      if (fellBack || !mapRef.current) return;
+      fellBack = true;
+      layer.remove();
+      tileRef.current = L.tileLayer(TILES.light.url, { maxZoom: 19, attribution: TILES.light.attribution }).addTo(mapRef.current);
+      tileRef.current.bringToBack();
+    });
+    layer.addTo(map);
+    tileRef.current = layer;
+    layer.bringToBack();
   }, [dark]);
 
   // Pan when the focus changes (e.g. a card/pin gets selected).

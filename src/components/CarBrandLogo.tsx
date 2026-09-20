@@ -5,8 +5,8 @@ import { bundledBrandLogo } from '../assets/brandLogos';
 import { brandLogoUrl } from '../hooks/useActiveVehicle';
 
 /**
- * Real car-brand logo (Clearbit). Always renders a brand mark — the brand's
- * initial in a circle if the logo can't load — never a generic car emoji.
+ * Real car-brand logo (Clearbit). Always renders a brand mark, the brand's
+ * initial in a circle if the logo can't load, never a generic car emoji.
  */
 export function CarBrandLogo({
   brand,

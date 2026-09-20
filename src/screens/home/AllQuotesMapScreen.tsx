@@ -209,7 +209,7 @@ export function AllQuotesMapScreen() {
             paddingVertical: spacing.lg,
           }}
         >
-          No quotes match these filters — widen the distance or price range.
+          No quotes match these filters · widen the distance or price range.
         </Text>
       ) : null}
       {filtered.map((q) => {

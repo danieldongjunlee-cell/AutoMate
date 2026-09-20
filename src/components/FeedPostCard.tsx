@@ -23,7 +23,7 @@ export function FeedPostCard({
   upvoted,
 }: {
   post: FeedPost;
-  /** Position in the feed — picks the placeholder photo. */
+  /** Position in the feed, picks the placeholder photo. */
   index?: number;
   onPress: () => void;
   onCommunity: () => void;

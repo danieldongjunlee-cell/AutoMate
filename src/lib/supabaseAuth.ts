@@ -33,7 +33,7 @@ async function fromProfile(email: string, metaName: string, token: string | null
     if (p?.username && p.username.trim()) username = p.username.trim();
     if (p?.phone && p.phone.trim()) phone = p.phone.trim();
   } catch {
-    // profiles table may not exist yet — keep the metadata/email fallback
+    // profiles table may not exist yet, keep the metadata/email fallback
   }
   if (!name.trim()) name = email.split('@')[0] || email;
   return { name, email, username, phone, token };
@@ -60,7 +60,7 @@ export async function signUpWithSupabase(params: {
   if (error) throw error;
   if (!data.session) {
     throw new Error(
-      'Account created — confirm via the email Supabase sent, then sign in. (Or disable “Confirm email” in Supabase → Authentication for instant access.)',
+      'Account created, confirm via the email Supabase sent, then sign in. (Or disable “Confirm email” in Supabase → Authentication for instant access.)',
     );
   }
   const email = data.user?.email ?? params.email.trim();

@@ -9,10 +9,10 @@ import { radii, spacing, useTheme } from '../theme';
 
 /**
  * Shared pieces of the two "Booking confirmed" screens (wireframe
- * s-booking-confirm and s-maint-schedule-confirm — one pattern, two routes).
+ * s-booking-confirm and s-maint-schedule-confirm, one pattern, two routes).
  */
 
-/** Headline + subtitle (no hero decoration — canvas "You're all set!"). */
+/** Headline + subtitle (no hero decoration, canvas "You're all set!"). */
 export function SuccessHeader({ title, subtitle }: { title: string; subtitle: string }) {
   const { colors } = useTheme();
   return (

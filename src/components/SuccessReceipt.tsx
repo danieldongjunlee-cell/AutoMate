@@ -123,7 +123,7 @@ export function SuccessReceipt({
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg }}>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 11, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Confirmation</Text>
-          <Text style={{ fontSize: 17, fontWeight: '800', letterSpacing: 1.2, color: colors.textPrimary, marginTop: 2 }}>{reference ?? '—'}</Text>
+          <Text style={{ fontSize: 17, fontWeight: '800', letterSpacing: 1.2, color: colors.textPrimary, marginTop: 2 }}>{reference ?? '-'}</Text>
         </View>
         <View style={{ backgroundColor: colors.primary, borderRadius: radii.pill, paddingHorizontal: 18, paddingVertical: 9 }}>
           <Text style={{ fontSize: 13, fontWeight: '800', letterSpacing: 0.6, color: colors.onPrimary }}>{stamp}</Text>

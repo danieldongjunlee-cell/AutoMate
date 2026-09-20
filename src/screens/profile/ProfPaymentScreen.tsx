@@ -168,7 +168,7 @@ function CardFormModal({
 /**
  * A saved card as a swipe card: the card face (brand, number, holder, expiry)
  * over the blue deck, four stat tiles, then the primary action and Edit /
- * Remove — the same deck pattern as My cars and My insurance.
+ * Remove, the same deck pattern as My cars and My insurance.
  */
 function SavedCard({
   card,
@@ -277,12 +277,9 @@ export function ProfPaymentScreen() {
   const addCardFace = (
     <SwipeCard key="add" title="Add a card" dashed>
       <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+        <Tappable onPress={addCard} accessibilityRole="button" accessibilityLabel="Add payment method" style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg }}>
           <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
-        </View>
-        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>
-          Visa, Mastercard or Amex — used for deposits and bookings.
-        </Text>
+        </Tappable>
         <PrimaryButton label="Add payment method" onPress={addCard} style={{ alignSelf: 'stretch' }} />
       </View>
     </SwipeCard>
@@ -321,7 +318,7 @@ export function ProfPaymentScreen() {
       </SwipeDeck>
 
       <Text style={{ fontSize: 12, color: colors.textTertiary, textAlign: 'center', marginTop: spacing.lg }}>
-        Cards are stored with our payment processor — AutoMate never sees the full number.
+        Cards are stored with our payment processor · AutoMate never sees the full number.
       </Text>
 
       <CardFormModal
