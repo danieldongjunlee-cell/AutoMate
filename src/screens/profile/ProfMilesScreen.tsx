@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Glyph, Icon } from '../../components/Icon';
+import { Glyph, Icon, subjectColor } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -117,7 +117,7 @@ export function ProfMilesScreen() {
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                <Glyph glyph={m.icon} size={24} color={colors.textSecondary} />
+                <Glyph glyph={m.icon} size={26} color={subjectColor(m.icon)} />
                 <View>
                   <Text style={{ fontSize: 15, fontWeight: '500', color: colors.textPrimary }}>
                     {m.title}

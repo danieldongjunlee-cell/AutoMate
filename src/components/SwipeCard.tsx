@@ -41,12 +41,10 @@ export function SwipeCard({ title, subtitle, badge, dashed, children }: { title:
   return (
     <View
       style={{
-        backgroundColor: dashed ? 'transparent' : DECK_FILL,
+        // No inner panel: the card sits straight on the gradient.
         borderRadius: radii.tile,
-        borderWidth: dashed ? 1.5 : 1,
-        borderStyle: dashed ? 'dashed' : 'solid',
-        borderColor: DECK_LINE,
-        padding: spacing.lg,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
         marginHorizontal: 2,
       }}
     >

@@ -44,22 +44,7 @@ function GridCard({
         borderColor: selected ? colors.primary : colors.border,
       }}
     >
-      {logo ? (
-        <View
-          style={{
-            width: 38,
-            height: 38,
-            borderRadius: 10,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: selected ? colors.primary : colors.surfaceAlt,
-            borderWidth: selected ? 0 : 1,
-            borderColor: colors.border,
-          }}
-        >
-          {logo}
-        </View>
-      ) : null}
+      {logo ? <View style={{ width: 38, alignItems: 'center', justifyContent: 'center' }}>{logo}</View> : null}
       <Text style={{ flex: 1, fontSize: 14, fontWeight: '700', color: selected ? colors.primaryDeep : colors.textPrimary }} numberOfLines={2}>
         {label}
       </Text>
@@ -95,7 +80,7 @@ export function BrandGrid({
             label={b}
             selected={b === value}
             onPress={() => onChange(b)}
-            logo={<CarBrandLogo brand={b} size={26} bg={b === value ? '#ffffff' : '#ffffff'} />}
+            logo={<CarBrandLogo brand={b} size={32} bg="transparent" />}
           />
         ))}
       </View>

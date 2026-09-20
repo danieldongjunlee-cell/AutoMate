@@ -112,7 +112,7 @@ export function QuotesSheet({
       lat: d.lat,
       lng: d.lng,
       label: `$${q.price}`,
-      color: q.tier === 'best' ? '#085041' : q.tier === 'recommended' ? palette.primary : colors.surfaceAlt,
+      color: q.tier === 'best' ? '#085041' : q.tier === 'recommended' ? palette.primary : palette.navy,
       selected: q.dealerId === selectedId,
     };
   });

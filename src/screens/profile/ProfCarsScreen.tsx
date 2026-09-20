@@ -170,7 +170,7 @@ function VehicleCard({
             style={{ width: '100%', height: 150, shadowColor: '#000', shadowOpacity: dark ? 0.5 : 0, shadowRadius: 18, shadowOffset: { width: 0, height: 14 } }}
           />
         ) : (
-          <CarBrandLogo brand={brand} size={110} bg="rgba(255,255,255,0.92)" />
+          <CarBrandLogo brand={brand} size={120} bg="transparent" />
         )}
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
@@ -233,7 +233,7 @@ export function ProfCarsScreen() {
           <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
         </View>
         <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Scan the VIN barcode or enter the details manually.</Text>
-        <DeckButton label="Add another car" onPress={addCar} />
+        <PrimaryButton label="Add another car" onPress={addCar} style={{ alignSelf: 'stretch' }} />
       </View>
     </SwipeCard>
   );

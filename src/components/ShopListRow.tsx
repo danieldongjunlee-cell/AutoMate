@@ -10,8 +10,8 @@ import { palette, radii, spacing, useTheme } from '../theme';
 import { callDealer, openDealerReviews, openDealerWebsite, openDirections } from '../utils/links';
 
 const OPEN_GREEN = '#34C759';
-const PHOTO_W = 156;
-const PHOTO_H = 132;
+const PHOTO_W = 104;
+const PHOTO_H = 82;
 
 export interface RowAction {
   label: string;
