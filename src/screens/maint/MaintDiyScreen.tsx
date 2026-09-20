@@ -27,7 +27,7 @@ const DURATIONS = ['Any length', 'Under 15 min', 'Under 30 min'];
 /**
  * DIY Repair Tips (canvas "DIY guides"): search bar under the header, guides
  * in sections. Non-Pro users see the header and a locked, blurred preview of
- * the whole list with one amber unlock button — no free samples.
+ * the whole list with one amber unlock button, no free samples.
  */
 export function MaintDiyScreen() {
   const navigation = useNavigation<Nav>();
@@ -76,7 +76,7 @@ export function MaintDiyScreen() {
         </View>
       ))}
       {sections.length === 0 ? (
-        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>No guides match — try another search.</Text>
+        <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.lg }}>No guides match, try another search.</Text>
       ) : null}
     </>
   );

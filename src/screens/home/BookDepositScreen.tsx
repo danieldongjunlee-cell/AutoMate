@@ -10,6 +10,7 @@ import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
+import { SummaryPanel } from '../../components/SummaryPanel';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
@@ -42,6 +43,9 @@ export function BookDepositScreen() {
   const next = params?.next ?? 'BookingConfirm';
   const nextParams = params?.nextParams;
   const waived = isPro;
+  const dealer = dealerById(params?.dealerId);
+  const slotLabel = `${nextParams?.dateLabel ?? formatDayLabel(defaultBookingISO())} · ${nextParams?.time ?? '10:30 AM'}`;
+  const estimateLabel = nextParams?.priceLabel ?? '$320–$345';
 
   const confirm = async () => {
     setBooking(true);
@@ -54,7 +58,7 @@ export function BookDepositScreen() {
       dealerId: params?.dealerId,
       icon: 'car',
       title: 'Rear bumper repair',
-      dealerName: dealerById(params?.dealerId).name,
+      dealerName: dealer.name,
       dateLabel,
       ...dateBadgeParts(dateLabel),
       time: nextParams?.time ?? '10:30 AM',
@@ -65,67 +69,58 @@ export function BookDepositScreen() {
     (navigation.navigate as (n: string, p?: object) => void)(next, nextParams);
   };
 
-  const row = (label: string, value: React.ReactNode) => (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 3 }}>
-      <Text style={{ fontSize: 14, color: colors.textSecondary }}>{label}</Text>
-      {typeof value === 'string' ? (
-        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>{value}</Text>
-      ) : (
-        value
-      )}
-    </View>
-  );
-
   return (
     <Screen>
-      <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 16, fontWeight: '800', color: colors.textPrimary }}>
-          Book now, pay the shop later
-        </Text>
-        <Text style={{ fontSize: 13, color: colors.textTertiary, textAlign: 'center' }}>
-          We only hold a refundable deposit to protect the shop's time.
-        </Text>
-      </View>
-
-      <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottomWidth: 0.5,
-            borderBottomColor: colors.divider,
-            paddingBottom: spacing.sm,
-            marginBottom: spacing.sm,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>
-              Refundable security deposit
-            </Text>
-            <Text style={{ fontSize: 12, color: colors.textTertiary }}>
-              Held, not charged · auto-released after your visit
-            </Text>
-          </View>
-          {waived ? (
-            <Text style={{ fontSize: 18, fontWeight: '800' }}>
-              <Text style={{ textDecorationLine: 'line-through', color: colors.textTertiary }}>
+      {/* Same panel as "Your services": what is held, what the shop charges later. */}
+      <SummaryPanel
+        icon="wallet"
+        label="Reserve your spot"
+        title={dealer.name}
+        actionLabel="Edit"
+        actionAccessibilityLabel="Edit date and time"
+        onAction={() => navigation.goBack()}
+        rows={[
+          {
+            key: 'slot',
+            icon: 'calendar',
+            iconColor: colors.primary,
+            title: slotLabel,
+            caption: "We hold this slot while you confirm",
+          },
+          {
+            key: 'deposit',
+            icon: 'lock',
+            iconColor: colors.primary,
+            title: 'Refundable security deposit',
+            caption: 'Held, not charged · auto-released after your visit',
+            valueNode: waived ? (
+              <Text style={{ fontSize: 15, fontWeight: '800' }}>
+                <Text style={{ textDecorationLine: 'line-through', color: colors.textTertiary }}>
+                  {usd(DEPOSIT_CENTS)}
+                </Text>{' '}
+                <Text style={{ color: colors.successDark }}>$0</Text>
+              </Text>
+            ) : (
+              <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>
                 {usd(DEPOSIT_CENTS)}
-              </Text>{' '}
-              <Text style={{ color: colors.successDark }}>$0</Text>
-            </Text>
-          ) : (
-            <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>
-              {usd(DEPOSIT_CENTS)}
-            </Text>
-          )}
-        </View>
-        {row('Repair estimate', '$320–$345 · pay shop after')}
-        {row(
-          'Charged today',
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>$0.00</Text>,
-        )}
-      </Card>
+              </Text>
+            ),
+          },
+          {
+            key: 'estimate',
+            icon: 'wrench',
+            iconColor: colors.primary,
+            title: params?.kind === 'maintenance' ? 'Service estimate' : 'Repair estimate',
+            caption: 'Book now, pay the shop after your visit',
+            value: estimateLabel,
+          },
+        ]}
+        footerLabel="Charged today"
+        footerCaption="Deposit hold only · nothing leaves your account"
+        footerValue="$0.00"
+        footerValueColor={colors.successDark}
+        style={{ marginBottom: spacing.md }}
+      />
 
       {waived ? (
         <View
@@ -142,7 +137,7 @@ export function BookDepositScreen() {
         >
           <Icon name="sparkle" size={18} color={colors.textSecondary} />
           <Text style={{ fontWeight: '700', color: colors.successDeep, fontSize: 14 }}>
-            Deposit waived — Pro member
+            Deposit waived · Pro member
           </Text>
         </View>
       ) : (
@@ -189,7 +184,7 @@ export function BookDepositScreen() {
 
       <PrimaryButton
         variant="warning"
-        label={waived ? 'Confirm booking — no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
+        label={waived ? 'Confirm booking · no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
         loading={booking}
         onPress={confirm}
       />

@@ -43,7 +43,7 @@ import { isSupabaseConfigured } from '../lib/supabase';
 export const USE_API = apiEnabled;
 
 /**
- * True when Supabase env vars are set — the app stores real data directly in
+ * True when Supabase env vars are set, the app stores real data directly in
  * Supabase (no server). Domains are migrated to Supabase one at a time; until a
  * domain has a Supabase twin it stays on the mock/api implementation.
  */

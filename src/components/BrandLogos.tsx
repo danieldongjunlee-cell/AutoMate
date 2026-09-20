@@ -6,7 +6,7 @@ import { Path, Svg } from 'react-native-svg';
  * Both use a 0 0 24 24 viewBox so `size` maps directly to width/height.
  */
 
-/** Apple silhouette mark. Single fill — pass color="#fff" on dark buttons. */
+/** Apple silhouette mark. Single fill, pass color="#fff" on dark buttons. */
 export function AppleLogo({ size, color = '#000' }: { size: number; color?: string }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
@@ -20,7 +20,7 @@ export function AppleLogo({ size, color = '#000' }: { size: number; color?: stri
 
 /**
  * Google four-color "G" mark. The `color` prop is accepted for a consistent
- * API but ignored — the official mark is always its four brand colors.
+ * API but ignored, the official mark is always its four brand colors.
  */
 export function GoogleLogo({ size }: { size: number; color?: string }) {
   return (

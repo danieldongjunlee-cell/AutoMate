@@ -76,7 +76,7 @@ export function RootNavigator() {
   }, [isAuthenticated, setBookings, setPoints]);
 
   // Web: the page body shows through during navigation transitions and past
-  // the app root — keep it on the theme ground.
+  // the app root, keep it on the theme ground.
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       document.body.style.backgroundColor = theme.colors.background;

@@ -26,7 +26,7 @@ const toVehicle = (r: Row): Vehicle => ({
   vin: r.vin ?? '',
   odometerMi: r.odometer_mi ?? 0,
   oilSpec: r.oil_spec ?? '',
-  lastService: r.last_service ?? '—',
+  lastService: r.last_service ?? '-',
   isPrimary: r.is_primary ?? false,
 });
 
@@ -62,7 +62,7 @@ export const vehiclesService: typeof mockVehiclesService = {
         vin: input.vin ?? '',
         odometer_mi: input.odometerMi ?? 0,
         oil_spec: input.oilSpec ?? '',
-        last_service: '—',
+        last_service: '-',
         is_primary: (count ?? 0) === 0,
       })
       .select(COLS)

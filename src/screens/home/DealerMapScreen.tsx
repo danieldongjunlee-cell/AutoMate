@@ -161,7 +161,7 @@ export function DealerMapScreen() {
         </Tappable>
         <Tappable
           onPress={() =>
-            Share.share({ message: `${dealer.name} Service Center — ${dealer.address}` }).catch(
+            Share.share({ message: `${dealer.name} Service Center · ${dealer.address}` }).catch(
               () => {},
             )
           }

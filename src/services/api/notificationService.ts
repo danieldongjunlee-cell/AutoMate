@@ -1,4 +1,4 @@
-/** Real notification service (server/) — mirrors services/mock/notificationService. */
+/** Real notification service (server/), mirrors services/mock/notificationService. */
 import { AppNotification } from '../mock/notificationService';
 import { request } from './client';
 

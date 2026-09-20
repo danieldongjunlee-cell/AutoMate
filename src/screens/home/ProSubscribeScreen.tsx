@@ -41,7 +41,7 @@ export function ProSubscribeScreen() {
   const card = picked ?? cards?.[0];
   const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
 
-  // v17: the plan-pick screen is the commit point — subscribe → success (no
+  // v17: the plan-pick screen is the commit point, subscribe → success (no
   // separate payment screen). Tapping the priced button is the confirmation.
   // Pro is a digital subscription, so on App Store builds the purchases layer
   // routes it through StoreKit (guideline 3.1.1); elsewhere it charges direct.
@@ -110,7 +110,7 @@ export function ProSubscribeScreen() {
         <Icon name="star" size={26} color={colors.textSecondary} />
         <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
-          Skip every security deposit — and more.
+          Skip every security deposit · and more.
         </Text>
       </LinearGradient>
 
@@ -135,12 +135,12 @@ export function ProSubscribeScreen() {
         }}
       >
         <Text style={{ fontSize: 14, fontWeight: '700', color: colors.successDark }}>
-          Just $4 a month — cheaper than one coffee
+          Just $4 a month · cheaper than one coffee
         </Text>
       </View>
 
       <SectionLabel>Choose a plan</SectionLabel>
-      {planRow('annual', 'Annual', '$48/yr — just $4/mo', 'SAVE 60%')}
+      {planRow('annual', 'Annual', '$48/yr · just $4/mo', 'SAVE 60%')}
       {planRow('monthly', 'Monthly', '$9.99 / month')}
 
       <SectionLabel>Payment method</SectionLabel>
@@ -174,7 +174,7 @@ export function ProSubscribeScreen() {
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
           variant="warning"
-          label={`Start Pro — ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} →`}
+          label={`Start Pro · ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} →`}
           loading={busy}
           onPress={startPro}
         />

@@ -8,7 +8,7 @@ import { radii, spacing, useTheme } from '../theme';
 
 /**
  * Two-column picker card. Selected cards get a blue tint, a blue border and a
- * solid blue logo tile — the brand-chooser pattern from the design.
+ * solid blue logo tile, the brand-chooser pattern from the design.
  */
 function GridCard({
   label,

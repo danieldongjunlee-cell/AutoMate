@@ -7,7 +7,7 @@ import { palette, radii, spacing, useTheme } from '../theme';
 /**
  * "Use points" row for payment screens (maint-payment, diy-payment).
  * Toggling on applies up to min(balance, total × 100) points against the
- * order total — 1 pt = $0.01, so 420 pts knocks $4.20 off.
+ * order total, 1 pt = $0.01, so 420 pts knocks $4.20 off.
  */
 export function UsePointsRow({
   balance,
@@ -17,7 +17,7 @@ export function UsePointsRow({
 }: {
   /** Current points balance (store.points). */
   balance: number;
-  /** min(balance, total * 100) — most points this order can absorb. */
+  /** min(balance, total * 100), most points this order can absorb. */
   maxRedeemable: number;
   /** Points currently applied (0 = toggle off). */
   applied: number;

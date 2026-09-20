@@ -152,7 +152,7 @@ export function SkeletonCard({ tall }: { tall?: boolean }) {
   );
 }
 
-/** N skeletons of one shape — `variant="card"` for cards, `"row"` for list rows. */
+/** N skeletons of one shape, `variant="card"` for cards, `"row"` for list rows. */
 export function SkeletonList({
   count = 3,
   variant = 'row',

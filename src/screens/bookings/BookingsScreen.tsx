@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
@@ -34,6 +34,8 @@ const STATUS_FILTERS = ['All', 'Confirmed', 'New time proposed', 'Cancelled'];
 export function BookingsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  // Set when the screen was opened from another tab, so we can offer Back.
+  const backTo = (useRoute().params as { backTo?: string } | undefined)?.backTo;
   const t = useT();
   const { brand } = useActiveVehicle();
   const allBookings = useAppStore((s) => s.bookings);
@@ -253,7 +255,7 @@ export function BookingsScreen() {
   return (
     <Screen safeTop>
       <GuestBanner />
-      {/* Title row — car switch pinned top-right (consistent across tabs). */}
+      {/* Title row · car switch pinned top-right (consistent across tabs). */}
       <View
         style={{
           flexDirection: 'row',
@@ -263,6 +265,17 @@ export function BookingsScreen() {
           marginBottom: spacing.md,
         }}
       >
+        {/* Opened from another tab (More → My bookings): offer the way back. */}
+        {backTo ? (
+          <Tappable
+            onPress={() => navigateCrossTab(navigation, backTo as 'MoreTab', 'ProfHub')}
+            hitSlop={8}
+            accessibilityLabel="Back"
+            style={{ width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center', marginRight: 2 }}
+          >
+            <Icon name="back" size={24} color={colors.textPrimary} strokeWidth={2} />
+          </Tappable>
+        ) : null}
         <Text style={{ flex: 1, fontSize: 27, fontWeight: '800', color: colors.textPrimary }}>{t('Bookings')}</Text>
         <CarSwitchChip />
       </View>
@@ -379,7 +392,7 @@ export function BookingsScreen() {
         scheduledBookings.map(renderBooking)
       )}
 
-      {/* Completed services — its own section */}
+      {/* Completed services · its own section */}
       {completedBookings.length > 0 ? (
         <>
           <SectionLabel>{t('Completed')}</SectionLabel>

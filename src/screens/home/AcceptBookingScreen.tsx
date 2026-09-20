@@ -66,7 +66,7 @@ export function AcceptBookingScreen() {
   const onConfirm = async () => {
     if (!day || !time || !agreed) return;
     setBooking(true);
-    // Independent mock calls — run in parallel so the CTA doesn't stall.
+    // Independent mock calls, run in parallel so the CTA doesn't stall.
     const [, { pointsEarned }] = await Promise.all([
       quote ? quoteService.acceptQuote(quote.id) : Promise.resolve(null),
       quoteService.bookAppointment(dealer.id, dateLabel!, time),
@@ -126,7 +126,7 @@ export function AcceptBookingScreen() {
         <Badge label="Accepted" variant="primary" />
       </View>
 
-      {/* Shop hours — full week, sourced from the shop's Google listing. The
+      {/* Shop hours · full week, sourced from the shop's Google listing. The
           calendar below only opens days the shop is actually open. */}
       <SectionLabel>{dealer.name} hours</SectionLabel>
       <View
@@ -172,12 +172,12 @@ export function AcceptBookingScreen() {
         <CalendarMonth selectedDay={day} onSelectDay={setDay} closedWeekdays={closedWeekdays} />
       </View>
 
-      <SectionLabel>{day ? `Select time — ${dateLabel}` : 'Select time'}</SectionLabel>
+      <SectionLabel>{day ? `Select time · ${dateLabel}` : 'Select time'}</SectionLabel>
       <View style={{ marginBottom: spacing.lg }}>
         <TimeSlots slots={TIME_SLOTS} selected={time} onSelect={setTime} />
       </View>
 
-      {/* Booking agreement — folded into this screen as a compact consent. */}
+      {/* Booking agreement · folded into this screen as a compact consent. */}
       <View
         style={{
           backgroundColor: colors.surface,
@@ -189,7 +189,7 @@ export function AcceptBookingScreen() {
         }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 6 }}>
-          No payment today — you pay the shop after the work.
+          No payment today · you pay the shop after the work.
         </Text>
         <Tappable onPress={() => setAgreed((v) => !v)} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' }}>
           <View
@@ -212,13 +212,13 @@ export function AcceptBookingScreen() {
             <Text style={{ color: colors.primary, fontWeight: '700' }} onPress={() => navigation.navigate('TosBooking')}>
               Terms of Service
             </Text>{' '}
-            — show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
+           , show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
           </Text>
         </Tappable>
       </View>
 
       <PrimaryButton
-        label={day && time ? `Confirm booking — ${BOOKING_MONTH.monthAbbr} ${day} · ${time} →` : 'Select a date and time'}
+        label={day && time ? `Confirm booking, ${BOOKING_MONTH.monthAbbr} ${day} · ${time} →` : 'Select a date and time'}
         disabled={!day || !time || !agreed}
         loading={booking}
         onPress={onConfirm}

@@ -8,7 +8,7 @@ import { showAlert } from '../utils/alerts';
  *
  * - Native (Expo Go): real camera / photo-library pickers behind the standard
  *   permission prompts.
- * - Web: `launchCameraAsync` renders an `<input type="file" capture>` — mobile
+ * - Web: `launchCameraAsync` renders an `<input type="file" capture>`, mobile
  *   browsers open the camera, desktop browsers fall back to the file picker
  *   (and any thrown "camera unsupported" error falls back to the gallery).
  *

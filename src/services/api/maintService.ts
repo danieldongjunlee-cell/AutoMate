@@ -1,4 +1,4 @@
-/** Real maintenance service (server/) — mirrors services/mock/maintService. */
+/** Real maintenance service (server/), mirrors services/mock/maintService. */
 import { ScannedReceipt, ServiceRecord, UpcomingService, VEHICLE } from '../mock/data';
 import { request } from './client';
 

@@ -139,7 +139,7 @@ function GoogleChooser({
 
       <Tappable
         onPress={() =>
-          showAlert('Use another account', 'Demo build — only the demo Google account is available.')
+          showAlert('Use another account', 'Demo build, only the demo Google account is available.')
         }
         disabled={loading}
         style={{

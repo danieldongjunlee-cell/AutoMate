@@ -71,7 +71,7 @@ export function CarDiagramScreen() {
     () => new Set(damageParts.map((p) => KEY_BY_NAME[p.part]).filter((k): k is PartKey => !!k)),
     [damageParts],
   );
-  // "Part n" — this part's slot in the list (existing entry, or the next one).
+  // "Part n", this part's slot in the list (existing entry, or the next one).
   const partIndex = draftPart ? (damageParts.findIndex((p) => p.part === draftPart) + 1 || damageParts.length + 1) : 0;
 
   const upload = async () => {
@@ -90,7 +90,7 @@ export function CarDiagramScreen() {
   const saveHint = !canSave ? (draftTypes.length < 1 ? 'Pick a damage type' : 'Add at least one photo') : null;
 
   const goOn = () => {
-    // Car details come right after the damaged part — but only once. Guests
+    // Car details come right after the damaged part, but only once. Guests
     // (and signed-in users with no car on file) fill them here; otherwise
     // straight to review.
     const needsCarDetails = (!isAuthenticated || !active) && !pendingVehicle;
@@ -179,7 +179,7 @@ export function CarDiagramScreen() {
     <Screen scrollRef={scrollRef}>
       <SubmitProgress step={1} left="Avg 2 min" right="Let's go" />
 
-      {/* Selected part — centred blue pill with a teal dot */}
+      {/* Selected part · centred blue pill with a teal dot */}
       <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
         <View
           style={{
@@ -201,7 +201,7 @@ export function CarDiagramScreen() {
         </View>
       </View>
 
-      {/* A part that already has photos can't be picked again — remove it on the review step instead. */}
+      {/* A part that already has photos can't be picked again · remove it on the review step instead. */}
       <BlueprintPicker selected={selectedKey} done={doneKeys} onPick={(k) => (doneKeys.has(k) ? undefined : pickPart(PART_NAMES[k]))} />
 
       {draftPart ? (

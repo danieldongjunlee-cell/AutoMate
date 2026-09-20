@@ -46,7 +46,7 @@ export function ProfHubScreen() {
   const isPro = useAppStore((s) => s.isPro);
   const requireAuth = useRequireAuth();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  // Guests have no account yet — points read zero.
+  // Guests have no account yet, points read zero.
   const points = isAuthenticated ? storePoints : 0;
   const authedUser = useAppStore((s) => s.user);
   const displayName = authedUser?.name ?? USER.name;
@@ -138,7 +138,7 @@ export function ProfHubScreen() {
       {section('User settings', [
         { icon: hasCar ? <CarBrandLogo brand={carBrand} size={24} /> : 'car', label: 'My cars', to: 'ProfCars', gate: 'myCars', check: !hasCar },
         { icon: 'shield', label: 'My insurance', to: 'ProfInsurance', gate: 'insurance', check: !hasPolicy },
-        { icon: 'calendar', label: 'My bookings', cross: { tab: 'BookingsTab', screen: 'Bookings' } },
+        { icon: 'calendar', label: 'My bookings', cross: { tab: 'BookingsTab', screen: 'Bookings', params: { backTo: 'MoreTab' } } },
         { icon: 'search', label: 'AI estimate history', to: 'ProfEstimates', gate: 'estimateHistory' },
         { icon: 'wallet', label: 'Payment method', to: 'ProfPayment', gate: 'payment' },
       ])}

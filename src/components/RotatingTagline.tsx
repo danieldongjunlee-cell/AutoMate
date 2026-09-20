@@ -17,12 +17,12 @@ const LINES: TaglineLine[] = [
 
 const HOLD_MS = 2400;
 const SLIDE_MS = 440;
-/** Both rows start at the same point — no indent. */
+/** Both rows start at the same point, no indent. */
 const INDENT = 0;
 
 /**
- * Home header tagline: shows one two-row line at a time — a plain lead and an
- * indented blue accent — holding for a moment, then scrolling it up and out
+ * Home header tagline: shows one two-row line at a time, a plain lead and an
+ * indented blue accent, holding for a moment, then scrolling it up and out
  * while the next line scrolls in from below.
  */
 export function RotatingTagline({ lines = LINES, size = 21 }: { lines?: TaglineLine[]; size?: number }) {

@@ -1,7 +1,7 @@
 /**
  * Blueprint damage picker geometry (ported from the design canvas, board
  * "Damage picker" v11): a hatchback drawn as thin white line-art in three
- * views laid side by side at the same length — driver profile (left, rotated
+ * views laid side by side at the same length, driver profile (left, rotated
  * so the roof faces the centre), top view (centre), passenger profile (right).
  *
  * Coordinates are in the composite viewBox (654 × 420); each view is a

@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -8,6 +7,7 @@ import { CalendarMonth, TimeSlots } from '../../components/CalendarMonth';
 import { Glyph, Icon } from '../../components/Icon';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
+import { SummaryPanel } from '../../components/SummaryPanel';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { useActiveVehicle, vehicleTypeOf } from '../../hooks/useActiveVehicle';
 import { HomeStackParamList } from '../../navigation/types';
@@ -21,7 +21,7 @@ import {
   MaintSubService,
 } from '../../services/mock/data';
 import { cartTotals, dateBadgeParts, discountedPrice, useAppStore } from '../../store/useAppStore';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { radii, spacing, useTheme } from '../../theme';
 import { formatDayLabel } from '../../utils/dates';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'MaintScheduleBook'>;
@@ -56,7 +56,7 @@ export function MaintScheduleBookScreen() {
   // the brake job sized to the car's type (e.g. KIA Sportage → SUV).
   const didPreselect = useRef(false);
   useEffect(() => {
-    // Don't auto-add the brake reco when a bundle/deal seeded the cart — that
+    // Don't auto-add the brake reco when a bundle/deal seeded the cart, that
     // would inflate the claimed (discounted) price.
     if (didPreselect.current || !recoType || cart.promo || pickMode) return;
     didPreselect.current = true;
@@ -65,7 +65,7 @@ export function MaintScheduleBookScreen() {
     if (reco && !cart.services.some((s) => s.id === reco.id)) {
       toggleCartService({
         id: reco.id,
-        name: `Brakes — ${reco.name}`,
+        name: `Brakes · ${reco.name}`,
         price: reco.price,
         durationMin: reco.durationMin,
       });
@@ -79,7 +79,7 @@ export function MaintScheduleBookScreen() {
   const totalLabel = `$${total}`;
 
   // Maintenance is pay-at-shop (no deposit), so booking is confirmed right here
-  // once the agreement is checked — the separate agreement screen is gone.
+  // once the agreement is checked, the separate agreement screen is gone.
   const onConfirm = () => {
     if (!canContinue || !agreed) return;
     const dateLabel = formatDayLabel(cart.date, formatDayLabel(defaultBookingISO()));
@@ -107,7 +107,7 @@ export function MaintScheduleBookScreen() {
     const pct = pctFor(cat.id);
     toggleCartService({
       id: sub.id,
-      name: `${cat.name} — ${sub.name}`,
+      name: `${cat.name} · ${sub.name}`,
       price: discountedPrice(sub.price, pct),
       originalPrice: pct ? sub.price : undefined,
       durationMin: sub.durationMin,
@@ -188,47 +188,24 @@ export function MaintScheduleBookScreen() {
     <Screen>
       {pickMode ? (
         <>
-          {/* Your services — the booking's centrepiece: what this shop will do and charge. */}
-          <LinearGradient
-            colors={[colors.primary, palette.teal]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ borderRadius: radii.tile, padding: 2, marginBottom: spacing.section, shadowColor: colors.primary, shadowOpacity: 0.35, shadowRadius: 20, shadowOffset: { width: 0, height: 10 }, elevation: 8 }}
-          >
-            <View style={{ backgroundColor: colors.surface, borderRadius: radii.tile - 2, overflow: 'hidden' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg, paddingBottom: spacing.md }}>
-                <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="calcheck" size={26} color={colors.onPrimary} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 12, fontWeight: '800', letterSpacing: 0.8, textTransform: 'uppercase', color: colors.primaryDark }}>Your services</Text>
-                  <Text style={{ fontSize: 17, fontWeight: '800', color: colors.textPrimary, marginTop: 1 }} numberOfLines={1}>
-                    {count} service{count !== 1 ? 's' : ''} at {dealer.name}
-                  </Text>
-                </View>
-                <Tappable onPress={() => navigation.navigate('MaintServiceType')} hitSlop={8} accessibilityLabel="Edit services">
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>Edit</Text>
-                </Tappable>
-              </View>
-              {cart.services.map((s) => (
-                <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: 10, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider }}>
-                  <Icon name="check" size={20} color={palette.mint} strokeWidth={2.2} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{s.name}</Text>
-                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>~{s.durationMin} min</Text>
-                  </View>
-                  <Text style={{ fontSize: 15, fontWeight: '800', color: colors.textPrimary }}>${s.price}</Text>
-                </View>
-              ))}
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.primarySurface, paddingHorizontal: spacing.lg, paddingVertical: 12 }}>
-                <View>
-                  <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.primaryDark }}>Total · pay at shop</Text>
-                  <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 1 }}>~{totalMin} min · {dealer.name}&apos;s prices</Text>
-                </View>
-                <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>${total}</Text>
-              </View>
-            </View>
-          </LinearGradient>
+          {/* Your services · the booking's centrepiece: what this shop will do and charge. */}
+          <SummaryPanel
+            label="Your services"
+            title={`${count} service${count !== 1 ? 's' : ''} at ${dealer.name}`}
+            actionLabel="Edit"
+            actionAccessibilityLabel="Edit services"
+            onAction={() => navigation.navigate('MaintServiceType')}
+            rows={cart.services.map((s) => ({
+              key: s.id,
+              title: s.name,
+              caption: `~${s.durationMin} min`,
+              value: `$${s.price}`,
+            }))}
+            footerLabel="Total · pay at shop"
+            footerCaption={`~${totalMin} min · ${dealer.name}'s prices`}
+            footerValue={`$${total}`}
+            style={{ marginBottom: spacing.section }}
+          />
 
           <SectionLabel style={{ marginTop: 0 }}>Select date & time</SectionLabel>
           <View style={{ marginBottom: spacing.sm }}>
@@ -384,7 +361,7 @@ export function MaintScheduleBookScreen() {
 
         </>
       )}
-      {/* Booking agreement — folded into this screen as a compact consent. */}
+      {/* Booking agreement · folded into this screen as a compact consent. */}
       <View
         style={{
           backgroundColor: colors.surface,
@@ -396,7 +373,7 @@ export function MaintScheduleBookScreen() {
         }}
       >
         <Text style={{ fontSize: 13, fontWeight: '700', color: colors.successDeep, marginBottom: 6 }}>
-          No payment today — you pay the shop after your service.
+          No payment today · you pay the shop after your service.
         </Text>
         <Tappable onPress={() => setAgreed((v) => !v)} style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' }}>
           <View
@@ -419,13 +396,13 @@ export function MaintScheduleBookScreen() {
             <Text style={{ color: colors.primary, fontWeight: '700' }} onPress={() => navigation.navigate('TosBooking')}>
               Terms of Service
             </Text>{' '}
-            — show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
+           , show up or reschedule/cancel 12h+ ahead, the 3-no-show limit, and booking only through AutoMate.
           </Text>
         </Tappable>
       </View>
 
       <PrimaryButton
-        label={canContinue ? `Confirm booking — ${totalLabel} →` : 'Select services, date & time'}
+        label={canContinue ? `Confirm booking · ${totalLabel} →` : 'Select services, date & time'}
         disabled={!canContinue || !agreed}
         onPress={onConfirm}
       />

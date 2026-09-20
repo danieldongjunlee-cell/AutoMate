@@ -31,7 +31,7 @@ function policyCoversVehicle(covers: string, vehicleName: string): boolean {
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfInsurance'>;
 
-/** Inline edit form (modal) — the editable policy fields, mirroring the My-cars modal. */
+/** Inline edit form (modal), the editable policy fields, mirroring the My-cars modal. */
 function PolicyFormModal({
   policy,
   visible,
@@ -204,10 +204,9 @@ export function ProfInsuranceScreen() {
   const addCard = (
     <SwipeCard key="add" title="Add a policy" dashed>
       <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+        <Tappable onPress={() => navigation.navigate('ProfInsAdd')} accessibilityRole="button" accessibilityLabel="Add another policy" style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg }}>
           <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
-        </View>
-        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Geico, Progressive, USAA… scan your card or enter the details.</Text>
+        </Tappable>
         <PrimaryButton label="Add another policy" onPress={() => navigation.navigate('ProfInsAdd')} style={{ alignSelf: 'stretch' }} />
       </View>
     </SwipeCard>
@@ -217,13 +216,9 @@ export function ProfInsuranceScreen() {
     <Screen>
       <SwipeDeck
         caption={
-          active
-            ? linkedPolicy
-              ? `${active.name} · covered by ${linkedPolicy.carrier}`
-              : `${active.name} · no policy linked yet`
-            : sortedPolicies.length
-              ? `${sortedPolicies.length} polic${sortedPolicies.length !== 1 ? 'ies' : 'y'} on file · swipe to switch`
-              : 'No policies yet'
+          sortedPolicies.length
+            ? `${sortedPolicies.length} polic${sortedPolicies.length === 1 ? 'y' : 'ies'} · swipe to switch`
+            : 'No policies yet'
         }
       >
         {isLoading ? (

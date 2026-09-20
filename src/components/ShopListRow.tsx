@@ -66,11 +66,11 @@ export function ShopListRow({
   children,
 }: {
   dealer: Dealer;
-  /** Position in the list — picks which bundled photos show when the shop has none. */
+  /** Position in the list, picks which bundled photos show when the shop has none. */
   index?: number;
   /** "Oil · Tires · Filters" or "Body · Paint". */
   tags?: string;
-  /** Ribbon on the row's top right — BEST PRICE / RECOMMENDED / … */
+  /** Ribbon on the row's top right, BEST PRICE / RECOMMENDED / … */
   tag?: { label: string; tone?: 'best' | 'reco' | 'neutral' };
   selected?: boolean;
   onPress?: () => void;

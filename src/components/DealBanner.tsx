@@ -36,7 +36,7 @@ const IMG_OIL = require('../../assets/deals/oil.png');
 const IMG_TIRES = require('../../assets/deals/tires.png');
 const IMG_HANDSHAKE = require('../../assets/deals/handshake.png');
 
-/** The partner deals — one source for the Home carousel and "View all deals". */
+/** The partner deals, one source for the Home carousel and "View all deals". */
 export const DEALS: Deal[] = [
   {
     dealerId: 'honda-fairfax',
@@ -45,7 +45,7 @@ export const DEALS: Deal[] = [
     title: 'Honda Fairfax Summer Bundle',
     sub: 'Oil + rotation + 27-pt check · Save $40',
     gradient: ['#E0A93E', '#C2871F'],
-    body: 'Summer Bundle · ends Jul 31. Discounts apply automatically when you book at Honda Fairfax.',
+    body: 'Summer Bundle, ends Jul 31. Discounts apply automatically when you book at Honda Fairfax.',
     discounts: [
       { categoryId: 'oil', label: 'Oil change', pct: 15 },
       { categoryId: 'tires', label: 'Tire service', pct: 20 },
@@ -59,7 +59,7 @@ export const DEALS: Deal[] = [
     dealerId: 'autofix-pro',
     name: 'AutoFix Pro',
     badge: '20% OFF',
-    title: 'AutoFix Pro — new customer',
+    title: 'AutoFix Pro · new customer',
     sub: 'Free inspection w/ any oil change',
     gradient: [palette.primary, '#1e4fcc'],
     body: 'New AutoMate customers save on an oil change and a full brake job. Discounts applied automatically at booking.',
@@ -75,7 +75,7 @@ export const DEALS: Deal[] = [
     dealerId: 'vienna-auto',
     name: 'Vienna Auto Care',
     badge: 'SPONSORED',
-    title: 'Vienna Auto Care — $30 off',
+    title: 'Vienna Auto Care · $30 off',
     sub: 'Brakes, batteries & A/C service',
     gradient: ['#1f9e75', '#13795a'],
     body: 'AutoMate members save on filters and fluid services. Discounts applied automatically at booking.',

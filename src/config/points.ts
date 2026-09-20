@@ -1,10 +1,10 @@
 /**
- * Points economy — single source of truth (client).
+ * Points economy, single source of truth (client).
  *
  * APPROVED DECISION: 1 point = $0.01, the wireframe's rate (420 pts = $4.20,
  * 100 pts = $1). The gap-analysis spec's $0.10 figure was overruled.
  *
- * server/src/config.ts mirrors POINT_VALUE_USD + EARN_RULES — keep in sync.
+ * server/src/config.ts mirrors POINT_VALUE_USD + EARN_RULES, keep in sync.
  */
 export const POINT_VALUE_USD = 0.01;
 
@@ -18,7 +18,7 @@ export function pointsToUsd(points: number): string {
 
 /** Earn schedule (wireframe s-prof-earn "Earn points" list). */
 export const EARN_RULES = {
-  /** Daily check-in — once per calendar day, awarded on Home mount. */
+  /** Daily check-in, once per calendar day, awarded on Home mount. */
   dailyCheckIn: 10,
   /** Scan service receipt → history. */
   scanReceipt: 20,

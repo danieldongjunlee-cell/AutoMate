@@ -55,7 +55,7 @@ function record(delta: number, reason: string): number {
 }
 
 export const pointsService = {
-  /** Current balance — store.points is the single client cache. */
+  /** Current balance, store.points is the single client cache. */
   async getBalance(): Promise<number> {
     await delay(150);
     return useAppStore.getState().points;

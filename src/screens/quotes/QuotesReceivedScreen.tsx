@@ -22,7 +22,7 @@ type Nav = NativeStackNavigationProp<QuotesStackParamList, 'Quotes'>;
 
 /**
  * Quotes tab in a maps-app layout: the map of quoting shops fills the screen
- * and a draggable sheet lists them — AI estimate strip, filter chips (Sort by
+ * and a draggable sheet lists them, AI estimate strip, filter chips (Sort by
  * · Open now · Parts · Distance) and one result row per shop with its quote.
  */
 export function QuotesReceivedScreen() {
@@ -72,7 +72,7 @@ export function QuotesReceivedScreen() {
     );
   }
 
-  /** AI estimate strip + add / cancel — shared by the guest and signed-in views. */
+  /** AI estimate strip + add / cancel, shared by the guest and signed-in views. */
   const estimateBlock = (
     <>
       {aiEstimate ? (
@@ -100,7 +100,7 @@ export function QuotesReceivedScreen() {
     </>
   );
 
-  // Guest who submitted but hasn't signed up — quotes stay locked.
+  // Guest who submitted but hasn't signed up, quotes stay locked.
   if (!isAuthenticated) {
     return (
       <Screen safeTop>

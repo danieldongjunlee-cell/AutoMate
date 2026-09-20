@@ -89,14 +89,14 @@ export const hasPolicies = () => policies.length > 0;
 
 /**
  * Synchronous snapshot of the user's primary policy for the mock
- * compareService — deductible/premium edits flow straight into the
+ * compareService, deductible/premium edits flow straight into the
  * cash-vs-insurance math, mirroring how the server resolves the stored
  * policy on /compare/estimate. Falls back to the wireframe State Farm
  * numbers if compare is somehow reached with no policy on file.
  */
 export const primaryPolicy = (): Policy => policies[0] ?? DEMO_POLICIES[0];
 
-/** Demo card — same fields as the damage-ai mock (app/mock_engine.py). */
+/** Demo card, same fields as the damage-ai mock (app/mock_engine.py). */
 const SCANNED_CARD: ScannedInsuranceCard = {
   provider: 'State Farm',
   policyNumber: 'SF-8847234',
@@ -161,7 +161,7 @@ export const insuranceService = {
     return { ok: true };
   },
 
-  /** "OCR" an insurance card — autofills the prof-ins-add form after a scan
+  /** "OCR" an insurance card, autofills the prof-ins-add form after a scan
    * delay (api twin posts to /insurance/scan-card → damage-ai). */
   async scanCard(): Promise<ScannedInsuranceCard> {
     await delay(1100);

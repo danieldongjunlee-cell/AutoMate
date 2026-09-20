@@ -23,7 +23,7 @@ export function Screen({
   style?: StyleProp<ViewStyle>;
   /** Access the underlying ScrollView (e.g. scroll-into-view on AllQuotesMap). */
   scrollRef?: React.Ref<ScrollView>;
-  /** Add the top safe-area inset — for header-less tab roots. */
+  /** Add the top safe-area inset, for header-less tab roots. */
   safeTop?: boolean;
 }) {
   const { colors } = useTheme();

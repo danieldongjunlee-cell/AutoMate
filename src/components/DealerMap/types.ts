@@ -24,7 +24,7 @@ export interface MapMarker {
 
 export interface DealerMapProps {
   markers: MapMarker[];
-  /** Map focus — changing it pans the map (e.g. to the selected pin). */
+  /** Map focus, changing it pans the map (e.g. to the selected pin). */
   center: LatLng;
   /** Leaflet-style zoom level (native converts to region deltas). */
   zoom?: number;

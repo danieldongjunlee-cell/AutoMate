@@ -1,28 +1,20 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 
-import {
-  ConfirmationNumber,
-  confirmationCode,
-  ReminderRow,
-  SuccessHeader,
-  SummaryCell,
-} from '../../components/Confirmation';
-import { RatingLink } from '../../components/RatingLink';
-import { AvatarCircle, Card, Screen, SectionLabel } from '../../components/ui';
+import { ConfirmActions, confirmationCode } from '../../components/Confirmation';
+import { SuccessReceipt } from '../../components/SuccessReceipt';
+import { Screen } from '../../components/ui';
 import { HomeStackParamList } from '../../navigation/types';
 import { addToCalendar, dateAtTime } from '../../services/calendar';
 import { BOOKING_MONTH, dealerById, defaultBookingISO, QUOTES } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { formatDayLabel } from '../../utils/dates';
-import { useDistance } from '../../i18n';
-import { palette, radii, spacing, useTheme } from '../../theme';
+import { spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<HomeStackParamList, 'BookingConfirm'>;
 type Route = RouteProp<HomeStackParamList, 'BookingConfirm'>;
@@ -37,7 +29,6 @@ export function BookingConfirmScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<Route>();
   const { colors } = useTheme();
-  const dist = useDistance();
   const reminderPref = useAppStore((s) => s.reminderPref);
   const damageParts = useAppStore((s) => s.damageParts);
   const serviceLabel = damageParts.length
@@ -63,7 +54,7 @@ export function BookingConfirmScreen() {
     const startDate = dateAtTime(BOOKING_MONTH.year, BOOKING_MONTH.month, day, time);
     const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
     void addToCalendar({
-      title: `${dealer.name} — Rear bumper dent repair`,
+      title: `${dealer.name} · Rear bumper dent repair`,
       startDate,
       endDate,
       location: dealer.address,
@@ -73,118 +64,54 @@ export function BookingConfirmScreen() {
 
   return (
     <Screen>
-      <SuccessHeader
-        title="You're all set!"
-        subtitle={`Reminder set · We'll notify you ${reminderPref.toLowerCase()}`}
+      {/* Receipt-style confirmation: tick, the booking's facts, estimate and stub. */}
+      <SuccessReceipt
+        title="Thank you!"
+        subtitle={`Your booking is confirmed · we'll remind you ${reminderPref.toLowerCase()}`}
+        rows={[
+          { label: 'Date', value: route.params?.dateLabel ?? 'Thu, Apr 12' },
+          { label: 'Time', value: route.params?.time ?? '10:30 AM' },
+          { label: 'Shop', value: dealer.name },
+          { label: 'Service', value: serviceLabel },
+          { label: 'Parts', value: `${quote?.parts ?? 'OEM'} parts` },
+        ]}
+        total={priceLabel}
+        totalLabel="Estimate · ~2 days"
+        method={{ name: 'Pay the shop after the repair', detail: 'Deposit refunded on arrival' }}
+        stamp="CONFIRMED"
+        reference={confirmation}
       />
 
-      <ConfirmationNumber code={confirmation} />
+      <View style={{ height: spacing.lg }} />
 
-      {/* Booking summary */}
-      <Card style={{ padding: spacing.md, marginBottom: spacing.sm }}>
-        <SectionLabel>Booking summary</SectionLabel>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing.sm,
-            paddingBottom: spacing.sm,
-            marginBottom: spacing.sm,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            borderBottomColor: colors.divider,
-          }}
-        >
-          <AvatarCircle initial={dealer.initial} color={dealer.color} size={44} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.textPrimary }}>
-              {dealer.name} Service Center
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-                {dist.format(dealer.distanceMi)} away ·{' '}
-              </Text>
-              <RatingLink dealer={dealer} />
-            </View>
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <SummaryCell label="Service" value={serviceLabel} sub={`${quote?.parts ?? 'OEM'} parts`} />
-          <SummaryCell label="Date & time" value={`${dateLabel} · ${time}`} />
-          <SummaryCell label="Pay at shop" value={priceLabel} sub={isCash ? '$0 today · cash at pickup' : '$0 today · ± after inspection'} subColor={palette.mint} />
-          <SummaryCell label="Duration" value="~2 days" sub="Self drop-off · 15 min check-in" />
-        </View>
-      </Card>
-
-      <ReminderRow />
-
-      {/* What to bring */}
-      <Card style={{ padding: spacing.md, marginBottom: spacing.md }}>
-        <SectionLabel>What to bring</SectionLabel>
-        {BRING_ITEMS.map(({ icon, label }, i) => (
-          <View
-            key={label}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: spacing.sm,
-              paddingVertical: 6,
-              borderBottomWidth: i < BRING_ITEMS.length - 1 ? StyleSheet.hairlineWidth : 0,
-              borderBottomColor: colors.divider,
-            }}
-          >
-            <Glyph glyph={icon} size={18} color={colors.textSecondary} />
-            <Text style={{ fontSize: 14, color: colors.textPrimary }}>{label}</Text>
-          </View>
-        ))}
-      </Card>
-
-      {/* Primary action: manage (reschedule / cancel) the booking. */}
-      <PrimaryButton
-        label="Reschedule"
-        onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
+      {/* What to bring, the reminder, the calendar and the map, as icons. */}
+      <ConfirmActions
+        bring={BRING_ITEMS}
+        onAddToCalendar={onAddToCalendar}
+        onViewMap={() => navigation.navigate('DealerMap', { dealerId: dealer.id })}
       />
-      <Tappable
-        onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
-        style={{ alignItems: 'center', paddingVertical: spacing.sm, marginTop: spacing.xs }}
-      >
-        <Text style={{ fontSize: 14, fontWeight: '600', color: colors.danger }}>Cancel</Text>
-      </Tappable>
 
-      {/* Secondary, smaller: add to calendar + view on map (wireframe v15.10). */}
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xs }}>
-        <Tappable
-          onPress={onAddToCalendar}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: radii.sm,
-            paddingVertical: 9,
-            alignItems: 'center',
-          })}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
-            Add to calendar
-          </Text>
-        </Tappable>
-        <Tappable
-          onPress={() => navigation.navigate('DealerMap', { dealerId: dealer.id })}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: radii.sm,
-            paddingVertical: 9,
-            alignItems: 'center',
-          })}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.textSecondary }}>
-            View on map
-          </Text>
-        </Tappable>
+      {/* Manage the booking: reschedule or cancel side by side, then home. */}
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg }}>
+        <PrimaryButton
+          label="Reschedule"
+          style={{ flex: 1 }}
+          onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
+        />
+        <PrimaryButton
+          label="Cancel"
+          variant="outline"
+          style={{ flex: 1, borderColor: colors.dangerBorder }}
+          textStyle={{ color: colors.danger }}
+          onPress={() => navigation.navigate('Reschedule', { kind: 'repair', bookingId: route.params?.bookingId })}
+        />
       </View>
+      <PrimaryButton
+        label="Back to home"
+        variant="outline"
+        style={{ marginTop: spacing.sm }}
+        onPress={() => navigation.popToTop()}
+      />
 
       <Tappable
         onPress={() => navigation.navigate('Reviews', { dealerId: dealer.id })}

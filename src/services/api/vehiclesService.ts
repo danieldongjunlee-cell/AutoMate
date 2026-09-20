@@ -1,4 +1,4 @@
-/** Real vehicles service (server /profile/vehicles) — mirrors services/mock/vehiclesService. */
+/** Real vehicles service (server /profile/vehicles), mirrors services/mock/vehiclesService. */
 import { Vehicle, VehicleInput } from '../mock/vehiclesService';
 import { request } from './client';
 
@@ -20,7 +20,7 @@ const toVehicle = (v: ServerVehicle): Vehicle => ({
   vin: v.vin ?? '',
   odometerMi: v.odometerMi,
   oilSpec: v.oilSpec ?? '',
-  lastService: '—',
+  lastService: '-',
   isPrimary: v.isPrimary,
 });
 

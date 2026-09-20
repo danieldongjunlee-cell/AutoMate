@@ -5,7 +5,7 @@ import { confirmAction, showAlert } from '../utils/alerts';
 /**
  * "Add to calendar" (user-feedback pass 2):
  * - Web: confirm → opens a pre-filled Google Calendar event template.
- * - Native: expo-calendar (legacy API — the only one available inside Expo Go)
+ * - Native: expo-calendar (legacy API, the only one available inside Expo Go)
  *   inserts the event into the default writable device calendar.
  *
  * expo-calendar is lazy-required on native only so the web bundle never pulls
@@ -21,7 +21,7 @@ export interface CalendarEventInput {
 
 const pad = (n: number) => `${n}`.padStart(2, '0');
 
-/** Floating local timestamp (no Z) — Google Calendar reads it in the user's zone. */
+/** Floating local timestamp (no Z), Google Calendar reads it in the user's zone. */
 const gcalStamp = (d: Date) =>
   `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(
     d.getMinutes(),
@@ -68,7 +68,7 @@ async function defaultCalendarId(
   return all.find((c) => c.allowsModifications)?.id ?? null;
 }
 
-/** Export a booking to the user's calendar (never rejects — alerts instead). */
+/** Export a booking to the user's calendar (never rejects, alerts instead). */
 export async function addToCalendar(evt: CalendarEventInput): Promise<void> {
   if (Platform.OS === 'web') {
     confirmAction(

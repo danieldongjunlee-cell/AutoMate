@@ -30,7 +30,7 @@ export function ProManageScreen() {
   const onCancel = () =>
     confirmAction(
       'Cancel AutoMate Pro?',
-      'Your membership ends immediately — deposits and DIY guides return to standard right away across the app.',
+      'Your membership ends immediately, deposits and DIY guides return to standard right away across the app.',
       () => cancelPro(),
       'Cancel subscription',
     );
@@ -79,7 +79,7 @@ export function ProManageScreen() {
                     day: 'numeric',
                     year: 'numeric',
                   })
-                : '—',
+                : '-',
             ],
           ] as const
         ).map(([k, v]) => (
@@ -98,7 +98,7 @@ export function ProManageScreen() {
       ) : (
         <>
           <PrimaryButton
-            label={`Renew Pro — ${priceLabel} →`}
+            label={`Renew Pro · ${priceLabel} →`}
             onPress={() => subscribePro(planKey)}
           />
           <View style={{ height: spacing.sm }} />

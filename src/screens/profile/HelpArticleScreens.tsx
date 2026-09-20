@@ -121,7 +121,7 @@ export function HelpPhotosScreen() {
         {
           title: 'Follow the photo guide',
           body:
-            'Shoot in daylight or bright shade, stand 3–5 feet away, and capture at least 3 angles: straight-on, left 45°, and right 45°. Avoid flash — glare hides dent depth.',
+            'Shoot in daylight or bright shade, stand 3–5 feet away, and capture at least 3 angles: straight-on, left 45°, and right 45°. Avoid flash, glare hides dent depth.',
         },
         {
           title: 'Pick the damage type',
@@ -131,7 +131,7 @@ export function HelpPhotosScreen() {
         {
           title: 'Review and submit',
           body:
-            'Check your parts list on the Confirm Damage screen, then submit. 12 nearby shops are notified instantly — quotes usually arrive in 1–3 hours.',
+            'Check your parts list on the Confirm Damage screen, then submit. 12 nearby shops are notified instantly, quotes usually arrive in 1–3 hours.',
         },
       ]}
     />
@@ -148,7 +148,7 @@ export function HelpQuotesScreen() {
         {
           title: 'Photo-based estimates',
           body:
-            'Every quote is based on your submitted photos. The AI confidence score comes from our YOLOv8 damage-detection model’s accuracy (~91% mAP) — higher confidence means less variance after inspection.',
+            'Every quote is based on your submitted photos. The AI confidence score comes from our YOLOv8 damage-detection model’s accuracy (~91% mAP), higher confidence means less variance after inspection.',
         },
         {
           title: 'Why prices vary',
@@ -158,12 +158,12 @@ export function HelpQuotesScreen() {
         {
           title: 'The RECOMMENDED tag',
           body:
-            'Our AI balances price, distance, rating, and parts quality — not just the lowest number. A mid-priced shop with OEM parts and 4.9★ often beats the cheapest quote.',
+            'Our AI balances price, distance, rating, and parts quality, not just the lowest number. A mid-priced shop with OEM parts and 4.9★ often beats the cheapest quote.',
         },
         {
           title: 'Final price protection',
           body:
-            'Shops commit to their quoted range. If in-person inspection reveals hidden damage, you approve any change before work begins — no surprise charges.',
+            'Shops commit to their quoted range. If in-person inspection reveals hidden damage, you approve any change before work begins, no surprise charges.',
         },
       ]}
     />
@@ -195,7 +195,7 @@ export function HelpBookingsScreen() {
         {
           title: 'After your visit',
           body:
-            "Payment is charged only after service completion. Your service record is added to Maintenance History automatically — boosting your car's documented resale value.",
+            "Payment is charged only after service completion. Your service record is added to Maintenance History automatically, boosting your car's documented resale value.",
         },
       ]}
     />
@@ -213,11 +213,11 @@ export function HelpContactScreen() {
       steps={[
         {
           title: 'Chat with us',
-          body: 'Fastest option — average reply under 5 minutes, 7AM–10PM ET daily.',
+          body: 'Fastest option, average reply under 5 minutes, 7AM–10PM ET daily.',
         },
         {
           title: 'Email',
-          body: 'support@automate.app — we respond within 24 hours, usually much faster.',
+          body: 'support@automate.app, we respond within 24 hours, usually much faster.',
         },
         {
           title: 'Phone',

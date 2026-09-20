@@ -83,7 +83,7 @@ export function ProGuideRow({ guide }: { guide: ProGuide }) {
   );
 }
 
-/** One readable guide row — tapping opens the full step-by-step reader. */
+/** One readable guide row, tapping opens the full step-by-step reader. */
 export function DiyGuideRow({ guide, onPress }: { guide: DiyGuide; onPress: () => void }) {
   const { colors } = useTheme();
   return (
@@ -493,7 +493,7 @@ export function DiyFutureScreen() {
         }}
       >
         <Text style={{ fontSize: 14, color: colors.primaryDark, lineHeight: 19 }}>
-          New guides ship monthly — all included in your AutoMate Pro membership. Vote below for
+          New guides ship monthly · all included in your AutoMate Pro membership. Vote below for
           what we build next!
         </Text>
       </View>

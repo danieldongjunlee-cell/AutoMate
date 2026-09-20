@@ -3,7 +3,7 @@ import { delay } from './delay';
 
 /**
  * AutoMate Pro (v17). Two products:
- *  - Pro subscription (annual/monthly) — includes DIY guides + waives booking
+ *  - Pro subscription (annual/monthly), includes DIY guides + waives booking
  *    deposits (pro-subscribe → pro-payment → pro-success).
  *  - $10 one-time DIY-only unlock (diy-unlock → diy-payment → diy-confirm).
  *

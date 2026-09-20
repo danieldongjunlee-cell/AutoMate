@@ -1,4 +1,4 @@
-/** Real quote service (server/) — mirrors services/mock/quoteService. */
+/** Real quote service (server/), mirrors services/mock/quoteService. */
 import { AiEstimateSummary, Quote, QUOTE_REQUEST } from '../mock/data';
 import { request } from './client';
 

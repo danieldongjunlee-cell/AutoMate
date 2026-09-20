@@ -2,7 +2,7 @@ import { Alert, Platform } from 'react-native';
 
 /**
  * Cross-platform alert/confirm. RN-web's Alert.alert is a silent no-op, so
- * the browser build falls back to window.alert / window.confirm — required
+ * the browser build falls back to window.alert / window.confirm, required
  * for the profile CRUD confirm flows (user-feedback pass 1).
  */
 export function showAlert(title: string, message?: string) {

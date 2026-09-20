@@ -1,4 +1,4 @@
-/** Real community service (server/) — mirrors services/mock/communityService. */
+/** Real community service (server/), mirrors services/mock/communityService. */
 import { Channel, CommunityPost, PostCategory, PostComment } from '../mock/data';
 import { request } from './client';
 

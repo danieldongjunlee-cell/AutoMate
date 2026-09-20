@@ -7,7 +7,7 @@ import { Tappable } from './Tappable';
 import { palette, radii, spacing, useTheme } from '../theme';
 
 /**
- * Live in-app camera (expo-camera CameraView) — real device camera on native,
+ * Live in-app camera (expo-camera CameraView), real device camera on native,
  * the browser webcam (getUserMedia) on web. Renders a live preview inside a
  * framed viewfinder with a shutter button; `onCapture` receives the photo uri.
  * Handles the permission prompt inline and shows an "Enable camera" CTA until

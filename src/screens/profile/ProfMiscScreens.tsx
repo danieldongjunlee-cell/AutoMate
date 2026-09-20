@@ -20,7 +20,7 @@ import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
 /** Wireframe s-prof-linked-accounts. Connect opens the branded sign-in sheet
- * (user-feedback pass 1) — Google/Apple run authService.socialSignIn. */
+ * (user-feedback pass 1), Google/Apple run authService.socialSignIn. */
 export function ProfLinkedAccountsScreen() {
   const { colors } = useTheme();
   const [sheetProvider, setSheetProvider] = useState<SocialProvider | null>(null);

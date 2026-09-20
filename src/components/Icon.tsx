@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, { Circle, Ellipse, Path, Rect } from 'react-native-svg';
 
 /**
- * Thin outline icon set (24 grid, 1.7 stroke, round caps) — the reference set
+ * Thin outline icon set (24 grid, 1.7 stroke, round caps), the reference set
  * drawn on the redesign canvas. Every former emoji glyph maps to one of these.
  *
  * Shapes are stored as compact tuples so the whole set stays data:

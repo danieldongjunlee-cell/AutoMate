@@ -24,7 +24,7 @@ type Tab = 'home' | 'new' | 'top';
 /**
  * Community (Reddit-style): a search bar on top, Home · New · Top chips, then
  * one feed of posts from every community. Registering a car makes you a member of its brand's
- * communities automatically — no joining. The funnel opens a sheet where you
+ * communities automatically, no joining. The funnel opens a sheet where you
  * pick which communities show in the feed. Guests see every brand's lounge.
  * The floating pencil (bottom right, above the dock) writes a post.
  */
@@ -152,7 +152,7 @@ export function CommChannelsScreen() {
           ) : null}
           {posts.length === 0 ? (
             <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.xl }}>
-              {q ? `Nothing matches “${query.trim()}”` : hiddenCount ? 'Every community is hidden — pick some in the filter.' : 'No posts yet — be the first to write one.'}
+              {q ? `Nothing matches “${query.trim()}”` : hiddenCount ? 'Every community is hidden, pick some in the filter.' : 'No posts yet, be the first to write one.'}
             </Text>
           ) : (
             posts.map((post, i) => (
@@ -170,7 +170,7 @@ export function CommChannelsScreen() {
         </View>
       </ScrollView>
 
-      {/* Write a post — floats bottom right, above the dock. */}
+      {/* Write a post · floats bottom right, above the dock. */}
       <Tappable
         onPress={write}
         accessibilityRole="button"

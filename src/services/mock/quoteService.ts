@@ -4,7 +4,7 @@ import { delay } from './delay';
 
 /**
  * Business-hours rule for routing Submitted vs. After-Hours (wireframe
- * 11:48 PM variant). Owned by the service layer — the real backend will
+ * 11:48 PM variant). Owned by the service layer, the real backend will
  * decide this from dealer hours/timezone.
  */
 export const isAfterHours = (d = new Date()) => d.getHours() >= 21 || d.getHours() < 7;

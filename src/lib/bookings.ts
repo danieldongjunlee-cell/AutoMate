@@ -75,7 +75,7 @@ export async function fetchBookings(): Promise<AppBooking[]> {
   return (data as Row[]).map(toBooking);
 }
 
-/** Write-through helpers — no-ops when Supabase isn't configured. */
+/** Write-through helpers, no-ops when Supabase isn't configured. */
 export async function insertBooking(b: AppBooking): Promise<void> {
   await supabase?.from('bookings').insert(toRow(b));
 }

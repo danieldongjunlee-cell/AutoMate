@@ -113,7 +113,7 @@ export const insuranceService: typeof mockInsuranceService = {
     return { ok: true };
   },
 
-  // Card OCR + provider list are demo helpers with no persistence — reuse the mock.
+  // Card OCR + provider list are demo helpers with no persistence, reuse the mock.
   scanCard: mockInsuranceService.scanCard,
   getProviders: mockInsuranceService.getProviders,
 

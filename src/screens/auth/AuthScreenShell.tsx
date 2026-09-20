@@ -6,7 +6,7 @@ import { spacing, useTheme } from '../../theme';
 
 /**
  * Shared shell for the auth screens. Uses the app background (light by default)
- * so log in / sign up match the returning-vs-new chooser — not a separate navy
+ * so log in / sign up match the returning-vs-new chooser, not a separate navy
  * gradient.
  */
 export function AuthScreenShell({

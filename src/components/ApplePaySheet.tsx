@@ -23,9 +23,9 @@ export function ApplePaySheet({
 }: {
   visible: boolean;
   onClose: () => void;
-  /** Called after the Done beat — wire the real payment handler here. */
+  /** Called after the Done beat, wire the real payment handler here. */
   onConfirmed?: () => void;
-  /** e.g. "$49.00" — when set the sheet shows a "Pay Total" line. */
+  /** e.g. "$49.00", when set the sheet shows a "Pay Total" line. */
   totalLabel?: string;
   cardLabel?: string;
   merchant?: string;

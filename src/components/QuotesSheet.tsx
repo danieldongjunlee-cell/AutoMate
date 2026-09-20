@@ -50,7 +50,7 @@ const SORT_CHIP: Record<string, string> = {
 /**
  * The quotes list in the maps-app layout, shared by the Quotes tab and the
  * post-submit "View available quotes" screen: the map of quoting shops fills
- * the screen and a draggable sheet lists them — AI estimate strip, filter
+ * the screen and a draggable sheet lists them, AI estimate strip, filter
  * chips (Sort by · Open now · Parts · Distance) and one result row per shop
  * with its quote.
  */
@@ -96,7 +96,7 @@ export function QuotesSheet({
     [quotes, sort, parts, radius, openNow],
   );
   const summary = quoteFilterSummary(sort, parts, radius);
-  /** Photos the AI analysed — shown as "detected damage points". */
+  /** Photos the AI analysed, shown as "detected damage points". */
   const damagePoints = damageParts.reduce((n, p) => n + (p.photos || 1), 0);
 
   const onPinSelect = (dealerId: string) => {

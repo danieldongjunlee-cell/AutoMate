@@ -63,7 +63,7 @@ export const vehiclesService = {
       vin: input.vin ?? '',
       odometerMi: input.odometerMi ?? 0,
       oilSpec: input.oilSpec ?? '',
-      lastService: input.lastService?.trim() || '—',
+      lastService: input.lastService?.trim() || '-',
       isPrimary: vehicles.length === 0,
     };
     vehicles = [...vehicles, vehicle];

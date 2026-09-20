@@ -1,5 +1,5 @@
 /**
- * Mock account service — same signatures as services/api/accountService so
+ * Mock account service, same signatures as services/api/accountService so
  * the service-layer mode switch (services/index.ts) is transparent to screens.
  *
  * Deleting the demo account has nothing server-side to remove; the screen

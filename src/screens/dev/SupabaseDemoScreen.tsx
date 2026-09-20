@@ -16,7 +16,7 @@ interface Note {
 }
 
 /**
- * Standalone Supabase smoke test (the direct supabase-js path — no Express /
+ * Standalone Supabase smoke test (the direct supabase-js path, no Express /
  * Prisma server). Sign up / sign in via Supabase Auth, then read/write a
  * per-user `notes` table guarded by RLS. See docs/supabase-demo.sql for the
  * table + policies to paste into the Supabase SQL editor.
@@ -74,7 +74,7 @@ export function SupabaseDemoScreen() {
       setMsg(
         data.session
           ? 'Signed up & logged in.'
-          : 'Account created — confirm via the email Supabase sent, then sign in. (Or disable “Confirm email” in Supabase → Authentication for instant testing.)',
+          : 'Account created, confirm via the email Supabase sent, then sign in. (Or disable “Confirm email” in Supabase → Authentication for instant testing.)',
       );
     });
 
@@ -219,7 +219,7 @@ export function SupabaseDemoScreen() {
         {profile ? (
           <>
             <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.xs }}>
-              email: {profile.email ?? '—'} · phone: {profile.phone ?? '—'}
+              email: {profile.email ?? '-'} · phone: {profile.phone ?? '-'}
             </Text>
             <TextField
               label="Full name"
@@ -236,7 +236,7 @@ export function SupabaseDemoScreen() {
           </>
         ) : (
           <Text style={{ fontSize: 14, color: colors.textTertiary }}>
-            No profile row yet — run docs/supabase-profiles.sql in Supabase so the signup trigger
+            No profile row yet · run docs/supabase-profiles.sql in Supabase so the signup trigger
             creates one.
           </Text>
         )}
@@ -258,7 +258,7 @@ export function SupabaseDemoScreen() {
         scrollEnabled={false}
         ListEmptyComponent={
           <Text style={{ fontSize: 14, color: colors.textTertiary, paddingVertical: spacing.md }}>
-            No notes yet — add one above. It’s stored in Supabase and only visible to you (RLS).
+            No notes yet · add one above. It’s stored in Supabase and only visible to you (RLS).
           </Text>
         }
         renderItem={({ item }) => (

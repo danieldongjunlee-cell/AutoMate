@@ -22,7 +22,7 @@ const BENEFITS = [
   { icon: 'sparkle', title: 'All future guides included', sub: 'New guides added monthly · never pay again' },
 ];
 
-/** Wireframe s-diy-unlock: DIY guide paywall — included with AutoMate Pro ($48/yr). */
+/** Wireframe s-diy-unlock: DIY guide paywall, included with AutoMate Pro ($48/yr). */
 export function DiyUnlockScreen() {
   const navigation = useNavigation<Nav>();
   const returnTo = useRoute<Route>().params?.returnTo;
@@ -97,7 +97,7 @@ export function DiyUnlockScreen() {
 
       <SectionLabel>Unlock with AutoMate Pro</SectionLabel>
 
-      {/* Option 2: AutoMate Pro — best value */}
+      {/* Option 2: AutoMate Pro · best value */}
       <View
         style={{
           backgroundColor: colors.surface,
@@ -167,7 +167,7 @@ export function DiyUnlockScreen() {
           })}
         >
           <Text style={{ fontSize: 14, fontWeight: '800', color: palette.onAmber }}>
-            Get Pro — includes DIY →
+            Get Pro · includes DIY →
           </Text>
         </Tappable>
       </View>

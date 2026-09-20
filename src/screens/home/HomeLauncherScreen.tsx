@@ -33,7 +33,7 @@ export function HomeLauncherScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const t = useT();
-  // "New here?" is onboarding for brand-new users only — it disappears once
+  // "New here?" is onboarding for brand-new users only, it disappears once
   // they submit their first AI estimate, and never shows for returning users.
   const isNewUser = useAppStore((s) => s.isNewUser);
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
@@ -82,7 +82,7 @@ export function HomeLauncherScreen() {
         <AppLogoRow markSize={34} textSize={17} color={colors.textPrimary} />
       </View>
 
-      {/* New here? — how-it-works entry (new users only) */}
+      {/* New here? · how-it-works entry (new users only) */}
       {isNewUser ? (
         <Tappable
           onPress={() => navigation.navigate('HowItWorks')}
@@ -109,6 +109,7 @@ export function HomeLauncherScreen() {
         <PhotoTile
           title="Maintenance"
           source={TILE_MAINT}
+          fit="cover"
           effect="service"
           height={168}
           style={{ flex: 1 }}
@@ -117,7 +118,7 @@ export function HomeLauncherScreen() {
         />
       </View>
 
-      {/* Deals carousel — only a right-aligned "View all deals →" link above it. */}
+      {/* Deals carousel · only a right-aligned "View all deals →" link above it. */}
       <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginBottom: spacing.sm }}>
         <Tappable onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals'))} hitSlop={8}>
           <Text style={{ fontSize: 15, fontWeight: '700', color: colors.primary }}>View all deals →</Text>
@@ -130,7 +131,7 @@ export function HomeLauncherScreen() {
         ))}
       />
 
-      {/* Real customer reviews — title only, then the sliding cards. */}
+      {/* Real customer reviews · title only, then the sliding cards. */}
       <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.section, marginBottom: spacing.md }}>
         {t('Real customer reviews')}
       </Text>

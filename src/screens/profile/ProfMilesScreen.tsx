@@ -28,7 +28,7 @@ export function ProfMilesScreen() {
   const storeCheckedIn = useAppStore((s) => s.dailyCheckedIn);
   const claimCheckIn = useAppStore((s) => s.claimDailyCheckIn);
   const requireAuth = useRequireAuth();
-  // Guests have no account yet — points, streak and check-in all read zero.
+  // Guests have no account yet, points, streak and check-in all read zero.
   const points = isAuthenticated ? storePoints : 0;
   const checkedIn = isAuthenticated ? storeCheckedIn : false;
 

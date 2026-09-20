@@ -56,7 +56,7 @@ export function MaintScheduleScreen() {
     pickedCategories.flatMap((cat) =>
       cat.services
         .filter((s) => (subPick[cat.id] ?? []).includes(s.id))
-        .map((sub) => ({ id: sub.id, name: `${cat.name} — ${sub.name}`, price: shopServicePrice(dealerId, cat, sub), durationMin: sub.durationMin })),
+        .map((sub) => ({ id: sub.id, name: `${cat.name}, ${sub.name}`, price: shopServicePrice(dealerId, cat, sub), durationMin: sub.durationMin })),
     );
 
   const goBook = (id: string) => {
@@ -64,7 +64,7 @@ export function MaintScheduleScreen() {
     if (pickedCategories.length) setCartServices(servicesAt(id));
     navigation.navigate('MaintScheduleBook');
   };
-  /** Picking a shop is a value action — guests sign in first, then resume. */
+  /** Picking a shop is a value action, guests sign in first, then resume. */
   const selectShop = (id: string) => {
     if (!requireAuth('selectShop')) {
       setPendingDealer(id);
@@ -171,7 +171,7 @@ export function MaintScheduleScreen() {
       >
         {dealers.length === 0 ? (
           <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', padding: spacing.xl }}>
-            No partner shops match — widen the distance or turn off “Open now”.
+            No partner shops match · widen the distance or turn off “Open now”.
           </Text>
         ) : null}
 

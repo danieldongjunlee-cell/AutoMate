@@ -19,7 +19,7 @@ export function CalendarMonth({
 }: {
   selectedDay: number | null;
   onSelectDay: (day: number) => void;
-  /** Weekday indices (0=Sun) the selected shop is closed — disabled in the grid. */
+  /** Weekday indices (0=Sun) the selected shop is closed, disabled in the grid. */
   closedWeekdays?: number[];
 }) {
   const { colors } = useTheme();
@@ -128,7 +128,7 @@ export function CalendarMonth({
 const otherMonths = () =>
   Alert.alert(
     BOOKING_MONTH.label,
-    `Only ${BOOKING_MONTH.label} has open slots in the demo — more months arrive with live dealer availability.`,
+    `Only ${BOOKING_MONTH.label} has open slots in the demo, more months arrive with live dealer availability.`,
   );
 
 const navBtn = (bg: string, pressed?: boolean) =>

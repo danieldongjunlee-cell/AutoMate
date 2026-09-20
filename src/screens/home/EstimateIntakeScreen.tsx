@@ -96,7 +96,7 @@ const MODELS_BY_BRAND: Record<string, string[]> = {
 };
 const modelsForBrand = (brand: string): string[] => MODELS_BY_BRAND[brand] ?? [];
 
-/** Canonical service locations (NoVA) — typing a city / county / ZIP filters
+/** Canonical service locations (NoVA), typing a city / county / ZIP filters
  *  this list so every user stores the exact same location string. */
 /** Service areas the picker suggests: cities, counties and ZIPs (each ZIP
  *  carries its city so a numeric search still reads clearly). */
@@ -271,7 +271,7 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
           setOpen(true);
           if (value) onSelect(''); // re-typing clears the confirmed pick
         }}
-        placeholder="City, county, state or ZIP — e.g. Fairfax, VA or 22031"
+        placeholder="City, county, state or ZIP · e.g. Fairfax, VA or 22031"
         onFocus={() => setOpen(true)}
       />
       {open && matches.length > 0 ? (
@@ -323,7 +323,7 @@ function LocationField({ value, onSelect }: { value: string; onSelect: (v: strin
 /**
  * Shown when a user starts an estimate with no car on file. Captures the car
  * (brand/model/year/color) and then progressively reveals location, then
- * insurance + optional rental/pick-up — everything the shops need to quote.
+ * insurance + optional rental/pick-up, everything the shops need to quote.
  */
 export function EstimateIntakeScreen() {
   const navigation = useNavigation<Nav>();
@@ -386,7 +386,7 @@ export function EstimateIntakeScreen() {
         We need a few details to get accurate quotes from shops near you.
       </Text>
 
-      {/* 1 — Car info (always shown). Model is a dropdown filtered by brand. */}
+      {/* 1 · Car info (always shown). Model is a dropdown filtered by brand. */}
       <Section n={1} title="Your car" subtitle="Brand, model, year & color">
         <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
           Which brand is your car?
@@ -418,14 +418,14 @@ export function EstimateIntakeScreen() {
         </View>
       </Section>
 
-      {/* 2 — Location (expands once the car is filled in) */}
+      {/* 2 · Location (expands once the car is filled in) */}
       {carDone ? (
         <Section n={2} title="Where are you?" subtitle="So we can find shops near you">
           <LocationField value={location} onSelect={setLocation} />
         </Section>
       ) : null}
 
-      {/* 3 — Insurance + optional rental & pick-up (separate, both optional) */}
+      {/* 3 · Insurance + optional rental & pick-up (separate, both optional) */}
       {carDone && locationDone ? (
         <Section n={3} title="Insurance & pick-up" subtitle="Helps shops quote the right way">
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
@@ -443,7 +443,7 @@ export function EstimateIntakeScreen() {
           />
           <ToggleRow
             label="Requires pick-up"
-            sub="Optional — a shop collects the car instead of you dropping it off"
+            sub="Optional · a shop collects the car instead of you dropping it off"
             value={needsPickup}
             onChange={setNeedsPickup}
           />
@@ -457,7 +457,7 @@ export function EstimateIntakeScreen() {
             : !locationDone
               ? 'Add your location'
               : !insuranceDone
-                ? 'Insurance — Yes or No'
+                ? 'Insurance · Yes or No'
                 : 'Continue →'
         }
         disabled={!canContinue}

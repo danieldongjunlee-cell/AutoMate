@@ -37,7 +37,7 @@ interface VehicleFormFields {
   lastService: string;
 }
 
-/** Inline edit form (modal) — the same fields captured when registering a car. */
+/** Inline edit form (modal), the same fields captured when registering a car. */
 function VehicleFormModal({
   vehicle,
   visible,
@@ -67,7 +67,7 @@ function VehicleFormModal({
       setVin(vehicle?.vin ?? '');
       setOdometer(vehicle ? String(vehicle.odometerMi) : '');
       setOilSpec(vehicle?.oilSpec ?? '');
-      setLastService(vehicle?.lastService && vehicle.lastService !== '—' ? vehicle.lastService : '');
+      setLastService(vehicle?.lastService && vehicle.lastService !== '-' ? vehicle.lastService : '');
     }
   }, [visible, vehicle]);
 
@@ -175,9 +175,9 @@ function VehicleCard({
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
         <StatTile icon="gauge" color={palette.primaryLight} value={`${vehicle.odometerMi.toLocaleString()}`} label="miles" />
-        <StatTile icon="oil" color={palette.amber} value={(vehicle.oilSpec || '—').split(' ')[0]} label="oil" />
-        <StatTile icon="wrench" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '—' ? vehicle.lastService.split(',')[0] : '—'} label="serviced" />
-        <StatTile icon="palette" color={palette.lavender} value={year ?? (vehicle.colorName || '—').split(' ')[0]} label={year ? 'year' : 'colour'} />
+        <StatTile icon="oil" color={palette.amber} value={(vehicle.oilSpec || '-').split(' ')[0]} label="oil" />
+        <StatTile icon="wrench" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '-' ? vehicle.lastService.split(',')[0] : '-'} label="serviced" />
+        <StatTile icon="palette" color={palette.lavender} value={year ?? (vehicle.colorName || '-').split(' ')[0]} label={year ? 'year' : 'colour'} />
       </View>
       <DeckButton label={isActive ? 'Active car ✓' : 'Set as active car'} secondary={isActive} disabled={isActive} onPress={onSetActive} />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.xl, marginTop: spacing.md }}>
@@ -229,10 +229,9 @@ export function ProfCarsScreen() {
   const addCard = (
     <SwipeCard key="add" title="Add a car" dashed>
       <View style={{ alignItems: 'center', paddingVertical: spacing.xl }}>
-        <View style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.md }}>
+        <Tappable onPress={addCar} accessibilityRole="button" accessibilityLabel="Add another car" style={{ width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.14)', alignItems: 'center', justifyContent: 'center', marginBottom: spacing.lg }}>
           <Icon name="plus" size={40} color={DECK_TEXT} strokeWidth={2.4} />
-        </View>
-        <Text style={{ fontSize: 14, color: DECK_TEXT_SOFT, textAlign: 'center', marginBottom: spacing.lg }}>Scan the VIN barcode or enter the details manually.</Text>
+        </Tappable>
         <PrimaryButton label="Add another car" onPress={addCar} style={{ alignSelf: 'stretch' }} />
       </View>
     </SwipeCard>
@@ -241,7 +240,7 @@ export function ProfCarsScreen() {
   return (
     <Screen>
       <SwipeDeck
-        caption={sortedVehicles.length ? `${sortedVehicles.length} car${sortedVehicles.length !== 1 ? 's' : ''} in your garage · swipe to switch` : 'No cars yet — add your first car'}
+        caption={sortedVehicles.length ? `${sortedVehicles.length} car${sortedVehicles.length !== 1 ? 's' : ''} in your garage · swipe to switch` : 'No cars yet, add your first car'}
       >
         {isLoading ? (
           <SkeletonList variant="card" count={1} tall />

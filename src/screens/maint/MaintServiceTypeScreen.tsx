@@ -18,7 +18,7 @@ type Nav = NativeStackNavigationProp<MaintStackParamList, 'MaintServiceType'>;
 /**
  * First step of booking maintenance (dock → Book maintenance): the six
  * service categories as an accordion. Tapping a category expands it to its
- * services (no prices — those vary by shop); tapping a service adds it to
+ * services (no prices, those vary by shop); tapping a service adds it to
  * "Your services", which builds up live. "Find shops" then lists the partner
  * shops that offer everything chosen, and the shop's screen is date & time.
  */
@@ -111,10 +111,10 @@ export function MaintServiceTypeScreen() {
     <Screen>
       <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 2 }}>What service do you need?</Text>
       <Text style={{ fontSize: 14, color: colors.textTertiary, marginBottom: spacing.lg }}>
-        Tap a category to see its services. Prices vary by shop — you&apos;ll see them once you pick one.
+        Tap a category to see its services. Prices vary by shop · you&apos;ll see them once you pick one.
       </Text>
 
-      {/* Six categories — an accordion; the open one lists its services. */}
+      {/* Six categories · an accordion; the open one lists its services. */}
       <View style={{ gap: spacing.sm, marginBottom: spacing.section }}>
         {MAINT_CATEGORIES.map((cat) => {
           const isOpen = open === cat.id;
@@ -171,7 +171,7 @@ export function MaintServiceTypeScreen() {
         })}
       </View>
 
-      {/* Your services — builds up live as services are tapped. */}
+      {/* Your services · builds up live as services are tapped. */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md }}>
         <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary }}>Your services</Text>
         {count ? (
@@ -213,7 +213,7 @@ export function MaintServiceTypeScreen() {
       </View>
 
       <PrimaryButton
-        label={count > 0 ? `Find shops — ${count} service${count !== 1 ? 's' : ''} →` : 'Select a service'}
+        label={count > 0 ? `Find shops · ${count} service${count !== 1 ? 's' : ''} →` : 'Select a service'}
         disabled={count === 0}
         onPress={onContinue}
       />

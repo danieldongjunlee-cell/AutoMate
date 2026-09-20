@@ -267,10 +267,10 @@ export function ConfirmSubmitScreen() {
     setExistingPrompt(null);
     setSubmitting(true);
     try {
-      // Persist the car entered during intake — now if signed in, otherwise it
+      // Persist the car entered during intake, now if signed in, otherwise it
       // stays pending and is saved the moment the guest signs up (RootNavigator).
       const pending = useAppStore.getState().pendingVehicle;
-      // Snapshot before pendingVehicle is consumed — this key identifies the
+      // Snapshot before pendingVehicle is consumed, this key identifies the
       // request so an identical resubmission can be flagged as a duplicate.
       // pending wins: it's the car this submission was captured for.
       const subKey = submissionKey(damageParts, pending?.name ?? active?.name);
@@ -279,7 +279,7 @@ export function ConfirmSubmitScreen() {
           .addVehicle({ name: pending.name, colorName: pending.colorName })
           .then((r) => {
             // carrySubmission: this submission was captured for the car that
-            // was just persisted — keep it attached when the car activates.
+            // was just persisted, keep it attached when the car activates.
             setActiveVehicle(r.vehicle.id, { carrySubmission: true });
             void queryClient.invalidateQueries({ queryKey: ['vehicles'] });
           })
@@ -321,7 +321,7 @@ export function ConfirmSubmitScreen() {
       return;
     }
     if (isAuthenticated) {
-      // An open request already exists (submitted earlier this session) —
+      // An open request already exists (submitted earlier this session) -
       // warn before replacing it instead of silently overwriting.
       if (useAppStore.getState().lastSubmissionKey) {
         setSubmitting(false);
@@ -344,8 +344,8 @@ export function ConfirmSubmitScreen() {
 
   // After the guest authenticates from the preview: a fresh sign-up submits
   // straight away (everything they entered as a guest carries into the new
-  // account — car, parts, estimate, quotes). A returning user who already has
-  // an open quote request gets the replace warning first — or the duplicate
+  // account, car, parts, estimate, quotes). A returning user who already has
+  // an open quote request gets the replace warning first, or the duplicate
   // prompt when this submission is identical (same parts, photos and car).
   useResumeAfterAuth('unlockEstimate', () => {
     const est = pendingEstimate;
@@ -369,7 +369,7 @@ export function ConfirmSubmitScreen() {
     );
   }
 
-  // A prior open quote request exists — ask before replacing it. The
+  // A prior open quote request exists, ask before replacing it. The
   // 'duplicate' variant additionally flags that this submission is identical
   // (same parts, photos and car) to the one already out with the shops.
   if (existingPrompt) {
@@ -462,7 +462,7 @@ export function ConfirmSubmitScreen() {
 
         <SectionLabel>Quotes from nearby shops</SectionLabel>
         <View style={{ position: 'relative', marginBottom: spacing.lg }}>
-          {/* Obscured (faded) shop rows — the real quotes are hidden until auth. */}
+          {/* Obscured (faded) shop rows · the real quotes are hidden until auth. */}
           {[0, 1, 2].map((i) => (
             <View
               key={i}
@@ -524,7 +524,7 @@ export function ConfirmSubmitScreen() {
     );
   }
 
-  // YOLO safety guard fired — show why and how to retake instead of a range.
+  // YOLO safety guard fired, show why and how to retake instead of a range.
   if (rejected) {
     return (
       <Screen>
@@ -574,7 +574,7 @@ export function ConfirmSubmitScreen() {
             paddingVertical: spacing.lg,
           }}
         >
-          No parts yet — add your first damaged part below.
+          No parts yet · add your first damaged part below.
         </Text>
       ) : (
         damageParts.map((item, i) => (

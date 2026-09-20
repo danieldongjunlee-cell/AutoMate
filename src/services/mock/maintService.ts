@@ -29,7 +29,7 @@ export const maintService = {
     return [...history];
   },
 
-  /** "OCR" a captured receipt — mock returns the canonical AutoFix Pro
+  /** "OCR" a captured receipt, mock returns the canonical AutoFix Pro
    * receipt after a scanning delay (api twin posts to /maintenance/scan). */
   async scanReceipt(): Promise<ScannedReceipt> {
     await delay(900);

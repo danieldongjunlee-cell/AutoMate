@@ -67,7 +67,7 @@ export function CommCreateScreen() {
 
   return (
     <Screen>
-      {/* Community picker — the user's brand communities (auto-membership). */}
+      {/* Community picker · the user's brand communities (auto-membership). */}
       <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>Post to</Text>
       <View style={{ gap: 8, marginBottom: spacing.md }}>
         {communities.map((c) => {

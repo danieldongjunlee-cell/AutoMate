@@ -1,5 +1,5 @@
 /**
- * Mock auth service — same signatures as services/api/authService so the
+ * Mock auth service, same signatures as services/api/authService so the
  * service-layer mode switch (services/index.ts) is transparent to screens.
  *
  * Demo contract (spec §6): demo@automate.app / Demo1234! is the only valid
@@ -27,7 +27,7 @@ export type VerifyChannel = 'email' | 'sms';
 
 const DEMO_USER = { name: 'John Doe', email: DEMO_EMAIL };
 
-/** Whoever just passed login/sign-up — becomes store.user after the OTP. */
+/** Whoever just passed login/sign-up, becomes store.user after the OTP. */
 let pendingUser = DEMO_USER;
 
 export const authService = {
