@@ -9,6 +9,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { RemoveButton } from '../../components/RemoveButton';
 import { SkeletonList } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
+import { CvcField, isValidCvc } from '../../components/CvcField';
 import { TextField } from '../../components/TextField';
 import { DECK_TEXT, DECK_TEXT_SOFT, DeckButton, StatTile, SwipeCard, SwipeDeck } from '../../components/SwipeCard';
 import { PagedCarousel } from '../../components/PagedCarousel';
@@ -41,6 +42,7 @@ function CardFormModal({
   const [holder, setHolder] = useState('');
   const [expires, setExpires] = useState('');
   const [cardNumber, setCardNumber] = useState('');
+  const [cvc, setCvc] = useState('');
   const [setPrimary, setSetPrimary] = useState(false);
 
   React.useEffect(() => {
@@ -48,15 +50,18 @@ function CardFormModal({
       setHolder(card?.holder ?? '');
       setExpires(card?.expires ?? '');
       setCardNumber('');
+      setCvc('');
       setSetPrimary(card?.isDefault ?? false);
     }
   }, [visible, card]);
 
   const isEdit = !!card;
-  // Add mode requires a full 16-digit number; edit mode keeps last4 read-only.
+  // Add mode requires a full 16-digit number and its CVC; edit mode keeps
+  // last4 read-only and re-checks the CVC before saving the change.
   const canSave =
     holder.trim().length > 0 &&
     /^\d{2}\/\d{2}$/.test(expires) &&
+    isValidCvc(cvc) &&
     (isEdit || cardNumber.length === 16);
 
   return (
@@ -112,6 +117,16 @@ function CardFormModal({
           containerStyle={{ marginBottom: spacing.md }}
         />
       )}
+
+      <CvcField
+        value={cvc}
+        onChange={setCvc}
+        hint={
+          isEdit
+            ? 'Confirm the code on the card to save changes · never stored'
+            : '3 digits on the back of the card, 4 on American Express · never stored'
+        }
+      />
 
       <Tappable
         onPress={() => setSetPrimary((v) => !v)}

@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
+import { CvcField, isValidCvc } from '../../components/CvcField';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
 import { ProcessingOverlay } from '../../components/Skeleton';
@@ -37,6 +38,7 @@ export function ProSubscribeScreen() {
   const [busy, setBusy] = useState(false);
   const [picked, setPicked] = useState<PaymentCard | null>(null);
   const [cardSheet, setCardSheet] = useState(false);
+  const [cvc, setCvc] = useState('');
   const { data: cards } = useQuery({ queryKey: ['cards'], queryFn: paymentMethodsService.listCards });
   const card = picked ?? cards?.[0];
   const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
@@ -107,7 +109,7 @@ export function ProSubscribeScreen() {
         colors={[palette.dark, palette.navyMid]}
         style={{ borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }}
       >
-        <Icon name="star" size={26} color={colors.textSecondary} />
+        <Icon name="star" size={26} color={palette.star} />
         <Text style={{ fontSize: 18, fontWeight: '800', color: '#fff' }}>AutoMate Pro</Text>
         <Text style={{ fontSize: 13, color: 'rgba(255,255,255,.7)' }}>
           Skip every security deposit · and more.
@@ -171,11 +173,15 @@ export function ProSubscribeScreen() {
         onClose={() => setCardSheet(false)}
       />
 
+      {/* The card is on file, its security code is not: confirm it to charge. */}
+      <CvcField value={cvc} onChange={setCvc} label={`CVC for ${cardLabel}`} />
+
       <View style={{ marginTop: spacing.xs }}>
         <PrimaryButton
           variant="warning"
           label={`Start Pro · ${plan === 'annual' ? '$48/yr' : '$9.99/mo'} →`}
           loading={busy}
+          disabled={!isValidCvc(cvc)}
           onPress={startPro}
         />
       </View>

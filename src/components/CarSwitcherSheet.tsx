@@ -2,8 +2,8 @@ import React from 'react';
 import { Icon } from './Icon';
 import { Modal, Text, View } from 'react-native';
 
+import { CarBrandLogo } from './CarBrandLogo';
 import { Tappable } from './Tappable';
-import { AvatarCircle } from './ui';
 import { brandOf } from '../hooks/useActiveVehicle';
 import { Vehicle } from '../services';
 import { useAppStore } from '../store/useAppStore';
@@ -61,7 +61,8 @@ export function CarSwitcherSheet({
                   marginBottom: spacing.sm,
                 }}
               >
-                <AvatarCircle initial={brandOf(v.name).charAt(0)} color={colors.primary} size={36} />
+                {/* The car's own badge, so switching is recognisable at a glance. */}
+                <CarBrandLogo brand={brandOf(v.name)} size={36} bg="transparent" />
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{v.name}</Text>
                   <Text style={{ fontSize: 12, color: colors.textTertiary }}>

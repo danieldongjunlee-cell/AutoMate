@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 
 import { useQuery } from '@tanstack/react-query';
 
+import { CvcField, isValidCvc } from '../../components/CvcField';
 import { PaymentMethodSheet } from '../../components/PaymentMethodSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
@@ -36,6 +37,7 @@ export function BookDepositScreen() {
   const [booking, setBooking] = useState(false);
   const [picked, setPicked] = useState<PaymentCard | null>(null);
   const [cardSheet, setCardSheet] = useState(false);
+  const [cvc, setCvc] = useState('');
   const { data: cards } = useQuery({ queryKey: ['cards'], queryFn: paymentMethodsService.listCards });
   const card = picked ?? cards?.[0];
   const cardLabel = card ? `${card.brand} ••••${card.last4}` : 'Visa ••••4242';
@@ -154,7 +156,7 @@ export function BookDepositScreen() {
               marginBottom: spacing.md,
             }}
           >
-            <Icon name="star" size={18} color={colors.textSecondary} />
+            <Icon name="star" size={18} color={palette.star} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>
                 Skip the deposit with Pro
@@ -179,6 +181,8 @@ export function BookDepositScreen() {
               <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '700' }}>Change</Text>
             </Tappable>
           </Card>
+          {/* The hold is a real authorisation, so the code is confirmed first. */}
+          <CvcField value={cvc} onChange={setCvc} label={`CVC for ${cardLabel}`} />
         </>
       )}
 
@@ -186,6 +190,7 @@ export function BookDepositScreen() {
         variant="warning"
         label={waived ? 'Confirm booking · no deposit →' : `Hold ${usd(DEPOSIT_CENTS)} deposit & confirm →`}
         loading={booking}
+        disabled={!waived && !isValidCvc(cvc)}
         onPress={confirm}
       />
       <ProcessingOverlay visible={booking} label="Confirming booking…" />

@@ -4,6 +4,7 @@ import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleShe
 import { Icon } from './Icon';
 import { Tappable } from './Tappable';
 import { spacing, useTheme } from '../theme';
+import { panYStyle, webDragProps } from '../utils/webDrag';
 
 /**
  * Horizontal paged carousel: each item fills the width and snaps one-per-view.
@@ -20,6 +21,16 @@ export function PagedCarousel({ items, arrows = true, autoPlay }: { items: React
   idxRef.current = idx;
   const wRef = useRef(0);
   wRef.current = w;
+
+  // Web: a horizontal ScrollView with scrolling off gets `touch-action: none`
+  // from RNW, which swallows vertical finger scrolling over the carousel and
+  // freezes the page under it. The class cannot be overridden from `style`,
+  // so the rule goes straight onto the node.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const node = (ref.current as unknown as { getScrollableNode?: () => { style?: CSSStyleDeclaration } } | null)?.getScrollableNode?.();
+    if (node?.style) node.style.touchAction = 'pan-y';
+  }, []);
 
   const go = (next: number, animated = true) => {
     const clamped = Math.max(0, Math.min(items.length - 1, next));
@@ -48,47 +59,38 @@ export function PagedCarousel({ items, arrows = true, autoPlay }: { items: React
     setTick((t) => t + 1);
   };
 
-  // Web: the ScrollView doesn't follow mouse drags, so window mouse listeners
-  // move the content with the cursor and snap on release. While a drag is in
-  // progress an overlay covers the cards so the release isn't a tap on one.
+  // Web: the ScrollView follows neither mouse nor touch drags here, so the
+  // cards are moved by hand from window listeners and snapped on release.
+  // While a drag is in progress an overlay covers the cards so the release
+  // isn't a tap on one. Sideways drags only, a vertical swipe is left to the
+  // page so the screen still scrolls under a finger.
   const [dragging, setDragging] = useState(false);
-  const drag = useRef<{ startX: number; startOffset: number; moved: boolean } | null>(null);
-  const onMouseDown = (e: { pageX: number }) => {
-    if (Platform.OS !== 'web' || typeof window === 'undefined') return;
-    drag.current = { startX: e.pageX, startOffset: idxRef.current * wRef.current, moved: false };
-    const onMove = (ev: MouseEvent) => {
-      const d = drag.current;
-      if (!d) return;
-      const dx = ev.pageX - d.startX;
-      if (!d.moved && Math.abs(dx) > 6) {
-        d.moved = true;
+  const startOffset = useRef(0);
+  const dragProps = webDragProps(() => {
+    if (items.length < 2) return null;
+    startOffset.current = idxRef.current * wRef.current;
+    return {
+      onMove: (dx) => {
         setDragging(true);
-      }
-      if (d.moved) {
         const max = (items.length - 1) * wRef.current;
-        // Follow the cursor, with a little resistance past the ends.
-        const raw = d.startOffset - dx;
+        // Follow the pointer, with a little resistance past the ends.
+        const raw = startOffset.current - dx;
         const x = raw < 0 ? raw * 0.35 : raw > max ? max + (raw - max) * 0.35 : raw;
         ref.current?.scrollTo({ x, animated: false });
-      }
+      },
+      onEnd: (dx) => {
+        // Snap: a drag past a third of the width (or a quick flick) turns the page.
+        const from = idxRef.current;
+        const next = dx <= -wRef.current / 3 || dx <= -60 ? from + 1 : dx >= wRef.current / 3 || dx >= 60 ? from - 1 : from;
+        goManual(next);
+        setTimeout(() => setDragging(false), 50);
+      },
     };
-    const onUp = (ev: MouseEvent) => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      const d = drag.current;
-      drag.current = null;
-      if (!d?.moved) return;
-      const dx = ev.pageX - d.startX;
-      // Snap: a drag past a third of the width (or a quick flick) turns the page.
-      const from = idxRef.current;
-      const next = dx <= -wRef.current / 3 || dx <= -60 ? from + 1 : dx >= wRef.current / 3 || dx >= 60 ? from - 1 : from;
-      goManual(next);
-      setTimeout(() => setDragging(false), 50);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-  };
-  const webMouse = Platform.OS === 'web' ? ({ onMouseDown, onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) } as object) : {};
+  }, 'x');
+  const webMouse =
+    Platform.OS === 'web'
+      ? ({ ...dragProps, onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false) } as object)
+      : {};
 
   /** Small ‹ › step buttons that flank the dots (never over the card content). */
   const arrow = (side: 'left' | 'right', onPress: () => void, disabled: boolean) => (
@@ -118,7 +120,7 @@ export function PagedCarousel({ items, arrows = true, autoPlay }: { items: React
       <View
         onLayout={(e) => setW(e.nativeEvent.layout.width)}
         {...webMouse}
-        style={Platform.OS === 'web' ? ({ cursor: dragging ? 'grabbing' : 'grab', userSelect: 'none' } as object) : undefined}
+        style={Platform.OS === 'web' ? ({ cursor: dragging ? 'grabbing' : 'grab', userSelect: 'none', ...panYStyle } as object) : undefined}
       >
         <ScrollView
           ref={ref}
@@ -129,6 +131,7 @@ export function PagedCarousel({ items, arrows = true, autoPlay }: { items: React
           showsHorizontalScrollIndicator={false}
           onMomentumScrollEnd={onEnd}
           scrollEventThrottle={16}
+          style={Platform.OS === 'web' ? (panYStyle as object) : undefined}
         >
           {items.map((it, i) => (
             <View key={i} style={{ width: w }}>

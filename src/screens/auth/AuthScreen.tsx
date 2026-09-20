@@ -142,7 +142,7 @@ function SignInForm() {
     try {
       if (isSupabaseConfigured) {
         const u = await signInWithSupabase(email, password);
-        setAuth(u.token, { name: u.name, email: u.email, username: u.username, phone: u.phone });
+        setAuth(u.token, { name: u.name, email: u.email, phone: u.phone });
         signIn();
         return;
       }
@@ -196,7 +196,7 @@ function JoinForm() {
     try {
       if (isSupabaseConfigured) {
         const u = await signUpWithSupabase({ fullName, email, phone, password });
-        setAuth(u.token, { name: u.name, email: u.email, username: u.username, phone: u.phone });
+        setAuth(u.token, { name: u.name, email: u.email, phone: u.phone });
         signIn();
         return;
       }

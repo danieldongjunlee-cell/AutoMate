@@ -50,8 +50,6 @@ export function ProfHubScreen() {
   const points = isAuthenticated ? storePoints : 0;
   const authedUser = useAppStore((s) => s.user);
   const displayName = authedUser?.name ?? USER.name;
-  const handleFromName = displayName.trim().toLowerCase().replace(/\s+/g, '');
-  const displayHandle = authedUser?.username ? `@${authedUser.username}` : handleFromName ? `@${handleFromName}` : '@user';
   const displayInitial = displayName.trim().charAt(0).toUpperCase() || USER.initial;
 
   // "Check" prompts: shown until a car / a policy is on file.
@@ -123,11 +121,10 @@ export function ProfHubScreen() {
             <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary }}>{displayName}</Text>
             {isPro ? (
               <View style={{ backgroundColor: palette.dark, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 }}>
-                <Text style={{ fontSize: 11, fontWeight: '800', color: palette.warning }}>★ PRO</Text>
+                <Text style={{ fontSize: 11, fontWeight: '800', color: palette.star }}>★ PRO</Text>
               </View>
             ) : null}
           </View>
-          <Text style={{ fontSize: 14, color: colors.textTertiary }}>{displayHandle}</Text>
         </View>
         <View style={{ alignSelf: 'flex-start' }}>
           <CarSwitchChip />
@@ -171,7 +168,7 @@ export function ProfHubScreen() {
       {/* Support */}
       {section('Support', [
         { icon: 'alert', label: 'Help center', to: 'ProfHelpCenter' },
-        { icon: 'wrench', label: 'Repair & booking help', to: 'HelpBookings' },
+        { icon: 'chat', label: 'Repair & booking help', to: 'HelpBookings' },
         { icon: 'file', label: 'Terms of service', to: 'ProfTerms' },
         { icon: 'gear', label: 'Settings', to: 'ProfSettings' },
       ])}

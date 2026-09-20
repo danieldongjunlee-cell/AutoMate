@@ -41,7 +41,7 @@ export function UsePointsRow({
         opacity: disabled ? 0.55 : 1,
       }}
     >
-      <Text style={{ fontSize: 16 }}>★</Text>
+      <Text style={{ fontSize: 16, color: palette.star }}>★</Text>
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 14, fontWeight: '600', color: colors.warningDeep }}>
           Use points

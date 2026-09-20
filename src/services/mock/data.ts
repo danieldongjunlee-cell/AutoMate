@@ -1246,7 +1246,6 @@ export const POST_CATEGORIES: PostCategory[] = ['Question', 'Tip', 'Quotes', 'DI
 
 export const USER = {
   name: 'John Doe',
-  username: '@johndoe',
   email: 'johndoe@email.com',
   phone: '+1 (703) 555-0198',
   initial: 'J',

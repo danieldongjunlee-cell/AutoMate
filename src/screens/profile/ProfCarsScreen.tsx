@@ -176,7 +176,7 @@ function VehicleCard({
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.lg }}>
         <StatTile icon="gauge" color={palette.primaryLight} value={`${vehicle.odometerMi.toLocaleString()}`} label="miles" />
         <StatTile icon="oil" color={palette.amber} value={(vehicle.oilSpec || '-').split(' ')[0]} label="oil" />
-        <StatTile icon="wrench" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '-' ? vehicle.lastService.split(',')[0] : '-'} label="serviced" />
+        <StatTile icon="calendar" color={palette.teal} value={vehicle.lastService && vehicle.lastService !== '-' ? vehicle.lastService.split(',')[0] : '-'} label="serviced" />
         <StatTile icon="palette" color={palette.lavender} value={year ?? (vehicle.colorName || '-').split(' ')[0]} label={year ? 'year' : 'colour'} />
       </View>
       <DeckButton label={isActive ? 'Active car ✓' : 'Set as active car'} secondary={isActive} disabled={isActive} onPress={onSetActive} />

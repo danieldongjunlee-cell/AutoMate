@@ -7,9 +7,8 @@ import { Dealer } from '../services/mock/data';
 import { palette, useTheme } from '../theme';
 import { Tappable } from './Tappable';
 
-/** Shared yellow used for every review star across the app. */
-/** Google-style review-star yellow. */
-export const STAR_YELLOW = '#FBBC04';
+/** The one star yellow, from the palette, re-exported for the star call sites. */
+export const STAR_YELLOW = palette.star;
 
 /**
  * Tappable "★ 4.9 (312 reviews)" rating → the in-app Reviews screen for the

@@ -7,6 +7,7 @@ import { DEFAULT_ZOOM } from './DealerMap/types';
 import { Icon, IconName } from './Icon';
 import { Tappable } from './Tappable';
 import { radii, spacing, useTheme } from '../theme';
+import { webDragProps } from '../utils/webDrag';
 
 /** Where the sheet's top edge sits, as a share of the screen height, when half open. */
 const HALF_SHARE = 0.44;
@@ -117,19 +118,12 @@ export function MapSheet({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fullTop, halfTop, expanded],
   );
-  const onMouseDown = (e: { pageY: number }) => {
-    if (typeof window === 'undefined') return;
-    drag.current = { startY: e.pageY, startTop: topValue.current, moved: false };
-    const move = (ev: MouseEvent) => onDragMove(ev.pageY - (drag.current?.startY ?? ev.pageY));
-    const up = (ev: MouseEvent) => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
-      onDragEnd(ev.pageY - (drag.current?.startY ?? ev.pageY));
-    };
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
-  };
-  const handleProps = Platform.OS === 'web' ? ({ onMouseDown } as object) : pan.panHandlers;
+  // Web (which is what a phone browser runs): mouse and finger both drag.
+  const webDrag = webDragProps(() => {
+    drag.current = { startY: 0, startTop: topValue.current, moved: false };
+    return { onMove: (_dx, dy) => onDragMove(dy), onEnd: (_dx, dy) => onDragEnd(dy) };
+  });
+  const handleProps = Platform.OS === 'web' ? webDrag : pan.panHandlers;
 
   // Centre the pins in the strip of map above the half-open sheet.
   const mapCenter = useMemo(() => offsetCenter(center, zoom, screenH / 2 - halfTop / 2), [center, zoom, screenH, halfTop]);
@@ -171,7 +165,8 @@ export function MapSheet({
 
         {/* Title row */}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
-          <View style={{ flex: 1 }}>
+          {/* The title is part of the grab area, the buttons beside it are not. */}
+          <View {...handleProps} style={{ flex: 1, ...(Platform.OS === 'web' ? ({ cursor: 'grab', userSelect: 'none' } as object) : null) }}>
             <Text style={{ fontSize: 26, fontWeight: '700', color: colors.textPrimary, letterSpacing: -0.3 }} numberOfLines={1}>
               {title}
             </Text>

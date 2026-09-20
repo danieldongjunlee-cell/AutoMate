@@ -266,7 +266,6 @@ export type ReminderPref = (typeof REMINDER_OPTIONS)[number];
 export interface AuthUser {
   name: string;
   email: string;
-  username?: string;
   phone?: string;
   /** Profile photo (local uri or remote url). */
   avatarUri?: string;
@@ -279,7 +278,7 @@ interface AppState {
   authToken: string | null;
   user: AuthUser | null;
   setAuth: (token: string | null, user: AuthUser | null) => void;
-  /** Merge profile edits (name/username) into the current user for live display. */
+  /** Merge profile edits (name, photo) into the current user for live display. */
   patchUser: (patch: Partial<AuthUser>) => void;
   signIn: () => void;
   signOut: () => void;

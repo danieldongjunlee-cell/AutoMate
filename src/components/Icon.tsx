@@ -175,7 +175,7 @@ export const SUBJECT_COLOR: Partial<Record<IconName, string>> = {
   oil: '#F0B44E', tire: '#6fa0ff', wiper: '#6fa0ff', filter: '#4FE3C1', fog: '#4FE3C1', sponge: '#4FE3C1', seat: '#4FE3C1',
   droplet: '#5BD1F5', glass: '#5BD1F5', snowflake: '#5BD1F5', brake: '#f0726e', kettle: '#f0726e', flame: '#f0726e',
   search: '#B7B1F2', plunger: '#B7B1F2', magnet: '#B7B1F2', palette: '#B7B1F2', battery: '#2EE87E', key: '#F0B44E',
-  brush: '#F0B44E', bulb: '#F0B44E', star: '#F0B44E', gauge: '#6fa0ff', wrench: '#b8c3d3', car: '#4FE3C1',
+  brush: '#F0B44E', bulb: '#F0B44E', star: '#FBBC04', gauge: '#6fa0ff', wrench: '#b8c3d3', car: '#4FE3C1',
 };
 export function subjectColor(glyph: string | undefined | null, fallback = '#b8c3d3'): string {
   return SUBJECT_COLOR[iconForGlyph(glyph)] ?? fallback;

@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { CvcField, isValidCvc } from '../../components/CvcField';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';
@@ -35,6 +36,7 @@ export function MaintPaymentScreen() {
   const [method, setMethod] = useState<PayMethod>('visa');
   const [usePoints, setUsePoints] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [cvc, setCvc] = useState('');
 
   const { total, totalMin, savings } = cartTotals(cart);
 
@@ -231,10 +233,13 @@ export function MaintPaymentScreen() {
         </Text>
       </View>
 
+      <CvcField value={cvc} onChange={setCvc} label="CVC for Visa ending 4242" />
+
       <PrimaryButton
         variant="warning"
         label={`Confirm & pay $${totalLabel} →`}
         loading={paying}
+        disabled={!isValidCvc(cvc)}
         onPress={onPay}
       />
       <ProcessingOverlay visible={paying} label="Processing payment…" />

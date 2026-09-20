@@ -45,6 +45,8 @@ export const palette = {
   teal: '#4FE3C1',
   mint: '#2EE87E',
   amber: '#F0B44E',
+  /** Every star in the app, ratings and Pro alike, is this yellow. */
+  star: '#FBBC04',
   lavender: '#B7B1F2',
   /** Text colour on amber (money / Pro) buttons. */
   onAmber: '#0B1E3D',

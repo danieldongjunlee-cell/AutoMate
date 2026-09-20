@@ -15,15 +15,13 @@ import { useAppStore } from '../../store/useAppStore';
 import { palette, spacing, useTheme } from '../../theme';
 import { showAlert } from '../../utils/alerts';
 
-/** Wireframe s-prof-edit-profile: avatar + name/username/bio form. */
+/** Wireframe s-prof-edit-profile: avatar + name/bio form. */
 export function ProfEditProfileScreen() {
   const navigation = useNavigation();
   const { colors } = useTheme();
   const authedUser = useAppStore((s) => s.user);
   const patchUser = useAppStore((s) => s.patchUser);
   const [name, setName] = useState(authedUser?.name ?? USER.name);
-  // Username starts blank until the user sets their own (no mock placeholder).
-  const [username, setUsername] = useState(authedUser?.username ?? '');
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState<string | undefined>(authedUser?.avatarUri);
   const [saving, setSaving] = useState(false);
@@ -41,10 +39,10 @@ export function ProfEditProfileScreen() {
     try {
       // Persist to Supabase when configured so it survives relaunch + lives in the DB.
       if (isSupabaseConfigured) {
-        await updateMyProfile({ full_name: name.trim(), username: username.trim() });
+        await updateMyProfile({ full_name: name.trim() });
       }
-      // Reflect immediately in the More-tab header (top-left name + @username).
-      patchUser({ name: name.trim(), username: username.trim() });
+      // Reflect immediately in the More-tab header.
+      patchUser({ name: name.trim() });
       navigation.goBack();
     } catch (err) {
       showAlert('Save failed', err instanceof Error ? err.message : 'Please try again.');
@@ -121,7 +119,6 @@ export function ProfEditProfileScreen() {
 
       <Card style={{ overflow: 'hidden', marginBottom: spacing.md }}>
         {field('Full name', name, setName)}
-        {field('Username', username, setUsername)}
         {field('Bio', bio, setBio, 'Add a short bio...', true)}
       </Card>
 
