@@ -3,14 +3,15 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Tappable } from '../../components/Tappable';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { AvatarCircle, Screen } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
-import { BrandChannel, brandChannels, channelKind, FEED_BRANDS } from '../../services/mock/communityChannels';
+import { CarBrandLogo } from '../../components/CarBrandLogo';
+import { Screen } from '../../components/ui';
+import { useMyBrands } from '../../hooks/useActiveVehicle';
+import { brandCommunity, FEED_BRANDS } from '../../services/mock/communityChannels';
 import { CommunityStackParamList } from '../../navigation/types';
 import { PostCategory, POST_CATEGORIES } from '../../services/mock/data';
 import { communityService } from '../../services';
@@ -27,14 +28,14 @@ export function CommCreateScreen() {
   const { colors } = useTheme();
   const addPoints = useAppStore((s) => s.addPoints);
 
-  // Communities you can post to: the registered car's brand communities (guests: every brand's lounge).
-  const { active, brand } = useActiveVehicle();
-  const communities = useMemo<BrandChannel[]>(
-    () => (active ? brandChannels(brand) : FEED_BRANDS.map((b) => brandChannels(b).find((c) => channelKind(c.name) === 'lounge') ?? brandChannels(b)[0])),
-    [active, brand],
-  );
+  // Communities you can post to: one per brand in your garage (every brand's for a guest).
+  const { brands: myBrands, hasCar } = useMyBrands();
+  const brands = hasCar ? myBrands : FEED_BRANDS;
+  const communities = useMemo(() => brands.map(brandCommunity), [brands.join('|')]); // eslint-disable-line react-hooks/exhaustive-deps
   const [communityId, setCommunityId] = useState<string>(communities[0]?.id ?? '');
   const community = communities.find((c) => c.id === communityId) ?? communities[0];
+  // The dropdown only appears with two or more brands to choose between.
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [category, setCategory] = useState<PostCategory>('Question');
   const [body, setBody] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
@@ -67,41 +68,68 @@ export function CommCreateScreen() {
 
   return (
     <Screen>
-      {/* Community picker · the user's brand communities (auto-membership). */}
+      {/* Post to · a dropdown when the garage has more than one brand, otherwise the one community. */}
       <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>Post to</Text>
-      <View style={{ gap: 8, marginBottom: spacing.md }}>
-        {communities.map((c) => {
-          const on = c.id === communityId;
-          return (
-            <Tappable
-              key={c.id}
-              onPress={() => setCommunityId(c.id)}
-              accessibilityRole="radio"
-              accessibilityState={{ selected: on }}
-              accessibilityLabel={`Post to ${c.name}`}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: spacing.sm,
-                backgroundColor: on ? colors.primarySurface : colors.surface,
-                borderWidth: on ? 1.5 : StyleSheet.hairlineWidth,
-                borderColor: on ? colors.primary : colors.border,
-                borderRadius: radii.md,
-                padding: spacing.sm,
-              }}
-            >
-              <AvatarCircle initial={c.initial} color={c.color} size={30} />
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: on ? colors.primaryDeep : colors.textPrimary }}>{c.name}</Text>
-                <Text style={{ fontSize: 12, color: colors.textTertiary }}>{c.members.toLocaleString()} members</Text>
-              </View>
-              <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 1.5, borderColor: on ? colors.primary : colors.border, backgroundColor: on ? colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                {on ? <Icon name="check" size={13} color={colors.onPrimary} strokeWidth={2.4} /> : null}
-              </View>
-            </Tappable>
-          );
-        })}
-      </View>
+      <Tappable
+        onPress={() => communities.length > 1 && setPickerOpen(true)}
+        disabled={communities.length < 2}
+        accessibilityRole={communities.length > 1 ? 'button' : undefined}
+        accessibilityLabel={communities.length > 1 ? 'Choose a community' : undefined}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: spacing.sm,
+          backgroundColor: colors.surface,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: colors.border,
+          borderRadius: radii.md,
+          padding: spacing.sm,
+          marginBottom: spacing.md,
+        }}
+      >
+        <CarBrandLogo brand={community?.brand ?? ''} size={30} bg="transparent" />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.textPrimary }}>{community?.name}</Text>
+          <Text style={{ fontSize: 12, color: colors.textTertiary }}>{community?.members.toLocaleString()} members</Text>
+        </View>
+        {communities.length > 1 ? (
+          <View style={{ transform: [{ rotate: '90deg' }] }}>
+            <Icon name="chevron" size={20} color={colors.textTertiary} />
+          </View>
+        ) : null}
+      </Tappable>
+
+      <Modal visible={pickerOpen} transparent animationType="slide" onRequestClose={() => setPickerOpen(false)}>
+        <Tappable noFeedback onPress={() => setPickerOpen(false)} style={{ flex: 1, backgroundColor: colors.backdrop, justifyContent: 'flex-end' }}>
+          <Tappable noFeedback onPress={() => undefined} style={{ backgroundColor: colors.sheet, borderTopLeftRadius: radii.actionSheet, borderTopRightRadius: radii.actionSheet, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.border, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.xxl }}>
+            <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: colors.disabled, alignSelf: 'center', marginBottom: spacing.md }} />
+            <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.sm }}>Post to</Text>
+            {communities.map((c, i) => {
+              const on = c.id === communityId;
+              return (
+                <Tappable
+                  key={c.id}
+                  onPress={() => {
+                    setCommunityId(c.id);
+                    setPickerOpen(false);
+                  }}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected: on }}
+                  accessibilityLabel={`Post to ${c.name}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 12, borderTopWidth: i ? 1 : 0, borderTopColor: colors.divider }}
+                >
+                  <CarBrandLogo brand={c.brand} size={36} bg="transparent" />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: on ? colors.primaryDeep : colors.textPrimary }}>{c.name}</Text>
+                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>{c.members.toLocaleString()} members</Text>
+                  </View>
+                  {on ? <Icon name="check" size={18} color={colors.primary} strokeWidth={2.4} /> : null}
+                </Tappable>
+              );
+            })}
+          </Tappable>
+        </Tappable>
+      </Modal>
 
       {/* Category chips */}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: spacing.md }}>

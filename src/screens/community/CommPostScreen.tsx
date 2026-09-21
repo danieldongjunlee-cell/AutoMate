@@ -166,7 +166,7 @@ export function CommPostScreen() {
               {post.author}
             </Text>
             <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-              {post.car} · Honda Owners · {post.ago}
+              {post.car} · {(post as { community?: { name: string } }).community?.name ?? 'Owners'} · {post.ago}
             </Text>
           </View>
           <CategoryBadge category={post.category} />

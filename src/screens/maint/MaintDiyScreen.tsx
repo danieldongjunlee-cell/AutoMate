@@ -86,7 +86,7 @@ export function MaintDiyScreen() {
       {/* Header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md }}>
         <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: colors.chip, alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name="wrench" size={28} color={palette.amber} />
+          <Icon name="bulb" size={28} color={palette.amber} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>DIY Repair Guides</Text>

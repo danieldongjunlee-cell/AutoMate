@@ -1,6 +1,5 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 
-import type { ScannedReceipt } from '../services/mock/data';
 
 /** Params for the post-booking confirmation, threaded through agreement/deposit. */
 export type BookingConfirmParams = {
@@ -72,8 +71,6 @@ type HomeFlowParamList = {
 export type MaintStackParamList = {
   MaintDashboard: undefined;
   MaintHistory: undefined;
-  MaintScanCam: undefined;
-  MaintScanRev: { receipt?: ScannedReceipt; receiptUri?: string } | undefined;
   MaintManual: undefined;
   MaintDiy: undefined;
   DiyUnlock: { returnTo?: 'DealerQuotes' | 'MaintDashboard' } | undefined;
@@ -108,7 +105,8 @@ export type BookingsStackParamList = {
 
 export type CommunityStackParamList = {
   CommChannels: undefined;
-  CommHonda: { title?: string; kind?: 'service' | 'maintenance' | 'lounge' | 'deals' } | undefined;
+  /** One brand's community feed. */
+  CommBrand: { brand?: string } | undefined;
   CommPost: { postId?: string; post?: import('../services/mock/data').CommunityPost } | undefined;
   CommCreate: undefined;
 };

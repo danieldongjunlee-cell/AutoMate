@@ -1,19 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FeedPostCard } from '../../components/FeedPostCard';
+import { FilterSheet } from '../../components/FilterSheet';
 import { GuestBanner } from '../../components/GuestBanner';
 import { Icon } from '../../components/Icon';
 import { Tappable } from '../../components/Tappable';
-import { AvatarCircle } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useMyBrands } from '../../hooks/useActiveVehicle';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { DOCK_HEIGHT, DOCK_INSET } from '../../navigation/Dock';
 import { CommunityStackParamList } from '../../navigation/types';
-import { BrandChannel, brandChannels, channelKind, FEED_BRANDS, FeedPost, homeFeed } from '../../services/mock/communityChannels';
+import { brandCommunity, communityFeed, FEED_BRANDS, FeedPost } from '../../services/mock/communityChannels';
+import { POST_TAGS } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
@@ -21,58 +23,55 @@ type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 
 type Tab = 'home' | 'new' | 'top';
 
+const ALL = 'All';
+
 /**
- * Community (Reddit-style): a search bar on top, Home · New · Top chips, then
- * one feed of posts from every community. Registering a car makes you a member of its brand's
- * communities automatically, no joining. The funnel opens a sheet where you
- * pick which communities show in the feed. Guests see every brand's lounge.
- * The floating pencil (bottom right, above the dock) writes a post.
+ * Community (Reddit-style): a search bar on top, the filter funnel with
+ * Home · New · Top, then one feed. Every brand has one community and
+ * registering a car makes you a member of its brand's, so the feed holds the
+ * communities of the cars in your garage (every brand's for a guest). The
+ * funnel opens the app's filter sheet: which community, when more than one
+ * brand is registered, and which tag (Question, Tip, ...). The floating pencil
+ * writes a post.
  */
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const requireAuth = useRequireAuth();
-  const { active, brand } = useActiveVehicle();
-  const hasCar = !!active;
+  const { brands: myBrands, hasCar } = useMyBrands();
+  const brands = hasCar ? myBrands : FEED_BRANDS;
+  const brandsKey = brands.join('|');
+  const communities = useMemo(() => brands.map(brandCommunity), [brandsKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // More than one brand in the garage: the community filter appears.
+  const multi = communities.length > 1;
+
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState<Tab>('home');
   const [upvoted, setUpvoted] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
-  // Communities the user has deselected in the filter (everything shows by default).
-  const [hidden, setHidden] = useState<Set<string>>(new Set());
-  // Filter sheet: only posts about the user's own car model.
-  const [onlyMine, setOnlyMine] = useState(false);
+  const [community, setCommunity] = useState(ALL);
+  const [tag, setTag] = useState(ALL);
 
-  // Your communities: the registered car's brand communities; guests (no car)
-  // get every brand's Owners Lounge so the tab is never empty.
-  const myCommunities = useMemo<BrandChannel[]>(
-    () => (hasCar ? brandChannels(brand) : FEED_BRANDS.map((b) => brandChannels(b).find((c) => channelKind(c.name) === 'lounge') ?? brandChannels(b)[0])),
-    [hasCar, brand],
-  );
-  const feedBrand = hasCar ? brand : FEED_BRANDS[0];
-  const toggleHidden = (id: string) =>
-    setHidden((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  // A community filter that no longer matches the garage falls back to all.
+  useEffect(() => {
+    if (community !== ALL && !brands.some((b) => b === community)) setCommunity(ALL);
+  }, [brandsKey, community]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // The feed: every brand's communities, minus blocked authors and deselected
-  // communities; the user's brand first. Tabs + search narrow and reorder it.
+  // The feed: the posts of every community you belong to, minus blocked
+  // authors; the filter, tabs and search narrow and reorder it.
   const blockedAuthors = useAppStore((s) => s.blockedAuthors);
-  const feed = useMemo(() => homeFeed(feedBrand).filter((p) => !blockedAuthors.includes(p.author)), [feedBrand, blockedAuthors]);
-  const activeModel = (active?.name ?? '').replace(/\b(19|20)\d{2}\b/, '').trim().toLowerCase();
+  const feed = useMemo(() => communityFeed(brands).filter((p) => !blockedAuthors.includes(p.author)), [brandsKey, blockedAuthors]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = query.trim().toLowerCase();
   const posts = useMemo(() => {
-    let list = feed.filter((p) => !hidden.has(p.community.id));
-    if (onlyMine && hasCar) list = list.filter((p) => p.brand.toLowerCase() === brand.toLowerCase() || (!!activeModel && p.car.toLowerCase().includes(activeModel)));
+    let list = feed;
+    if (community !== ALL) list = list.filter((p) => p.brand === community);
+    if (tag !== ALL) list = list.filter((p) => p.category === tag);
     if (q) list = list.filter((p) => [p.body, p.author, p.community.name, p.category, p.car].some((t) => t.toLowerCase().includes(q)));
     if (tab === 'new') list = [...list].sort((a, b) => a.ageMin - b.ageMin);
     if (tab === 'top') list = [...list].sort((a, b) => b.likes + b.replies - (a.likes + a.replies));
     return list;
-  }, [feed, hidden, onlyMine, hasCar, tab, q, brand, activeModel]);
+  }, [feed, community, tag, tab, q]);
 
   // Browsing the feed marks its posts read (drives the unread badge).
   const markPostsRead = useAppStore((s) => s.markPostsRead);
@@ -81,7 +80,7 @@ export function CommChannelsScreen() {
   }, [posts, markPostsRead]);
 
   const openPost = (post: FeedPost) => navigation.navigate('CommPost', { postId: post.id, post });
-  const openCommunity = (c: BrandChannel) => navigation.navigate('CommHonda', { title: c.name, kind: channelKind(c.name) });
+  const openCommunity = (brand: string) => navigation.navigate('CommBrand', { brand });
   const write = () => requireAuth('createPost', () => navigation.navigate('CommCreate'));
 
   const tabs: { key: Tab; label: string }[] = [
@@ -101,12 +100,12 @@ export function CommChannelsScreen() {
       <Text style={{ fontSize: 14, fontWeight: '700', color: on ? colors.onPrimary : colors.textSecondary }}>{label}</Text>
     </Tappable>
   );
-  const hiddenCount = myCommunities.filter((c) => hidden.has(c.id)).length;
-  const filterCount = hiddenCount + (onlyMine && hasCar ? 1 : 0);
+  const filterCount = (community !== ALL ? 1 : 0) + (tag !== ALL ? 1 : 0);
+  const filterCaption = [community !== ALL ? `${community} Owners` : null, tag !== ALL ? `${tag}s` : null].filter(Boolean).join(' · ');
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: Math.max(spacing.screenTop, insets.top + spacing.lg), paddingBottom: spacing.screenBottom + 40 }} keyboardShouldPersistTaps="handled">
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: insets.top + spacing.lg, paddingBottom: spacing.screenBottom + 40 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: spacing.screenH }}>
           <GuestBanner />
 
@@ -131,12 +130,12 @@ export function CommChannelsScreen() {
           </View>
         </View>
 
-        {/* Filter (which communities · only my car) · Home · New · Top */}
+        {/* Filter (community · tag) · Home · New · Top */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.screenH, gap: 8, paddingBottom: spacing.md }}>
           <Tappable
             onPress={() => setFilterOpen(true)}
             accessibilityRole="button"
-            accessibilityLabel="Filter communities"
+            accessibilityLabel="Filters"
             style={{ height: 36, minWidth: 36, paddingHorizontal: filterCount ? 10 : 0, borderRadius: 18, backgroundColor: filterCount ? colors.primarySurface : colors.inputBg, borderWidth: 1, borderColor: filterCount ? colors.primary : colors.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}
           >
             <Icon name="funnel" size={18} color={filterCount ? colors.primaryDark : colors.textPrimary} strokeWidth={1.8} />
@@ -147,12 +146,12 @@ export function CommChannelsScreen() {
 
         {/* Feed */}
         <View style={{ paddingHorizontal: spacing.screenH }}>
-          {onlyMine && active ? (
-            <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>{`Posts from ${brand} communities and ${active.name} owners`}</Text>
+          {filterCaption ? (
+            <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.sm }}>Showing {filterCaption}</Text>
           ) : null}
           {posts.length === 0 ? (
             <Text style={{ fontSize: 14, color: colors.textTertiary, textAlign: 'center', paddingVertical: spacing.xl }}>
-              {q ? `Nothing matches “${query.trim()}”` : hiddenCount ? 'Every community is hidden, pick some in the filter.' : 'No posts yet, be the first to write one.'}
+              {q ? `Nothing matches “${query.trim()}”` : filterCount ? 'No posts match these filters.' : 'No posts yet, be the first to write one.'}
             </Text>
           ) : (
             posts.map((post, i) => (
@@ -163,7 +162,7 @@ export function CommChannelsScreen() {
                 upvoted={!!upvoted[post.id]}
                 onUpvote={() => requireAuth('likePost', () => setUpvoted((u) => ({ ...u, [post.id]: !u[post.id] })))}
                 onPress={() => openPost(post)}
-                onCommunity={() => openCommunity(post.community)}
+                onCommunity={() => openCommunity(post.brand)}
               />
             ))
           )}
@@ -195,78 +194,28 @@ export function CommChannelsScreen() {
         <Icon name="pencil" size={26} color={colors.onPrimary} strokeWidth={2} />
       </Tappable>
 
-      {/* Community filter: select / deselect which communities show in the feed. */}
-      <Modal visible={filterOpen} transparent animationType="slide" onRequestClose={() => setFilterOpen(false)}>
-        <Tappable noFeedback onPress={() => setFilterOpen(false)} style={{ flex: 1, backgroundColor: colors.backdrop, justifyContent: 'flex-end' }}>
-          <Tappable
-            noFeedback
-            onPress={() => undefined}
-            style={{ backgroundColor: colors.sheet, borderTopLeftRadius: radii.actionSheet, borderTopRightRadius: radii.actionSheet, borderWidth: 1, borderBottomWidth: 0, borderColor: colors.border, paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.sm }}
-          >
-            <View style={{ width: 40, height: 5, borderRadius: 3, backgroundColor: colors.disabled, alignSelf: 'center', marginBottom: spacing.md }} />
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm }}>
-              <Text style={{ fontSize: 19, fontWeight: '800', color: colors.textPrimary }}>Communities</Text>
-              <Tappable
-                onPress={() => {
-                  setHidden(new Set());
-                  setOnlyMine(false);
-                }}
-                hitSlop={8}
-              >
-                <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>Show all</Text>
-              </Tappable>
-            </View>
-            <Text style={{ fontSize: 13, color: colors.textTertiary, marginBottom: spacing.md }}>
-              {hasCar ? `You're a member of your ${brand}'s communities. Choose which ones show in your feed.` : 'Choose which communities show in your feed.'}
-            </Text>
-            {myCommunities.map((c) => {
-              const on = !hidden.has(c.id);
-              return (
-                <Tappable
-                  key={c.id}
-                  onPress={() => toggleHidden(c.id)}
-                  accessibilityRole="checkbox"
-                  accessibilityState={{ checked: on }}
-                  accessibilityLabel={`Show ${c.name}`}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 12 }}
-                >
-                  <AvatarCircle initial={c.initial} color={c.color} size={36} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{c.name}</Text>
-                    <Text style={{ fontSize: 12, color: colors.textTertiary }}>{c.members.toLocaleString()} members</Text>
-                  </View>
-                  <View style={{ width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: on ? colors.primary : colors.border, backgroundColor: on ? colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                    {on ? <Icon name="check" size={15} color={colors.onPrimary} strokeWidth={2.4} /> : null}
-                  </View>
-                </Tappable>
-              );
-            })}
-            {hasCar && active ? (
-              <Tappable
-                onPress={() => setOnlyMine((v) => !v)}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: onlyMine }}
-                accessibilityLabel="Only posts about my car"
-                style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: 12, marginTop: spacing.sm, borderTopWidth: 1, borderTopColor: colors.border }}
-              >
-                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySurface, alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon name="car" size={20} color={colors.primaryDark} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>Only my car</Text>
-                  <Text style={{ fontSize: 12, color: colors.textTertiary }}>{`Posts from ${brand} owners and about the ${active.name}`}</Text>
-                </View>
-                <View style={{ width: 24, height: 24, borderRadius: 7, borderWidth: 1.5, borderColor: onlyMine ? colors.primary : colors.border, backgroundColor: onlyMine ? colors.primary : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-                  {onlyMine ? <Icon name="check" size={15} color={colors.onPrimary} strokeWidth={2.4} /> : null}
-                </View>
-              </Tappable>
-            ) : null}
-            <Tappable onPress={() => setFilterOpen(false)} accessibilityLabel="Apply community filter" style={{ marginTop: spacing.md, height: 50, borderRadius: radii.pill, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 16, fontWeight: '800', color: colors.onPrimary }}>Show {myCommunities.length - hiddenCount} of {myCommunities.length}</Text>
-            </Tappable>
-          </Tappable>
-        </Tappable>
-      </Modal>
+      {/* The app's filter sheet: which community (with two or more brands), which tag. */}
+      <FilterSheet
+        visible={filterOpen}
+        title="Filter posts"
+        resultsLabel="Show posts"
+        onClose={() => setFilterOpen(false)}
+        groups={[
+          {
+            key: 'community',
+            title: 'Community',
+            options: [ALL, ...brands],
+            value: community,
+            hidden: !multi,
+            optionIcon: (o) => (o === ALL ? null : <CarBrandLogo brand={o} size={22} bg="transparent" />),
+          },
+          { key: 'tag', title: 'Tags', options: [ALL, ...POST_TAGS], value: tag },
+        ]}
+        onApply={(v) => {
+          setCommunity(v.community ?? ALL);
+          setTag(v.tag ?? ALL);
+        }}
+      />
     </View>
   );
 }

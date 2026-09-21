@@ -37,8 +37,6 @@ import { MaintDiyScreen } from '../screens/maint/MaintDiyScreen';
 import { MaintHistoryScreen } from '../screens/maint/MaintHistoryScreen';
 import { MaintManualScreen } from '../screens/maint/MaintManualScreen';
 import { MaintPaymentScreen } from '../screens/maint/MaintPaymentScreen';
-import { MaintScanCamScreen } from '../screens/maint/MaintScanCamScreen';
-import { MaintScanRevScreen } from '../screens/maint/MaintScanRevScreen';
 import { MaintScheduleBookScreen } from '../screens/maint/MaintScheduleBookScreen';
 import { MaintScheduleConfirmScreen } from '../screens/maint/MaintScheduleConfirmScreen';
 import { MaintScheduleScreen } from '../screens/maint/MaintScheduleScreen';
@@ -46,7 +44,7 @@ import { MaintServiceTypeScreen } from '../screens/maint/MaintServiceTypeScreen'
 import { BookingsScreen } from '../screens/bookings/BookingsScreen';
 import { CommChannelsScreen } from '../screens/community/CommChannelsScreen';
 import { CommCreateScreen } from '../screens/community/CommCreateScreen';
-import { CommHondaScreen } from '../screens/community/CommHondaScreen';
+import { CommBrandScreen } from '../screens/community/CommBrandScreen';
 import { CommPostScreen } from '../screens/community/CommPostScreen';
 import {
   ProfChangeEmailScreen,
@@ -83,9 +81,9 @@ import { PointsHistoryScreen } from '../screens/profile/PointsHistoryScreen';
 import { EstimateHistoryScreen } from '../screens/profile/EstimateHistoryScreen';
 import { SupabaseDemoScreen } from '../screens/dev/SupabaseDemoScreen';
 import { useT } from '../i18n';
-import { useActiveVehicle } from '../hooks/useActiveVehicle';
-import { allBrandPosts } from '../services/mock/communityChannels';
-import { QUOTES } from '../services/mock/data';
+import { useActiveVehicle, useMyBrands } from '../hooks/useActiveVehicle';
+import { communityFeed } from '../services/mock/communityChannels';
+import { QUOTES, quotesInEstimateRange } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
 import { useTheme } from '../theme';
 import { buildScreens, stackScreenOptions } from './stackFactory';
@@ -129,8 +127,6 @@ const homeScreens = buildScreens(
     'Notifications',
     'MaintDashboard',
     'MaintHistory',
-    'MaintScanCam',
-    'MaintScanRev',
     'MaintManual',
     'MaintDiy',
     'DiyUnlock',
@@ -173,8 +169,6 @@ const homeScreens = buildScreens(
     Notifications: NotificationsScreen,
     MaintDashboard: MaintDashboardScreen,
     MaintHistory: MaintHistoryScreen,
-    MaintScanCam: MaintScanCamScreen,
-    MaintScanRev: MaintScanRevScreen,
     MaintManual: MaintManualScreen,
     MaintDiy: MaintDiyScreen,
     DiyUnlock: DiyUnlockScreen,
@@ -234,10 +228,10 @@ function BookingsStack() {
 // ── Community tab ──────────────────────────────────────────────────────
 const CommunityNative = createNativeStackNavigator<CommunityStackParamList>();
 const communityScreens = buildScreens(
-  ['CommChannels', 'CommHonda', 'CommPost', 'CommCreate'] as const,
+  ['CommChannels', 'CommBrand', 'CommPost', 'CommCreate'] as const,
   {
     CommChannels: CommChannelsScreen,
-    CommHonda: CommHondaScreen,
+    CommBrand: CommBrandScreen,
     CommPost: CommPostScreen,
     CommCreate: CommCreateScreen,
   },
@@ -353,8 +347,9 @@ export function MainTabs() {
   const theme = useTheme();
   const t = useT();
   const { brand } = useActiveVehicle();
+  const { brands, hasCar } = useMyBrands();
   const damageParts = useAppStore((s) => s.damageParts);
-  const quotesViewed = useAppStore((s) => s.quotesViewed);
+  const aiEstimate = useAppStore((s) => s.aiEstimate);
   const readPostIds = useAppStore((s) => s.readPostIds);
   const bookings = useAppStore((s) => s.bookings);
 
@@ -370,11 +365,15 @@ export function MainTabs() {
       !b.id.startsWith('bk-seed-') &&
       (b.status === 'confirmed' || b.status === 'paid'),
   ).length;
-  // Community = unread posts in the active car's brand communities (membership
-  // is automatic once a car is registered). Cleared as the posts are read.
-  const unreadPosts = (brand === 'your car' ? [] : allBrandPosts(brand)).filter((p) => !readPostIds[p.id]).length;
+  // Community = unread posts across the communities of every brand in the
+  // garage (membership is automatic once a car is registered). Cleared as the
+  // posts are read.
+  const unreadPosts = (hasCar ? communityFeed(brands) : []).filter((p) => !readPostIds[p.id]).length;
+  // Quotes = how many shops have quoted the open request, the same list the
+  // tab shows, so the count stays on the icon while the request is open.
+  const quotesReceived = damageParts.length > 0 ? quotesInEstimateRange(QUOTES, aiEstimate).length : 0;
   const badges: Partial<Record<keyof MainTabParamList, number>> = {
-    QuotesTab: damageParts.length > 0 && !quotesViewed ? QUOTES.length : undefined,
+    QuotesTab: quotesReceived || undefined,
     BookingsTab: upcoming || undefined,
     CommunityTab: unreadPosts || undefined,
   };

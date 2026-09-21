@@ -36,10 +36,8 @@ export const SCREEN_TITLES: Record<string, string> = {
   DealerMap: 'Honda Fairfax', // s-dealer-map
   BundleDeals: 'Bundle deals', // s-home-bundle-deals
   Notifications: 'Notifications', // s-notifications
-  MaintDashboard: 'Maintenance', // canvas dashboard (title is replaced by the car name at runtime)
+  MaintDashboard: 'Maintenance', // canvas dashboard
   MaintHistory: 'Service history', // s-maint-history
-  MaintScanCam: 'Scan receipt', // s-maint-scan-cam
-  MaintScanRev: 'Review receipt', // s-maint-scan-rev
   MaintManual: 'Log service manually', // s-maint-manual
   MaintDiy: 'DIY Repair Tips', // s-maint-diy
   DiyUnlock: 'Unlock DIY Repairs', // s-diy-unlock
@@ -55,7 +53,7 @@ export const SCREEN_TITLES: Record<string, string> = {
   MaintPayment: 'Payment', // s-maint-payment
   MaintScheduleConfirm: 'Booking confirmed', // s-maint-schedule-confirm
   CommChannels: 'Community', // s-comm-channels
-  CommHonda: 'Honda Owners', // s-comm-honda
+  CommBrand: 'Owners', // one brand's community (title is replaced by the brand at runtime)
   CommPost: 'Post detail', // s-comm-post
   CommCreate: 'New post', // s-comm-create
   ProfHub: 'Profile', // s-prof-hub

@@ -5,13 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useLayoutEffect, useState } from 'react';
 import { Image, Text, View } from 'react-native';
 
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Icon, IconName } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
-import { useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
-import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
 import { useCarImage } from '../../services/carImage';
@@ -56,27 +56,17 @@ export function MaintDashboardScreen() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const { data: upcoming } = useQuery({ queryKey: ['upcoming-services'], queryFn: maintService.getUpcomingServices });
-  const { active } = useActiveVehicle();
+  const { active, brand } = useActiveVehicle();
   const carName = active?.name ?? VEHICLE.name;
-  const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
-  const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0];
-  const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
   const mv = marketValueFor(carName);
   const { data: photoUrl } = useCarImage(carName);
   const [heroW, setHeroW] = useState(0);
   const [photoFailed, setPhotoFailed] = useState(false);
 
-  // Header: back chevron (native), car name centred, bell on the right.
+  // Header: back chevron (native), "Maintenance", the car switch on the right.
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: carName,
-      headerRight: () => (
-        <Tappable onPress={() => navigation.navigate('Notifications' as never)} hitSlop={8} accessibilityLabel="Notifications">
-          <Icon name="bell" size={24} color={colors.textPrimary} />
-        </Tappable>
-      ),
-    });
-  }, [navigation, carName, colors.textPrimary]);
+    navigation.setOptions({ headerRight: () => <CarSwitchChip /> });
+  }, [navigation]);
 
   const quick = (label: string, icon: IconName, color: string, onPress: () => void) => (
     <Tappable
@@ -138,6 +128,11 @@ export function MaintDashboardScreen() {
           />
         )}
       </View>
+      {/* The brand under the photo, its model beneath. */}
+      <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.2 }}>{brand === 'your car' ? carName : brand}</Text>
+        {brand !== 'your car' ? <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>{modelOf(carName, brand)}</Text> : null}
+      </View>
 
       {/* Estimated market value */}
       <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radii.tile, padding: spacing.lg, marginBottom: spacing.md }}>
@@ -190,8 +185,7 @@ export function MaintDashboardScreen() {
 
       {/* Quick actions */}
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
-        {quick('DIY tips', 'star', palette.star, () => navigation.navigate('MaintDiy'))}
-        {quick('Receipt', 'camera', palette.teal, () => navigation.navigate('MaintScanCam'))}
+        {quick('DIY tips', 'bulb', palette.amber, () => navigation.navigate('MaintDiy'))}
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>
 
@@ -236,30 +230,6 @@ export function MaintDashboardScreen() {
         </>
       ) : null}
 
-      {/* Vehicle row → My cars */}
-      <Tappable
-        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfCars')}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.md,
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: radii.lg,
-          padding: spacing.md,
-          marginTop: isAuthenticated ? spacing.lg : 0,
-        }}
-      >
-        <IconChip name="car" size={44} glyph={24} color={palette.teal} bg={`${palette.teal}14`} radius={12} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{carName}</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-            {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
-          </Text>
-        </View>
-        <Icon name="chevron" size={22} color={colors.textTertiary} />
-      </Tappable>
     </Screen>
   );
 }
