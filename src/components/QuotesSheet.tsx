@@ -5,6 +5,7 @@ import { ScrollView, View } from 'react-native';
 import { Text } from './Text';
 
 import { AiEstimateCard } from './AiEstimateCard';
+import { AiRecommendationCard } from './AiRecommendationCard';
 import { MapMarker } from './DealerMap';
 import { FilterSheet } from './FilterSheet';
 import { Icon } from './Icon';
@@ -132,6 +133,8 @@ export function QuotesSheet({
         {/* AI estimate strip + add / cancel */}
         <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
           <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damagePoints} style={{ marginBottom: spacing.md }} />
+          {/* Pro members find the AI's matched DIY methods here too. */}
+          <AiRecommendationCard primaryPart={damageParts[0]?.part ?? 'Rear bumper'} style={{ marginBottom: spacing.md }} />
           <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <Tappable
               onPress={onRevise}

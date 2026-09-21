@@ -6,7 +6,6 @@ import { Text, TextInput } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
-import { USER } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 
@@ -88,7 +87,7 @@ function AccountForm({
 
 /** Wireframe s-prof-change-email. */
 export function ProfChangeEmailScreen() {
-  const email = useAppStore((s) => s.user?.email) ?? USER.email;
+  const email = useAppStore((s) => s.user?.email) ?? '';
   return (
     <AccountForm
       rows={[
@@ -104,7 +103,7 @@ export function ProfChangeEmailScreen() {
 /** Wireframe s-prof-change-phone. */
 export function ProfChangePhoneScreen() {
   const user = useAppStore((s) => s.user);
-  const phone = user ? user.phone ?? '' : USER.phone;
+  const phone = user?.phone ?? '';
   return (
     <AccountForm
       rows={[

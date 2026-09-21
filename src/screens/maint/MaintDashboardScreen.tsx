@@ -12,7 +12,7 @@ import { Icon, IconName } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
-import { modelOf, useActiveVehicle } from '../../hooks/useActiveVehicle';
+import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
@@ -58,8 +58,11 @@ export function MaintDashboardScreen() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const { data: upcoming } = useQuery({ queryKey: ['upcoming-services'], queryFn: maintService.getUpcomingServices });
-  const { active, brand } = useActiveVehicle();
+  const { active } = useActiveVehicle();
+  const isPro = useAppStore((s) => s.isPro);
   const carName = active?.name ?? VEHICLE.name;
+  // Everything registered about the car, under the photo.
+  const carDetails = [active?.colorName, active ? `${active.odometerMi.toLocaleString()} mi` : null, active?.oilSpec].filter(Boolean).join(' · ');
   const mv = marketValueFor(carName);
   const { data: photoUrl } = useCarImage(carName);
   const [heroW, setHeroW] = useState(0);
@@ -70,7 +73,7 @@ export function MaintDashboardScreen() {
     navigation.setOptions({ headerRight: () => <CarSwitchChip /> });
   }, [navigation]);
 
-  const quick = (label: string, icon: IconName, color: string, onPress: () => void) => (
+  const quick = (label: string, icon: IconName, color: string, onPress: () => void, pro?: boolean) => (
     <Tappable
       key={label}
       onPress={() => requireAuth('maintAction', onPress)}
@@ -87,6 +90,13 @@ export function MaintDashboardScreen() {
     >
       <IconChip name={icon} size={50} glyph={26} color={color} bg={`${color}14`} radius={14} />
       <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{label}</Text>
+      {pro ? (
+        // Pro feature: the badge sits in the tile's top-right corner, locked until you are Pro.
+        <View style={{ position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: palette.dark, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 3 }}>
+          <Icon name={isPro ? 'unlock' : 'lock'} size={11} color={palette.star} strokeWidth={2.2} />
+          <Text style={{ fontSize: 10, fontWeight: '800', color: palette.star }}>PRO</Text>
+        </View>
+      ) : null}
     </Tappable>
   );
 
@@ -130,10 +140,10 @@ export function MaintDashboardScreen() {
           />
         )}
       </View>
-      {/* The brand under the photo, its model beneath. */}
-      <View style={{ alignItems: 'center', marginBottom: spacing.md }}>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.2 }}>{brand === 'your car' ? carName : brand}</Text>
-        {brand !== 'your car' ? <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2 }}>{modelOf(carName, brand)}</Text> : null}
+      {/* The registered car under the photo: year, make, model and trim on one line, the rest beneath. */}
+      <View style={{ alignItems: 'center', marginBottom: spacing.md, paddingHorizontal: spacing.md }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.2, textAlign: 'center' }} numberOfLines={1} adjustsFontSizeToFit>{carName}</Text>
+        {carDetails ? <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>{carDetails}</Text> : null}
       </View>
 
       {/* Estimated market value */}
@@ -187,7 +197,7 @@ export function MaintDashboardScreen() {
 
       {/* Quick actions */}
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
-        {quick('DIY tips', 'bulb', palette.amber, () => navigation.navigate('MaintDiy'))}
+        {quick('DIY tips', 'bulb', palette.amber, () => navigation.navigate('MaintDiy'), true)}
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>
 

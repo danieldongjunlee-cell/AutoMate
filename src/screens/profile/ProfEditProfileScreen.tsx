@@ -11,7 +11,6 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { updateMyProfile } from '../../lib/profiles';
-import { USER } from '../../services/mock/data';
 import { pickFromGallery } from '../../services/photos';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, spacing, useTheme } from '../../theme';
@@ -23,7 +22,7 @@ export function ProfEditProfileScreen() {
   const { colors } = useTheme();
   const authedUser = useAppStore((s) => s.user);
   const patchUser = useAppStore((s) => s.patchUser);
-  const [name, setName] = useState(authedUser?.name ?? USER.name);
+  const [name, setName] = useState(authedUser?.name ?? '');
   const [bio, setBio] = useState('');
   const [avatar, setAvatar] = useState<string | undefined>(authedUser?.avatarUri);
   const [saving, setSaving] = useState(false);
@@ -110,7 +109,7 @@ export function ProfEditProfileScreen() {
             }}
           >
             <Text style={{ fontSize: 34, fontWeight: '700', color: '#fff' }}>
-              {(name.trim().charAt(0) || USER.initial).toUpperCase()}
+              {(name.trim().charAt(0) || 'G').toUpperCase()}
             </Text>
           </LinearGradient>
         )}

@@ -14,7 +14,6 @@ import { SkeletonCard, SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { communityService } from '../../services';
-import { USER } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction, showAlert } from '../../utils/alerts';
@@ -126,7 +125,7 @@ export function CommPostScreen() {
     Share.share({ message: `${post.author} on AutoMate: "${post.body}"` }).catch(() => {});
 
   // Moderation (App Store 1.2): flag the post for review / hide this author.
-  const isOwnPost = post.author === (useAppStore.getState().user?.name ?? USER.name);
+  const isOwnPost = post.author === (useAppStore.getState().user?.name ?? 'Guest');
   const onReport = () =>
     confirmAction(
       'Report this post?',
@@ -296,7 +295,7 @@ export function CommPostScreen() {
           marginTop: spacing.sm,
         }}
       >
-        <AvatarCircle initial={USER.initial} color={colors.primary} size={28} />
+        <AvatarCircle initial={(useAppStore.getState().user?.name ?? 'Guest').charAt(0).toUpperCase()} color={colors.primary} size={28} />
         <TextInput
           ref={composerRef}
           value={draft}

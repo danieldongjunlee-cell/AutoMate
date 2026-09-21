@@ -12,7 +12,6 @@ import { SettingsRow, TogglePill } from '../../components/SettingsRow';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { accountService } from '../../services';
-import { USER } from '../../services/mock/data';
 import { ThemeMode, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction, showAlert } from '../../utils/alerts';
@@ -37,8 +36,8 @@ export function ProfSettingsScreen() {
   const setThemeMode = useAppStore((s) => s.setThemeMode);
   const signOut = useAppStore((s) => s.signOut);
   const authedUser = useAppStore((s) => s.user);
-  const email = authedUser?.email ?? USER.email;
-  const phone = authedUser ? authedUser.phone ?? '' : USER.phone;
+  const email = authedUser?.email ?? '';
+  const phone = authedUser?.phone ?? '';
 
   // Wireframe defaults: community replies off, the rest on.
   const [notif, setNotif] = useState<Record<NotifKey, boolean>>({

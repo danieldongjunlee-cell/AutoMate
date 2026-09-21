@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FeedPostCard } from '../../components/FeedPostCard';
 import { FilterSheet } from '../../components/FilterSheet';
-import { GuestBanner } from '../../components/GuestBanner';
+import { GuestGate } from '../../components/GuestGate';
 import { Icon } from '../../components/Icon';
 import { Tappable } from '../../components/Tappable';
 import { useMyBrands } from '../../hooks/useActiveVehicle';
@@ -23,24 +23,23 @@ import { radii, spacing, useTheme } from '../../theme';
 
 type Nav = NativeStackNavigationProp<CommunityStackParamList, 'CommChannels'>;
 
-type Tab = 'home' | 'new' | 'top';
-
 const ALL = 'All';
 
 /**
- * Community (Reddit-style): a search bar on top, the filter funnel with
- * Home · New · Top, then one feed. Every brand has one community and
- * registering a car makes you a member of its brand's, so the feed holds the
- * communities of the cars in your garage (every brand's for a guest). The
- * funnel opens the app's filter sheet: which community, when more than one
- * brand is registered, and which tag (Question, Tip, ...). The floating pencil
- * writes a post.
+ * Community (Reddit-style): the filter funnel and the search bar on one row,
+ * then one feed, newest first. Every brand has one community and registering
+ * a car makes you a member of its brand's, so the feed holds the communities
+ * of the cars in your garage; a guest is asked to join first. The funnel opens
+ * the app's filter sheet: which community, when more than one brand is
+ * registered, and which tag (Question, Tip, ...). The floating pencil writes
+ * a post.
  */
 export function CommChannelsScreen() {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const requireAuth = useRequireAuth();
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const { brands: myBrands, hasCar } = useMyBrands();
   const brands = hasCar ? myBrands : FEED_BRANDS;
   const brandsKey = brands.join('|');
@@ -49,7 +48,6 @@ export function CommChannelsScreen() {
   const multi = communities.length > 1;
 
   const [query, setQuery] = useState('');
-  const [tab, setTab] = useState<Tab>('home');
   const [upvoted, setUpvoted] = useState<Record<string, boolean>>({});
   const [filterOpen, setFilterOpen] = useState(false);
   const [community, setCommunity] = useState(ALL);
@@ -70,10 +68,8 @@ export function CommChannelsScreen() {
     if (community !== ALL) list = list.filter((p) => p.brand === community);
     if (tag !== ALL) list = list.filter((p) => p.category === tag);
     if (q) list = list.filter((p) => [p.body, p.author, p.community.name, p.category, p.car].some((t) => t.toLowerCase().includes(q)));
-    if (tab === 'new') list = [...list].sort((a, b) => a.ageMin - b.ageMin);
-    if (tab === 'top') list = [...list].sort((a, b) => b.likes + b.replies - (a.likes + a.replies));
-    return list;
-  }, [feed, community, tag, tab, q]);
+    return [...list].sort((a, b) => a.ageMin - b.ageMin);
+  }, [feed, community, tag, q]);
 
   // Browsing the feed marks its posts read (drives the unread badge).
   const markPostsRead = useAppStore((s) => s.markPostsRead);
@@ -85,36 +81,37 @@ export function CommChannelsScreen() {
   const openCommunity = (brand: string) => navigation.navigate('CommBrand', { brand });
   const write = () => requireAuth('createPost', () => navigation.navigate('CommCreate'));
 
-  const tabs: { key: Tab; label: string }[] = [
-    { key: 'home', label: 'Home' },
-    { key: 'new', label: 'New' },
-    { key: 'top', label: 'Top' },
-  ];
-  const chip = (label: string, on: boolean, onPress: () => void) => (
-    <Tappable
-      key={label}
-      onPress={onPress}
-      accessibilityRole="tab"
-      accessibilityState={{ selected: on }}
-      accessibilityLabel={label}
-      style={{ height: 36, paddingHorizontal: 16, borderRadius: radii.pill, backgroundColor: on ? colors.primary : colors.inputBg, borderWidth: 1, borderColor: on ? colors.primary : colors.border, justifyContent: 'center' }}
-    >
-      <Text style={{ fontSize: 14, fontWeight: '700', color: on ? colors.onPrimary : colors.textSecondary }}>{label}</Text>
-    </Tappable>
-  );
   const filterCount = (community !== ALL ? 1 : 0) + (tag !== ALL ? 1 : 0);
   const filterCaption = [community !== ALL ? `${community} Owners` : null, tag !== ALL ? `${tag}s` : null].filter(Boolean).join(' · ');
+
+  // Guests have no community yet: the way in, nothing else.
+  if (!isAuthenticated) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background, paddingTop: insets.top + spacing.lg, paddingHorizontal: spacing.screenH }}>
+        <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.3, marginBottom: spacing.lg }}>Community</Text>
+        <GuestGate icon="chat" title="Join your car's community" body="Register a car and you're in its owners' community: questions, tips, deals and warnings from people driving the same brand." intent="community" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: insets.top + spacing.lg, paddingBottom: spacing.screenBottom + 40 }} keyboardShouldPersistTaps="handled">
         <View style={{ paddingHorizontal: spacing.screenH }}>
-          <GuestBanner />
-
           <Text style={{ fontSize: 28, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.3, marginBottom: spacing.md }}>Community</Text>
 
-          {/* Search */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, height: 46, backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, paddingHorizontal: spacing.md, marginBottom: spacing.md }}>
+          {/* Filter funnel, then the search bar, on one row. */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.md }}>
+          <Tappable
+            onPress={() => setFilterOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Filters"
+            style={{ height: 46, minWidth: 46, paddingHorizontal: filterCount ? 12 : 0, borderRadius: 23, backgroundColor: filterCount ? colors.primarySurface : colors.inputBg, borderWidth: 1, borderColor: filterCount ? colors.primary : colors.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}
+          >
+            <Icon name="funnel" size={20} color={filterCount ? colors.primaryDark : colors.textPrimary} strokeWidth={1.8} />
+            {filterCount ? <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>{filterCount}</Text> : null}
+          </Tappable>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, height: 46, backgroundColor: colors.inputBg, borderWidth: 1, borderColor: colors.border, borderRadius: radii.pill, paddingHorizontal: spacing.md }}>
             <Icon name="search" size={20} color={colors.textTertiary} />
             <TextInput
               value={query}
@@ -130,21 +127,8 @@ export function CommChannelsScreen() {
               </Tappable>
             ) : null}
           </View>
+          </View>
         </View>
-
-        {/* Filter (community · tag) · Home · New · Top */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ paddingHorizontal: spacing.screenH, gap: 8, paddingBottom: spacing.md }}>
-          <Tappable
-            onPress={() => setFilterOpen(true)}
-            accessibilityRole="button"
-            accessibilityLabel="Filters"
-            style={{ height: 36, minWidth: 36, paddingHorizontal: filterCount ? 10 : 0, borderRadius: 18, backgroundColor: filterCount ? colors.primarySurface : colors.inputBg, borderWidth: 1, borderColor: filterCount ? colors.primary : colors.border, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 6 }}
-          >
-            <Icon name="funnel" size={18} color={filterCount ? colors.primaryDark : colors.textPrimary} strokeWidth={1.8} />
-            {filterCount ? <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDark }}>{filterCount}</Text> : null}
-          </Tappable>
-          {tabs.map((t) => chip(t.label, tab === t.key, () => setTab(t.key)))}
-        </ScrollView>
 
         {/* Feed */}
         <View style={{ paddingHorizontal: spacing.screenH }}>

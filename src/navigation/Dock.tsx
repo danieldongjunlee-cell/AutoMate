@@ -88,6 +88,11 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
       color: palette.primary,
       glyphColor: '#ffffff',
       onPress: () => {
+        if (!isAuthenticated) {
+          setPendingAuth('bookMaintenance');
+          navigation.dispatch(CommonActions.navigate('Auth', { intent: 'bookMaintenance', tab: 'join' }));
+          return;
+        }
         setServiceTypePick([]);
         openInHome('MaintServiceType');
       },
