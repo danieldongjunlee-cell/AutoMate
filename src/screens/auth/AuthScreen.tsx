@@ -1,7 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '../../components/Icon';

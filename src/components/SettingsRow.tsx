@@ -1,6 +1,8 @@
 import React from 'react';
 import { Glyph } from './Icon';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Tappable } from './Tappable';
 

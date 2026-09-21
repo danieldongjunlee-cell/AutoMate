@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Icon } from './Icon';
 import { Tappable } from './Tappable';

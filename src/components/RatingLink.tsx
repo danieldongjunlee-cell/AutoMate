@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { StyleProp, Text, TextStyle } from 'react-native';
+import { StyleProp, TextStyle } from 'react-native';
+
+import { Text } from './Text';
 
 import { navigateCrossTab } from '../navigation/crossTab';
 import { Dealer } from '../services/mock/data';

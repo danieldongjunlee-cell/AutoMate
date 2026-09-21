@@ -3,7 +3,9 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen, SectionLabel } from '../../components/ui';

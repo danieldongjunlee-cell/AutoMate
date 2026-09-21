@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleProp,
-  StyleSheet,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ScrollView, StyleProp, StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
+
+import { Text } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { radii, spacing, useTheme } from '../theme';

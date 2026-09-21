@@ -1,5 +1,7 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { FormSheet } from './FormSheet';
 import { PRIVACY_SECTIONS, TERMS_SECTIONS } from '../services/mock/data';

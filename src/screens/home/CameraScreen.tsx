@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
@@ -116,7 +118,7 @@ export function CameraScreen() {
                 position: 'absolute',
                 bottom: 4,
                 right: 5,
-                backgroundColor: colors.success,
+                backgroundColor: colors.primary,
                 borderRadius: radii.pill,
                 paddingHorizontal: 6,
                 paddingVertical: 1,

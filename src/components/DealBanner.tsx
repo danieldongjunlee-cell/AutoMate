@@ -1,6 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Tappable } from './Tappable';
 import { palette, radii, spacing } from '../theme';

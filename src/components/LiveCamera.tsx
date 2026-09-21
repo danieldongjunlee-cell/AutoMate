@@ -1,7 +1,9 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Icon } from './Icon';
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Tappable } from './Tappable';
 import { palette, radii, spacing, useTheme } from '../theme';

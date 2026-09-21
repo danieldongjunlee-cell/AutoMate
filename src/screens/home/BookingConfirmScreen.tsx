@@ -1,7 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
@@ -34,6 +36,11 @@ export function BookingConfirmScreen() {
   const serviceLabel = damageParts.length
     ? `${damageParts[0].part} ${damageParts[0].type.split(',')[0].toLowerCase()}${damageParts.length > 1 ? ` +${damageParts.length - 1}` : ''}`
     : 'Rear bumper dent';
+
+  // Confirmed: there is nothing to go back to, the header's back button goes.
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerBackVisible: false, headerLeft: () => null, gestureEnabled: false });
+  }, [navigation]);
 
   const dealer = dealerById(route.params?.dealerId);
   const quote = QUOTES.find((q) => q.dealerId === dealer.id);
@@ -108,7 +115,7 @@ export function BookingConfirmScreen() {
       </View>
       <PrimaryButton
         label="Back to home"
-        variant="outline"
+        variant="muted"
         style={{ marginTop: spacing.sm }}
         onPress={() => navigation.popToTop()}
       />

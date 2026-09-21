@@ -3,7 +3,9 @@ import { Icon } from '../../components/Icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
-import { Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Share, StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 

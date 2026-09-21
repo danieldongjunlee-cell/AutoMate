@@ -1,6 +1,8 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Deal, DealBanner, DEALS } from '../../components/DealBanner';
 import { Tappable } from '../../components/Tappable';

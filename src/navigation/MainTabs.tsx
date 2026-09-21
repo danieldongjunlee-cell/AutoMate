@@ -188,10 +188,11 @@ const homeScreens = buildScreens(
 
 function HomeStack() {
   const theme = useTheme();
+  const t = useT();
   return (
     <HomeNative.Navigator initialRouteName="HomeLauncher" screenOptions={stackScreenOptions(theme)}>
       {homeScreens.map(({ name, component, title }) => (
-        <HomeNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'HomeLauncher' }} />
+        <HomeNative.Screen key={name} name={name} component={component} options={{ title: t(title), headerShown: name !== 'HomeLauncher' }} />
       ))}
     </HomeNative.Navigator>
   );
@@ -202,10 +203,11 @@ const QuotesNative = createNativeStackNavigator<QuotesStackParamList>();
 const quotesScreens = buildScreens(['Quotes'] as const, { Quotes: QuotesReceivedScreen });
 function QuotesStack() {
   const theme = useTheme();
+  const t = useT();
   return (
     <QuotesNative.Navigator initialRouteName="Quotes" screenOptions={stackScreenOptions(theme)}>
       {quotesScreens.map(({ name, component, title }) => (
-        <QuotesNative.Screen key={name} name={name} component={component} options={{ title, headerShown: false }} />
+        <QuotesNative.Screen key={name} name={name} component={component} options={{ title: t(title), headerShown: false }} />
       ))}
     </QuotesNative.Navigator>
   );
@@ -216,10 +218,11 @@ const BookingsNative = createNativeStackNavigator<BookingsStackParamList>();
 const bookingsScreens = buildScreens(['Bookings'] as const, { Bookings: BookingsScreen });
 function BookingsStack() {
   const theme = useTheme();
+  const t = useT();
   return (
     <BookingsNative.Navigator initialRouteName="Bookings" screenOptions={stackScreenOptions(theme)}>
       {bookingsScreens.map(({ name, component, title }) => (
-        <BookingsNative.Screen key={name} name={name} component={component} options={{ title, headerShown: false }} />
+        <BookingsNative.Screen key={name} name={name} component={component} options={{ title: t(title), headerShown: false }} />
       ))}
     </BookingsNative.Navigator>
   );
@@ -238,10 +241,11 @@ const communityScreens = buildScreens(
 );
 function CommunityStack() {
   const theme = useTheme();
+  const t = useT();
   return (
     <CommunityNative.Navigator initialRouteName="CommChannels" screenOptions={stackScreenOptions(theme)}>
       {communityScreens.map(({ name, component, title }) => (
-        <CommunityNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'CommChannels' }} />
+        <CommunityNative.Screen key={name} name={name} component={component} options={{ title: t(title), headerShown: name !== 'CommChannels' }} />
       ))}
     </CommunityNative.Navigator>
   );
@@ -315,10 +319,11 @@ const profileScreens = buildScreens(
 );
 function MoreStack() {
   const theme = useTheme();
+  const t = useT();
   return (
     <ProfileNative.Navigator initialRouteName="ProfHub" screenOptions={stackScreenOptions(theme)}>
       {profileScreens.map(({ name, component, title }) => (
-        <ProfileNative.Screen key={name} name={name} component={component} options={{ title, headerShown: name !== 'ProfHub' }} />
+        <ProfileNative.Screen key={name} name={name} component={component} options={{ title: t(title), headerShown: name !== 'ProfHub' }} />
       ))}
     </ProfileNative.Navigator>
   );

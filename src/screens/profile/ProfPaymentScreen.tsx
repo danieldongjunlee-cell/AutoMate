@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Icon } from '../../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { FormSheet } from '../../components/FormSheet';
 import { PrimaryButton } from '../../components/PrimaryButton';

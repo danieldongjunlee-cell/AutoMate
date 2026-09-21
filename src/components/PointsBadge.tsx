@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from './Text';
 
 import { pointsToUsd } from '../config/points';
 import { palette, radii, useTheme } from '../theme';

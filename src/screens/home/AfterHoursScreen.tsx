@@ -1,8 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Icon, IconName } from '../../components/Icon';
 import { AiEstimateCard } from '../../components/AiEstimateCard';
@@ -73,6 +75,10 @@ function TimelineNode({
 
 export function AfterHoursScreen() {
   const navigation = useNavigation<Nav>();
+  // Submitted: the request is in, there is nothing to go back to, the header's back button goes.
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerBackVisible: false, headerLeft: () => null, gestureEnabled: false });
+  }, [navigation]);
   const { colors } = useTheme();
   const damageParts = useAppStore((s) => s.damageParts);
   const isPro = useAppStore((s) => s.isPro);
@@ -149,19 +155,7 @@ export function AfterHoursScreen() {
         onPress={() => navigation.navigate('DealerQuotes')}
         style={{ marginBottom: spacing.sm }}
       />
-      <Tappable
-        onPress={() => navigation.navigate('HomeLauncher')}
-        style={({ pressed }) => ({
-          backgroundColor: colors.surface,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: colors.border,
-          borderRadius: radii.md,
-          paddingVertical: 13,
-          alignItems: 'center',
-        })}
-      >
-        <Text style={{ fontSize: 14, color: colors.textSecondary }}>Back to home</Text>
-      </Tappable>
+      <PrimaryButton label="Back to home" variant="muted" onPress={() => navigation.navigate('HomeLauncher')} />
     </Screen>
   );
 }

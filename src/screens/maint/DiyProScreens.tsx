@@ -3,7 +3,9 @@ import { Glyph, Icon, subjectColor } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Alert, Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Linking, ScrollView, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { FormSheet } from '../../components/FormSheet';
 import { Tappable } from '../../components/Tappable';

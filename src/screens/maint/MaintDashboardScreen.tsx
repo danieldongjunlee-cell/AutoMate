@@ -3,7 +3,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useLayoutEffect, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Icon, IconName } from '../../components/Icon';

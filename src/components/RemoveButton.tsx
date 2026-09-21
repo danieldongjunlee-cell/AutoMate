@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
+
+import { Text } from './Text';
 
 import { Tappable } from './Tappable';
 import { radii, useTheme } from '../theme';

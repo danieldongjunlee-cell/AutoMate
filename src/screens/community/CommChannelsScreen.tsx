@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';

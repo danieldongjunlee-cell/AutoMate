@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Platform, Text, View } from 'react-native';
+import { Animated, Easing, Platform, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { useTheme } from '../theme';
 

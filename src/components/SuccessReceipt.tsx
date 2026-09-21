@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Icon } from './Icon';
 import { palette, radii, spacing, useTheme } from '../theme';
@@ -10,7 +12,7 @@ export interface ReceiptRow {
 }
 
 /**
- * Success receipt (the confirmation design): a green tick in a soft disc,
+ * Success receipt (the confirmation design): a white tick on a blue disc,
  * "Thank you!", the transaction rows, then the total and the method it was
  * booked or paid with, closed by a PAID / CONFIRMED stub.
  */
@@ -62,9 +64,9 @@ export function SuccessReceipt({
   return (
     <View style={{ backgroundColor: colors.surface, borderRadius: 26, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' }}>
       <View style={{ alignItems: 'center', paddingTop: spacing.xl, paddingHorizontal: spacing.lg }}>
-        <View style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: colors.successSurface, alignItems: 'center', justifyContent: 'center' }}>
-          <View style={{ width: 54, height: 54, borderRadius: 27, backgroundColor: palette.mint, alignItems: 'center', justifyContent: 'center' }}>
-            <Icon name="check" size={30} color="#0B1E3D" strokeWidth={3} />
+        <View style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: colors.primarySurface, alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 54, height: 54, borderRadius: 27, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="check" size={30} color={colors.onPrimary} strokeWidth={3} />
           </View>
         </View>
         <Text style={{ fontSize: 24, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.md }}>{title}</Text>

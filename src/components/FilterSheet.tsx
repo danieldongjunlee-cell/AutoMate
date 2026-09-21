@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Modal, PanResponder, Platform, Text, View } from 'react-native';
+import { Modal, PanResponder, Platform, View } from 'react-native';
+
+import { Text } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from './Icon';

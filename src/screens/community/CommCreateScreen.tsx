@@ -3,7 +3,9 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
-import { Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Modal, StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 

@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '../../components/Icon';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Dropdown } from '../../components/Dropdown';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';

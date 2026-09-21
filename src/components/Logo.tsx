@@ -1,5 +1,7 @@
+import { Text as RNText } from 'react-native';
 import React from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
+
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 import { palette } from '../theme';
@@ -38,9 +40,9 @@ export function LogoWordmark({
   color?: string;
 }) {
   return (
-    <Text style={{ fontSize: size, fontWeight: '800', letterSpacing: -0.4, color }}>
-      Auto<Text style={{ color: palette.brandBlue }}>Mate</Text>
-    </Text>
+    <RNText style={{ fontSize: size, fontWeight: '800', letterSpacing: -0.4, color }}>
+      Auto<RNText style={{ color: palette.brandBlue }}>Mate</RNText>
+    </RNText>
   );
 }
 
@@ -67,9 +69,9 @@ export function AppLogoRow({ markSize = 34, textSize = 18, color = '#151a26' }: 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }} accessibilityLabel="AutoMate">
       <AppMark size={markSize} />
-      <Text style={{ fontSize: textSize, fontWeight: '800', letterSpacing: -0.4, color }}>
-        Auto<Text style={{ color: palette.primary }}>Mate</Text>
-      </Text>
+      <RNText style={{ fontSize: textSize, fontWeight: '800', letterSpacing: -0.4, color }}>
+        Auto<RNText style={{ color: palette.primary }}>Mate</RNText>
+      </RNText>
     </View>
   );
 }

@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 

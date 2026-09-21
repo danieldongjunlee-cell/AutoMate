@@ -1,6 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';

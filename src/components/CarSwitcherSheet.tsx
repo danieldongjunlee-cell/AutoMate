@@ -1,6 +1,8 @@
 import React from 'react';
 import { Icon } from './Icon';
-import { Modal, Text, View } from 'react-native';
+import { Modal, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { CarBrandLogo } from './CarBrandLogo';
 import { Tappable } from './Tappable';

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { View } from 'react-native';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
@@ -39,6 +39,11 @@ export function MaintScheduleConfirmScreen() {
       return cart.services.length > 0 ? cart : BOOKED_APPOINTMENT;
     })(),
   ).current;
+
+  // Confirmed: there is nothing to go back to, the header's back button goes.
+  useLayoutEffect(() => {
+    navigation.setOptions({ headerBackVisible: false, headerLeft: () => null, gestureEnabled: false });
+  }, [navigation]);
 
   const dealer = dealerById(booking.dealerId);
   const { total, totalMin } = cartTotals(booking);
@@ -115,7 +120,7 @@ export function MaintScheduleConfirmScreen() {
       </View>
       <PrimaryButton
         label="Back to home"
-        variant="outline"
+        variant="muted"
         style={{ marginTop: spacing.sm }}
         onPress={() => navigation.popToTop()}
       />

@@ -3,7 +3,9 @@ import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 import { Screen, SectionLabel } from '../../components/ui';

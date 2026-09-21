@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { MapMarker } from '../../components/DealerMap';
 import { FilterSheet } from '../../components/FilterSheet';

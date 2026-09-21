@@ -1,5 +1,7 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { SHOP_PHOTOS } from '../assets/shopPhotos';
 import { CarBrandLogo } from './CarBrandLogo';

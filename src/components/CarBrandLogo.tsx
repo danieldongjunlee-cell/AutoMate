@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { bundledBrandLogo } from '../assets/brandLogos';
 import { brandLogoUrl } from '../hooks/useActiveVehicle';

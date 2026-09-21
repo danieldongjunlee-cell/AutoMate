@@ -3,7 +3,9 @@ import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Image, Modal, StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 import Svg, { Circle } from 'react-native-svg';

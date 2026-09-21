@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Card, Screen } from '../../components/ui';

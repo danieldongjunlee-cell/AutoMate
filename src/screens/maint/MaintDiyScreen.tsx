@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { Icon } from '../../components/Icon';

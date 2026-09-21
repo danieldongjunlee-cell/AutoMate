@@ -1,7 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FeedPostCard } from '../../components/FeedPostCard';

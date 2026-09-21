@@ -1,15 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  ActivityIndicator,
-  Animated,
-  Easing,
-  Modal,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { ActivityIndicator, Animated, Easing, Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+
+import { Text } from './Text';
 
 import { radii, spacing, useTheme } from '../theme';
 

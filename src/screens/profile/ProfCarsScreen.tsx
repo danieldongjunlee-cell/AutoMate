@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CarBrandLogo } from '../../components/CarBrandLogo';
 import { FormSheet } from '../../components/FormSheet';

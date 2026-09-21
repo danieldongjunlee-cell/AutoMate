@@ -2,7 +2,9 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { PanResponder, StyleSheet, Text, View } from 'react-native';
+import { PanResponder, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
