@@ -3,7 +3,9 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { ProcessingOverlay } from '../../components/Skeleton';
 import { Tappable } from '../../components/Tappable';

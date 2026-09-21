@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../Text';
 import MapView, { Marker } from 'react-native-maps';
 
 import { useAppStore } from '../../store/useAppStore';

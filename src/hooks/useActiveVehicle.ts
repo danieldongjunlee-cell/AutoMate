@@ -87,3 +87,17 @@ export function useActiveVehicle(): ActiveVehicle {
 
   return { vehicles: list, active, brand: active ? brandOf(active.name) : 'your car' };
 }
+
+/**
+ * The brands in the user's garage, the active car's first and no repeats:
+ * the communities they belong to. A guest with no car gets an empty list.
+ */
+export function useMyBrands(): { brands: string[]; activeBrand: string; hasCar: boolean } {
+  const { vehicles, active, brand } = useActiveVehicle();
+  const brands: string[] = [];
+  for (const v of [...(active ? [active] : []), ...vehicles]) {
+    const b = brandOf(v.name);
+    if (!brands.some((x) => x.toLowerCase() === b.toLowerCase())) brands.push(b);
+  }
+  return { brands, activeBrand: brand, hasCar: !!active };
+}

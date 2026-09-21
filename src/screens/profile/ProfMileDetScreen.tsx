@@ -2,7 +2,9 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Glyph } from '../../components/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 

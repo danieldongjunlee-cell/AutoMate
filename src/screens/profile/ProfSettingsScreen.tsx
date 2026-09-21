@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { Modal, StyleSheet, Text, View } from 'react-native';
+import { Modal, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Icon } from '../../components/Icon';
 import { Tappable } from '../../components/Tappable';
@@ -10,7 +12,6 @@ import { SettingsRow, TogglePill } from '../../components/SettingsRow';
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { ProfileStackParamList } from '../../navigation/types';
 import { accountService } from '../../services';
-import { USER } from '../../services/mock/data';
 import { ThemeMode, useAppStore } from '../../store/useAppStore';
 import { radii, spacing, useTheme } from '../../theme';
 import { confirmAction, showAlert } from '../../utils/alerts';
@@ -35,8 +36,8 @@ export function ProfSettingsScreen() {
   const setThemeMode = useAppStore((s) => s.setThemeMode);
   const signOut = useAppStore((s) => s.signOut);
   const authedUser = useAppStore((s) => s.user);
-  const email = authedUser?.email ?? USER.email;
-  const phone = authedUser ? authedUser.phone ?? '' : USER.phone;
+  const email = authedUser?.email ?? '';
+  const phone = authedUser?.phone ?? '';
 
   // Wireframe defaults: community replies off, the rest on.
   const [notif, setNotif] = useState<Record<NotifKey, boolean>>({

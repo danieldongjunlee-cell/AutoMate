@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Icon, IconName } from './Icon';
 import { palette, radii, spacing } from '../theme';

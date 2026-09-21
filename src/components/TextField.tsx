@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { StyleProp, Text, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
+import { StyleProp, TextInputProps, View, ViewStyle } from 'react-native';
+
+import { Text, TextInput } from './Text';
 
 import { Icon } from './Icon';
 import { Tappable } from './Tappable';

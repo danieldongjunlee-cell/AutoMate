@@ -1,5 +1,6 @@
 import { PAYMENT_CARD } from './data';
 import { delay } from './delay';
+import { useAppStore } from '../../store/useAppStore';
 
 /** Saved card (prof-payment). last4 is immutable after add (PCI-style). */
 export interface PaymentCard {
@@ -34,6 +35,7 @@ let nextId = 1;
 
 export const paymentMethodsService = {
   async listCards(): Promise<PaymentCard[]> {
+    if (!useAppStore.getState().isAuthenticated) return [];
     await delay(250);
     return cards.map((c) => ({ ...c }));
   },

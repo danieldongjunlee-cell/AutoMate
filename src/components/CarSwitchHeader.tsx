@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Icon } from './Icon';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from './Text';
 
 import { CarSwitcherSheet } from './CarSwitcherSheet';
 import { Tappable } from './Tappable';

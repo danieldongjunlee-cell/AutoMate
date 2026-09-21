@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { authService } from '../services';
 import { palette, radii, spacing, useTheme } from '../theme';

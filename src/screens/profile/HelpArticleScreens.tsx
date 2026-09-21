@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Glyph } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -202,9 +204,8 @@ export function HelpBookingsScreen() {
   );
 }
 
-/** Wireframe s-help-contact: chat / email / phone + action stubs. */
+/** Wireframe s-help-contact: how to reach support (chat hours, email, phone). */
 export function HelpContactScreen() {
-  const { colors } = useTheme();
   return (
     <HelpArticle
       icon="phone"
@@ -224,39 +225,6 @@ export function HelpContactScreen() {
           body: '(703) 555-0123 · Mon–Fri 8AM–8PM ET. Have your booking ID ready for fastest service.',
         },
       ]}
-    >
-      <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.xs }}>
-        <Tappable
-          onPress={() => Alert.alert('Start chat', 'Live chat connects to support with the backend.')}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.primary,
-            borderRadius: radii.sm,
-            paddingVertical: 13,
-            alignItems: 'center',
-          })}
-        >
-          <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onPrimary }}>
-            Start chat
-          </Text>
-        </Tappable>
-        <Tappable
-          onPress={() =>
-            Alert.alert('Email us', 'Opens a draft to support@automate.app with the backend.')
-          }
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.surface,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: radii.sm,
-            paddingVertical: 13,
-            alignItems: 'center',
-          })}
-        >
-          <Text style={{ fontSize: 14, color: colors.textSecondary }}>Email us</Text>
-        </Tappable>
-      </View>
-    </HelpArticle>
+    />
   );
 }

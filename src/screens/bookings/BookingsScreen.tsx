@@ -2,14 +2,16 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useRef, useState } from 'react';
-import { PanResponder, StyleSheet, Text, View } from 'react-native';
+import { PanResponder, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CarSwitchChip } from '../../components/CarSwitchChip';
+import { GuestGate } from '../../components/GuestGate';
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { Tappable } from '../../components/Tappable';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Badge, Card, Screen, SectionLabel } from '../../components/ui';
-import { GuestBanner } from '../../components/GuestBanner';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { BookingsStackParamList } from '../../navigation/types';
@@ -39,6 +41,7 @@ export function BookingsScreen() {
   const t = useT();
   const { brand } = useActiveVehicle();
   const allBookings = useAppStore((s) => s.bookings);
+  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const setBookingsViewed = useAppStore((s) => s.setBookingsViewed);
   const markBookingCompleted = useAppStore((s) => s.markBookingCompleted);
   // Opening the Bookings tab clears its badge.
@@ -252,9 +255,18 @@ export function BookingsScreen() {
     );
   };
 
+  // Guests have no bookings: the way in, nothing else.
+  if (!isAuthenticated) {
+    return (
+      <Screen safeTop>
+        <Text style={{ fontSize: 27, fontWeight: '800', color: colors.textPrimary, marginBottom: spacing.lg }}>{t('Bookings')}</Text>
+        <GuestGate icon="calendar" title="Sign up to see your bookings" body="Your repair and maintenance appointments, the calendar and the reminders live here once you have an account." intent="bookings" />
+      </Screen>
+    );
+  }
+
   return (
     <Screen safeTop>
-      <GuestBanner />
       {/* Title row · car switch pinned top-right (consistent across tabs). */}
       <View
         style={{

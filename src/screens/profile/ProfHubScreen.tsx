@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -14,8 +16,6 @@ import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { navigateCrossTab } from '../../navigation/crossTab';
 import { MainTabParamList, ProfileStackParamList } from '../../navigation/types';
 import { insuranceService, vehiclesService } from '../../services';
-import { USER } from '../../services/mock/data';
-import { GuestBanner } from '../../components/GuestBanner';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
@@ -49,8 +49,9 @@ export function ProfHubScreen() {
   // Guests have no account yet, points read zero.
   const points = isAuthenticated ? storePoints : 0;
   const authedUser = useAppStore((s) => s.user);
-  const displayName = authedUser?.name ?? USER.name;
-  const displayInitial = displayName.trim().charAt(0).toUpperCase() || USER.initial;
+  // A guest is a guest, never the demo account's details.
+  const displayName = authedUser?.name ?? 'Guest';
+  const displayInitial = displayName.trim().charAt(0).toUpperCase() || 'G';
 
   // "Check" prompts: shown until a car / a policy is on file.
   const { data: policies } = useQuery({ queryKey: ['policies'], queryFn: () => insuranceService.listPolicies() });
@@ -107,8 +108,6 @@ export function ProfHubScreen() {
 
   return (
     <Screen safeTop>
-      <GuestBanner />
-
       {/* Identity */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg }}>
         {authedUser?.avatarUri ? (

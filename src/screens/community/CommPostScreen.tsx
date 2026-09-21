@@ -3,7 +3,9 @@ import { Icon } from '../../components/Icon';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef, useState } from 'react';
-import { Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Share, StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 
@@ -12,7 +14,6 @@ import { SkeletonCard, SkeletonList } from '../../components/Skeleton';
 import { AvatarCircle, Screen, SectionLabel } from '../../components/ui';
 import { CommunityStackParamList } from '../../navigation/types';
 import { communityService } from '../../services';
-import { USER } from '../../services/mock/data';
 import { useAppStore } from '../../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../../theme';
 import { confirmAction, showAlert } from '../../utils/alerts';
@@ -124,7 +125,7 @@ export function CommPostScreen() {
     Share.share({ message: `${post.author} on AutoMate: "${post.body}"` }).catch(() => {});
 
   // Moderation (App Store 1.2): flag the post for review / hide this author.
-  const isOwnPost = post.author === (useAppStore.getState().user?.name ?? USER.name);
+  const isOwnPost = post.author === (useAppStore.getState().user?.name ?? 'Guest');
   const onReport = () =>
     confirmAction(
       'Report this post?',
@@ -166,7 +167,7 @@ export function CommPostScreen() {
               {post.author}
             </Text>
             <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-              {post.car} · Honda Owners · {post.ago}
+              {post.car} · {(post as { community?: { name: string } }).community?.name ?? 'Owners'} · {post.ago}
             </Text>
           </View>
           <CategoryBadge category={post.category} />
@@ -294,7 +295,7 @@ export function CommPostScreen() {
           marginTop: spacing.sm,
         }}
       >
-        <AvatarCircle initial={USER.initial} color={colors.primary} size={28} />
+        <AvatarCircle initial={(useAppStore.getState().user?.name ?? 'Guest').charAt(0).toUpperCase()} color={colors.primary} size={28} />
         <TextInput
           ref={composerRef}
           value={draft}

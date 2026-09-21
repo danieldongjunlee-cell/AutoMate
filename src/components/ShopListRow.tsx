@@ -1,5 +1,7 @@
 import React from 'react';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, ScrollView, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { SHOP_PHOTOS } from '../assets/shopPhotos';
 import { Icon, IconName } from './Icon';

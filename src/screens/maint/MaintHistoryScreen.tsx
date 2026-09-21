@@ -3,7 +3,9 @@ import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
-import { Image, Modal, StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Tappable } from '../../components/Tappable';
 import Svg, { Circle } from 'react-native-svg';
@@ -109,25 +111,6 @@ export function MaintHistoryScreen() {
 
       {/* Add record */}
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.md }}>
-        <Tappable
-          onPress={() => navigation.navigate('MaintScanCam')}
-          style={({ pressed }) => ({
-            flex: 1,
-            backgroundColor: colors.successSurface,
-            borderRadius: radii.sm,
-            borderWidth: 1.5,
-            borderColor: colors.success,
-            padding: spacing.md,
-            alignItems: 'center',
-            gap: 5,
-          })}
-        >
-          <Icon name="camera" size={26} color={colors.textSecondary} />
-          <Text style={{ fontSize: 14, fontWeight: '500', color: colors.successDeep }}>
-            Scan receipt
-          </Text>
-          <PointsBadge points={EARN_RULES.scanReceipt} usd />
-        </Tappable>
         <Tappable
           onPress={() => navigation.navigate('MaintManual')}
           style={({ pressed }) => ({

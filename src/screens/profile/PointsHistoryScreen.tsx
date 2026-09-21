@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '../../components/Icon';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { Card, Screen, SectionLabel } from '../../components/ui';
 import { fetchLedger } from '../../lib/points';

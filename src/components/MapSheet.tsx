@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, PanResponder, Platform, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Animated, PanResponder, Platform, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+
+import { Text } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DealerMap, LatLng, MapMarker } from './DealerMap';

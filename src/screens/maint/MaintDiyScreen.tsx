@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { FilterButton, FilterSheet } from '../../components/FilterSheet';
 import { Icon } from '../../components/Icon';
@@ -86,7 +88,7 @@ export function MaintDiyScreen() {
       {/* Header */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md }}>
         <View style={{ width: 50, height: 50, borderRadius: 14, backgroundColor: colors.chip, alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name="wrench" size={28} color={palette.amber} />
+          <Icon name="bulb" size={28} color={palette.amber} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>DIY Repair Guides</Text>

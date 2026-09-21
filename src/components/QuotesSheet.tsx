@@ -1,8 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { AiEstimateCard } from './AiEstimateCard';
+import { AiRecommendationCard } from './AiRecommendationCard';
 import { MapMarker } from './DealerMap';
 import { FilterSheet } from './FilterSheet';
 import { Icon } from './Icon';
@@ -38,14 +41,6 @@ export function quoteFilterSummary(sort: string, parts: string, radiusMi: number
   if (sort !== QUOTE_SORTS[0]) bits.push(sort);
   return { label: bits.length ? `Filter · ${bits[0]}` : 'Filter', count: bits.length };
 }
-
-/** Short chip labels for the quote sorts. */
-const SORT_CHIP: Record<string, string> = {
-  'Price: low to high': 'Price ↑',
-  'Price: high to low': 'Price ↓',
-  'Rating: high to low': 'Top rated',
-  'Nearest first': 'Nearest',
-};
 
 /**
  * The quotes list in the maps-app layout, shared by the Quotes tab and the
@@ -85,8 +80,6 @@ export function QuotesSheet({
   const [openNow, setOpenNow] = useState(false);
   const [radius, setRadius] = useState(30);
   const [filterOpen, setFilterOpen] = useState(false);
-  // Sort / Parts / Distance stay hidden until the funnel is tapped.
-  const [chipsOpen, setChipsOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
   const rowY = useRef<Record<string, number>>({});
@@ -116,7 +109,6 @@ export function QuotesSheet({
       selected: q.dealerId === selectedId,
     };
   });
-  const cycle = (list: string[], cur: string) => list[(list.indexOf(cur) + 1) % list.length];
 
   return (
     <>
@@ -131,21 +123,18 @@ export function QuotesSheet({
         scrollRef={scrollRef}
         chips={
           <>
-            <FilterChip icon="funnel" onPress={() => setChipsOpen((v) => !v)} active={chipsOpen || summary.count > 0} />
+            {/* The funnel opens the app's filter sheet; the count is how many filters are on. */}
+            <FilterChip icon="funnel" label={summary.count ? String(summary.count) : undefined} onPress={() => setFilterOpen(true)} active={summary.count > 0} />
             <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
-            {chipsOpen ? (
-              <>
-                <FilterChip label={sort === QUOTE_SORTS[0] ? 'Sort by' : SORT_CHIP[sort] ?? sort} caret active={sort !== QUOTE_SORTS[0]} onPress={() => setSort(cycle(QUOTE_SORTS, sort))} />
-                <FilterChip label={parts === QUOTE_PARTS[0] ? 'Parts' : parts} caret active={parts !== QUOTE_PARTS[0]} onPress={() => setParts(cycle(QUOTE_PARTS, parts))} />
-                <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
-              </>
-            ) : null}
+            {summary.count ? <FilterChip label={summary.label.replace('Filter · ', '')} active onPress={() => setFilterOpen(true)} /> : null}
           </>
         }
       >
         {/* AI estimate strip + add / cancel */}
         <View style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
           <AiEstimateCard priceLow={priceLow} priceHigh={priceHigh} points={damagePoints} style={{ marginBottom: spacing.md }} />
+          {/* Pro members find the AI's matched DIY methods here too. */}
+          <AiRecommendationCard primaryPart={damageParts[0]?.part ?? 'Rear bumper'} style={{ marginBottom: spacing.md }} />
           <View style={{ flexDirection: 'row', gap: spacing.sm }}>
             <Tappable
               onPress={onRevise}

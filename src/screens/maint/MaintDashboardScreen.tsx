@@ -3,15 +3,17 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useLayoutEffect, useState } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 
+import { Text } from '../../components/Text';
+
+import { CarSwitchChip } from '../../components/CarSwitchChip';
 import { Icon, IconName } from '../../components/Icon';
 import { IconChip } from '../../components/IconChip';
 import { Tappable } from '../../components/Tappable';
 import { Screen } from '../../components/ui';
 import { useActiveVehicle } from '../../hooks/useActiveVehicle';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
-import { navigateCrossTab } from '../../navigation/crossTab';
 import { MaintStackParamList } from '../../navigation/types';
 import { maintService } from '../../services';
 import { useCarImage } from '../../services/carImage';
@@ -57,28 +59,21 @@ export function MaintDashboardScreen() {
   const setServiceTypePick = useAppStore((s) => s.setServiceTypePick);
   const { data: upcoming } = useQuery({ queryKey: ['upcoming-services'], queryFn: maintService.getUpcomingServices });
   const { active } = useActiveVehicle();
+  const isPro = useAppStore((s) => s.isPro);
   const carName = active?.name ?? VEHICLE.name;
-  const carOdometer = active?.odometerMi ?? VEHICLE.odometerMi;
-  const carOil = (active?.oilSpec ?? VEHICLE.oilSpec).split(' ')[0];
-  const carColor = (active?.colorName ?? VEHICLE.colorName).replace(/\s*Metallic$/i, '');
+  // Everything registered about the car, under the photo.
+  const carDetails = [active?.colorName, active ? `${active.odometerMi.toLocaleString()} mi` : null, active?.oilSpec].filter(Boolean).join(' · ');
   const mv = marketValueFor(carName);
   const { data: photoUrl } = useCarImage(carName);
   const [heroW, setHeroW] = useState(0);
   const [photoFailed, setPhotoFailed] = useState(false);
 
-  // Header: back chevron (native), car name centred, bell on the right.
+  // Header: back chevron (native), "Maintenance", the car switch on the right.
   useLayoutEffect(() => {
-    navigation.setOptions({
-      title: carName,
-      headerRight: () => (
-        <Tappable onPress={() => navigation.navigate('Notifications' as never)} hitSlop={8} accessibilityLabel="Notifications">
-          <Icon name="bell" size={24} color={colors.textPrimary} />
-        </Tappable>
-      ),
-    });
-  }, [navigation, carName, colors.textPrimary]);
+    navigation.setOptions({ headerRight: () => <CarSwitchChip /> });
+  }, [navigation]);
 
-  const quick = (label: string, icon: IconName, color: string, onPress: () => void) => (
+  const quick = (label: string, icon: IconName, color: string, onPress: () => void, pro?: boolean) => (
     <Tappable
       key={label}
       onPress={() => requireAuth('maintAction', onPress)}
@@ -95,6 +90,13 @@ export function MaintDashboardScreen() {
     >
       <IconChip name={icon} size={50} glyph={26} color={color} bg={`${color}14`} radius={14} />
       <Text style={{ fontSize: 13, fontWeight: '700', color: colors.textPrimary }}>{label}</Text>
+      {pro ? (
+        // Pro feature: the badge sits in the tile's top-right corner, locked until you are Pro.
+        <View style={{ position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: palette.dark, borderRadius: radii.pill, paddingHorizontal: 7, paddingVertical: 3 }}>
+          <Icon name={isPro ? 'unlock' : 'lock'} size={11} color={palette.star} strokeWidth={2.2} />
+          <Text style={{ fontSize: 10, fontWeight: '800', color: palette.star }}>PRO</Text>
+        </View>
+      ) : null}
     </Tappable>
   );
 
@@ -137,6 +139,11 @@ export function MaintDashboardScreen() {
             }}
           />
         )}
+      </View>
+      {/* The registered car under the photo: year, make, model and trim on one line, the rest beneath. */}
+      <View style={{ alignItems: 'center', marginBottom: spacing.md, paddingHorizontal: spacing.md }}>
+        <Text style={{ fontSize: 20, fontWeight: '800', color: colors.textPrimary, letterSpacing: -0.2, textAlign: 'center' }} numberOfLines={1} adjustsFontSizeToFit>{carName}</Text>
+        {carDetails ? <Text style={{ fontSize: 13, color: colors.textTertiary, marginTop: 2, textAlign: 'center' }}>{carDetails}</Text> : null}
       </View>
 
       {/* Estimated market value */}
@@ -190,8 +197,7 @@ export function MaintDashboardScreen() {
 
       {/* Quick actions */}
       <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.section }}>
-        {quick('DIY tips', 'star', palette.star, () => navigation.navigate('MaintDiy'))}
-        {quick('Receipt', 'camera', palette.teal, () => navigation.navigate('MaintScanCam'))}
+        {quick('DIY tips', 'bulb', palette.amber, () => navigation.navigate('MaintDiy'), true)}
         {quick('History', 'clock', palette.lavender, () => navigation.navigate('MaintHistory'))}
       </View>
 
@@ -236,30 +242,6 @@ export function MaintDashboardScreen() {
         </>
       ) : null}
 
-      {/* Vehicle row → My cars */}
-      <Tappable
-        onPress={() => navigateCrossTab(navigation, 'MoreTab', 'ProfCars')}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: spacing.md,
-          backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
-          borderRadius: radii.lg,
-          padding: spacing.md,
-          marginTop: isAuthenticated ? spacing.lg : 0,
-        }}
-      >
-        <IconChip name="car" size={44} glyph={24} color={palette.teal} bg={`${palette.teal}14`} radius={12} />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '700', color: colors.textPrimary }}>{carName}</Text>
-          <Text style={{ fontSize: 13, color: colors.textTertiary }}>
-            {carOdometer.toLocaleString()} mi · {carOil} · {carColor}
-          </Text>
-        </View>
-        <Icon name="chevron" size={22} color={colors.textTertiary} />
-      </Tappable>
     </Screen>
   );
 }

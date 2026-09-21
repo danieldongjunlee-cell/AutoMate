@@ -1,5 +1,7 @@
 import React from 'react';
-import { Alert, Platform, Text, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Icon } from './Icon';
 import { Tappable } from './Tappable';

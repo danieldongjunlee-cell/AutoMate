@@ -1,5 +1,6 @@
 import { VEHICLE } from './data';
 import { delay } from './delay';
+import { useAppStore } from '../../store/useAppStore';
 
 /** App-level vehicle shape (mirror of the server's vehicles rows). */
 export interface Vehicle {
@@ -50,6 +51,7 @@ let nextId = 1;
 
 export const vehiclesService = {
   async listVehicles(): Promise<Vehicle[]> {
+    if (!useAppStore.getState().isAuthenticated) return [];
     await delay(250);
     return vehicles.map((v) => ({ ...v }));
   },

@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { TextInput, Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';

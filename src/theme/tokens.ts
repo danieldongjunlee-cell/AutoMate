@@ -11,8 +11,6 @@ export const spacing = {
   xxxl: 32,
   /** Horizontal screen padding. */
   screenH: 16,
-  /** Top padding under the status bar on header-less tab roots. */
-  screenTop: 56,
   /** Bottom padding so content scrolls clear of the floating dock. */
   screenBottom: 104,
   /** Vertical gap between sections on a screen. */

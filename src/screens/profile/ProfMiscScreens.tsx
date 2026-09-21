@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text, TextInput } from '../../components/Text';
 
 import { AppleLogo, GoogleLogo } from '../../components/BrandLogos';
 import { SocialSignInSheet, SocialProvider } from '../../components/SocialSignInSheet';

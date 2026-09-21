@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
-import { ActivityIndicator, Animated, Modal, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Modal, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { radii, spacing } from '../theme';
 import { Tappable } from './Tappable';

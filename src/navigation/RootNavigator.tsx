@@ -21,6 +21,10 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // Signing in or out swaps what the account-bound lists return, so refetch them all.
+  useEffect(() => {
+    void queryClient.invalidateQueries();
+  }, [isAuthenticated]);
   const setAuth = useAppStore((s) => s.setAuth);
   const signIn = useAppStore((s) => s.signIn);
   const setBookings = useAppStore((s) => s.setBookings);

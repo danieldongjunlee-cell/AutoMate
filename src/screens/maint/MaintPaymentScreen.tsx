@@ -2,7 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Glyph, Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { CvcField, isValidCvc } from '../../components/CvcField';
 import { PrimaryButton } from '../../components/PrimaryButton';

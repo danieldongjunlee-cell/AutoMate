@@ -1,7 +1,9 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Modal, Platform, Text, useWindowDimensions, View } from 'react-native';
+import { Animated, Modal, Platform, useWindowDimensions, View } from 'react-native';
+
+import { Text } from '../components/Text';
 
 import { EstimateGateSheet } from '../components/EstimateGateSheet';
 import { Icon, IconName } from '../components/Icon';
@@ -86,6 +88,11 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
       color: palette.primary,
       glyphColor: '#ffffff',
       onPress: () => {
+        if (!isAuthenticated) {
+          setPendingAuth('bookMaintenance');
+          navigation.dispatch(CommonActions.navigate('Auth', { intent: 'bookMaintenance', tab: 'join' }));
+          return;
+        }
         setServiceTypePick([]);
         openInHome('MaintServiceType');
       },
@@ -231,22 +238,26 @@ export function Dock({ state, descriptors, navigation, insets }: BottomTabBarPro
                       }}
                       accessibilityRole="button"
                       accessibilityLabel={a.title}
-                      style={{
+                      // Hover: the row tints, its edge takes the action's colour and it
+                      // nudges right; no dimming, the backdrop must not show through.
+                      noFeedback
+                      style={({ hovered, pressed }) => ({
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: spacing.md,
-                        backgroundColor: colors.sheet,
+                        backgroundColor: hovered || pressed ? colors.primarySurface : colors.sheet,
                         borderWidth: 1,
-                        borderColor: `${a.color}66`,
+                        borderColor: hovered || pressed ? a.color : `${a.color}66`,
                         borderRadius: radii.xl,
                         paddingVertical: 12,
                         paddingHorizontal: 14,
-                        shadowColor: '#000',
-                        shadowOpacity: dark ? 0.5 : 0.18,
+                        shadowColor: hovered ? a.color : '#000',
+                        shadowOpacity: hovered ? 0.35 : dark ? 0.5 : 0.18,
                         shadowRadius: 16,
                         shadowOffset: { width: 0, height: 8 },
                         elevation: 8,
-                      }}
+                        transform: [{ translateX: hovered ? 6 : 0 }, { scale: pressed ? 0.98 : 1 }],
+                      })}
                     >
                       <IconChip name={a.icon} size={48} glyph={26} bg={a.color} color={a.glyphColor ?? colors.sheet} radius={14} />
                       <Text style={{ flex: 1, fontSize: 17, fontWeight: '800', color: colors.textPrimary }}>{a.title}</Text>

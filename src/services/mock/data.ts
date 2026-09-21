@@ -1241,6 +1241,8 @@ export const POST_COMMENTS: PostComment[] = [
 ];
 
 export const POST_CATEGORIES: PostCategory[] = ['Question', 'Tip', 'Quotes', 'DIY', 'Review'];
+/** Every tag a post can carry, what the community feed filters on. */
+export const POST_TAGS: PostCategory[] = ['Question', 'Tip', 'DIY', 'Review', 'Quotes', 'Warning'];
 
 // ── Profile domain ─────────────────────────────────────────────────────
 
@@ -1269,7 +1271,6 @@ export const MILESTONES: Milestone[] = [
 // Point values come from the central earn schedule (src/config/points.ts).
 export const EARN_ACTIONS = [
   { icon: 'calendar', title: 'Daily check-in', sub: 'Log in every day', pts: EARN_RULES.dailyCheckIn },
-  { icon: 'camera', title: 'Scan service receipt', sub: 'Add to service history', pts: EARN_RULES.scanReceipt },
   { icon: 'pencil', title: 'Manual service log', sub: 'Enter service details', pts: EARN_RULES.manualLog },
   { icon: 'oil', title: 'Book service via app', sub: 'Schedule at a dealer', pts: EARN_RULES.bookService },
   { icon: 'camera', title: 'Submit damage photos', sub: 'Get dealer quotes', pts: EARN_RULES.submitPhotos },

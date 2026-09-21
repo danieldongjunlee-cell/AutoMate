@@ -1,10 +1,12 @@
 import React from 'react';
-import { ActivityIndicator, StyleProp, Text, TextStyle, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleProp, TextStyle, ViewStyle } from 'react-native';
+
+import { Text } from './Text';
 
 import { palette, radii, spacing, useTheme } from '../theme';
 import { Tappable } from './Tappable';
 
-type Variant = 'primary' | 'auth' | 'outline' | 'success' | 'warning' | 'danger';
+type Variant = 'primary' | 'auth' | 'outline' | 'muted' | 'success' | 'warning' | 'danger';
 
 interface Props {
   label: string;
@@ -31,6 +33,8 @@ export function PrimaryButton({
     primary: colors.primary,
     auth: palette.authAction,
     outline: 'transparent',
+    // Light grey fill, the secondary action beside a primary one (Back to home).
+    muted: colors.surfaceAlt,
     success: colors.success,
     warning: colors.warning,
     danger: colors.danger,
@@ -39,6 +43,7 @@ export function PrimaryButton({
     primary: colors.onPrimary,
     auth: '#fff',
     outline: colors.textSecondary,
+    muted: colors.textPrimary,
     success: '#fff',
     warning: palette.dark,
     danger: '#fff',

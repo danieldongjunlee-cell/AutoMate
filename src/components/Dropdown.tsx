@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Icon } from './Icon';
-import { Modal, ScrollView, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Modal, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+
+import { Text } from './Text';
 
 import { palette, radii, spacing, useTheme } from '../theme';
 import { Tappable } from './Tappable';

@@ -1,7 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { MapMarker } from '../../components/DealerMap';
 import { FilterSheet } from '../../components/FilterSheet';
@@ -85,8 +87,7 @@ export function MaintScheduleScreen() {
   const [service, setService] = useState(SCHEDULE_SERVICE_FILTERS[0]);
   const [radius, setRadius] = useState(30);
   const [filterOpen, setFilterOpen] = useState(false);
-  // Sort / Service / Distance stay hidden until the funnel is tapped.
-  const [chipsOpen, setChipsOpen] = useState(false);
+  const filterCount = (sort !== SORTS[0] ? 1 : 0) + (service !== 'All' ? 1 : 0) + (radius < 30 ? 1 : 0);
   // Pin ↔ row selection sync.
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const scrollRef = useRef<ScrollView>(null);
@@ -141,7 +142,6 @@ export function MaintScheduleScreen() {
   const topRatedId = dealers.length ? [...dealers].sort((a, b) => b.rating - a.rating)[0].id : null;
 
   const pickedLabel = pickedCategories.map((c) => c.name).join(' + ');
-  const cycleSort = () => setSort((s) => SORTS[(SORTS.indexOf(s) + 1) % SORTS.length]);
 
   return (
     <>
@@ -155,17 +155,12 @@ export function MaintScheduleScreen() {
         scrollRef={scrollRef}
         chips={
           <>
-            <FilterChip icon="funnel" onPress={() => setChipsOpen((v) => !v)} active={chipsOpen || radius < 30} />
+            {/* The funnel opens the app's filter sheet; the count is how many filters are on. */}
+            <FilterChip icon="funnel" label={filterCount ? String(filterCount) : undefined} onPress={() => setFilterOpen(true)} active={filterCount > 0} />
             <FilterChip label="Open now" active={openNow} onPress={() => setOpenNow((v) => !v)} />
-            {chipsOpen ? (
-              <>
-                <FilterChip label={sort === SORTS[0] ? 'Sort by' : sort} caret onPress={cycleSort} active={sort !== SORTS[0]} />
-                {pickedCategories.length === 0 ? (
-                  <FilterChip label={service === 'All' ? 'Service' : service} caret active={service !== 'All'} onPress={() => setFilterOpen(true)} />
-                ) : null}
-                <FilterChip label={radius < 30 ? `Within ${radius} mi` : 'Distance'} caret active={radius < 30} onPress={() => setFilterOpen(true)} />
-              </>
-            ) : null}
+            {sort !== SORTS[0] ? <FilterChip label={sort} active onPress={() => setFilterOpen(true)} /> : null}
+            {service !== 'All' ? <FilterChip label={service} active onPress={() => setFilterOpen(true)} /> : null}
+            {radius < 30 ? <FilterChip label={`Within ${radius} mi`} active onPress={() => setFilterOpen(true)} /> : null}
           </>
         }
       >
@@ -224,8 +219,12 @@ export function MaintScheduleScreen() {
         visible={filterOpen}
         onClose={() => setFilterOpen(false)}
         distance={{ value: radius }}
-        groups={pickedCategories.length ? [] : [{ key: 'service', title: 'Service', options: SCHEDULE_SERVICE_FILTERS, value: service }]}
+        groups={[
+          { key: 'sort', title: 'Sort by', options: [...SORTS], value: sort },
+          { key: 'service', title: 'Service', options: SCHEDULE_SERVICE_FILTERS, value: service, hidden: pickedCategories.length > 0 },
+        ]}
         onApply={(v, d) => {
+          setSort((v.sort as Sort) ?? SORTS[0]);
           setService(v.service ?? 'All');
           if (d != null) setRadius(d);
         }}

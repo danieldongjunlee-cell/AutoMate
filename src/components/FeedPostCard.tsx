@@ -1,16 +1,18 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { SHOP_PHOTOS } from '../assets/shopPhotos';
+import { CarBrandLogo } from './CarBrandLogo';
 import { Icon } from './Icon';
 import { CategoryBadge } from './PostCard';
 import { Tappable } from './Tappable';
 import { FeedPost } from '../services/mock/communityChannels';
 import { radii, spacing, useTheme } from '../theme';
-import { AvatarCircle } from './ui';
 
 /**
- * Reddit-style feed card: community avatar + "c/Community · author · time",
+ * Reddit-style feed card: the community's brand badge + "c/Community · author · time",
  * a category badge, the post body, an optional photo, then an upvote pill,
  * comment count and share.
  */
@@ -54,7 +56,7 @@ export function FeedPostCard({
       {/* Community + author line */}
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm }}>
         <Tappable onPress={onCommunity} hitSlop={6} accessibilityLabel={`Open ${post.community.name}`}>
-          <AvatarCircle initial={post.community.initial} color={post.community.color} size={34} />
+          <CarBrandLogo brand={post.community.brand} size={34} bg="transparent" />
         </Tappable>
         <View style={{ flex: 1 }}>
           <Tappable onPress={onCommunity} hitSlop={4} noFeedback>

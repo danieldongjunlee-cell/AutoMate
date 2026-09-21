@@ -1,5 +1,7 @@
 import React from 'react';
-import { Modal, Platform, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, StyleSheet, View } from 'react-native';
+
+import { Text } from './Text';
 
 import { Tappable } from './Tappable';
 import { useAppStore } from '../store/useAppStore';

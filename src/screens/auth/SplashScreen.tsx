@@ -1,8 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Text as RNText } from 'react-native';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+
+import { Text } from '../../components/Text';
 
 import { AppleLogo, GoogleLogo } from '../../components/BrandLogos';
 import { LogoMark } from '../../components/Logo';
@@ -59,9 +62,9 @@ export function SplashScreen() {
         }}
       >
         <LogoMark size={84} />
-        <Text style={{ fontSize: 30, fontWeight: '800', color: '#fff', marginTop: spacing.md }}>
-          Auto<Text style={{ color: palette.brandBlue }}>Mate</Text>
-        </Text>
+        <RNText style={{ fontSize: 30, fontWeight: '800', color: '#fff', marginTop: spacing.md }}>
+          Auto<RNText style={{ color: palette.brandBlue }}>Mate</RNText>
+        </RNText>
         <Text
           style={{
             fontSize: 14,

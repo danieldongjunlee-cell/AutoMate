@@ -1,14 +1,15 @@
 /**
- * Brand-scoped community generator.
+ * Brand community generator.
  *
- * The Community tab shows communities only for the user's active car brand.
- * `brandChannels(brand)` synthesizes four sub-communities for ANY brand name,
- * with deterministic (seeded) member/post counts so the list is stable per
- * brand instead of flickering on every render.
+ * Every brand has exactly one community ("Honda Owners"); registering a car
+ * makes its owner a member of that brand's community, no joining. The four
+ * topic kinds below only flavour the mock posts (service, DIY, lounge, deals)
+ * so a community's feed reads varied, the posts are then tagged by their
+ * category (Question, Tip, ...), which is what the feed filters on.
  *
- * `channelKind(title)` maps a sub-community title to a topic kind, and
- * `groupPosts(brand, kind)` generates a themed, brand-flavored mock feed so
- * each group's detail screen reads on-topic instead of a generic feed.
+ * `brandChannels(brand)` keeps the four themed sub-feeds, with deterministic
+ * (seeded) counts so nothing flickers between renders; `brandCommunity` folds
+ * them into the one community the app shows.
  */
 
 import { CommunityPost } from './data';
@@ -208,23 +209,6 @@ const POST_TEMPLATES: Record<ChannelKind, PostSeed[]> = {
  */
 export const CHANNEL_KINDS: ChannelKind[] = ['service', 'maintenance', 'lounge', 'deals'];
 
-/** Every post across all of a brand's communities (used for the unread badge). */
-export function allBrandPosts(brand: string): CommunityPost[] {
-  return CHANNEL_KINDS.flatMap((kind) => groupPosts(brand, kind));
-}
-
-/**
- * Posts only from the communities the user has actually JOINED (within the
- * active brand). New users join nothing, so this is empty and the Community tab
- * shows no notification badge until they join a community.
- */
-export function joinedBrandPosts(brand: string, joinedIds: string[]): CommunityPost[] {
-  const joined = new Set(joinedIds);
-  return brandChannels(brand)
-    .filter((channel) => joined.has(channel.id))
-    .flatMap((channel) => groupPosts(brand, channelKind(channel.name)));
-}
-
 export function groupPosts(brand: string, kind: ChannelKind): CommunityPost[] {
   const safeBrand = brand.trim() || 'Your Car';
   return POST_TEMPLATES[kind].map((seed, index) => ({
@@ -241,12 +225,33 @@ export function groupPosts(brand: string, kind: ChannelKind): CommunityPost[] {
   }));
 }
 
-/** Brands with active communities on the Reddit-style home feed. */
+/** Brands with active communities, what a guest with no car browses. */
 export const FEED_BRANDS = ['Honda', 'Toyota', 'Kia', 'Ford', 'BMW'];
+
+/** The one community a brand has. */
+export interface BrandCommunity {
+  id: string;
+  brand: string;
+  name: string;
+  members: number;
+  newPosts: number;
+}
+
+export function brandCommunity(brand: string): BrandCommunity {
+  const safeBrand = brand.trim() || 'Your Car';
+  const parts = brandChannels(safeBrand);
+  return {
+    id: safeBrand.toLowerCase().replace(/\s+/g, '-'),
+    brand: safeBrand,
+    name: `${safeBrand} Owners`,
+    members: parts.reduce((n, c) => n + c.members, 0),
+    newPosts: parts.reduce((n, c) => n + c.newPosts, 0),
+  };
+}
 
 /** A feed post plus the community it was posted in. */
 export interface FeedPost extends CommunityPost {
-  community: BrandChannel;
+  community: BrandCommunity;
   brand: string;
   /** Deterministic "minutes ago" for New sorting. */
   ageMin: number;
@@ -255,27 +260,33 @@ export interface FeedPost extends CommunityPost {
 const AGE_MIN: Record<string, number> = { '1h ago': 60, '2h ago': 120, '3h ago': 180, '4h ago': 240, '5h ago': 300, '6h ago': 360, '7h ago': 420, '9h ago': 540, '10h ago': 600, '11h ago': 660, '1d ago': 1440, '2d ago': 2880 };
 
 /**
- * The home feed: posts from every brand's communities, each tagged with its
- * community, ids made unique per brand. Two posts per community keeps the
- * feed varied without drowning the user's own brand.
+ * Every post in a brand's community: the four themed sub-feeds folded into
+ * one, ids made unique per brand so the read-state and the badge agree.
  */
-export function homeFeed(activeBrand: string): FeedPost[] {
-  const brands = [activeBrand, ...FEED_BRANDS.filter((b) => b.toLowerCase() !== activeBrand.toLowerCase())].filter((b) => b.trim());
-  return brands.flatMap((brand, bi) =>
-    brandChannels(brand).flatMap((community) => {
-      const kind = channelKind(community.name);
-      // The active brand gets its full feed; other brands contribute two posts each.
-      const take = bi === 0 ? 4 : 2;
-      return groupPosts(brand, kind)
-        .slice(0, take)
-        .map((post, i) => ({
-          ...post,
-          id: `${brand.toLowerCase()}-${post.id}`,
-          community,
-          brand,
-          ageMin: (AGE_MIN[post.ago] ?? 720) + bi * 7 + i,
-          hasPhoto: (hash(`${brand}-${kind}-${i}`) % 3) === 0,
-        }));
-    }),
+export function brandPosts(brand: string): FeedPost[] {
+  const community = brandCommunity(brand);
+  return CHANNEL_KINDS.flatMap((kind, ki) =>
+    groupPosts(community.brand, kind).map((post, i) => ({
+      ...post,
+      id: `${community.id}-${post.id}`,
+      community,
+      brand: community.brand,
+      ageMin: (AGE_MIN[post.ago] ?? 720) + ki * 3 + i,
+      hasPhoto: hash(`${community.brand}-${kind}-${i}`) % 3 === 0,
+    })),
   );
+}
+
+/** The feed for a set of brands (the user's cars, or every brand for a guest), newest first. */
+export function communityFeed(brands: string[]): FeedPost[] {
+  const seen = new Set<string>();
+  return brands
+    .filter((b) => {
+      const key = b.trim().toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .flatMap(brandPosts)
+    .sort((a, b) => a.ageMin - b.ageMin);
 }
