@@ -10,9 +10,9 @@ import { Tappable } from './Tappable';
 import { palette, radii, spacing, useTheme } from '../theme';
 
 /**
- * Guest gate for "AI Repair Estimate" (canvas "Estimate gate"): a bottom sheet
- * offering the picker as a guest, or Join first to earn points. Signed-in
- * users never see it.
+ * Guest gate for "AI Repair Estimate": a bottom sheet with just the two
+ * choices, continue as a guest or sign up for rewards, and Not now.
+ * Signed-in users never see it.
  */
 export function EstimateGateSheet({
   visible,
@@ -30,7 +30,6 @@ export function EstimateGateSheet({
 
   const option = (opts: {
     title: string;
-    caption: string;
     icon: 'user' | 'coins';
     bg: string;
     border: string;
@@ -57,7 +56,6 @@ export function EstimateGateSheet({
       <IconChip name={opts.icon} size={64} glyph={34} color={opts.tint} radius={20} />
       <View style={{ flex: 1 }}>
         <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary }}>{opts.title}</Text>
-        <Text style={{ fontSize: 13, color: colors.textSecondary, marginTop: 3 }}>{opts.caption}</Text>
       </View>
       <Icon name="chevron" size={22} color={colors.textTertiary} />
     </Tappable>
@@ -81,15 +79,8 @@ export function EstimateGateSheet({
           }}
         >
           <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: colors.border, alignSelf: 'center', marginBottom: spacing.lg }} />
-          <Text style={{ fontSize: 22, fontWeight: '800', color: colors.textPrimary, marginBottom: 4 }}>
-            You can use this as a guest
-          </Text>
-          <Text style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 20, marginBottom: spacing.lg }}>
-            Sign up to save your estimate, cars and points.
-          </Text>
           {option({
             title: 'Get an estimate as a guest',
-            caption: 'No account needed · quotes in about an hour',
             icon: 'user',
             bg: colors.tileNavy,
             border: colors.tileNavyBorder,
@@ -98,7 +89,6 @@ export function EstimateGateSheet({
           })}
           {option({
             title: 'Sign up and get rewards',
-            caption: 'Earn points on every estimate',
             icon: 'coins',
             bg: dark ? '#2a2212' : colors.warningSurface,
             border: palette.amber,

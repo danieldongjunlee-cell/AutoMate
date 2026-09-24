@@ -2,7 +2,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
 
+import { CarBrandLogo } from './CarBrandLogo';
 import { Text } from './Text';
+import { brandOf, useActiveVehicle } from '../hooks/useActiveVehicle';
+import { useAppStore } from '../store/useAppStore';
 
 import { palette, radii, spacing } from '../theme';
 
@@ -53,10 +56,11 @@ function Gloss({ width }: { width: number }) {
 }
 
 /**
- * The AI estimate panel from automate-technology.com: "AI ESTIMATED TOTAL"
- * over the whole estimated range (low to high, never a single average), how
- * it was generated, then the AutoMate AI analysis with that range drawn as a
- * bar from its low to its high end. A sheen sweeps across it.
+ * The AI estimate panel from automate-technology.com: the car and the
+ * damaged parts on top, "AI ESTIMATED TOTAL" over the whole estimated range,
+ * how it was generated, then the AutoMate AI analysis with the range drawn as
+ * a bar from its low to its high end and the average marked on it. A sheen
+ * sweeps across it.
  */
 export function AiEstimateCard({
   priceLow,
@@ -77,11 +81,31 @@ export function AiEstimateCard({
   style?: object;
 }) {
   const [w, setW] = React.useState(0);
+  const { active } = useActiveVehicle();
+  const damageParts = useAppStore((s) => s.damageParts);
+  const carName = active?.name;
+  const partsLabel = damageParts.map((p) => p.part).join(', ');
+  const avg = Math.round((priceLow + priceHigh) / 2);
+  const span = Math.max(1, priceHigh - priceLow);
+  const markerPct = Math.max(6, Math.min(94, ((avg - priceLow) / span) * 100));
   const money = (n: number) => `$${n.toLocaleString(undefined, { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })}`;
 
   return (
     <View onLayout={(e) => setW(Math.round(e.nativeEvent.layout.width))} style={[{ borderRadius: radii.tile, overflow: 'hidden' }, style]}>
       <LinearGradient colors={[CARD_TOP, CARD_BOTTOM]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: spacing.lg, borderRadius: radii.tile, borderWidth: 1, borderColor: CARD_LINE }}>
+        {/* The car this estimate is for, and the parts that were photographed. */}
+        {carName ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingBottom: spacing.md, marginBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: 'rgba(126,155,255,0.2)' }}>
+            <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#ffffff', alignItems: 'center', justifyContent: 'center' }}>
+              <CarBrandLogo brand={brandOf(carName)} size={28} bg="transparent" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 15, fontWeight: '800', color: '#ffffff' }} numberOfLines={1}>{carName}</Text>
+              {partsLabel ? <Text style={{ fontSize: 12, fontWeight: '600', color: BODY, marginTop: 1 }} numberOfLines={1}>{partsLabel}</Text> : null}
+            </View>
+          </View>
+        ) : null}
+
         {/* Headline: the whole estimated range */}
         <Text style={{ fontSize: 11, fontWeight: '800', letterSpacing: 1.1, textTransform: 'uppercase', color: LABEL_BLUE }}>AI estimated total</Text>
         <Text style={{ fontSize: 34, fontWeight: '800', color: '#ffffff', letterSpacing: -0.6, marginTop: 4 }} numberOfLines={1} adjustsFontSizeToFit>
@@ -100,9 +124,12 @@ export function AiEstimateCard({
           <Text style={{ fontSize: 13, fontWeight: '600', color: BODY, marginTop: 6, marginBottom: 8 }}>Market range for this repair</Text>
           <View style={{ height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.12)', overflow: 'visible', justifyContent: 'center' }}>
             <LinearGradient colors={[palette.mint, '#2bd07f', '#1f9e75']} start={{ x: 0, y: 0.5 }} end={{ x: 1, y: 0.5 }} style={{ position: 'absolute', left: 0, right: 0, height: 8, borderRadius: 4 }} />
+            {/* The average, marked on the range. */}
+            <View style={{ position: 'absolute', left: `${markerPct}%`, marginLeft: -3, width: 6, height: 18, borderRadius: 3, backgroundColor: '#ffffff' }} />
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
             <Text style={{ fontSize: 12, fontWeight: '600', color: BODY }}>{`Low ${money(priceLow)}`}</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: '#ffffff' }}>{`Avg ${money(avg)}`}</Text>
             <Text style={{ fontSize: 12, fontWeight: '600', color: BODY }}>{`High ${money(priceHigh)}`}</Text>
           </View>
         </View>

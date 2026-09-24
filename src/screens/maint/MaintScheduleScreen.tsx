@@ -24,6 +24,7 @@ import {
   SERVICE_FILTER_KEY,
   shopServicePrice,
   USER_LOCATION,
+  recommendedShopId,
 } from '../../services/mock/data';
 import { CartService, useAppStore } from '../../store/useAppStore';
 import { palette, spacing, useTheme } from '../../theme';
@@ -132,14 +133,19 @@ export function MaintScheduleScreen() {
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
     const y = rowY.current[dealerId];
-    if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: true });
+    // After the sheet opens fully, bring the picked row to the top of the list.
+    if (y != null) setTimeout(() => scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true }), 280);
   };
 
-  // Ribbons: the cheapest shop for the chosen services, and the best-rated one.
+  // Ribbons: the cheapest shop for the chosen services, and the recommended one.
   const cheapestId = dealers.length
     ? [...dealers].sort((a, b) => (pickedCategories.length ? totalAt(a.id) - totalAt(b.id) : fromPrice(a.id) - fromPrice(b.id)))[0].id
     : null;
-  const topRatedId = dealers.length ? [...dealers].sort((a, b) => b.rating - a.rating)[0].id : null;
+  // Recommended weighs each shop's rating against its price for these services.
+  const recommendedId = recommendedShopId(
+    dealers.map((d) => ({ id: d.id, price: pickedCategories.length ? totalAt(d.id) : fromPrice(d.id), rating: d.rating })),
+    cheapestId,
+  );
 
   const pickedLabel = pickedCategories.map((c) => c.name).join(' + ');
 
@@ -149,6 +155,7 @@ export function MaintScheduleScreen() {
         markers={markers}
         center={USER_LOCATION}
         onSelectPin={onPinSelect}
+        expandKey={selectedId}
         title={pickedCategories.length ? pickedLabel : 'Partner shops'}
         subtitle={`${dealers.length} shop${dealers.length !== 1 ? 's' : ''} for your ${brand} · ${sort.toLowerCase()}`}
         onClose={() => navigation.goBack()}
@@ -184,8 +191,8 @@ export function MaintScheduleScreen() {
                 tag={
                   dealer.id === cheapestId
                     ? { label: 'Best price', tone: 'best' as const }
-                    : dealer.id === topRatedId
-                      ? { label: 'Top rated', tone: 'reco' as const }
+                    : dealer.id === recommendedId
+                      ? { label: 'Recommended', tone: 'reco' as const }
                       : undefined
                 }
                 selected={dealer.id === selectedId}

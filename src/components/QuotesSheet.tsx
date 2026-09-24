@@ -14,7 +14,7 @@ import { QuoteShopCard } from './QuoteShopCard';
 import { SkeletonList } from './Skeleton';
 import { Tappable } from './Tappable';
 import { quoteService } from '../services';
-import { dealerById, Quote, QUOTE_REQUEST, quotesInEstimateRange, USER_LOCATION } from '../services/mock/data';
+import { dealerById, Quote, QUOTE_REQUEST, quotesInEstimateRange, recommendedShopId, USER_LOCATION } from '../services/mock/data';
 import { useAppStore } from '../store/useAppStore';
 import { palette, radii, spacing, useTheme } from '../theme';
 
@@ -73,7 +73,15 @@ export function QuotesSheet({
   const priceLow = aiEstimate?.priceLow ?? QUOTE_REQUEST.priceRange.low;
   const priceHigh = aiEstimate?.priceHigh ?? QUOTE_REQUEST.priceRange.high;
   // Shop quotes always reflect the AI estimate range shown above.
-  const quotes = useMemo(() => quotesInEstimateRange(rawQuotes ?? [], { priceLow, priceHigh }), [rawQuotes, priceLow, priceHigh]);
+  // Ribbons: Best price is the cheapest quote; Recommended weighs the shop's
+  // rating against its price, so a well-rated shop a little dearer can win it.
+  const quotes = useMemo(() => {
+    const list = quotesInEstimateRange(rawQuotes ?? [], { priceLow, priceHigh });
+    if (!list.length) return list;
+    const bestId = [...list].sort((a, b) => a.price - b.price)[0].dealerId;
+    const recoId = recommendedShopId(list.map((q) => ({ id: q.dealerId, price: q.price, rating: dealerById(q.dealerId).rating })), bestId);
+    return list.map((q) => ({ ...q, tier: q.dealerId === bestId ? 'best' : q.dealerId === recoId ? 'recommended' : 'other' }) as Quote);
+  }, [rawQuotes, priceLow, priceHigh]);
 
   const [sort, setSort] = useState(QUOTE_SORTS[0]);
   const [parts, setParts] = useState(QUOTE_PARTS[0]);
@@ -95,7 +103,8 @@ export function QuotesSheet({
   const onPinSelect = (dealerId: string) => {
     setSelectedId(dealerId);
     const y = rowY.current[dealerId];
-    if (y != null) scrollRef.current?.scrollTo({ y: Math.max(0, y), animated: true });
+    // After the sheet opens fully, bring the picked row to the top of the list.
+    if (y != null) setTimeout(() => scrollRef.current?.scrollTo({ y: Math.max(0, y - 8), animated: true }), 280);
   };
 
   const markers: MapMarker[] = filtered.map((q) => {
@@ -116,6 +125,7 @@ export function QuotesSheet({
         markers={markers}
         center={USER_LOCATION}
         onSelectPin={onPinSelect}
+        expandKey={selectedId}
         title={title}
         subtitle={`${filtered.length} shops responded · ${summary.label.toLowerCase()}`}
         headerRight={headerRight}

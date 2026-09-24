@@ -44,6 +44,7 @@ export function MapSheet({
   children,
   scrollRef,
   onExpandedChange,
+  expandKey,
 }: {
   markers: MapMarker[];
   center: LatLng;
@@ -59,6 +60,8 @@ export function MapSheet({
   children: React.ReactNode;
   scrollRef?: React.Ref<ScrollView>;
   onExpandedChange?: (expanded: boolean) => void;
+  /** Change this (e.g. to the picked shop's id) to open the sheet fully. */
+  expandKey?: string | null;
 }) {
   const { colors, dark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -79,6 +82,13 @@ export function MapSheet({
     onExpandedChange?.(open);
     Animated.spring(top, { toValue: open ? fullTop : halfTop, useNativeDriver: false, bounciness: 2, speed: 18 }).start();
   };
+  // A shop picked on the map: open the sheet fully so its row sits at the
+  // top of the list, not half hidden behind the dock.
+  useEffect(() => {
+    if (expandKey) snapTo(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expandKey]);
+
   // Keep the sheet on its snap point if the window resizes.
   useEffect(() => {
     top.setValue(expanded ? fullTop : halfTop);

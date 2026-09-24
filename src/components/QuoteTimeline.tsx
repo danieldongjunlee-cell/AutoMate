@@ -58,8 +58,8 @@ export function QuoteTimeline({ steps, note }: { steps: TimelineStep[]; note?: s
         ))}
       </View>
       {note ? (
-        <View style={{ marginTop: spacing.md, backgroundColor: 'rgba(255,255,255,0.07)', borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 }}>
-          <Text style={{ fontSize: 12, fontWeight: '600', color: 'rgba(226,232,255,0.8)', lineHeight: 17 }}>{note}</Text>
+        <View style={{ marginTop: spacing.md, backgroundColor: 'rgba(46,232,126,0.16)', borderWidth: 1, borderColor: 'rgba(46,232,126,0.35)', borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 }}>
+          <Text style={{ fontSize: 12, fontWeight: '700', color: '#9ff5c4', lineHeight: 17 }}>{note}</Text>
         </View>
       ) : null}
     </View>

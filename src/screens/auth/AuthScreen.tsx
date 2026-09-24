@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Icon } from '../../components/Icon';
 import { LegalKind, LegalSheet } from '../../components/LegalSheet';
-import { LogoRow } from '../../components/Logo';
+import { AppLogoRow } from '../../components/Logo';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SocialAuthButtons } from '../../components/SocialAuthButtons';
 import { Tappable } from '../../components/Tappable';
@@ -79,7 +79,7 @@ export function AuthScreen() {
       <View style={{ height: Math.max(insets.top, 8) }} />
       {/* Logo + close × */}
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.xl }}>
-        <LogoRow markSize={28} textSize={16} />
+        <AppLogoRow markSize={34} textSize={17} color={colors.textPrimary} />
         <Tappable onPress={close} hitSlop={10} accessibilityLabel="Close" style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name="close" size={22} color={colors.textPrimary} />
         </Tappable>
