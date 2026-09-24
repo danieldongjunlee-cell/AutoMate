@@ -1131,7 +1131,7 @@
   "{n}d ago": "hace {n} d",
   "{n}m ago": "hace {n} min",
   "Generated in {n}s": "Generado en {n}s",
-  "Generated in {n}s from {n} detected damage point{n}": "Generado en {n}s a partir de {n} punto{n} de daño detectados",
+  "Generated in {n}s from {n} detected damage point{n}": "Generado en {1}s a partir de {2} punto{3} de daño detectados",
   "Photos sent to {n} shops · free, no obligation · 1–3 hr est. response": "Fotos enviadas a {n} talleres · gratis, sin compromiso · respuesta est. en 1–3 h",
   "1–3 hr": "1–3 h",
   "AI ESTIMATED TOTAL": "TOTAL ESTIMADO POR IA",
@@ -1331,5 +1331,7 @@
   "{n} replies": "{n} respuestas",
   "{n} reply": "{n} respuesta",
   "replies": "respuestas",
-  "Add a comment": "Agregar un comentario"
+  "Add a comment": "Agregar un comentario",
+  "Low {n}": "Mín. {n}",
+  "High {n}": "Máx. {n}"
 }
