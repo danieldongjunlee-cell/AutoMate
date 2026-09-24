@@ -1155,7 +1155,7 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     ago: '5h ago',
     category: 'Review',
     body:
-      'The Pro DIY guide for nail polish paint chip fix actually worked on my hood scratch. Saved $400 in labor. Paint match was perfect ',
+      'Honda Fairfax fixed my hood scratch for exactly the quoted price, kept me updated by text and had the car back a day early. Staff could not have been friendlier.',
     replies: 7,
     likes: 41,
   },
@@ -1166,9 +1166,9 @@ export const COMMUNITY_POSTS: CommunityPost[] = [
     color: '#378ADD',
     car: '2020 Pilot',
     ago: '8h ago',
-    category: 'Question',
+    category: 'Review',
     body:
-      "Insurance filed a claim for my door ding and my premium went up $180/yr. AutoMate's compare tool literally showed me it would cost more to insure than pay cash . Always check first!",
+      "The shop I booked through AutoMate told me honestly that my door ding was cheaper to pay cash for than to claim on insurance. Saved me a premium hike. That kind of honesty keeps me coming back.",
     replies: 22,
     likes: 67,
   },
@@ -1371,3 +1371,22 @@ export const BOOKED_APPOINTMENT = {
   date: '2027-04-07',
   time: '8:00 AM',
 };
+
+/**
+ * The shop to recommend: the best balance of rating and price, not just the
+ * cheapest. Rating counts 60%, price 40%, each scaled across the shops being
+ * compared. `exclude` keeps the Best price shop from also taking this ribbon.
+ */
+export function recommendedShopId(
+  shops: { id: string; price: number; rating: number }[],
+  exclude?: string | null,
+): string | null {
+  const pool = shops.filter((s) => s.id !== exclude);
+  if (!pool.length) return null;
+  const prices = shops.map((s) => s.price);
+  const ratings = shops.map((s) => s.rating);
+  const [pMin, pMax, rMin, rMax] = [Math.min(...prices), Math.max(...prices), Math.min(...ratings), Math.max(...ratings)];
+  const score = (s: { price: number; rating: number }) =>
+    0.6 * (rMax > rMin ? (s.rating - rMin) / (rMax - rMin) : 1) + 0.4 * (pMax > pMin ? (pMax - s.price) / (pMax - pMin) : 1);
+  return [...pool].sort((a, b) => score(b) - score(a))[0].id;
+}

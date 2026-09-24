@@ -97,8 +97,8 @@ export function Tile({
 }
 
 /**
- * Scan overlay for the photo tiles: while the tile is hovered (or being
- * pressed on touch), a teal laser line sweeps top → bottom on a faint grid,
+ * Scan overlay for the photo tiles: always running, a teal laser line
+ * sweeps top → bottom on a faint grid,
  * like the damage-scanner animation on the AutoMate site.
  */
 function ScanOverlay({ active, height }: { active: boolean; height: number }) {
@@ -250,6 +250,7 @@ export function PhotoTile({
   style?: StyleProp<ViewStyle>;
 }) {
   const { colors } = useTheme();
+  // Hover / press only lights the border; the animation itself always runs.
   const [active, setActive] = useState(false);
   const accent = effect === 'service' ? SERVICE_AMBER : SCAN_TEAL;
   return (
@@ -284,7 +285,7 @@ export function PhotoTile({
       >
         <TileTitle color="#e8edf5">{title}</TileTitle>
       </LinearGradient>
-      {effect === 'service' ? <ServiceOverlay active={active} height={height} /> : <ScanOverlay active={active} height={height} />}
+      {effect === 'service' ? <ServiceOverlay active height={height} /> : <ScanOverlay active height={height} />}
     </Tappable>
   );
 }
