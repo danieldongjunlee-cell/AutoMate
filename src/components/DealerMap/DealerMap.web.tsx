@@ -66,7 +66,7 @@ export function DealerMap({
   markers,
   center,
   zoom = DEFAULT_ZOOM,
-  userLocation,
+  userLocation: fallbackLocation,
   onSelect,
   style,
 }: DealerMapProps) {
@@ -76,8 +76,10 @@ export function DealerMap({
   const tileRef = useRef<L.TileLayer | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
-  // The "you are here" dot only shows once the user grants location access.
-  const showUser = useAppStore((s) => s.locationPermission === 'granted');
+  // The "you are here" dot shows the device position once the OS location
+  // prompt is granted; until then (or on denial) there is nothing to show.
+  const userLocation = useAppStore((s) => s.userLocation) ?? fallbackLocation;
+  const showUser = useAppStore((s) => s.userLocation !== null);
   const { dark } = useTheme();
 
   // Init once the container div exists.

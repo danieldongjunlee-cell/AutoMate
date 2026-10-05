@@ -34,6 +34,12 @@
         {
           "cameraPermission": "AutoMate uses the camera to photograph vehicle damage and scan service receipts."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "AutoMate uses your location to find nearby auto and body shops and show how far each quote is from you."
+        }
       ]
     ],
     "extra": {

@@ -296,6 +296,11 @@ interface AppState {
   pendingVehicle: { name: string; colorName: string } | null;
   setPendingVehicle: (v: { name: string; colorName: string } | null) => void;
 
+  /** Device position from the OS location prompt shown at launch (null until
+   *  granted or when denied). Not persisted: re-read on every launch. */
+  userLocation: { lat: number; lng: number } | null;
+  setUserLocation: (v: { lat: number; lng: number } | null) => void;
+
   // App preferences (Settings → Language / Distance units). Stored here so the
   // selection persists across navigation (device-level prefs, survive sign-out).
   language: string;
@@ -343,10 +348,6 @@ interface AppState {
   setActiveVehicle: (id: string, opts?: { carrySubmission?: boolean }) => void;
   /** Per-car snapshots of the damage/quotes flow, keyed by vehicle id. */
   damageByVehicle: Record<string, DamageSlice>;
-
-  // Location permission (asked once so the maps can show "you are here").
-  locationPermission: 'unasked' | 'granted' | 'denied';
-  setLocationPermission: (p: 'granted' | 'denied') => void;
 
   /** Estimate context captured on the first-estimate intake (no car on file):
    *  service location + insurance/rental/pick-up flags, carried into the quote. */
@@ -494,6 +495,8 @@ export const useAppStore = create<AppState>()(
   setPendingAuth: (pendingAuth) => set({ pendingAuth }),
   pendingVehicle: null,
   setPendingVehicle: (pendingVehicle) => set({ pendingVehicle }),
+  userLocation: null,
+  setUserLocation: (userLocation) => set({ userLocation }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
   signOut: () => {
@@ -609,9 +612,6 @@ export const useAppStore = create<AppState>()(
         ...emptyDraft,
       };
     }),
-
-  locationPermission: 'unasked',
-  setLocationPermission: (locationPermission) => set({ locationPermission }),
 
   estimateContext: { location: '', hasInsurance: null, isRental: false, needsPickup: false },
   setEstimateContext: (patch) =>

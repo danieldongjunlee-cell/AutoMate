@@ -108,7 +108,7 @@ function ScanOverlay({ active, height }: { active: boolean; height: number }) {
     Animated.timing(fade, { toValue: active ? 1 : 0, duration: 220, useNativeDriver: Platform.OS !== 'web' }).start();
     if (!active) return;
     y.setValue(0);
-    const loop = Animated.loop(Animated.timing(y, { toValue: 1, duration: 1500, easing: Easing.inOut(Easing.sin), useNativeDriver: Platform.OS !== 'web' }));
+    const loop = Animated.loop(Animated.timing(y, { toValue: 1, duration: 3500, easing: Easing.inOut(Easing.sin), useNativeDriver: Platform.OS !== 'web' }));
     loop.start();
     return () => loop.stop();
   }, [active, y, fade]);
@@ -168,8 +168,8 @@ function ServiceOverlay({ active, height }: { active: boolean; height: number })
     spin.setValue(0);
     pulse.setValue(0);
     const loops = [
-      Animated.loop(Animated.timing(spin, { toValue: 1, duration: 2600, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
-      Animated.loop(Animated.timing(pulse, { toValue: 3, duration: 1800, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
+      Animated.loop(Animated.timing(spin, { toValue: 1, duration: 6000, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
+      Animated.loop(Animated.timing(pulse, { toValue: 3, duration: 4200, easing: Easing.linear, useNativeDriver: Platform.OS !== 'web' })),
     ];
     loops.forEach((l) => l.start());
     return () => loops.forEach((l) => l.stop());
