@@ -9,7 +9,6 @@ import { DealBanner, DEALS } from '../../components/DealBanner';
 import { Icon } from '../../components/Icon';
 import { EstimateGateSheet } from '../../components/EstimateGateSheet';
 import { useRequireAuth, useResumeAfterAuth } from '../../hooks/useRequireAuth';
-import { LocationPermissionSheet } from '../../components/LocationPermissionSheet';
 import { AppLogoRow } from '../../components/Logo';
 import { PagedCarousel } from '../../components/PagedCarousel';
 import { RotatingTagline } from '../../components/RotatingTagline';
@@ -177,7 +176,6 @@ export function HomeLauncherScreen() {
         onGuest={() => navigation.navigate('CarDiagram')}
         onSignUp={() => requireAuth('newEstimate', () => navigation.navigate('CarDiagram'), 'join')}
       />
-      <LocationPermissionSheet />
     </Screen>
   );
 }

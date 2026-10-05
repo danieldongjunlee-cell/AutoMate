@@ -349,10 +349,6 @@ interface AppState {
   /** Per-car snapshots of the damage/quotes flow, keyed by vehicle id. */
   damageByVehicle: Record<string, DamageSlice>;
 
-  // Location permission (asked once so the maps can show "you are here").
-  locationPermission: 'unasked' | 'granted' | 'denied';
-  setLocationPermission: (p: 'granted' | 'denied') => void;
-
   /** Estimate context captured on the first-estimate intake (no car on file):
    *  service location + insurance/rental/pick-up flags, carried into the quote. */
   estimateContext: {
@@ -616,9 +612,6 @@ export const useAppStore = create<AppState>()(
         ...emptyDraft,
       };
     }),
-
-  locationPermission: 'unasked',
-  setLocationPermission: (locationPermission) => set({ locationPermission }),
 
   estimateContext: { location: '', hasInsurance: null, isRental: false, needsPickup: false },
   setEstimateContext: (patch) =>
