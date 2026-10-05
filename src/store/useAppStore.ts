@@ -296,6 +296,11 @@ interface AppState {
   pendingVehicle: { name: string; colorName: string } | null;
   setPendingVehicle: (v: { name: string; colorName: string } | null) => void;
 
+  /** Device position from the OS location prompt shown at launch (null until
+   *  granted or when denied). Not persisted: re-read on every launch. */
+  userLocation: { lat: number; lng: number } | null;
+  setUserLocation: (v: { lat: number; lng: number } | null) => void;
+
   // App preferences (Settings → Language / Distance units). Stored here so the
   // selection persists across navigation (device-level prefs, survive sign-out).
   language: string;
@@ -494,6 +499,8 @@ export const useAppStore = create<AppState>()(
   setPendingAuth: (pendingAuth) => set({ pendingAuth }),
   pendingVehicle: null,
   setPendingVehicle: (pendingVehicle) => set({ pendingVehicle }),
+  userLocation: null,
+  setUserLocation: (userLocation) => set({ userLocation }),
   // Sign-out clears the whole client session so the next account starts clean
   // (wireframe: sign-out sheet → splash).
   signOut: () => {

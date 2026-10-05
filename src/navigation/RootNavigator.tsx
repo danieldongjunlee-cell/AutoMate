@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 
+import { useLocationPermission } from '../hooks/useLocationPermission';
 import { fetchBookings } from '../lib/bookings';
 import { fetchPointsBalance } from '../lib/points';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -30,6 +31,8 @@ export function RootNavigator() {
   const setBookings = useAppStore((s) => s.setBookings);
   const setPoints = useAppStore((s) => s.setPoints);
   const theme = useTheme();
+  // First thing on launch: the OS location prompt (shop maps and distances).
+  useLocationPermission();
 
   // E2E hook: only when the web export is built with EXPO_PUBLIC_E2E=1 (the
   // screenshot runs in docs/redesign). Never set on Vercel, so production

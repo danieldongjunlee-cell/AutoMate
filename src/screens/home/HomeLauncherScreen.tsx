@@ -127,7 +127,7 @@ export function HomeLauncherScreen() {
         </Tappable>
       </View>
       <PagedCarousel
-        autoPlay={4500}
+        autoPlay={7000}
         items={DEALS.map((deal) => (
           <DealBanner key={deal.dealerId} deal={deal} onPress={() => requireAuth('deals', () => navigation.navigate('BundleDeals', { focus: deal.dealerId }))} />
         ))}
@@ -137,7 +137,7 @@ export function HomeLauncherScreen() {
       <Text style={{ fontSize: 18, fontWeight: '800', color: colors.textPrimary, marginTop: spacing.section, marginBottom: spacing.md }}>
         {t('Real customer reviews')}
       </Text>
-      <PagedCarousel autoPlay={6000} items={HOME_REVIEWS.map((r) => reviewCard(r))} />
+      <PagedCarousel autoPlay={7000} items={HOME_REVIEWS.map((r) => reviewCard(r))} />
 
       {/* Footer: help, legal & support documents. */}
       <View
