@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { ActivityIndicator, Animated, Easing, Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Animated, Easing, Modal, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Spinner } from './Spinner';
 
 import { Text } from './Text';
 
@@ -190,7 +191,7 @@ export function ProcessingOverlay({ visible, label }: { visible: boolean; label?
             minWidth: 200,
           }}
         >
-          <ActivityIndicator color={colors.primary} size="large" />
+          <Spinner color={colors.primary} size="large" />
           <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
             {label ?? 'Processing…'}
           </Text>

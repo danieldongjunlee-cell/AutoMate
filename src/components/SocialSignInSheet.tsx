@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, StyleSheet, View } from 'react-native';
+import { Modal, StyleSheet, View } from 'react-native';
+import { Spinner } from './Spinner';
 
 import { Text } from './Text';
 
@@ -136,7 +137,7 @@ function GoogleChooser({
           </Text>
           <Text style={{ fontSize: 13, color: colors.textSecondary }}>{DEMO_ACCOUNT.email}</Text>
         </View>
-        {loading ? <ActivityIndicator size="small" color="#4285F4" /> : null}
+        {loading ? <Spinner size="small" color="#4285F4" /> : null}
       </Tappable>
 
       <Tappable
@@ -285,7 +286,7 @@ function AppleSheet({
         }}
       >
         {loading ? (
-          <ActivityIndicator size="small" color={palette.dark} />
+          <Spinner size="small" color={palette.dark} />
         ) : (
           <Text style={{ fontSize: 15, fontWeight: '700', color: '#000' }}>Continue</Text>
         )}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
-import { ActivityIndicator, Animated, Modal, View } from 'react-native';
+import { Animated, Modal, View } from 'react-native';
+import { Spinner } from './Spinner';
 
 import { Text } from './Text';
 
@@ -171,7 +172,7 @@ export function ApplePaySheet({
               </Tappable>
             ) : stage === 'processing' ? (
               <View style={{ alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#fff" />
+                <Spinner size="large" color="#fff" />
                 <Text style={{ fontSize: 14, color: 'rgba(255,255,255,.7)', marginTop: spacing.sm }}>
                   Processing…
                 </Text>

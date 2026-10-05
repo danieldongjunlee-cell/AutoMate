@@ -3,7 +3,8 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -170,7 +171,7 @@ function AnalyzingState({ partCount }: { partCount: number }) {
 
   return (
     <View style={{ alignItems: 'center', paddingVertical: 72 }}>
-      <ActivityIndicator size="large" color={colors.primary} />
+      <Spinner size="large" color={colors.primary} />
       <Text
         style={{
           fontSize: 17,

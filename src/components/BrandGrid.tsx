@@ -32,8 +32,9 @@ function GridCard({
       accessibilityState={{ selected }}
       accessibilityLabel={label}
       style={{
+        // Fixed share of the row: an odd last card stays the same size as the rest.
         width: '47.8%',
-        flexGrow: 1,
+        flexGrow: 0,
         flexDirection: 'row',
         alignItems: 'center',
         gap: spacing.sm,
@@ -52,6 +53,20 @@ function GridCard({
       </Text>
       {selected ? <Icon name="check" size={16} color={colors.primary} strokeWidth={2.6} /> : null}
     </Tappable>
+  );
+}
+
+/**
+ * The question above a picker ("Which brand is your car?"): a stand-out
+ * heading with an accent bar, not a caption.
+ */
+export function QuestionLabel({ children, first }: { children: React.ReactNode; /** No top margin for the first question in a card. */ first?: boolean }) {
+  const { colors } = useTheme();
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: first ? 0 : spacing.lg, marginBottom: spacing.md }}>
+      <View style={{ width: 4, alignSelf: 'stretch', borderRadius: 2, backgroundColor: colors.primary }} />
+      <Text style={{ flex: 1, fontSize: 19, fontWeight: '800', letterSpacing: -0.2, color: colors.textPrimary }}>{children}</Text>
+    </View>
   );
 }
 

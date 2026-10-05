@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '../../components/Icon';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -45,7 +46,7 @@ export function PointsHistoryScreen() {
       <SectionLabel>Earn & redeem history</SectionLabel>
       {isLoading ? (
         <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
-          <ActivityIndicator color={colors.primary} />
+          <Spinner color={colors.primary} />
         </View>
       ) : rows.length === 0 ? (
         <Card style={{ padding: spacing.lg, alignItems: 'center' }}>

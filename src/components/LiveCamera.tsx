@@ -1,7 +1,8 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Icon } from './Icon';
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Spinner } from './Spinner';
 
 import { Text } from './Text';
 
@@ -62,7 +63,7 @@ export function LiveCamera({
   );
 
   if (!permission) {
-    return frame(<ActivityIndicator color={palette.primaryLight} />);
+    return frame(<Spinner color={palette.primaryLight} />);
   }
 
   if (!permission.granted) {
@@ -101,7 +102,7 @@ export function LiveCamera({
           }}
         >
           {busy ? (
-            <ActivityIndicator color={palette.primary} />
+            <Spinner color={palette.primary} />
           ) : (
             <View style={{ width: 42, height: 42, borderRadius: 21, backgroundColor: '#e8edf5' }} />
           )}

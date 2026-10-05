@@ -7,7 +7,7 @@ import { View } from 'react-native';
 
 import { Text } from '../../components/Text';
 
-import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
+import { BrandGrid, OptionGrid, QuestionLabel } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { SubmitProgress } from '../../components/SubmitProgress';
@@ -390,9 +390,7 @@ export function EstimateIntakeScreen() {
 
       {/* 1 · Car info (always shown). Model is a dropdown filtered by brand. */}
       <Section n={1} title="Your car" subtitle="Brand, model, year & color">
-        <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
-          Which brand is your car?
-        </Text>
+        <QuestionLabel first>Which brand is your car?</QuestionLabel>
         <BrandGrid
           brands={CAR_BRANDS}
           value={brand}
@@ -403,9 +401,7 @@ export function EstimateIntakeScreen() {
         />
         {brand ? (
           <>
-            <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
-              Which {brand}?
-            </Text>
+            <QuestionLabel>{`Which ${brand}?`}</QuestionLabel>
             {modelsForBrand(brand).length > 0 ? (
               <OptionGrid options={modelsForBrand(brand)} value={model} onChange={setModel} initialCount={6} />
             ) : (
@@ -430,9 +426,7 @@ export function EstimateIntakeScreen() {
       {/* 3 · Insurance + optional rental & pick-up (separate, both optional) */}
       {carDone && locationDone ? (
         <Section n={3} title="Insurance & pick-up" subtitle="Helps shops quote the right way">
-          <Text style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: spacing.xs }}>
-            Do you have insurance?
-          </Text>
+          <QuestionLabel first>Do you have insurance?</QuestionLabel>
           <YesNo value={hasInsurance} onChange={setHasInsurance} />
 
           <View style={{ height: 1, backgroundColor: colors.divider, marginVertical: spacing.sm }} />

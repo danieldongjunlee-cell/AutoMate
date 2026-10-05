@@ -2,7 +2,8 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text, TextInput } from '../../components/Text';
 
@@ -181,7 +182,7 @@ export function ProfInsEditScreen() {
     return (
       <Screen>
         <View style={{ paddingVertical: spacing.xl, alignItems: 'center' }}>
-          <ActivityIndicator color={colors.primary} />
+          <Spinner color={colors.primary} />
         </View>
       </Screen>
     );
