@@ -6,7 +6,7 @@ import { View } from 'react-native';
 
 import { Text } from '../../components/Text';
 
-import { BrandGrid, OptionGrid } from '../../components/BrandGrid';
+import { BrandGrid, OptionGrid, QuestionLabel } from '../../components/BrandGrid';
 import { Dropdown } from '../../components/Dropdown';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { Tappable } from '../../components/Tappable';
@@ -157,9 +157,7 @@ export function ProfCarAddScreen() {
             All fields required except Oil spec &amp; Last service.
           </Text>
           {/* Brand · real logos, tap to pick. */}
-          <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginBottom: spacing.sm }}>
-            Which brand is your car? *
-          </Text>
+          <QuestionLabel first>Which brand is your car? *</QuestionLabel>
           <BrandGrid
             brands={BRANDS}
             value={brand}
@@ -172,9 +170,7 @@ export function ProfCarAddScreen() {
           {/* Model · the chosen brand's line-up. */}
           {brand ? (
             <>
-              <Text style={{ fontSize: 12, fontWeight: '700', letterSpacing: 0.6, textTransform: 'uppercase', color: colors.textTertiary, marginTop: spacing.lg, marginBottom: spacing.sm }}>
-                Which {brand}? *
-              </Text>
+              <QuestionLabel>{`Which ${brand}? *`}</QuestionLabel>
               <OptionGrid options={modelOptions} value={model} onChange={setModel} initialCount={6} />
             </>
           ) : null}

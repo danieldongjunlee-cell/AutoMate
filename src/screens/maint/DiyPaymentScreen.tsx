@@ -3,7 +3,8 @@ import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -168,7 +169,7 @@ export function DiyPaymentScreen() {
             }}
           >
             {paying ? (
-              <ActivityIndicator color={palette.dark} />
+              <Spinner color={palette.dark} />
             ) : (
               <Text style={{ fontSize: 16, fontWeight: '800', color: palette.dark }}>
                 Pay ${payTotal.toFixed(2)}

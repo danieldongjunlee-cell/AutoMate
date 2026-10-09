@@ -1,7 +1,8 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -78,7 +79,7 @@ export function VerifyMethodScreen() {
             </Text>
           </View>
           {sending === method ? (
-            <ActivityIndicator size="small" color={colors.primary} />
+            <Spinner size="small" color={colors.primary} />
           ) : (
             <Text style={{ fontSize: 18, color: colors.textTertiary }}>›</Text>
           )}

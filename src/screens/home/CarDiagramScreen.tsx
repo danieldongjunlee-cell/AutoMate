@@ -1,7 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Animated, Image, ScrollView, StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text, TextInput } from '../../components/Text';
 
@@ -169,7 +170,7 @@ export function CarDiagramScreen() {
         }}
       >
         {picking && isNext ? (
-          <ActivityIndicator color={colors.primary} />
+          <Spinner color={colors.primary} />
         ) : (
           <Icon name={isNext ? 'camera' : 'plus'} size={isNext ? 26 : 20} color={isNext ? colors.primaryDark : colors.textTertiary} />
         )}

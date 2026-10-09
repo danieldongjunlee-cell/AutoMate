@@ -1,5 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import { Spinner } from './Spinner';
 
 import { Text } from './Text';
 
@@ -69,7 +70,7 @@ export function PrimaryButton({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={fg[variant]} />
+        <Spinner color={fg[variant]} />
       ) : (
         <Text style={[{ color: fg[variant], fontSize: 18, fontWeight: '700' }, textStyle]}>
           {label}

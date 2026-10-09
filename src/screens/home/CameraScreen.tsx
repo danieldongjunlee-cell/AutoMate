@@ -2,7 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '../../components/Icon';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text, TextInput } from '../../components/Text';
 
@@ -145,7 +146,7 @@ export function CameraScreen() {
             }}
           >
             {picking ? (
-              <ActivityIndicator color={colors.primary} />
+              <Spinner color={colors.primary} />
             ) : (
               <>
                 <Text style={{ fontSize: 20, color: colors.primary }}>＋</Text>

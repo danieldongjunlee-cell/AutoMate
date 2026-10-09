@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, View } from 'react-native';
+import { FlatList, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -252,7 +253,7 @@ export function SupabaseDemoScreen() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <SectionLabel>Your notes ({notes.length})</SectionLabel>
-        {busy ? <ActivityIndicator color={colors.primary} /> : null}
+        {busy ? <Spinner color={colors.primary} /> : null}
       </View>
       <FlatList
         data={notes}

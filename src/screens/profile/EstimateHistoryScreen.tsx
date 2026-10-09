@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '../../components/Icon';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import { Spinner } from '../../components/Spinner';
 
 import { Text } from '../../components/Text';
 
@@ -56,7 +57,7 @@ export function EstimateHistoryScreen() {
     return (
       <Screen>
         <View style={{ paddingVertical: spacing.xxxl, alignItems: 'center' }}>
-          <ActivityIndicator color={colors.primary} />
+          <Spinner color={colors.primary} />
         </View>
       </Screen>
     );
