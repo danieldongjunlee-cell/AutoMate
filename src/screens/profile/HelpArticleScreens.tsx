@@ -218,7 +218,7 @@ export function HelpContactScreen() {
         },
         {
           title: 'Email',
-          body: 'support@automate.app, we respond within 24 hours, usually much faster.',
+          body: 'support@automate.com, we respond within 24 hours, usually much faster.',
         },
         {
           title: 'Phone',
